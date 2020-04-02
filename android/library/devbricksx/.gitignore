@@ -38,5 +38,3 @@ captures/
 # OS generated files #
 .DS_Store
 .DS_Store?
-
-private.properties
