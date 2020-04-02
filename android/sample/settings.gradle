@@ -1,2 +1,5 @@
 rootProject.name='DevbricksX Sample'
 include ':app'
+include ':devbricksx'
+
+project(':devbricksx').projectDir = new File("$rootDir/../library/")
