@@ -39,4 +39,5 @@ captures/
 .DS_Store
 .DS_Store?
 
+# private
 private.properties
