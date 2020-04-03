@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         GlobalScope.launch {
-            SampleDataDatabase.getDatabase(this@MainActivity).sampleDataDao().getAll()
+//            SampleDataDatabase.getDatabase(this@MainActivity).sampleDataDao().getAll()
         }
     }
 }

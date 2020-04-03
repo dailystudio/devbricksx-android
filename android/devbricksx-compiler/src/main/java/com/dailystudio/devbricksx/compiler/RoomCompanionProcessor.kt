@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.compiler
 
 import androidx.room.Database
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
@@ -34,12 +35,13 @@ class RoomCompanionProcessor : AbstractProcessor() {
                         processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
                         return true
                     }
-                    processAnnotation(it)
+                    generateCompanion(it)
+                    generateCompanionDatabase(it)
                 }
         return false
     }
 
-    private fun processAnnotation(element: Element) {
+    private fun generateCompanion(element: Element) {
         val className = element.simpleName.toString()
         val pack = processingEnv.elementUtils.getPackageOf(element).toString()
 
@@ -47,44 +49,55 @@ class RoomCompanionProcessor : AbstractProcessor() {
         val fileBuilder= FileSpec.builder(pack, fileName)
         val classBuilder = TypeSpec.classBuilder(fileName)
                 .addAnnotation(Entity::class)
+        classBuilder.primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter(ParameterSpec.builder("id", Int::class)
+                        .addAnnotation(PrimaryKey::class)
+                        .build())
+                .build()
+        ).addProperty(PropertySpec.builder("id", Int::class)
+                .initializer("id")
+                .build())
+        for (enclosed in element.enclosedElements) {
+            if (enclosed.kind == ElementKind.FIELD) {
+                val name = enclosed.simpleName
+                val type = enclosed.asType().asTypeName()
 
-        val primaryConstructorBuilder = FunSpec.constructorBuilder()
+
+            }
+        }
+
+        val file = fileBuilder.addType(classBuilder.build()).build()
+        val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
+        file.writeTo(File(kaptKotlinGeneratedDir))
+    }
+
+    private fun generateCompanionDatabase(element: Element) {
+        val className = element.simpleName.toString()
+        val pack = processingEnv.elementUtils.getPackageOf(element).toString()
+
+        val fileName = "${className}RoomCompanionDatabase"
+        val fileBuilder= FileSpec.builder(pack, fileName)
+        val classBuilder = TypeSpec.classBuilder(fileName)
+                .addModifiers(KModifier.ABSTRACT)
+                .superclass(ClassName("androidx.room", "RoomDatabase"))
+                .addAnnotation(AnnotationSpec.builder(Database::class)
+                        .addMember("entities = arrayOf(%N::class)", "${className}RoomCompanion")
+                        .addMember("version = 1")
+                        .build()
+                )
+
+
 
         for (enclosed in element.enclosedElements) {
             if (enclosed.kind == ElementKind.FIELD) {
                 val name = enclosed.simpleName
                 val type = enclosed.asType().asTypeName()
 
-                System.out.println("processing field: [$name]type: [$type]")
-                System.out.println("processing type: [$type]")
-                primaryConstructorBuilder.addParameter(
-                        ParameterSpec.builder(enclosed.simpleName.toString(),
-                                type.copy(nullable = true)).build()
-                )
-////                classBuilder.addProperty(
-////                        PropertySpec.varBuilder(enclosed.simpleName.toString(), enclosed.asType().asTypeName().asNullable(), KModifier.PRIVATE)
-////                                .initializer("null")
-////                                .build()
-////                )
-//                classBuilder.addFunction(
-//                        FunSpec.builder("get${enclosed.simpleName}")
-//                                .returns(enclosed.asType().asTypeName().asNullable())
-//                                .addStatement("return ${enclosed.simpleName}")
-//                                .build()
-//                )
-//                classBuilder.addFunction(
-//                        FunSpec.builder("set${enclosed.simpleName}")
-//                                .addParameter(ParameterSpec.builder("${enclosed.simpleName}", enclosed.asType().asTypeName().asNullable()).build())
-//                                .addStatement("this.${enclosed.simpleName} = ${enclosed.simpleName}")
-//                                .build()
-//                )
             }
         }
 
-        classBuilder.primaryConstructor(primaryConstructorBuilder.build())
-
         val file = fileBuilder.addType(classBuilder.build()).build()
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
-        file.writeTo(processingEnv.filer)
+        file.writeTo(File(kaptKotlinGeneratedDir))
     }
 }
