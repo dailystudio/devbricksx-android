@@ -1,11 +1,10 @@
 package com.dailystudio.devbricksx.compiler
 
-import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Processor
@@ -36,6 +35,7 @@ class RoomCompanionProcessor : AbstractProcessor() {
                         return true
                     }
                     generateCompanion(it)
+                    generateCompanionDao(it)
                     generateCompanionDatabase(it)
                 }
         return false
@@ -86,7 +86,46 @@ class RoomCompanionProcessor : AbstractProcessor() {
                         .build()
                 )
 
+        val companionDaoClassName = ClassName(pack, "${className}RoomCompanionDao")
+        classBuilder.addFunction(FunSpec.builder("${className}Dao")
+                .addModifiers(KModifier.ABSTRACT)
+                .returns(companionDaoClassName).build())
 
+
+        for (enclosed in element.enclosedElements) {
+            if (enclosed.kind == ElementKind.FIELD) {
+                val name = enclosed.simpleName
+                val type = enclosed.asType().asTypeName()
+
+            }
+        }
+
+        val file = fileBuilder.addType(classBuilder.build()).build()
+        val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
+        file.writeTo(File(kaptKotlinGeneratedDir))
+    }
+
+    private fun generateCompanionDao(element: Element) {
+        val className = element.simpleName.toString()
+        val pack = processingEnv.elementUtils.getPackageOf(element).toString()
+
+        val fileName = "${className}RoomCompanionDao"
+        val fileBuilder= FileSpec.builder(pack, fileName)
+        val classBuilder = TypeSpec.interfaceBuilder(fileName)
+                .addAnnotation(AnnotationSpec.builder(Dao::class).build())
+
+        val companionClassName = ClassName(pack, "${className}RoomCompanion")
+        val list = ClassName("kotlin.collections", "List")
+        val livedata = ClassName("androidx.lifecycle", "LiveData")
+        val listOfCompanion = list.parameterizedBy(companionClassName)
+        val livedataOfListOfCompanion = livedata.parameterizedBy(listOfCompanion)
+        classBuilder.addFunction(FunSpec.builder("list")
+                .addModifiers(KModifier.ABSTRACT)
+                .addAnnotation(AnnotationSpec.builder(Query::class)
+                        .addMember("value = %S", "SELECT * from ${companionClassName.simpleName.toLowerCase()}")
+                        .build()
+                )
+                .returns(livedataOfListOfCompanion).build())
 
         for (enclosed in element.enclosedElements) {
             if (enclosed.kind == ElementKind.FIELD) {
