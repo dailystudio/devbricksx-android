@@ -24,6 +24,7 @@ allprojects {
 }
 
 ext {
+    // Jcenter publish credentials
     if (file("private.properties").exists()) {
         Properties props = new Properties()
         props.load(new FileInputStream(file("private.properties")))
@@ -34,70 +35,22 @@ ext {
         BINTRAY_USER = ""
     }
 
-    VERSION_NAME = version()
-    VERSION_CODE = versionCode().toInteger()
-    SITE_URL = 'https://github.com/dailystudio/devbricksx'
-    GIT_URL = 'https://github.com/dailystudio/devbricksx.git'
-    GROUP_NAME = 'com.github.dailystudio'
+    // Compile Settings
     COMPILE_SDK = 29
     BUILD_TOOLS = '29.0.3'
-    IS_UPLOADING = project.getGradle().startParameter.taskNames.any{it.contains('bintrayUpload')}
-}
+    VERSION_NAME = version()
+    VERSION_CODE = versionCode().toInteger()
 
-subprojects {
-    repositories {
-        jcenter()
-    }
-
-    group = GROUP_NAME
-    version = VERSION_NAME
-
-    if (IS_UPLOADING && project.name in ['devbricksx']) {
-        println "generating POM for project [$project.name]"
-        apply plugin: 'maven'
-
-        gradle.taskGraph.whenReady { taskGraph ->
-            def pomTask = taskGraph.getAllTasks().find {
-                it.path == ":$project.name:generatePomFileForReleasePublication"
-            }
-            if (pomTask == null) return
-
-            taskGraph.getAllTasks().find{it.path == ":$project.name:generatePomFileForReleasePublication"}.doLast {
-                file("build/publications/maven/pom-default.xml").delete()
-                pom {
-                    //noinspection GroovyAssignabilityCheck
-                    project {
-                        name "$project.name"
-                        artifactId "$project.name"
-                        packaging project.name == 'compiler' ? 'jar' : 'aar'
-                        description 'Development Bricks eXetrems'
-                        url SITE_URL
-                        version VERSION_NAME
-
-                        scm {
-                            url GIT_URL
-                            connection GIT_URL
-                            developerConnection GIT_URL
-                        }
-
-                        licenses {
-                            license {
-                                name 'The Apache Software License, Version 2.0'
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id 'dailystudio'
-                                name 'dailystudio'
-                                email 'dailystudio2020@gmail.com'
-                            }
-                        }
-                    }
-                }.writeTo("build/publications/maven/pom-default.xml")
-            }
-        }
-    }
+    // Publishing Parameters
+    SITE_URL = 'https://github.com/dailystudio/devbricksx'
+    GIT_URL = 'https://github.com/dailystudio/devbricksx.git'
+    GROUP_NAME = 'com.dailystudio'
+    DESCRIPTION = 'Provide utils classes commonly used in Android application development.'
+    DEVELOPER_ID = 'dailystudio'
+    DEVELOPER_NAME = 'dailystudio'
+    DEVELOPER_EMAIL = 'dailystudio2020@gmail.com'
+    LICENCE_NAME  = 'The Apache Software License, Version 2.0'
+    LICENCE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 }
 
 def String version() {
