@@ -1,4 +1,4 @@
-package com.dailystudio.devbrickx.devbricksx.devbricksxsample
+package com.dailystudio.devbricksx.sample
 
 import com.dailystudio.devbrickx.app.DevBricksApplication
 

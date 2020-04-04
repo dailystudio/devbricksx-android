@@ -8,7 +8,7 @@ android {
     buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
-        applicationId "com.dailystudio.devbrickx.devbricksx.devbricksxsample"
+        applicationId "com.dailystudio.devbricksx.devbricksxsample"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode VERSION_CODE
@@ -25,9 +25,14 @@ android {
     }
 
     sourceSets {
-        main {
+        debug {
             java {
-                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/"
+                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/debug"
+            }
+        }
+        release {
+            java {
+                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/release"
             }
         }
     }
@@ -50,3 +55,12 @@ dependencies {
     kapt project(':devbricksx-compiler')
     kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
 }
+//
+//afterEvaluate {
+//    android.applicationVariants.all { variant ->
+//        def kotlinGenerated = file("${buildDir.absolutePath}/generated/source/kaptKotlin/${variant.name}/")
+//        println kotlinGenerated
+//        variant.addJavaSourceFoldersToModel(kotlinGenerated)
+//        return
+//    }
+//}

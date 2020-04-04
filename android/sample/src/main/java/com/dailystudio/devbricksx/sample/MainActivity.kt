@@ -1,10 +1,9 @@
-package com.dailystudio.devbrickx.devbricksx.devbricksxsample
+package com.dailystudio.devbricksx.sample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.room.Room
-import com.dailystudio.devbrickx.devbricksx.devbricksxsample.db.AutoDataRoomCompanionDatabase
-import com.dailystudio.devbrickx.devbricksx.devbricksxsample.db.SampleDataDatabase
+import com.dailystudio.devbricksx.sample.db.AutoDataRoomCompanionDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

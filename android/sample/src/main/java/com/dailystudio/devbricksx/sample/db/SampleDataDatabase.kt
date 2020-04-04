@@ -1,4 +1,4 @@
-package com.dailystudio.devbrickx.devbricksx.devbricksxsample.db
+package com.dailystudio.devbricksx.sample.db
 
 import android.content.Context
 import androidx.room.Database
