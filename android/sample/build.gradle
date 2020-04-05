@@ -1,3 +1,4 @@
+apply plugin: GreetingPlugin
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -24,18 +25,18 @@ android {
         }
     }
 
-    sourceSets {
-        debug {
-            java {
-                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/debug"
-            }
-        }
-        release {
-            java {
-                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/release"
-            }
-        }
-    }
+//    sourceSets {
+//        debug {
+//            java {
+//                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/debug"
+//            }
+//        }
+//        release {
+//            java {
+//                srcDir "${buildDir.absolutePath}/generated/source/kaptKotlin/release"
+//            }
+//        }
+//    }
 
 }
 
@@ -55,12 +56,30 @@ dependencies {
     kapt project(':devbricksx-compiler')
     kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
 }
-//
-//afterEvaluate {
-//    android.applicationVariants.all { variant ->
-//        def kotlinGenerated = file("${buildDir.absolutePath}/generated/source/kaptKotlin/${variant.name}/")
-//        println kotlinGenerated
-//        variant.addJavaSourceFoldersToModel(kotlinGenerated)
-//        return
-//    }
-//}
+
+class GreetingPlugin implements Plugin<Project> {
+
+    @Override
+    void apply(Project project) {
+        Task task = project.task('preRunKapt') {
+            doLast {
+                println 'running kapt first'
+//                project.getTasks().findByName('kaptGenerateStubsDebugKotlin').execute()
+            }
+        }
+
+        project.afterEvaluate {
+            project.android.sourceSets.all { sourceSet ->
+                def kotlinGenerated = "build/generated/source/kaptKotlin/${name}/"
+                println kotlinGenerated
+                sourceSet.java.srcDir(kotlinGenerated)
+            }
+
+            project.android.applicationVariants.all { variant ->
+                variant.javaCompiler.dependsOn(task)
+            }
+        }
+    }
+
+
+}
