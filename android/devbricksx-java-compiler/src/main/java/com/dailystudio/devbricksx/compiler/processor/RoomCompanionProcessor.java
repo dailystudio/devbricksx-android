@@ -1,19 +1,28 @@
 package com.dailystudio.devbricksx.compiler.processor;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Database;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.utils.GenUtils;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.Filer;
@@ -24,6 +33,8 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 @AutoService(Processor.class)
@@ -65,11 +76,49 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
         ClassName generatedClassName = ClassName
                 .get(packageName, GenUtils.getRoomCompanionName(typeName));
-        note("gen class: [%s]", generatedClassName);
+        debug("generated class = [%s]", generatedClassName);
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Entity.class);
+
+        List<? extends Element> subElements = typeElement.getEnclosedElements();
+        debug("sub-elements = %s", subElements);
+
+        Map<Integer, List<FieldSpec>> fieldsMap = new HashMap<>();
+
+        VariableElement varElement;
+        boolean addPrimaryKey = false;
+        for (Element subElement: subElements) {
+            if (subElement instanceof VariableElement) {
+                varElement = (VariableElement) subElement;
+
+                String varName = varElement.getSimpleName().toString();
+                TypeMirror fieldType = varElement.asType();
+                String varTypeName = fieldType.toString();
+
+                debug("property: name = %s", varName);
+                debug("property: type = %s", varTypeName);
+
+                FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(TypeName.get(fieldType),
+                        varName);
+
+                if (addPrimaryKey == false) {
+                    fieldSpecBuilder.addAnnotation(PrimaryKey.class);
+                    fieldSpecBuilder.addAnnotation(NonNull.class);
+
+                    addPrimaryKey = true;
+                } else {
+                    fieldSpecBuilder.addAnnotation(AnnotationSpec.builder(ColumnInfo.class)
+                            .addMember("name", "$S", varName)
+                            .build()
+                    );
+
+                }
+
+                classBuilder.addField(fieldSpecBuilder.build());
+            }
+        }
 
         try {
             JavaFile.builder(packageName,
@@ -88,7 +137,7 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
         ClassName generatedClassName = ClassName
                 .get(packageName, GenUtils.getRoomCompanionDatabaseName(typeName));
-        note("gen class: [%s]", generatedClassName);
+        info("generated class = [%s]", generatedClassName);
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
