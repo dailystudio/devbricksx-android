@@ -24,11 +24,10 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 
 @AutoService(Processor.class)
-public class RoomCompanionProcessor extends BaseProcessor {
+public class RoomCompanionProcessor extends AbsBaseProcessor {
 
     private Filer mFiler;
     private Elements mElementUtils;
@@ -47,7 +46,6 @@ public class RoomCompanionProcessor extends BaseProcessor {
                 roundEnv.getElementsAnnotatedWith(RoomCompanion.class);
 
         TypeElement typeElement;
-        VariableElement varElement;
         for (Element element : elements) {
             if (element instanceof TypeElement) {
                 typeElement = (TypeElement) element;
