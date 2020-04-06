@@ -21,6 +21,12 @@ allprojects {
         google()
         jcenter()
     }
+
+    tasks.withType(Exec) {
+        doFirst {
+            println commandLine
+        }
+    }
 }
 
 ext {
@@ -68,4 +74,3 @@ def String versionCode() {
 
     return versionProps['code']
 }
-

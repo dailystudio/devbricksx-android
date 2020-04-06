@@ -51,9 +51,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(":devbricksx")
-    implementation project(':devbricksx-annotations')
+    implementation project(':devbricksx-java-annotations')
 
-    kapt project(':devbricksx-compiler')
+    kapt project(':devbricksx-java-compiler')
     kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
 }
 
@@ -61,17 +61,29 @@ class GreetingPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        Task task = project.task('preRunKapt') {
-            doLast {
-                println 'running kapt first'
-//                project.getTasks().findByName('kaptGenerateStubsDebugKotlin').execute()
-            }
+        Task task = project.task('preRunKapt', type: JavaCompile) {
+            println 'running kapt first'
+//            options.compilerArgs << '-proc:only' << '-processors com.foo.bar.MyAnnotationProcessor'
+//
+//            def targetSourceSet
+//            def kotlinGenerated
+//            project.android.sourceSets.all { sourceSet ->
+//                def name = sourceSet.name
+//
+//                if (name == "debug") {
+//                    kotlinGenerated = "build/generated/source/kaptKotlin/${name}/"
+//                    targetSourceSet = sourceSet
+//                }
+//            }
+//
+//            source = targetSourceSet.java.srcDirs
+//            destinationDir = project.android.sourceSets.java.output.classesDir
         }
 
         project.afterEvaluate {
             project.android.sourceSets.all { sourceSet ->
                 def kotlinGenerated = "build/generated/source/kaptKotlin/${name}/"
-                println kotlinGenerated
+//                println kotlinGenerated
                 sourceSet.java.srcDir(kotlinGenerated)
             }
 

@@ -1,0 +1,15 @@
+apply plugin: 'java-library'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':devbricksx-java-annotations')
+
+    implementation 'com.squareup:javapoet:1.7.0'
+    implementation 'com.google.guava:guava:19.0'
+    implementation 'androidx.room:room-common:2.2.5'
+    implementation "com.google.auto.service:auto-service:1.0-rc4"
+    annotationProcessor "com.google.auto.service:auto-service:1.0-rc4"
+}
