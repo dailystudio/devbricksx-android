@@ -8,7 +8,7 @@ android {
     buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
-        applicationId "com.dailystudio.devbricksx.devbricksxsample"
+        applicationId "com.dailystudio.devbricksx.sample"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode VERSION_CODE

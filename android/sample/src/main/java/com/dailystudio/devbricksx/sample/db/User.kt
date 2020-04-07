@@ -3,11 +3,12 @@ package com.dailystudio.devbricksx.sample.db
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 
 @RoomCompanion
-class User (
+data class User (
         val id: String,
-        val name: String,
-        val firstName: String?,
-        val lastName: String?,
-        val age: Int?,
-        val phoneNumber: String?
-)
+        val name: String) {
+    var firstName: String? = null
+    val lastName: String? = null
+    val age: Int = 0
+    val phoneNumber: String? = null
+    val paid: Boolean = false
+}
