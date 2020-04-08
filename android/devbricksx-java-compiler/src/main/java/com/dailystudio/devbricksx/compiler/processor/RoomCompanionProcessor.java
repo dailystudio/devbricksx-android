@@ -227,8 +227,9 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
         info("generated class = [%s]", generatedClassName);
 
-        TypeSpec.Builder classBuilder = TypeSpec.interfaceBuilder(generatedClassName)
+        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.ABSTRACT)
                 .addAnnotation(Dao.class);
 
         ClassName roomCompanion = ClassName.get(packageName,
@@ -236,7 +237,7 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         ClassName list = ClassName.get("java.util", "List");
         TypeName listOfRoomCompanions = ParameterizedTypeName.get(list, roomCompanion);
 
-        MethodSpec methodGetAll = MethodSpec.methodBuilder("getAll")
+        MethodSpec methodGetAll = MethodSpec.methodBuilder("_getAll")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .returns(listOfRoomCompanions)
                 .addAnnotation(AnnotationSpec.builder(Query.class)
@@ -247,7 +248,7 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
         classBuilder.addMethod(methodGetAll);
 
-        MethodSpec methodInsertAll = MethodSpec.methodBuilder("insertAll")
+        MethodSpec methodInsertAll = MethodSpec.methodBuilder("_insertAll")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .addParameter(listOfRoomCompanions, "companions")
                 .addAnnotation(Insert.class)
@@ -255,44 +256,19 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
         classBuilder.addMethod(methodInsertAll);
 
-        try {
-            JavaFile.builder(packageName,
-                    classBuilder.build())
-                    .build()
-                    .writeTo(mFiler);
-        } catch (IOException e) {
-            error("generate class for %s failed: %s", typeElement, e.toString());
-        }
-    }
-
-    private TypeSpec.Builder createRoomCompanionDaoWrapper(TypeElement typeElement,
-                                                           RoundEnvironment roundEnv) {
-        String packageName = mElementUtils.getPackageOf(typeElement).getQualifiedName().toString();
-        String typeName = typeElement.getSimpleName().toString();
-
-        ClassName generatedClassName = ClassName
-                .get(packageName, GeneratedNames.getRoomCompanionDaoWrapperName(typeName));
-        info("generated class = [%s]", generatedClassName);
-
-        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .addModifiers(Modifier.PUBLIC);
-
         ClassName object = ClassName.get(packageName, typeName);
-        ClassName list = ClassName.get("java.util", "List");
         ClassName arrayList = ClassName.get("java.util", "ArrayList");
         TypeName listOfObjects = ParameterizedTypeName.get(list, object);
-        ClassName roomCompanion = ClassName.get(packageName,
-                GeneratedNames.getRoomCompanionName(typeName));
         TypeName listOfCompanions = ParameterizedTypeName.get(list, roomCompanion);
 
         ClassName dao = ClassName
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
 
-        MethodSpec methodGetAll = MethodSpec.methodBuilder("getAll")
+        MethodSpec methodGetAllWrapper = MethodSpec.methodBuilder("getAll")
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("$T companions = $N().getAll()",
+                .addStatement("$T companions = this.$N()",
                         listOfCompanions,
-                        NameUtils.lowerCamelCaseName(dao.simpleName()))
+                        methodGetAll.name)
                 .beginControlFlow("if (companions == null)")
                 .addStatement("return null")
                 .endControlFlow()
@@ -306,9 +282,9 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .returns(listOfObjects)
                 .build();
 
-        classBuilder.addMethod(methodGetAll);
+        classBuilder.addMethod(methodGetAllWrapper);
 
-        MethodSpec methodInsertAll = MethodSpec.methodBuilder("insertAll")
+        MethodSpec methodInsertAllWrapper = MethodSpec.methodBuilder("insertAll")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(listOfObjects, "objects")
                 .beginControlFlow("if (objects == null)")
@@ -320,13 +296,13 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .beginControlFlow("for (int i = 0; i < objects.size(); i++)")
                 .addStatement("companions.add($T.fromObject(objects.get(i)))", roomCompanion)
                 .endControlFlow()
-                .addStatement("$N().insertAll(companions)",
-                        NameUtils.lowerCamelCaseName(dao.simpleName()))
+                .addStatement("this.$N(companions)",
+                        methodInsertAll.name)
                 .build();
 
-        classBuilder.addMethod(methodInsertAll);
+        classBuilder.addMethod(methodInsertAllWrapper);
 
-        MethodSpec methodInsertOne = MethodSpec.methodBuilder("insert")
+        MethodSpec methodInsertOneWrapper = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(object, "object")
                 .beginControlFlow("if (object == null)")
@@ -336,12 +312,19 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                         listOfObjects,
                         arrayList)
                 .addStatement("objects.add(object)", roomCompanion)
-                .addStatement("this.$N(objects)", methodInsertAll.name)
+                .addStatement("this.$N(objects)", methodInsertAllWrapper.name)
                 .build();
 
-        classBuilder.addMethod(methodInsertOne);
+        classBuilder.addMethod(methodInsertOneWrapper);
 
-        return classBuilder;
+        try {
+            JavaFile.builder(packageName,
+                    classBuilder.build())
+                    .build()
+                    .writeTo(mFiler);
+        } catch (IOException e) {
+            error("generate class for %s failed: %s", typeElement, e.toString());
+        }
     }
 
     private void generateRoomCompanionDatabase(TypeElement typeElement,
@@ -368,34 +351,11 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
 
         MethodSpec methodGetDao = MethodSpec.methodBuilder(NameUtils.lowerCamelCaseName(dao.simpleName()))
-                .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .returns(dao)
                 .build();
 
         classBuilder.addMethod(methodGetDao);
-
-        classBuilder.addType(createRoomCompanionDaoWrapper(typeElement, roundEnv).build());
-
-        ClassName daoWrapperInner = ClassName
-                .get(packageName,
-                        GeneratedNames.getRoomCompanionDaoWrapperInnerClassName(typeName));
-
-        ClassName daoWrapper = ClassName
-                .get(packageName,
-                        GeneratedNames.getRoomCompanionDaoWrapperName(typeName));
-
-        FieldSpec daoWrapperFiled = FieldSpec.builder(daoWrapperInner, daoWrapper.simpleName())
-                .addModifiers(Modifier.PROTECTED)
-                .initializer("new $T()", daoWrapperInner)
-                .build();
-        MethodSpec methodGetDaoWrapper = MethodSpec.methodBuilder(NameUtils.lowerCamelCaseName(daoWrapper.simpleName()))
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("return this.$N", daoWrapperFiled.name)
-                .returns(daoWrapperInner)
-                .build();
-
-        classBuilder.addField(daoWrapperFiled);
-        classBuilder.addMethod(methodGetDaoWrapper);
 
         try {
             JavaFile.builder(packageName,
