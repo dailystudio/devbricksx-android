@@ -1,17 +1,21 @@
 package com.dailystudio.devbricksx.compiler.processor;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Database;
 import androidx.room.Entity;
+import androidx.room.Insert;
 import androidx.room.PrimaryKey;
 import androidx.room.Query;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
+import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -66,7 +70,6 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
                 generateRoomCompanion(typeElement, roundEnv);
                 generateRoomCompanionDao(typeElement, roundEnv);
-                createRoomCompanionDaoWrapper(typeElement, roundEnv);
                 generateRoomCompanionDatabase(typeElement, roundEnv);
             }
         }
@@ -83,6 +86,16 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .get(packageName, GeneratedNames.getRoomCompanionName(typeName));
         debug("generated class = [%s]", generatedClassName);
 
+        RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
+        String primaryKey = null;
+        if (companionAnnotation != null) {
+            primaryKey = companionAnnotation.primaryKey();
+        }
+
+        if (TextUtils.isEmpty(primaryKey)) {
+            return;
+        }
+
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Entity.class);
@@ -95,7 +108,6 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         Set<String> fields = new HashSet<>();
         Set<String> fieldsOutsideConstructor = new HashSet<>();
 
-        boolean addPrimaryKey = false;
         for (Element subElement: subElements) {
             if (subElement instanceof VariableElement) {
                 debug("processing field: %s", subElement);
@@ -104,7 +116,6 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
                 String varName = varElement.getSimpleName().toString();
                 TypeMirror fieldType = varElement.asType();
-                String varTypeName = fieldType.toString();
 
                 FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(TypeName.get(fieldType),
                         varName);
@@ -115,11 +126,9 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                         .build()
                 );
 
-                if (addPrimaryKey == false) {
+                if (primaryKey.equals(varName)) {
                     fieldSpecBuilder.addAnnotation(PrimaryKey.class);
                     fieldSpecBuilder.addAnnotation(NonNull.class);
-
-                    addPrimaryKey = true;
                 }
 
                 fieldSpecs.add(fieldSpecBuilder.build());
@@ -180,17 +189,17 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         MethodSpec.Builder methodToCompanionBuilder = MethodSpec.methodBuilder("fromObject")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(object, NameUtils.lowerCamelCaseName(typeName))
-                .addStatement("$T companion = new $T()", generatedClassName, generatedClassName)
+                .addStatement("$T companionAnnotation = new $T()", generatedClassName, generatedClassName)
                 .returns(generatedClassName);
 
         for (String fieldName: fields) {
-            methodToCompanionBuilder.addStatement("companion.$N = $N.$N",
+            methodToCompanionBuilder.addStatement("companionAnnotation.$N = $N.$N",
                     fieldName,
                     NameUtils.lowerCamelCaseName(typeName),
                     fieldName);
         }
 
-        methodToCompanionBuilder.addStatement("return companion");
+        methodToCompanionBuilder.addStatement("return companionAnnotation");
 
         for (FieldSpec fieldSpec: fieldSpecs) {
             classBuilder.addField(fieldSpec);
@@ -238,6 +247,14 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
         classBuilder.addMethod(methodGetAll);
 
+        MethodSpec methodInsertAll = MethodSpec.methodBuilder("insertAll")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .addParameter(listOfRoomCompanions, "companions")
+                .addAnnotation(Insert.class)
+                .build();
+
+        classBuilder.addMethod(methodInsertAll);
+
         try {
             JavaFile.builder(packageName,
                     classBuilder.build())
@@ -266,18 +283,15 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         TypeName listOfObjects = ParameterizedTypeName.get(list, object);
         ClassName roomCompanion = ClassName.get(packageName,
                 GeneratedNames.getRoomCompanionName(typeName));
-        TypeName listOfCompanion = ParameterizedTypeName.get(list, roomCompanion);
+        TypeName listOfCompanions = ParameterizedTypeName.get(list, roomCompanion);
 
-        ClassName daoWrapper = ClassName
-                .get(packageName,
-                        GeneratedNames.getRoomCompanionDaoWrapperName(typeName));
         ClassName dao = ClassName
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
 
         MethodSpec methodGetAll = MethodSpec.methodBuilder("getAll")
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("$T companions = $N().getAll()",
-                        listOfCompanion,
+                        listOfCompanions,
                         NameUtils.lowerCamelCaseName(dao.simpleName()))
                 .beginControlFlow("if (companions == null)")
                 .addStatement("return null")
@@ -293,6 +307,39 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .build();
 
         classBuilder.addMethod(methodGetAll);
+
+        MethodSpec methodInsertAll = MethodSpec.methodBuilder("insertAll")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(listOfObjects, "objects")
+                .beginControlFlow("if (objects == null)")
+                .addStatement("return")
+                .endControlFlow()
+                .addStatement("$T companions = new $T<>()",
+                        listOfCompanions,
+                        arrayList)
+                .beginControlFlow("for (int i = 0; i < objects.size(); i++)")
+                .addStatement("companions.add($T.fromObject(objects.get(i)))", roomCompanion)
+                .endControlFlow()
+                .addStatement("$N().insertAll(companions)",
+                        NameUtils.lowerCamelCaseName(dao.simpleName()))
+                .build();
+
+        classBuilder.addMethod(methodInsertAll);
+
+        MethodSpec methodInsertOne = MethodSpec.methodBuilder("insert")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(object, "object")
+                .beginControlFlow("if (object == null)")
+                .addStatement("return")
+                .endControlFlow()
+                .addStatement("$T objects = new $T<>()",
+                        listOfObjects,
+                        arrayList)
+                .addStatement("objects.add(object)", roomCompanion)
+                .addStatement("this.$N(objects)", methodInsertAll.name)
+                .build();
+
+        classBuilder.addMethod(methodInsertOne);
 
         return classBuilder;
     }

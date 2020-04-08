@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.sample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.room.Room
+import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.sample.db.UserDatabase
 import com.dailystudio.devbrickx.development.Logger
 import kotlinx.coroutines.GlobalScope
@@ -21,7 +22,10 @@ class MainActivity : AppCompatActivity() {
         ).build()
 
         GlobalScope.launch {
-//            SampleDataDatabase.getDatabase(this@MainActivity).sampleDataDao().getAll()
+            alertDatabase.clearAllTables()
+            val user = User("1", "dailystudio")
+            Logger.debug("user = $user")
+            alertDatabase.userDao().insert(user)
             val users = alertDatabase.userDao().all
             Logger.debug("users = $users")
         }
