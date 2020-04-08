@@ -7,13 +7,16 @@ public class NameUtils {
             return null;
         }
 
-        if (Character.isLowerCase(name.charAt(0))) {
-            return name;
-        }
-
         StringBuilder builder = new StringBuilder(name);
 
-        builder.setCharAt(0, Character.toLowerCase(name.charAt(0)));
+        for (int i = 0; i < name.length(); i++) {
+            if (Character.isAlphabetic(name.charAt(i))) {
+                builder.setCharAt(i, Character.toLowerCase(name.charAt(i)));
+                break;
+            }
+        }
+
+
 
         return builder.toString();
     }

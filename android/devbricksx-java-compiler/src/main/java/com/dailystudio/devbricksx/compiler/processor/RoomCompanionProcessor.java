@@ -21,6 +21,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +66,7 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
                 generateRoomCompanion(typeElement, roundEnv);
                 generateRoomCompanionDao(typeElement, roundEnv);
+                createRoomCompanionDaoWrapper(typeElement, roundEnv);
                 generateRoomCompanionDatabase(typeElement, roundEnv);
             }
         }
@@ -88,7 +90,11 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         List<? extends Element> subElements = typeElement.getEnclosedElements();
 
         VariableElement varElement;
-        ExecutableElement methodElement;
+        ExecutableElement constructorElement = null;
+        List<FieldSpec> fieldSpecs = new ArrayList<>();
+        Set<String> fields = new HashSet<>();
+        Set<String> fieldsOutsideConstructor = new HashSet<>();
+
         boolean addPrimaryKey = false;
         for (Element subElement: subElements) {
             if (subElement instanceof VariableElement) {
@@ -116,41 +122,82 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                     addPrimaryKey = true;
                 }
 
-                classBuilder.addField(fieldSpecBuilder.build());
+                fieldSpecs.add(fieldSpecBuilder.build());
+
+                fields.add(varName);
+                fieldsOutsideConstructor.add(varName);
             } else if (subElement instanceof ExecutableElement) {
-                methodElement = (ExecutableElement) subElement;
-                debug("processing method: [%s]", methodElement);
-
-                String methodName = methodElement.getSimpleName().toString();
-
-
-                if (Constants.CONSTRUCTOR_NAME.equals(methodName)) {
+                if (Constants.CONSTRUCTOR_NAME.equals(subElement.getSimpleName().toString())) {
                     debug("processing constructor: %s", subElement);
+                    constructorElement = (ExecutableElement) subElement;
                 }
             }
+        }
+
+        if (constructorElement == null) {
+            warn("failed to access constructor of %s", typeElement);
+            return;
         }
 
         ClassName object = ClassName
                 .get(packageName, typeName);
 
-        MethodSpec methodToObject = MethodSpec.methodBuilder("toObject")
+        MethodSpec.Builder methodToObjectBuilder = MethodSpec.methodBuilder("toObject")
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("$T object = new $T()", object, object)
-                .addStatement("return object")
-                .returns(object)
-                .build();
+                .returns(object);
 
-        MethodSpec methodToCompanion = MethodSpec.methodBuilder("fromObject")
+        StringBuilder constParamsBuilder = new StringBuilder();
+        List<? extends VariableElement> constParams =
+                constructorElement.getParameters();
+
+        VariableElement param;
+        String paramName;
+        for (int i = 0; i < constParams.size(); i++) {
+            param = constParams.get(i);
+
+            paramName = param.getSimpleName().toString();
+
+            debug("param: %s", param.getSimpleName());
+            constParamsBuilder.append(paramName);
+            if (i < constParams.size() - 1) {
+                constParamsBuilder.append(", ");
+            }
+
+            fieldsOutsideConstructor.remove(paramName);
+        }
+
+        methodToObjectBuilder.addStatement("$T object = new $T($N)",
+                object, object, constParamsBuilder.toString());
+
+        for (String fieldName: fieldsOutsideConstructor) {
+            methodToObjectBuilder.addStatement("object.$N = this.$N",
+                    fieldName,
+                    fieldName);
+        }
+
+        methodToObjectBuilder.addStatement("return object");
+
+        MethodSpec.Builder methodToCompanionBuilder = MethodSpec.methodBuilder("fromObject")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(object, NameUtils.lowerCamelCaseName(typeName))
                 .addStatement("$T companion = new $T()", generatedClassName, generatedClassName)
-                .addStatement("return companion")
-                .returns(generatedClassName)
-                .build();
+                .returns(generatedClassName);
 
+        for (String fieldName: fields) {
+            methodToCompanionBuilder.addStatement("companion.$N = $N.$N",
+                    fieldName,
+                    NameUtils.lowerCamelCaseName(typeName),
+                    fieldName);
+        }
 
-        classBuilder.addMethod(methodToObject);
-        classBuilder.addMethod(methodToCompanion);
+        methodToCompanionBuilder.addStatement("return companion");
+
+        for (FieldSpec fieldSpec: fieldSpecs) {
+            classBuilder.addField(fieldSpec);
+        }
+
+        classBuilder.addMethod(methodToObjectBuilder.build());
+        classBuilder.addMethod(methodToCompanionBuilder.build());
 
         try {
             JavaFile.builder(packageName,
@@ -187,8 +234,7 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                         .addMember("value", "$S",
                                 "SELECT * FROM " + roomCompanion.simpleName())
                         .build()
-                )
-                .build();
+                ).build();
 
         classBuilder.addMethod(methodGetAll);
 
@@ -200,6 +246,55 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         } catch (IOException e) {
             error("generate class for %s failed: %s", typeElement, e.toString());
         }
+    }
+
+    private TypeSpec.Builder createRoomCompanionDaoWrapper(TypeElement typeElement,
+                                                           RoundEnvironment roundEnv) {
+        String packageName = mElementUtils.getPackageOf(typeElement).getQualifiedName().toString();
+        String typeName = typeElement.getSimpleName().toString();
+
+        ClassName generatedClassName = ClassName
+                .get(packageName, GeneratedNames.getRoomCompanionDaoWrapperName(typeName));
+        info("generated class = [%s]", generatedClassName);
+
+        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
+                .addModifiers(Modifier.PUBLIC);
+
+        ClassName object = ClassName.get(packageName, typeName);
+        ClassName list = ClassName.get("java.util", "List");
+        ClassName arrayList = ClassName.get("java.util", "ArrayList");
+        TypeName listOfObjects = ParameterizedTypeName.get(list, object);
+        ClassName roomCompanion = ClassName.get(packageName,
+                GeneratedNames.getRoomCompanionName(typeName));
+        TypeName listOfCompanion = ParameterizedTypeName.get(list, roomCompanion);
+
+        ClassName daoWrapper = ClassName
+                .get(packageName,
+                        GeneratedNames.getRoomCompanionDaoWrapperName(typeName));
+        ClassName dao = ClassName
+                .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
+
+        MethodSpec methodGetAll = MethodSpec.methodBuilder("getAll")
+                .addModifiers(Modifier.PUBLIC)
+                .addStatement("$T companions = $N().getAll()",
+                        listOfCompanion,
+                        NameUtils.lowerCamelCaseName(dao.simpleName()))
+                .beginControlFlow("if (companions == null)")
+                .addStatement("return null")
+                .endControlFlow()
+                .addStatement("$T objects = new $T<>()",
+                        listOfObjects,
+                        arrayList)
+                .beginControlFlow("for (int i = 0; i < companions.size(); i++)")
+                .addStatement("objects.add(companions.get(i).toObject())")
+                .endControlFlow()
+                .addStatement("return objects")
+                .returns(listOfObjects)
+                .build();
+
+        classBuilder.addMethod(methodGetAll);
+
+        return classBuilder;
     }
 
     private void generateRoomCompanionDatabase(TypeElement typeElement,
@@ -226,11 +321,34 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
 
         MethodSpec methodGetDao = MethodSpec.methodBuilder(NameUtils.lowerCamelCaseName(dao.simpleName()))
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
                 .returns(dao)
                 .build();
 
         classBuilder.addMethod(methodGetDao);
+
+        classBuilder.addType(createRoomCompanionDaoWrapper(typeElement, roundEnv).build());
+
+        ClassName daoWrapperInner = ClassName
+                .get(packageName,
+                        GeneratedNames.getRoomCompanionDaoWrapperInnerClassName(typeName));
+
+        ClassName daoWrapper = ClassName
+                .get(packageName,
+                        GeneratedNames.getRoomCompanionDaoWrapperName(typeName));
+
+        FieldSpec daoWrapperFiled = FieldSpec.builder(daoWrapperInner, daoWrapper.simpleName())
+                .addModifiers(Modifier.PROTECTED)
+                .initializer("new $T()", daoWrapperInner)
+                .build();
+        MethodSpec methodGetDaoWrapper = MethodSpec.methodBuilder(NameUtils.lowerCamelCaseName(daoWrapper.simpleName()))
+                .addModifiers(Modifier.PUBLIC)
+                .addStatement("return this.$N", daoWrapperFiled.name)
+                .returns(daoWrapperInner)
+                .build();
+
+        classBuilder.addField(daoWrapperFiled);
+        classBuilder.addMethod(methodGetDaoWrapper);
 
         try {
             JavaFile.builder(packageName,
