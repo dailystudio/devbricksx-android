@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.compiler.processor;
+package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 
 public class GeneratedNames {
 
