@@ -1,9 +1,21 @@
 apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
+publish {
+    userOrg = 'dailystudio'
+    groupId = 'com.dailystudio'
+    artifactId = 'devbricksx-annotations'
+    publishVersion = VERSION_NAME
+    desc = 'DevBricks eXetrems Annotations'
+    bintrayUser = BINTRAY_USER
+    bintrayKey = BINTRAY_KEY
+    website = 'https://github.com/dailystudio/devbricksx'
+}
