@@ -12,7 +12,7 @@ dependencies {
 publish {
     userOrg = 'dailystudio'
     groupId = 'com.dailystudio'
-    artifactId = 'devbricksx-annotations'
+    artifactId = 'devbricksx-java-annotations'
     publishVersion = VERSION_NAME
     desc = 'DevBricks eXetrems Annotations'
     bintrayUser = BINTRAY_USER
