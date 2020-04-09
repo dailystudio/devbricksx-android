@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.sample
 
-import com.dailystudio.devbrickx.app.DevBricksApplication
+import com.dailystudio.devbricksx.app.DevBricksApplication
 
 class SampleApplication : DevBricksApplication() {
 

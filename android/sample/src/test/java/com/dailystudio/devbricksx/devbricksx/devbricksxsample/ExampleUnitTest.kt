@@ -1,4 +1,4 @@
-package com.dailystudio.devbrickx
+package com.dailystudio.devbricksx.devbricksx.devbricksxsample
 
 import org.junit.Test
 

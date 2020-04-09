@@ -1,9 +1,9 @@
-package com.dailystudio.devbrickx.development
+package com.dailystudio.devbricksx.development
 
 import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
-import com.dailystudio.devbrickx.BuildConfig
+import com.dailystudio.devbricksx.BuildConfig
 import java.io.File
 
 object Logger {

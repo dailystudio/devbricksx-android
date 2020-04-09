@@ -1,7 +1,7 @@
-package com.dailystudio.devbrickx
+package com.dailystudio.devbricksx
 
 import android.content.Context
-import com.dailystudio.devbrickx.development.Logger
+import com.dailystudio.devbricksx.development.Logger
 
 object GlobalContextWrapper {
     private var sContext: Context? = null

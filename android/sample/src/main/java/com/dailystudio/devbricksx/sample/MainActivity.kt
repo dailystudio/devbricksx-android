@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.room.Room
 import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.sample.db.UserDatabase
-import com.dailystudio.devbrickx.development.Logger
+import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

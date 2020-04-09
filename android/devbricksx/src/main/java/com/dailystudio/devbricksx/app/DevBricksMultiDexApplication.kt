@@ -1,11 +1,13 @@
-package com.dailystudio.devbrickx.app
+package com.dailystudio.devbricksx.app
 
-import android.app.Application
-import com.dailystudio.devbrickx.BuildConfig
-import com.dailystudio.devbrickx.GlobalContextWrapper
-import com.dailystudio.devbrickx.development.Logger
+import android.content.Context
+import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
+import com.dailystudio.devbricksx.BuildConfig
+import com.dailystudio.devbricksx.GlobalContextWrapper
+import com.dailystudio.devbricksx.development.Logger
 
-open class DevBricksApplication : Application() {
+open class DevBricksMultiDexApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
@@ -45,8 +47,13 @@ open class DevBricksApplication : Application() {
         Logger.isSecureDebugEnabled = isDebugBuild()
     }
 
-    protected open fun isDebugBuild() : Boolean {
+    protected fun isDebugBuild() : Boolean {
         return BuildConfig.DEBUG
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        MultiDex.install(base)
+        super.attachBaseContext(base)
     }
 
 }
