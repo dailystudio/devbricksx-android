@@ -1,6 +1,6 @@
 include ':sample'
 include ':devbricksx'
-include ':devbricksx-annotations'
-include ':devbricksx-compiler'
+//include ':devbricksx-annotations'
+//include ':devbricksx-compiler'
 include ':devbricksx-java-compiler'
 include ':devbricksx-java-annotations'
