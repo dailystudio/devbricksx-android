@@ -1,5 +1,10 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 
+import androidx.room.Database;
+
+import com.dailystudio.devbricksx.compiler.utils.NameUtils;
+import com.dailystudio.devbricksx.compiler.utils.TextUtils;
+
 public class GeneratedNames {
 
     private final static String ROOM_COMPANION_PREFIX = "_";
@@ -26,6 +31,20 @@ public class GeneratedNames {
         StringBuilder builder = new StringBuilder(className);
 
         builder.append(ROOM_COMPANION_DB_SUFFIX);
+
+        return builder.toString();
+    }
+
+    public static String databaseToClassName(String database) {
+        if (TextUtils.isEmpty(database)) {
+            return ROOM_COMPANION_DB_SUFFIX;
+        }
+
+        StringBuilder builder = new StringBuilder(NameUtils.capitalizeName(database));
+
+        if (!database.endsWith(ROOM_COMPANION_DB_SUFFIX)) {
+            builder.append(ROOM_COMPANION_DB_SUFFIX);
+        }
 
         return builder.toString();
     }

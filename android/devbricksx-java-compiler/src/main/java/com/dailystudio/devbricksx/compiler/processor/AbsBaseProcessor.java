@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.compiler.processor;
 
 import com.dailystudio.devbricksx.compiler.utils.LogUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,25 +24,25 @@ public abstract class AbsBaseProcessor extends AbstractProcessor  {
         mProcessingEnv = processingEnv;
     }
 
+    protected abstract Map<String, List<? extends AbsSingleTypeElementProcessor>> getTypeElementProcessors();
+    protected abstract Map<String, List<? extends AbsTypeElementsGroupProcessor>> getTypeElementsGroupProcessors();
 
-
-    protected abstract Map<String, List<? extends AbsTypeElementProcessor>> getTypeElementProcessors();
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnv) {
-        Map<String, List<? extends AbsTypeElementProcessor>> processorsMap =
+        Map<String, List<? extends AbsSingleTypeElementProcessor>> mapOfSingleTypeElementProcessors =
                 getTypeElementProcessors();
+        Map<String, List<? extends AbsTypeElementsGroupProcessor>> mapOfTypeElementsGroupProcessors =
+                getTypeElementsGroupProcessors();
 
-        if (processorsMap == null) {
-            return false;
-        }
+        Set<String> annotations = mapOfSingleTypeElementProcessors.keySet();
 
-        Set<String> annotations = processorsMap.keySet();
-
-        List<? extends AbsTypeElementProcessor> typeElementProcessors;
+        List<? extends AbsSingleTypeElementProcessor> singleTypeElementProcessors;
+        List<? extends AbsTypeElementsGroupProcessor> typeElementsGroupProcessors;
         Class annotationClass;
         for (String annotation: annotations) {
-            typeElementProcessors = processorsMap.get(annotation);
+            singleTypeElementProcessors = mapOfSingleTypeElementProcessors.get(annotation);
+            typeElementsGroupProcessors = mapOfTypeElementsGroupProcessors.get(annotation);
 
             try {
                 annotationClass = Class.forName(annotation);
@@ -53,19 +54,32 @@ public abstract class AbsBaseProcessor extends AbstractProcessor  {
             Set<? extends Element> elements =
                     roundEnv.getElementsAnnotatedWith(annotationClass);
 
+            List<TypeElement> typeElements = new ArrayList<>();
+
             TypeElement typeElement;
             for (Element element : elements) {
                 if (element instanceof TypeElement) {
                     typeElement = (TypeElement) element;
 
-                    for (AbsTypeElementProcessor p: typeElementProcessors) {
-                        p.attachToProcessEnvironment(mProcessingEnv);
-                        p.process(typeElement, roundEnv);
-                        p.detachFromProcessEnvironment();
+                    typeElements.add(typeElement);
+
+                    if (singleTypeElementProcessors != null) {
+                        for (AbsSingleTypeElementProcessor p : singleTypeElementProcessors) {
+                            p.attachToProcessEnvironment(mProcessingEnv);
+                            p.process(typeElement, roundEnv);
+                            p.detachFromProcessEnvironment();
+                        }
                     }
                 }
             }
 
+            if (typeElementsGroupProcessors != null) {
+                for (AbsTypeElementsGroupProcessor p: typeElementsGroupProcessors) {
+                    p.attachToProcessEnvironment(mProcessingEnv);
+                    p.process(typeElements, roundEnv);
+                    p.detachFromProcessEnvironment();
+                }
+            }
         }
 
         return true;

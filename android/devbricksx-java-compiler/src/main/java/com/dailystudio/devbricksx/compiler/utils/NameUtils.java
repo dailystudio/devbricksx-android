@@ -2,6 +2,14 @@ package com.dailystudio.devbricksx.compiler.utils;
 
 public class NameUtils {
 
+    public static String capitalizeName(String name) {
+        if (TextUtils.isEmpty(name)) {
+            return null;
+        }
+
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
+
     public static String lowerCamelCaseName(String name) {
         if (TextUtils.isEmpty(name)) {
             return null;
@@ -15,8 +23,6 @@ public class NameUtils {
                 break;
             }
         }
-
-
 
         return builder.toString();
     }

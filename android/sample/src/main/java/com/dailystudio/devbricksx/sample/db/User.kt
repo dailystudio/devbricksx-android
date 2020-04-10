@@ -2,7 +2,8 @@ package com.dailystudio.devbricksx.sample.db
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 
-@RoomCompanion(primaryKey = "id")
+//@RoomCompanion(primaryKey = "id")
+@RoomCompanion(primaryKey = "id", database = "user")
 class User (
         @JvmField val id: String,
         @JvmField val name: String) {

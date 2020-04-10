@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 
+import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementProcessor;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -7,7 +8,7 @@ import com.squareup.javapoet.TypeName;
 
 import java.util.List;
 
-public abstract class AbsRoomCompanionTypeElementProcessor extends AbsTypeElementProcessor {
+public abstract class AbsRoomCompanionTypeElementProcessor extends AbsSingleTypeElementProcessor {
 
     protected TypeName getListOfTypeName(Class<?> primitiveClass) {
         return ParameterizedTypeName.get(List.class, primitiveClass);
@@ -34,11 +35,6 @@ public abstract class AbsRoomCompanionTypeElementProcessor extends AbsTypeElemen
     protected ClassName getCompanionTypeName(String packageName, String typeElementName) {
         return ClassName.get(packageName,
                 GeneratedNames.getRoomCompanionName(typeElementName));
-    }
-
-    protected ClassName getCompanionDaoTypeName(String packageName, String typeElementName) {
-        return ClassName.get(packageName,
-                GeneratedNames.getRoomCompanionDaoName(typeElementName));
     }
 
 }

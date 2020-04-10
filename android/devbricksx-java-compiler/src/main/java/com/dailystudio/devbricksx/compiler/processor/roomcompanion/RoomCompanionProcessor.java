@@ -1,34 +1,15 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Dao;
-import androidx.room.Database;
-import androidx.room.Entity;
-import androidx.room.Insert;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsBaseProcessor;
+import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementProcessor;
-import com.dailystudio.devbricksx.compiler.processor.Constants;
+import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementsGroupProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionDaoClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionDatabaseClassProcessor;
-import com.dailystudio.devbricksx.compiler.utils.NameUtils;
-import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeSpec;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,23 +24,37 @@ import javax.lang.model.SourceVersion;
 @AutoService(Processor.class)
 public class RoomCompanionProcessor extends AbsBaseProcessor {
 
-    private static Map<String, List<? extends AbsTypeElementProcessor>> ELEMENT_PROCESSORS =
+    private static Map<String, List<? extends AbsSingleTypeElementProcessor>> ELEMENT_PROCESSORS =
+            new HashMap<>();
+
+    private static Map<String, List<? extends AbsTypeElementsGroupProcessor>> ELEMENT_GROUP_PROCESSORS =
             new HashMap<>();
 
     static {
-        List<AbsRoomCompanionTypeElementProcessor> processors;
+        List<AbsSingleTypeElementProcessor> singleProcessors;
 
-        processors = new ArrayList<>();
-        processors.add(new RoomCompanionClassProcessor());
-        processors.add(new RoomCompanionDaoClassProcessor());
-        processors.add(new RoomCompanionDatabaseClassProcessor());
+        singleProcessors = new ArrayList<>();
+        singleProcessors.add(new RoomCompanionClassProcessor());
+        singleProcessors.add(new RoomCompanionDaoClassProcessor());
 
-        ELEMENT_PROCESSORS.put(RoomCompanion.class.getCanonicalName(), processors);
+        ELEMENT_PROCESSORS.put(RoomCompanion.class.getCanonicalName(), singleProcessors);
+
+        List<AbsTypeElementsGroupProcessor> groupProcessors;
+
+        groupProcessors = new ArrayList<>();
+        groupProcessors.add(new RoomCompanionDatabaseClassProcessor());
+
+        ELEMENT_GROUP_PROCESSORS.put(RoomCompanion.class.getCanonicalName(), groupProcessors);
     }
 
     @Override
-    protected Map<String, List<? extends AbsTypeElementProcessor>> getTypeElementProcessors() {
+    protected Map<String, List<? extends AbsSingleTypeElementProcessor>> getTypeElementProcessors() {
         return ELEMENT_PROCESSORS;
+    }
+
+    @Override
+    protected Map<String, List<? extends AbsTypeElementsGroupProcessor>> getTypeElementsGroupProcessors() {
+        return ELEMENT_GROUP_PROCESSORS;
     }
 
     @Override
