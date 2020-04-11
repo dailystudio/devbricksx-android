@@ -1,10 +1,11 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 
+import com.dailystudio.devbricksx.annotations.DaoExtension;
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsBaseProcessor;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
-import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementsGroupProcessor;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.DaoExtensionClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionDaoClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionDatabaseClassProcessor;
@@ -38,6 +39,12 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         singleProcessors.add(new RoomCompanionDaoClassProcessor());
 
         ELEMENT_PROCESSORS.put(RoomCompanion.class.getCanonicalName(), singleProcessors);
+
+
+        singleProcessors = new ArrayList<>();
+        singleProcessors.add(new DaoExtensionClassProcessor());
+
+        ELEMENT_PROCESSORS.put(DaoExtension.class.getCanonicalName(), singleProcessors);
 
         List<AbsTypeElementsGroupProcessor> groupProcessors;
 

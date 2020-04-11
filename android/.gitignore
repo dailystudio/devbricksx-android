@@ -41,3 +41,6 @@ captures/
 
 # private
 private.properties
+
+# room schemas
+schemas

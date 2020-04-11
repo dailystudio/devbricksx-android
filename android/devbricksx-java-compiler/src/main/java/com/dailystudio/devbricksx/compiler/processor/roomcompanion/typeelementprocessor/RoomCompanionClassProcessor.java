@@ -41,11 +41,11 @@ public class RoomCompanionClassProcessor extends AbsRoomCompanionTypeElementProc
         debug("generated class = [%s]", generatedClassName);
 
         RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
-        String primaryKey = null;
-        if (companionAnnotation != null) {
-            primaryKey = companionAnnotation.primaryKey();
+        if (companionAnnotation == null) {
+            return null;
         }
 
+        String primaryKey = companionAnnotation.primaryKey();
         if (TextUtils.isEmpty(primaryKey)) {
             return null;
         }

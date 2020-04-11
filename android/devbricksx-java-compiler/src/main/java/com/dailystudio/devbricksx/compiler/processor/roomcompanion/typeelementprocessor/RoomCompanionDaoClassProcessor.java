@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.AbsRoomCompanionTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.squareup.javapoet.AnnotationSpec;
@@ -19,20 +20,45 @@ import com.squareup.javapoet.TypeSpec;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.TypeMirror;
 
 public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementProcessor {
 
     @Override
     protected TypeSpec.Builder onProcess(TypeElement typeElement, String packageName, String typeName, RoundEnvironment roundEnv) {
-
         ClassName generatedClassName = ClassName
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
         info("generated class = [%s]", generatedClassName);
+
+        RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
+        if (companionAnnotation == null) {
+            return null;
+        }
+
+        ClassName daoExtension = null;
+        TypeMirror daoExtensionTypeMirror = null;
+        try {
+            companionAnnotation.extension();
+        } catch( MirroredTypeException mte ) {
+            daoExtensionTypeMirror = mte.getTypeMirror();
+        }
+
+        if (daoExtensionTypeMirror != null) {
+            daoExtension = ClassName.bestGuess(
+                    daoExtensionTypeMirror.toString());
+        }
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addModifiers(Modifier.ABSTRACT)
                 .addAnnotation(Dao.class);
+
+        if (daoExtension != null) {
+            classBuilder.superclass(
+                    ClassName.get(daoExtension.packageName(),
+                            GeneratedNames.getDaoExtensionCompanionName(daoExtension.simpleName())));
+        }
 
         ClassName object = getObjectTypeName(packageName, typeName);
         ClassName companion = getCompanionTypeName(packageName, typeName);

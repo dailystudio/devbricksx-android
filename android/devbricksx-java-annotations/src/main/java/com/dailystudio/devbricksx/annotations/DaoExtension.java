@@ -7,9 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface RoomCompanion {
-    String primaryKey();
-    String database() default "";
-    Class<?> extension() default Void.class;
+public @interface DaoExtension {
 }
 

@@ -19,6 +19,8 @@ public abstract class AbsSingleTypeElementProcessor extends AbsTypeElementProces
                 onProcess(typeElement, packageName, typeName, roundEnv);
         if (classBuilder == null) {
             warn("no class generated for %s", typeElement);
+
+            return;
         }
 
         try {
