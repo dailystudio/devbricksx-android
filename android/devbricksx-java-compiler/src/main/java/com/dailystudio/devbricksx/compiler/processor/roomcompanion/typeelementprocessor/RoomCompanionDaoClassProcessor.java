@@ -54,7 +54,7 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
                 .addModifiers(Modifier.ABSTRACT)
                 .addAnnotation(Dao.class);
 
-        if (daoExtension != null) {
+        if (daoExtension != null && !daoExtension.simpleName().equals("Void")) {
             classBuilder.superclass(
                     ClassName.get(daoExtension.packageName(),
                             GeneratedNames.getDaoExtensionCompanionName(daoExtension.simpleName())));
