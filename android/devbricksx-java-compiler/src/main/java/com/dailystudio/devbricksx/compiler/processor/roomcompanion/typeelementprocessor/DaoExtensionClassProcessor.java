@@ -69,21 +69,9 @@ public class DaoExtensionClassProcessor extends AbsRoomCompanionTypeElementProce
                 .addModifiers(Modifier.ABSTRACT)
                 .addModifiers(Modifier.PUBLIC);
 
-        ClassName companion = getCompanionTypeName(object.packageName(), object.simpleName());
-        ClassName arrayList = ClassName.get("java.util", "ArrayList");
-        ClassName list = ClassName.get("java.util", "List");
-        TypeName listOfCompanions =
-                getListOfCompanionsTypeName(object.packageName(), object.simpleName());
-        TypeName listOfObjects =
-                getListOfObjectsTypeName(object.packageName(), object.simpleName());
-
         List<? extends Element> subElements = typeElement.getEnclosedElements();
 
         ExecutableElement executableElement;
-        MethodSpec.Builder methodSpecBuilder;
-        MethodSpec.Builder methodShadowSpecBuilder;
-        List<ParameterSpec> parameterSpecs;
-        List<? extends VariableElement> parameters;
         for (Element subElement: subElements) {
             if (subElement instanceof ExecutableElement) {
                 debug("processing method: %s", subElement);
@@ -91,39 +79,9 @@ public class DaoExtensionClassProcessor extends AbsRoomCompanionTypeElementProce
                 executableElement = (ExecutableElement) subElement;
 
                 if (executableElement.getAnnotation(Query.class) != null) {
-                    Query query = executableElement.getAnnotation(Query.class);
-
-                    TypeName returnTypeName =
-                            TypeName.get(executableElement.getReturnType());
-
-                    methodSpecBuilder = MethodSpec.methodBuilder(GeneratedNames.getShadowMethodName(
-                            executableElement.getSimpleName().toString()))
-                            .addAnnotation(AnnotationSpec.get(query))
-                            .addModifiers(Modifier.ABSTRACT);
-
-                    if (isTypeNameOfList(returnTypeName)) {
-                        methodSpecBuilder.returns(listOfCompanions);
-                    } else {
-                        methodSpecBuilder.returns(companion);
-                    }
-
-                    parameters = executableElement.getParameters();
-                    if (parameters != null && parameters.size() > 0) {
-
-                        for (VariableElement param: parameters) {
-                            methodSpecBuilder.addParameter(
-                                    TypeName.get(param.asType()),
-                                    param.getSimpleName().toString());
-                        }
-                    }
-
-                    classBuilder.addMethod(methodSpecBuilder.build());
-
-                    methodShadowSpecBuilder = MethodSpec.overriding(executableElement)
-                            .addStatement("return null");
-
-                    classBuilder.addMethod(methodShadowSpecBuilder.build());
-                };
+                    handleQueryMethod(object.packageName(), object.simpleName(),
+                            executableElement, classBuilder);
+                }
 
             }
         }
@@ -133,5 +91,101 @@ public class DaoExtensionClassProcessor extends AbsRoomCompanionTypeElementProce
 
     private boolean isTypeNameOfList(TypeName typeName) {
         return (typeName.toString().contains("java.util.List<"));
+    }
+
+    private void handleQueryMethod(String objectPackage,
+                                   String objectTypeName,
+                                   ExecutableElement executableElement,
+                                   TypeSpec.Builder classBuilder) {
+        Query query = executableElement.getAnnotation(Query.class);
+
+        ClassName object = ClassName.get(objectPackage, objectTypeName);
+        ClassName companion = getCompanionTypeName(objectPackage, objectTypeName);
+        TypeName listOfCompanions =
+                getListOfCompanionsTypeName(objectPackage, objectTypeName);
+        TypeName listOfObjects =
+                getListOfObjectsTypeName(objectPackage, objectTypeName);
+        ClassName arrayList = ClassName.get("java.util", "ArrayList");
+
+        TypeName returnTypeName =
+                TypeName.get(executableElement.getReturnType());
+
+        final boolean collectionOperation =
+                isTypeNameOfList(returnTypeName);
+
+        MethodSpec.Builder methodSpecBuilder;
+        MethodSpec.Builder methodShadowSpecBuilder;
+        List<? extends VariableElement> parameters;
+
+        String shadowMethodName = GeneratedNames.getShadowMethodName(
+                executableElement.getSimpleName().toString());
+
+        methodSpecBuilder = MethodSpec.methodBuilder(shadowMethodName)
+                .addAnnotation(AnnotationSpec.get(query))
+                .addModifiers(Modifier.ABSTRACT);
+
+        if (collectionOperation) {
+            methodSpecBuilder.returns(listOfCompanions);
+        } else {
+            methodSpecBuilder.returns(companion);
+        }
+
+        StringBuilder parametersBuilder = new StringBuilder();
+
+        parameters = executableElement.getParameters();
+        if (parameters != null && parameters.size() > 0) {
+            final int N = parameters.size();
+
+            String paramName;
+            VariableElement param;
+            for (int i = 0; i < N; i++) {
+                param = parameters.get(i);
+
+                paramName = param.getSimpleName().toString();
+
+                methodSpecBuilder.addParameter(
+                        TypeName.get(param.asType()),
+                        paramName);
+
+                parametersBuilder.append(paramName);
+                if (i < N - 1) {
+                    parametersBuilder.append(", ");
+                }
+            }
+        }
+
+        classBuilder.addMethod(methodSpecBuilder.build());
+
+        methodShadowSpecBuilder = MethodSpec.overriding(executableElement);
+
+        if (collectionOperation) {
+            methodShadowSpecBuilder
+                    .addStatement("$T companions = this.$N($N)",
+                            listOfCompanions,
+                            shadowMethodName,
+                            parametersBuilder.toString())
+                    .beginControlFlow("if (companions == null)")
+                    .addStatement("return null")
+                    .endControlFlow()
+                    .addStatement("$T objects = new $T<>()",
+                            listOfObjects,
+                            arrayList)
+                    .beginControlFlow("for (int i = 0; i < companions.size(); i++)")
+                    .addStatement("objects.add(companions.get(i).toObject())")
+                    .endControlFlow()
+                    .addStatement("return objects");
+        } else {
+            methodShadowSpecBuilder
+                    .addStatement("$T companion = this.$N($N)",
+                            companion,
+                            shadowMethodName,
+                            parametersBuilder.toString())
+                    .beginControlFlow("if (companion == null)")
+                    .addStatement("return null")
+                    .endControlFlow()
+                    .addStatement("return companion.toObject()");
+        }
+
+        classBuilder.addMethod(methodShadowSpecBuilder.build());
     }
 }
