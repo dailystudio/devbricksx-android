@@ -9,6 +9,14 @@ public class GeneratedNames {
     private final static String DATABASE_SUFFIX = "Database";
     private final static String DAO_SUFFIX = "Dao";
 
+    public static String getShadowMethodName(String method) {
+        StringBuilder builder = new StringBuilder(method);
+
+        builder.insert(0, COMPANION_PREFIX);
+
+        return builder.toString();
+    }
+
     public static String getDaoExtensionCompanionName(String className) {
         StringBuilder builder = new StringBuilder(className);
 

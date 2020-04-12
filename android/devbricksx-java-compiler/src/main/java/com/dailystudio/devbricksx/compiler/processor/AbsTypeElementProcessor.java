@@ -7,9 +7,11 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
 public abstract class AbsTypeElementProcessor {
 
+    protected Types mTypes;
     protected Filer mFiler;
     protected Elements mElementUtils;
     protected Messager mMessager;
@@ -19,6 +21,7 @@ public abstract class AbsTypeElementProcessor {
             return;
         }
 
+        mTypes = processingEnv.getTypeUtils();
         mFiler = processingEnv.getFiler();
         mElementUtils = processingEnv.getElementUtils();
         mMessager = processingEnv.getMessager();
