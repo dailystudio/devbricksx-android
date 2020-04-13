@@ -40,7 +40,6 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
 
         ELEMENT_PROCESSORS.put(RoomCompanion.class.getCanonicalName(), singleProcessors);
 
-
         singleProcessors = new ArrayList<>();
         singleProcessors.add(new DaoExtensionClassProcessor());
 

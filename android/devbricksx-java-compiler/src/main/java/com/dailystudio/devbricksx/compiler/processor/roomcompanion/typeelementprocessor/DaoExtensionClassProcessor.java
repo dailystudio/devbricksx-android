@@ -1,30 +1,19 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.Query;
 
 import com.dailystudio.devbricksx.annotations.DaoExtension;
-import com.dailystudio.devbricksx.annotations.RoomCompanion;
-import com.dailystudio.devbricksx.compiler.processor.Constants;
-import com.dailystudio.devbricksx.compiler.processor.roomcompanion.AbsRoomCompanionTypeElementProcessor;
+import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
-import com.dailystudio.devbricksx.compiler.utils.NameUtils;
-import com.dailystudio.devbricksx.compiler.utils.TextUtils;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -35,7 +24,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 
-public class DaoExtensionClassProcessor extends AbsRoomCompanionTypeElementProcessor {
+public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
     protected TypeSpec.Builder onProcess(TypeElement typeElement, String packageName, String typeName, RoundEnvironment roundEnv) {
@@ -100,11 +89,11 @@ public class DaoExtensionClassProcessor extends AbsRoomCompanionTypeElementProce
         Query query = executableElement.getAnnotation(Query.class);
 
         ClassName object = ClassName.get(objectPackage, objectTypeName);
-        ClassName companion = getCompanionTypeName(objectPackage, objectTypeName);
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(objectPackage, objectTypeName);
         TypeName listOfCompanions =
-                getListOfCompanionsTypeName(objectPackage, objectTypeName);
+                TypeNamesUtils.getListOfCompanionsTypeName(objectPackage, objectTypeName);
         TypeName listOfObjects =
-                getListOfObjectsTypeName(objectPackage, objectTypeName);
+                TypeNamesUtils.getListOfObjectsTypeName(objectPackage, objectTypeName);
         ClassName arrayList = ClassName.get("java.util", "ArrayList");
 
         TypeName returnTypeName =
@@ -159,31 +148,17 @@ public class DaoExtensionClassProcessor extends AbsRoomCompanionTypeElementProce
         methodShadowSpecBuilder = MethodSpec.overriding(executableElement);
 
         if (collectionOperation) {
-            methodShadowSpecBuilder
-                    .addStatement("$T companions = this.$N($N)",
-                            listOfCompanions,
-                            shadowMethodName,
-                            parametersBuilder.toString())
-                    .beginControlFlow("if (companions == null)")
-                    .addStatement("return null")
-                    .endControlFlow()
-                    .addStatement("$T objects = new $T<>()",
-                            listOfObjects,
-                            arrayList)
-                    .beginControlFlow("for (int i = 0; i < companions.size(); i++)")
-                    .addStatement("objects.add(companions.get(i).toObject())")
-                    .endControlFlow()
-                    .addStatement("return objects");
+            MethodStatementsGenerator.outputCompanionsToObjects(
+                    objectPackage, objectTypeName,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
         } else {
-            methodShadowSpecBuilder
-                    .addStatement("$T companion = this.$N($N)",
-                            companion,
-                            shadowMethodName,
-                            parametersBuilder.toString())
-                    .beginControlFlow("if (companion == null)")
-                    .addStatement("return null")
-                    .endControlFlow()
-                    .addStatement("return companion.toObject()");
+            MethodStatementsGenerator.outputCompanionToObject(
+                    objectPackage, objectTypeName,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
         }
 
         classBuilder.addMethod(methodShadowSpecBuilder.build());

@@ -4,7 +4,6 @@ import androidx.room.Database;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementsGroupProcessor;
-import com.dailystudio.devbricksx.compiler.processor.roomcompanion.AbsRoomCompanionTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;

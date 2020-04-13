@@ -9,8 +9,10 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
-import com.dailystudio.devbricksx.compiler.processor.roomcompanion.AbsRoomCompanionTypeElementProcessor;
+import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
@@ -23,7 +25,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 
-public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementProcessor {
+public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
     protected TypeSpec.Builder onProcess(TypeElement typeElement, String packageName, String typeName, RoundEnvironment roundEnv) {
@@ -61,13 +63,13 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
         }
 
         String tableName = GeneratedNames.getTableName(typeName);
-        ClassName object = getObjectTypeName(packageName, typeName);
-        ClassName companion = getCompanionTypeName(packageName, typeName);
+        ClassName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
         ClassName arrayList = ClassName.get("java.util", "ArrayList");
         TypeName listOfCompanions =
-                getListOfCompanionsTypeName(packageName, typeName);
+                TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
         TypeName listOfObjects =
-                getListOfObjectsTypeName(packageName, typeName);
+                TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
 
         MethodSpec methodGetAll = MethodSpec.methodBuilder("_getAll")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -95,7 +97,7 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
         MethodSpec methodInsertAll = MethodSpec.methodBuilder("_insert")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .addParameter(listOfCompanions, "companions")
-                .returns(getListOfTypeName(Long.class))
+                .returns(TypeNamesUtils.getListOfTypeName(Long.class))
                 .addAnnotation(AnnotationSpec.builder(Insert.class)
                         .addMember("onConflict", "$L", OnConflictStrategy.IGNORE)
                         .build()
@@ -137,7 +139,7 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
                 .addParameter(listOfCompanions, "companions")
                 .addAnnotation(Transaction.class)
                 .addStatement("$T insertResults = $N(companions)",
-                        getListOfTypeName(Long.class),
+                        TypeNamesUtils.getListOfTypeName(Long.class),
                         methodInsertAll.name)
                 .beginControlFlow("if (insertResults == null)")
                 .addStatement("return")
@@ -162,25 +164,18 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
 
         classBuilder.addMethod(methodDeleteOne);
 
-        MethodSpec methodGetAllWrapper = MethodSpec.methodBuilder("getAll")
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("$T companions = this.$N()",
-                        listOfCompanions,
-                        methodGetAll.name)
-                .beginControlFlow("if (companions == null)")
-                .addStatement("return null")
-                .endControlFlow()
-                .addStatement("$T objects = new $T<>()",
-                        listOfObjects,
-                        arrayList)
-                .beginControlFlow("for (int i = 0; i < companions.size(); i++)")
-                .addStatement("objects.add(companions.get(i).toObject())")
-                .endControlFlow()
-                .addStatement("return objects")
-                .returns(listOfObjects)
-                .build();
+        MethodSpec.Builder methodGetAllWrapperBuilder =
+                MethodSpec.methodBuilder("getAll")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(listOfObjects);
 
-        classBuilder.addMethod(methodGetAllWrapper);
+        MethodStatementsGenerator.outputCompanionsToObjects(
+                packageName,
+                typeName,
+                methodGetAllWrapperBuilder,
+                methodGetAll.name, null);
+
+        classBuilder.addMethod(methodGetAllWrapperBuilder.build());
 
         MethodSpec methodInsertOneWrapper = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)
@@ -211,7 +206,7 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
                 .endControlFlow()
                 .addStatement("return this.$N(companions)",
                         methodInsertAll.name)
-                .returns(getListOfTypeName(Long.class))
+                .returns(TypeNamesUtils.getListOfTypeName(Long.class))
 
                 .build();
 

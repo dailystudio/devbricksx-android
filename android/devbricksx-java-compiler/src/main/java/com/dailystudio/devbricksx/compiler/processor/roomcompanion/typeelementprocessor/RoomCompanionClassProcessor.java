@@ -6,10 +6,10 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
-import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementProcessor;
+import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.Constants;
-import com.dailystudio.devbricksx.compiler.processor.roomcompanion.AbsRoomCompanionTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.AnnotationSpec;
@@ -32,7 +32,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
-public class RoomCompanionClassProcessor extends AbsRoomCompanionTypeElementProcessor {
+public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
     protected TypeSpec.Builder onProcess(TypeElement typeElement, String packageName, String typeName, RoundEnvironment roundEnv) {
@@ -105,7 +105,7 @@ public class RoomCompanionClassProcessor extends AbsRoomCompanionTypeElementProc
             return null;
         }
 
-        TypeName object = getObjectTypeName(packageName, typeName);
+        TypeName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
 
         MethodSpec.Builder methodToObjectBuilder = MethodSpec.methodBuilder("toObject")
                 .addModifiers(Modifier.PUBLIC)
