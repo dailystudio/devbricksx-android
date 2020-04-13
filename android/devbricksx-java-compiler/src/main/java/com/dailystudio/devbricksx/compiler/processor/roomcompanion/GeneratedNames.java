@@ -3,6 +3,8 @@ package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 
+import javax.lang.model.element.VariableElement;
+
 public class GeneratedNames {
 
     private final static String COMPANION_PREFIX = "_";
@@ -13,6 +15,18 @@ public class GeneratedNames {
         StringBuilder builder = new StringBuilder(method);
 
         builder.insert(0, COMPANION_PREFIX);
+
+        return builder.toString();
+    }
+
+    public static String getShadowParameterName(VariableElement parameter) {
+        return getShadowParameterName(parameter.getSimpleName().toString());
+    }
+
+    public static String getShadowParameterName(String parameter) {
+        StringBuilder builder = new StringBuilder(parameter);
+
+        builder.append(COMPANION_PREFIX);
 
         return builder.toString();
     }

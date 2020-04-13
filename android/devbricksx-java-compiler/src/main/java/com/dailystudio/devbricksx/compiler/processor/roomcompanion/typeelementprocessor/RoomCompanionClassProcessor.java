@@ -145,17 +145,17 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         MethodSpec.Builder methodToCompanionBuilder = MethodSpec.methodBuilder("fromObject")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(object, NameUtils.lowerCamelCaseName(typeName))
-                .addStatement("$T companionAnnotation = new $T()", generatedClassName, generatedClassName)
+                .addStatement("$T companion = new $T()", generatedClassName, generatedClassName)
                 .returns(generatedClassName);
 
         for (String fieldName: fields) {
-            methodToCompanionBuilder.addStatement("companionAnnotation.$N = $N.$N",
+            methodToCompanionBuilder.addStatement("companion.$N = $N.$N",
                     fieldName,
                     NameUtils.lowerCamelCaseName(typeName),
                     fieldName);
         }
 
-        methodToCompanionBuilder.addStatement("return companionAnnotation");
+        methodToCompanionBuilder.addStatement("return companion");
 
         for (FieldSpec fieldSpec: fieldSpecs) {
             classBuilder.addField(fieldSpec);

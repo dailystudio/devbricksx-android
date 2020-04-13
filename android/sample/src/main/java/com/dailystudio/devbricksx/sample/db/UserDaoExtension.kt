@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.sample.db
 
+import androidx.room.Insert
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.DaoExtension
 
@@ -11,5 +12,12 @@ abstract class UserDaoExtension {
 
     @Query("SELECT * FROM user WHERE id == :id")
     abstract fun findById(id: String): User
+
+    @Insert
+    abstract fun insertBothUsers(user1: User?, user2: User?)
+
+    @Insert
+    abstract fun insertUsersAndFriends(user: User?, friends: List<User?>?)
+
 
 }

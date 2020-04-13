@@ -31,7 +31,7 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
     protected TypeSpec.Builder onProcess(TypeElement typeElement, String packageName, String typeName, RoundEnvironment roundEnv) {
         ClassName generatedClassName = ClassName
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
-        info("generated class = [%s]", generatedClassName);
+        debug("generated class = [%s]", generatedClassName);
 
         RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
         if (companionAnnotation == null) {
@@ -173,7 +173,7 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 packageName,
                 typeName,
                 methodGetAllWrapperBuilder,
-                methodGetAll.name, null);
+                methodGetAll.name);
 
         classBuilder.addMethod(methodGetAllWrapperBuilder.build());
 
