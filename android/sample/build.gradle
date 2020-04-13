@@ -44,6 +44,10 @@ dependencies {
     implementation project(":devbricksx")
     implementation project(':devbricksx-java-annotations')
 
+    implementation "androidx.lifecycle:lifecycle-extensions:${project.ext.archLifecycleVersion}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${project.ext.archLifecycleVersion}"
+
     kapt project(':devbricksx-java-compiler')
     kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 }

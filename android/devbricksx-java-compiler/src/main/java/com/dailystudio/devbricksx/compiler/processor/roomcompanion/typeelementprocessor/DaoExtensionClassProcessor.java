@@ -101,7 +101,7 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
     }
 
     private boolean isTypeNameVoid(TypeName typeName) {
-        return (typeName.toString().equals("void"));
+        return (TypeNamesUtils.getVoidTypeName().equals(typeName));
     }
 
     private void handleQueryMethod(String objectPackage,
@@ -110,9 +110,20 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                                    TypeSpec.Builder classBuilder) {
         Query query = executableElement.getAnnotation(Query.class);
 
+        ClassName object = TypeNamesUtils.getObjectTypeName(objectPackage, objectTypeName);
+        TypeName listOfObjects =
+                TypeNamesUtils.getListOfObjectsTypeName(objectPackage, objectTypeName);
+        TypeName liveDataOfListOfObjects =
+                TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectPackage, objectTypeName);
+        TypeName liveDataOfObject =
+                TypeNamesUtils.getLiveDataOfObjectTypeName(objectPackage, objectTypeName);
         ClassName companion = TypeNamesUtils.getCompanionTypeName(objectPackage, objectTypeName);
         TypeName listOfCompanions =
                 TypeNamesUtils.getListOfCompanionsTypeName(objectPackage, objectTypeName);
+        TypeName liveDataOfListOfCompanions =
+                TypeNamesUtils.getLiveDataOfListOfCompanionsTypeName(objectPackage, objectTypeName);
+        TypeName liveDataOfCompanion =
+                TypeNamesUtils.getLiveDataOfCompanionTypeName(objectPackage, objectTypeName);
 
         TypeName returnTypeName =
                 TypeName.get(executableElement.getReturnType());
@@ -131,10 +142,14 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 .addAnnotation(AnnotationSpec.get(query))
                 .addModifiers(Modifier.ABSTRACT);
 
-        if (collectionOperation) {
-            methodSpecBuilder.returns(listOfCompanions);
-        } else {
+        if (returnTypeName.equals(object)) {
             methodSpecBuilder.returns(companion);
+        } else if (returnTypeName.equals(listOfObjects)){
+            methodSpecBuilder.returns(listOfCompanions);
+        } else if (returnTypeName.equals(liveDataOfListOfObjects)) {
+            methodSpecBuilder.returns(liveDataOfListOfCompanions);
+        } else if (returnTypeName.equals(liveDataOfObject)) {
+            methodSpecBuilder.returns(liveDataOfCompanion);
         }
 
         StringBuilder parametersBuilder = new StringBuilder();
@@ -165,123 +180,31 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
         methodShadowSpecBuilder = MethodSpec.overriding(executableElement);
 
-        if (collectionOperation) {
-            MethodStatementsGenerator.outputCompanionsToObjects(
-                    objectPackage, objectTypeName,
-                    methodShadowSpecBuilder,
-                    shadowMethodName, parametersBuilder.toString()
-            );
-        } else {
+        if (returnTypeName.equals(object)) {
             MethodStatementsGenerator.outputCompanionToObject(
                     objectPackage, objectTypeName,
                     methodShadowSpecBuilder,
                     shadowMethodName, parametersBuilder.toString()
             );
+        } else if (returnTypeName.equals(listOfObjects)){
+            MethodStatementsGenerator.outputCompanionsToObjects(
+                    objectPackage, objectTypeName,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
+        } else if (returnTypeName.equals(liveDataOfListOfObjects)) {
+            MethodStatementsGenerator.outputLiveCompanionsToLiveObjects(
+                    objectPackage, objectTypeName,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
+        } else if (returnTypeName.equals(liveDataOfObject)) {
+            MethodStatementsGenerator.outputLiveCompanionToLiveObject(
+                    objectPackage, objectTypeName,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
         }
-
-        classBuilder.addMethod(methodShadowSpecBuilder.build());
-    }
-
-    private void handleInsertMethod(String objectPackage,
-                                   String objectTypeName,
-                                   ExecutableElement executableElement,
-                                   TypeSpec.Builder classBuilder) {
-        Insert insert = executableElement.getAnnotation(Insert.class);
-
-        ClassName object = TypeNamesUtils.getObjectTypeName(objectPackage, objectTypeName);
-        ClassName companion = TypeNamesUtils.getCompanionTypeName(
-                objectPackage, objectTypeName);
-        TypeName listOfObjects = TypeNamesUtils.getListOfObjectsTypeName(
-                objectPackage, objectTypeName);
-        TypeName listOfCompanions = TypeNamesUtils.getListOfCompanionsTypeName(
-                objectPackage, objectTypeName);
-
-        TypeName returnTypeName =
-                TypeName.get(executableElement.getReturnType());
-
-        final boolean hasReturn = (isTypeNameVoid(returnTypeName) == false);
-
-        final boolean collectionOperation =
-                isTypeNameOfList(returnTypeName);
-
-        MethodSpec.Builder methodSpecBuilder;
-        MethodSpec.Builder methodShadowSpecBuilder;
-        List<? extends VariableElement> parameters;
-
-        String shadowMethodName = GeneratedNames.getShadowMethodName(
-                executableElement.getSimpleName().toString());
-
-        methodSpecBuilder = MethodSpec.methodBuilder(shadowMethodName)
-                .addAnnotation(AnnotationSpec.builder(Insert.class)
-                        .addMember("entity", "$N.class",
-                                GeneratedNames.getRoomCompanionName(objectTypeName))
-                        .build())
-                .addModifiers(Modifier.ABSTRACT);
-
-        if (hasReturn) {
-            if (collectionOperation) {
-                methodSpecBuilder.returns(TypeNamesUtils.getListOfTypeName(Long.class));
-            } else {
-                methodSpecBuilder.returns(Long.class);
-            }
-        }
-
-        StringBuilder parametersBuilder = new StringBuilder();
-        Set<String> objectTypeParameters = new HashSet<>();
-        Set<String> objectsListTypeParameters = new HashSet<>();
-
-        parameters = executableElement.getParameters();
-        if (parameters != null && parameters.size() > 0) {
-            final int N = parameters.size();
-
-            String paramName;
-            VariableElement param;
-            TypeName paramTypeName;
-            for (int i = 0; i < N; i++) {
-                param = parameters.get(i);
-
-                paramTypeName = TypeName.get(param.asType());
-
-                if (object.equals(paramTypeName)) {
-                    paramName = GeneratedNames.getShadowParameterName(param);
-                    methodSpecBuilder.addParameter(
-                            companion,
-                            paramName);
-
-                    objectTypeParameters.add(param.getSimpleName().toString());
-                } else if (listOfObjects.equals(paramTypeName)) {
-                    paramName = GeneratedNames.getShadowParameterName(param);
-                    methodSpecBuilder.addParameter(
-                            listOfCompanions,
-                            paramName);
-
-                    objectsListTypeParameters.add(param.getSimpleName().toString());
-                } else {
-                    paramName = param.getSimpleName().toString();
-                    methodSpecBuilder.addParameter(
-                            TypeName.get(param.asType()),
-                            paramName);
-                }
-
-                parametersBuilder.append(paramName);
-                if (i < N - 1) {
-                    parametersBuilder.append(", ");
-                }
-            }
-        }
-
-        classBuilder.addMethod(methodSpecBuilder.build());
-
-        methodShadowSpecBuilder = MethodSpec.overriding(executableElement);
-        MethodStatementsGenerator.mapInputObjectAndObjects(
-                objectPackage,
-                objectTypeName,
-                methodShadowSpecBuilder,
-                objectTypeParameters,
-                objectsListTypeParameters,
-                shadowMethodName,
-                parametersBuilder.toString(),
-                hasReturn);
 
         classBuilder.addMethod(methodShadowSpecBuilder.build());
     }

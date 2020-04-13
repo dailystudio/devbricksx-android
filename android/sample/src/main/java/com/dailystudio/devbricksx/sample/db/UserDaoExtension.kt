@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.sample.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
@@ -12,8 +13,14 @@ abstract class UserDaoExtension {
     @Query("SELECT * FROM user WHERE id IN (:ids)")
     abstract fun loadAllByIds(ids: IntArray): List<User>
 
+    @Query("SELECT * FROM user WHERE id IN (:ids)")
+    abstract fun loadAllByIdsLive(ids: IntArray): LiveData<List<User>>
+
     @Query("SELECT * FROM user WHERE id == :id")
     abstract fun findById(id: String): User
+
+    @Query("SELECT * FROM user WHERE id == :id")
+    abstract fun findByIdLive(id: String): LiveData<User>
 
     @Insert
     abstract fun insertBothUsers(user1: User?, user2: User?)

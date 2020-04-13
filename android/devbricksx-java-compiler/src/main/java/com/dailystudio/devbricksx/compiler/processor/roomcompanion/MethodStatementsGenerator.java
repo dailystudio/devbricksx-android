@@ -9,6 +9,74 @@ import java.util.Set;
 
 public class MethodStatementsGenerator {
 
+    public static void outputLiveCompanionToLiveObject(String packageName, String typeName,
+                                                       MethodSpec.Builder methodSpecBuild,
+                                                       String shadowMethodName) {
+        outputLiveCompanionToLiveObject(packageName, typeName, methodSpecBuild,
+                shadowMethodName, null);
+    }
+
+    public static void outputLiveCompanionToLiveObject(String packageName, String typeName,
+                                                       MethodSpec.Builder methodSpecBuilder,
+                                                       String shadowMethodName,
+                                                       String methodParameters) {
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
+        TypeName liveDataOfCompanion =
+                TypeNamesUtils.getLiveDataOfCompanionTypeName(packageName, typeName);
+        TypeName liveDataOfObject =
+                TypeNamesUtils.getLiveDataOfObjectTypeName(packageName, typeName);
+
+        if (!TextUtils.isEmpty(methodParameters)) {
+            methodSpecBuilder.addStatement("$T liveCompanion = this.$N($N)",
+                    liveDataOfCompanion, shadowMethodName, methodParameters);
+        } else {
+            methodSpecBuilder.addStatement("$T liveCompanion = this.$N()",
+                    liveDataOfCompanion, shadowMethodName);
+        }
+
+        methodSpecBuilder.beginControlFlow("if (liveCompanion == null)")
+                .addStatement("return null")
+                .endControlFlow()
+                .addStatement("$T liveObject = $T.map(liveCompanion, $T.mapCompanionToObject)",
+                        liveDataOfObject, TypeNamesUtils.getTransformationsTypeName(), companion)
+                .addStatement("return liveObject")
+                .returns(liveDataOfObject);
+    }
+
+    public static void outputLiveCompanionsToLiveObjects(String packageName, String typeName,
+                                                         MethodSpec.Builder methodSpecBuild,
+                                                         String shadowMethodName) {
+        outputLiveCompanionsToLiveObjects(packageName, typeName, methodSpecBuild,
+                shadowMethodName, null);
+    }
+
+    public static void outputLiveCompanionsToLiveObjects(String packageName, String typeName,
+                                                         MethodSpec.Builder methodSpecBuilder,
+                                                         String shadowMethodName,
+                                                         String methodParameters) {
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
+        TypeName liveDataOfListOfCompanions =
+                TypeNamesUtils.getLiveDataOfListOfCompanionsTypeName(packageName, typeName);
+        TypeName liveDataOfListOfObjects =
+                TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(packageName, typeName);
+
+        if (!TextUtils.isEmpty(methodParameters)) {
+            methodSpecBuilder.addStatement("$T liveCompanions = this.$N($N)",
+                    liveDataOfListOfCompanions, shadowMethodName, methodParameters);
+        } else {
+            methodSpecBuilder.addStatement("$T liveCompanions = this.$N()",
+                    liveDataOfListOfCompanions, shadowMethodName);
+        }
+
+        methodSpecBuilder.beginControlFlow("if (liveCompanions == null)")
+                .addStatement("return null")
+                .endControlFlow()
+                .addStatement("$T liveObjects = $T.map(liveCompanions, $T.mapCompanionsToObjects)",
+                        liveDataOfListOfObjects, TypeNamesUtils.getTransformationsTypeName(), companion)
+                .addStatement("return liveObjects")
+                .returns(liveDataOfListOfObjects);
+    }
+
     public static void outputCompanionsToObjects(String packageName, String typeName,
                                                  MethodSpec.Builder methodSpecBuild,
                                                  String shadowMethodName) {

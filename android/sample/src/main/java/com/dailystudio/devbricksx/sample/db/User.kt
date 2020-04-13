@@ -3,7 +3,6 @@ package com.dailystudio.devbricksx.sample.db
 import androidx.room.Entity
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 
-//@RoomCompanion(primaryKey = "id")
 @RoomCompanion(primaryKey = "id", database = "user", extension = UserDaoExtension::class)
 @Entity
 class User (

@@ -70,6 +70,10 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
         TypeName listOfObjects =
                 TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
+        TypeName liveDataOfListOfCompanions =
+                TypeNamesUtils.getLiveDataOfListOfCompanionsTypeName(packageName, typeName);
+        TypeName liveDataOfListOfObjects =
+                TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(packageName, typeName);
 
         MethodSpec methodGetAll = MethodSpec.methodBuilder("_getAll")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -81,6 +85,17 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 ).build();
 
         classBuilder.addMethod(methodGetAll);
+
+        MethodSpec methodGetAllLive = MethodSpec.methodBuilder("_getAllLive")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .returns(liveDataOfListOfCompanions)
+                .addAnnotation(AnnotationSpec.builder(Query.class)
+                        .addMember("value", "$S",
+                                "SELECT * FROM `" + tableName + "`")
+                        .build()
+                ).build();
+
+        classBuilder.addMethod(methodGetAllLive);
 
         MethodSpec methodInsertOne = MethodSpec.methodBuilder("_insert")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -176,6 +191,19 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 methodGetAll.name);
 
         classBuilder.addMethod(methodGetAllWrapperBuilder.build());
+
+        MethodSpec.Builder methodGetAllLiveWrapperBuilder =
+                MethodSpec.methodBuilder("getAllLive")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(liveDataOfListOfObjects);
+
+        MethodStatementsGenerator.outputLiveCompanionsToLiveObjects(
+                packageName,
+                typeName,
+                methodGetAllLiveWrapperBuilder,
+                methodGetAllLive.name);
+
+        classBuilder.addMethod(methodGetAllLiveWrapperBuilder.build());
 
         MethodSpec methodInsertOneWrapper = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)

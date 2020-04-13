@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -105,7 +106,12 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
             return null;
         }
 
-        TypeName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
+        ClassName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
+        TypeName listOfCompanions =
+                TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
+        TypeName listOfObjects =
+                TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
 
         MethodSpec.Builder methodToObjectBuilder = MethodSpec.methodBuilder("toObject")
                 .addModifiers(Modifier.PUBLIC)
@@ -163,6 +169,40 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
         classBuilder.addMethod(methodToObjectBuilder.build());
         classBuilder.addMethod(methodToCompanionBuilder.build());
+
+        FieldSpec.Builder fieldMapFunc = FieldSpec.builder(
+                TypeNamesUtils.getMapFunctionOfTypeName(companion, object),
+                "mapCompanionToObject")
+                .addModifiers(Modifier.STATIC)
+                .initializer("new Function<$T, $T>() {\n" +
+                        "   @Override\n" +
+                        "   public $T apply($T companion) {\n" +
+                        "       return companion.toObject();\n" +
+                        "   }\n" +
+                        "}",
+                        companion, object, object, companion);
+
+        classBuilder.addField(fieldMapFunc.build());
+
+        FieldSpec.Builder fieldListMapFunc = FieldSpec.builder(
+                TypeNamesUtils.getMapFunctionOfTypeName(listOfCompanions, listOfObjects),
+                "mapCompanionsToObjects")
+                .addModifiers(Modifier.STATIC)
+                .initializer("new Function<$T, $T>() {\n" +
+                        "   @Override\n" +
+                        "   public $T apply($T companions) {\n" +
+                        "       $T objects = new $T<>();\n" +
+                        "       for(int i = 0; i < companions.size(); i++) {\n" +
+                        "           objects.add(companions.get(i).toObject());\n" +
+                        "       }\n" +
+                        "       return objects;\n" +
+                        "   }\n" +
+                        "}",
+                        listOfCompanions, listOfObjects,
+                        listOfObjects, listOfCompanions,
+                        listOfObjects, TypeNamesUtils.getArrayListTypeName());
+
+        classBuilder.addField(fieldListMapFunc.build());
 
         return classBuilder;
     }
