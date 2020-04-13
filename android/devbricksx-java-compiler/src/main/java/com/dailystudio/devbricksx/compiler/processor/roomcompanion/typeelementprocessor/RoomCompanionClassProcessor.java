@@ -52,7 +52,10 @@ public class RoomCompanionClassProcessor extends AbsRoomCompanionTypeElementProc
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Entity.class);
+                .addAnnotation(AnnotationSpec.builder(Entity.class)
+                        .addMember("tableName", "$S",
+                                GeneratedNames.getTableName(typeName))
+                        .build());
 
         List<? extends Element> subElements = typeElement.getEnclosedElements();
 

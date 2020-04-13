@@ -17,6 +17,10 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getTableName(String className) {
+        return className.toLowerCase();
+    }
+
     public static String getDaoExtensionCompanionName(String className) {
         StringBuilder builder = new StringBuilder(className);
 

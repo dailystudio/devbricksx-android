@@ -60,6 +60,7 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
                             GeneratedNames.getDaoExtensionCompanionName(daoExtension.simpleName())));
         }
 
+        String tableName = GeneratedNames.getTableName(typeName);
         ClassName object = getObjectTypeName(packageName, typeName);
         ClassName companion = getCompanionTypeName(packageName, typeName);
         ClassName arrayList = ClassName.get("java.util", "ArrayList");
@@ -73,7 +74,7 @@ public class RoomCompanionDaoClassProcessor extends AbsRoomCompanionTypeElementP
                 .returns(listOfCompanions)
                 .addAnnotation(AnnotationSpec.builder(Query.class)
                         .addMember("value", "$S",
-                                "SELECT * FROM " + companion.simpleName())
+                                "SELECT * FROM `" + tableName + "`")
                         .build()
                 ).build();
 
