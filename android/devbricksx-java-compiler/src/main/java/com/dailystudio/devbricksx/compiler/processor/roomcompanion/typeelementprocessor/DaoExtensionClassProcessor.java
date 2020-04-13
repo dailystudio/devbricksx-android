@@ -1,7 +1,9 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.dailystudio.devbricksx.annotations.DaoExtension;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
@@ -75,8 +77,17 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                     handleQueryMethod(object.packageName(), object.simpleName(),
                             executableElement, classBuilder);
                 } else if (executableElement.getAnnotation(Insert.class) != null) {
-                    handleInsertMethod(object.packageName(), object.simpleName(),
-                            executableElement, classBuilder);
+                    handleWriteActionMethod(object.packageName(), object.simpleName(),
+                            Insert.class,
+                            executableElement, classBuilder, false);
+                } else if (executableElement.getAnnotation(Update.class) != null) {
+                    handleWriteActionMethod(object.packageName(), object.simpleName(),
+                            Update.class,
+                            executableElement, classBuilder, true);
+                } else if (executableElement.getAnnotation(Delete.class) != null) {
+                    handleWriteActionMethod(object.packageName(), object.simpleName(),
+                            Delete.class,
+                            executableElement, classBuilder, true);
                 }
 
             }
@@ -201,7 +212,10 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 executableElement.getSimpleName().toString());
 
         methodSpecBuilder = MethodSpec.methodBuilder(shadowMethodName)
-                .addAnnotation(Insert.class)
+                .addAnnotation(AnnotationSpec.builder(Insert.class)
+                        .addMember("entity", "$N.class",
+                                GeneratedNames.getRoomCompanionName(objectTypeName))
+                        .build())
                 .addModifiers(Modifier.ABSTRACT);
 
         if (hasReturn) {
@@ -271,4 +285,110 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
         classBuilder.addMethod(methodShadowSpecBuilder.build());
     }
+
+    private void handleWriteActionMethod(String objectPackage,
+                                         String objectTypeName,
+                                         Class annotationClass,
+                                         ExecutableElement executableElement,
+                                         TypeSpec.Builder classBuilder,
+                                         Boolean alwaysReturnVoid) {
+
+        ClassName object = TypeNamesUtils.getObjectTypeName(objectPackage, objectTypeName);
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(
+                objectPackage, objectTypeName);
+        TypeName listOfObjects = TypeNamesUtils.getListOfObjectsTypeName(
+                objectPackage, objectTypeName);
+        TypeName listOfCompanions = TypeNamesUtils.getListOfCompanionsTypeName(
+                objectPackage, objectTypeName);
+
+        TypeName returnTypeName =
+                TypeName.get(executableElement.getReturnType());
+
+        final boolean hasReturn = (isTypeNameVoid(returnTypeName) == false) && !alwaysReturnVoid;
+
+        final boolean collectionOperation =
+                isTypeNameOfList(returnTypeName);
+
+        MethodSpec.Builder methodSpecBuilder;
+        MethodSpec.Builder methodShadowSpecBuilder;
+        List<? extends VariableElement> parameters;
+
+        String shadowMethodName = GeneratedNames.getShadowMethodName(
+                executableElement.getSimpleName().toString());
+
+        methodSpecBuilder = MethodSpec.methodBuilder(shadowMethodName)
+                .addAnnotation(AnnotationSpec.builder(annotationClass)
+                        .addMember("entity", "$N.class",
+                                GeneratedNames.getRoomCompanionName(objectTypeName))
+                        .build())
+                .addModifiers(Modifier.ABSTRACT);
+
+        if (hasReturn) {
+            if (collectionOperation) {
+                methodSpecBuilder.returns(TypeNamesUtils.getListOfTypeName(Long.class));
+            } else {
+                methodSpecBuilder.returns(Long.class);
+            }
+        }
+
+        StringBuilder parametersBuilder = new StringBuilder();
+        Set<String> objectTypeParameters = new HashSet<>();
+        Set<String> objectsListTypeParameters = new HashSet<>();
+
+        parameters = executableElement.getParameters();
+        if (parameters != null && parameters.size() > 0) {
+            final int N = parameters.size();
+
+            String paramName;
+            VariableElement param;
+            TypeName paramTypeName;
+            for (int i = 0; i < N; i++) {
+                param = parameters.get(i);
+
+                paramTypeName = TypeName.get(param.asType());
+
+                if (object.equals(paramTypeName)) {
+                    paramName = GeneratedNames.getShadowParameterName(param);
+                    methodSpecBuilder.addParameter(
+                            companion,
+                            paramName);
+
+                    objectTypeParameters.add(param.getSimpleName().toString());
+                } else if (listOfObjects.equals(paramTypeName)) {
+                    paramName = GeneratedNames.getShadowParameterName(param);
+                    methodSpecBuilder.addParameter(
+                            listOfCompanions,
+                            paramName);
+
+                    objectsListTypeParameters.add(param.getSimpleName().toString());
+                } else {
+                    paramName = param.getSimpleName().toString();
+                    methodSpecBuilder.addParameter(
+                            TypeName.get(param.asType()),
+                            paramName);
+                }
+
+                parametersBuilder.append(paramName);
+                if (i < N - 1) {
+                    parametersBuilder.append(", ");
+                }
+            }
+        }
+
+        classBuilder.addMethod(methodSpecBuilder.build());
+
+        methodShadowSpecBuilder = MethodSpec.overriding(executableElement);
+        MethodStatementsGenerator.mapInputObjectAndObjects(
+                objectPackage,
+                objectTypeName,
+                methodShadowSpecBuilder,
+                objectTypeParameters,
+                objectsListTypeParameters,
+                shadowMethodName,
+                parametersBuilder.toString(),
+                hasReturn);
+
+        classBuilder.addMethod(methodShadowSpecBuilder.build());
+    }
+
 }

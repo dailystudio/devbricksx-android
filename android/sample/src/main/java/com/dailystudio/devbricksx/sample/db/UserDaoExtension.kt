@@ -1,7 +1,9 @@
 package com.dailystudio.devbricksx.sample.db
 
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.dailystudio.devbricksx.annotations.DaoExtension
 
 @DaoExtension(entity = User::class)
@@ -18,6 +20,15 @@ abstract class UserDaoExtension {
 
     @Insert
     abstract fun insertUsersAndFriends(user: User?, friends: List<User?>?)
+
+    @Insert
+    abstract fun insertFriends(friends: List<User?>?) : List<Long>
+
+    @Update
+    abstract fun updateFriends(friends: List<User?>?)
+
+    @Delete
+    abstract fun deleteFriends(friends: List<User?>?)
 
 
 }
