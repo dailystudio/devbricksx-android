@@ -18,26 +18,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var alertDatabase = Room.databaseBuilder(
-                this,
-                UserDatabase::class.java,
-                "auto"
-        ).build()
+        var userDatabase = UserDatabase.getDatabase(this)
 
         val usersObserver = Observer<List<User>> { users ->
             Logger.debug("users = $users")
         }
 
         GlobalScope.launch {
-            alertDatabase.clearAllTables()
+            userDatabase.clearAllTables()
 
             withContext(Dispatchers.Main) {
-                alertDatabase.userDao().allLive.observe(this@MainActivity, usersObserver);
+                userDatabase.userDao().allLive.observe(this@MainActivity, usersObserver);
             }
 
             val user = User("1", "dailystudio")
             Logger.debug("user = $user")
-            alertDatabase.userDao().insert(user)
+            userDatabase.userDao().insert(user)
         }
     }
 }

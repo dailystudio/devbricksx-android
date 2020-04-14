@@ -12,6 +12,14 @@ public class TypeNamesUtils {
         return ClassName.VOID;
     }
 
+    public static TypeName getContextTypeName() {
+        return ClassName.get("android.content", "Context");
+    }
+
+    public static TypeName getRoomTypeName() {
+        return ClassName.get("androidx.room", "Room");
+    }
+
     public static ClassName getTransformationsTypeName() {
         return ClassName.get("androidx.lifecycle", "Transformations");
     }

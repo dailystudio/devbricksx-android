@@ -5,12 +5,15 @@ import androidx.room.Database;
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementsGroupProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +40,6 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
         }
 
         debug("group for database = [%s]", database);
-
 
         String packageName = getPackageNameOfTypeElement(typeElements.get(0));
 
@@ -91,6 +93,31 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                 .addMember("version", "$N", "1")
                 .build()
         );
+
+        String instanceFieldName = "sInstance";
+
+        classBuilder.addField(FieldSpec.builder(
+                generatedClassName, instanceFieldName)
+                .addModifiers(Modifier.PRIVATE)
+                .addModifiers(Modifier.VOLATILE)
+                .addModifiers(Modifier.STATIC)
+                .build()
+        );
+
+        MethodSpec.Builder getInstanceMethodBuilder = MethodSpec.methodBuilder("getDatabase")
+                .addModifiers(Modifier.STATIC)
+                .addModifiers(Modifier.SYNCHRONIZED)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(TypeNamesUtils.getContextTypeName(), "context")
+                .beginControlFlow("if ($N == null)", instanceFieldName)
+                .addStatement("$N = $T.databaseBuilder(context.getApplicationContext(), $T.class, $S).build()",
+                        instanceFieldName, TypeNamesUtils.getRoomTypeName(),
+                        generatedClassName, database)
+                .endControlFlow()
+                .addStatement("return $N", instanceFieldName)
+                .returns(generatedClassName);
+
+        classBuilder.addMethod(getInstanceMethodBuilder.build());
 
         return new GeneratedResult(packageName, classBuilder);
     }
