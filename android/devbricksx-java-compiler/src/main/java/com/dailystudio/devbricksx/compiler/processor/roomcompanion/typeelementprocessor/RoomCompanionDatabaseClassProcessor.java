@@ -9,6 +9,7 @@ import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtil
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
@@ -104,17 +105,34 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                 .build()
         );
 
+        MethodSpec getInstanceWithMigrationsMethod = MethodSpec.methodBuilder("getDatabase")
+                .addModifiers(Modifier.STATIC)
+                .addModifiers(Modifier.SYNCHRONIZED)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(TypeNamesUtils.getContextTypeName(), "context")
+                .addParameter(ArrayTypeName.of(TypeNamesUtils.getMigrationTypeName()), "migrations")
+                .beginControlFlow("if ($N == null)", instanceFieldName)
+                .addStatement("$T builder = $T.databaseBuilder(context.getApplicationContext(), $T.class, $S)",
+                        TypeNamesUtils.getRoomDatabaseBuilderTypeName(generatedClassName),
+                        TypeNamesUtils.getRoomTypeName(),
+                        generatedClassName, database)
+                .beginControlFlow("if (migrations != null)")
+                .addStatement("builder.addMigrations(migrations)")
+                .endControlFlow()
+                .addStatement("$N = builder.build()", instanceFieldName)
+                .endControlFlow()
+                .addStatement("return $N", instanceFieldName)
+                .returns(generatedClassName)
+                .build();
+
+        classBuilder.addMethod(getInstanceWithMigrationsMethod);
+
         MethodSpec.Builder getInstanceMethodBuilder = MethodSpec.methodBuilder("getDatabase")
                 .addModifiers(Modifier.STATIC)
                 .addModifiers(Modifier.SYNCHRONIZED)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(TypeNamesUtils.getContextTypeName(), "context")
-                .beginControlFlow("if ($N == null)", instanceFieldName)
-                .addStatement("$N = $T.databaseBuilder(context.getApplicationContext(), $T.class, $S).build()",
-                        instanceFieldName, TypeNamesUtils.getRoomTypeName(),
-                        generatedClassName, database)
-                .endControlFlow()
-                .addStatement("return $N", instanceFieldName)
+                .addStatement("return $N(context, null)", getInstanceWithMigrationsMethod.name)
                 .returns(generatedClassName);
 
         classBuilder.addMethod(getInstanceMethodBuilder.build());

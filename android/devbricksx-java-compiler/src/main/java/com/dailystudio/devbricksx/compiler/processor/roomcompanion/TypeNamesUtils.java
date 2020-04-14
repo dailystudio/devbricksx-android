@@ -20,6 +20,16 @@ public class TypeNamesUtils {
         return ClassName.get("androidx.room", "Room");
     }
 
+    public static TypeName getRoomDatabaseBuilderTypeName(TypeName className) {
+        ClassName builder = ClassName.get("androidx.room.RoomDatabase", "Builder");
+
+        return ParameterizedTypeName.get(builder, className);
+    }
+
+    public static TypeName getMigrationTypeName() {
+        return ClassName.get("androidx.room.migration", "Migration");
+    }
+
     public static ClassName getTransformationsTypeName() {
         return ClassName.get("androidx.lifecycle", "Transformations");
     }
