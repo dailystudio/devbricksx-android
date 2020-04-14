@@ -29,15 +29,32 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
 
-    api "androidx.multidex:multidex:${project.ext.multiDexVersion}"
+    // Kotlin Extension
+    implementation "androidx.core:core-ktx:${project.ext.ktxCoreVersion}"
 
-    kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
+    // AppCompat
+    implementation "androidx.appcompat:appcompat:${project.ext.appCompatVersion}"
+
+    // Room relatives
     api "androidx.room:room-runtime:${project.ext.roomVersion}"
     api "androidx.room:room-ktx:${project.ext.roomVersion}"
+    kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
+
+    // LifeCycle relatives
+    api "androidx.lifecycle:lifecycle-extensions:${project.ext.archLifecycleVersion}"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:${project.ext.archLifecycleVersion}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
+
+    // MultiDex
+    api "androidx.multidex:multidex:${project.ext.multiDexVersion}"
+
+    // Libraries
+    api project(':devbricksx-java-annotations')
+    kapt project(':devbricksx-java-compiler')
 
     // Test helpers
     testImplementation 'junit:junit:4.12'
