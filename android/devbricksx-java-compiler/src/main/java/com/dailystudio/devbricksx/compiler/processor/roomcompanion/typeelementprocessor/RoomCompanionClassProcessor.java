@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementp
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
@@ -10,10 +11,12 @@ import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcess
 import com.dailystudio.devbricksx.compiler.processor.Constants;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
+import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
@@ -26,6 +29,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -51,12 +55,20 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
             return null;
         }
 
+        AnnotationSpec.Builder entityAnnotationBuilder = AnnotationSpec.builder(Entity.class)
+                .addMember("tableName", "$S",
+                        GeneratedNames.getTableName(typeName));
+
+        String foreignKeyStrings = buildForeignKeysString(typeElement);
+
+        if (!TextUtils.isEmpty(foreignKeyStrings)) {
+            entityAnnotationBuilder.addMember("foreignKeys", "$N",
+                    foreignKeyStrings);
+        }
+
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(AnnotationSpec.builder(Entity.class)
-                        .addMember("tableName", "$S",
-                                GeneratedNames.getTableName(typeName))
-                        .build());
+                .addAnnotation(entityAnnotationBuilder.build());
 
         List<? extends Element> subElements = typeElement.getEnclosedElements();
 
@@ -206,5 +218,60 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
         return classBuilder;
     }
+
+    private String buildForeignKeysString(TypeElement typeElement) {
+
+        List<AnnotationMirror> foreignKeys = AnnotationsUtils.getAnnotationValueFromAnnotation(
+                typeElement, "foreignKeys");
+        debug("foreign keys = [%s]", foreignKeys);
+        if (foreignKeys == null) {
+            return null;
+        }
+
+        StringBuilder foreignKeyStrings = new StringBuilder();
+
+        foreignKeyStrings.append("{ ");
+
+        final int N = foreignKeys.size();
+
+        AnnotationMirror mirror;
+        AnnotationSpec spec;
+        List<CodeBlock> codeBlocks;
+        String foreignKeyString;
+        ClassName className;
+        ClassName companionClassName;
+        for (int i = 0; i < N; i++) {
+            mirror = foreignKeys.get(i);
+            spec = AnnotationSpec.get(mirror);
+            foreignKeyString = mirror.toString();
+
+            codeBlocks = spec.members.get("entity");
+
+            if (codeBlocks != null) {
+                for (CodeBlock cb: codeBlocks) {
+
+                    className = ClassName.bestGuess(cb.toString().replace(".class", ""));
+
+                    companionClassName = TypeNamesUtils.getCompanionTypeName(
+                            className.packageName(),
+                            className.simpleName());
+
+                    foreignKeyString = foreignKeyString.replace(className.toString(),
+                            companionClassName.toString());
+                }
+            }
+
+            foreignKeyStrings.append(foreignKeyString);
+
+            if (i < N - 1) {
+                foreignKeyStrings.append(", ");
+            }
+        }
+
+        foreignKeyStrings.append(" }");
+
+        return foreignKeyStrings.toString();
+    }
+
 
 }

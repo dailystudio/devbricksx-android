@@ -1,5 +1,7 @@
 package com.dailystudio.devbricksx.annotations;
 
+import androidx.room.ForeignKey;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,5 +14,6 @@ public @interface RoomCompanion {
     String database() default "";
     Class<?> extension() default Void.class;
     Class<?>[] converters() default {};
+    ForeignKey[] foreignKeys() default {};
 }
 
