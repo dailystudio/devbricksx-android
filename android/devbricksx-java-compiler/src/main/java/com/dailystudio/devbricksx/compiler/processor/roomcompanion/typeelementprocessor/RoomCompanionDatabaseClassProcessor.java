@@ -1,11 +1,13 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
 import androidx.room.Database;
+import androidx.room.TypeConverters;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsTypeElementsGroupProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
+import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.AnnotationSpec;
@@ -14,7 +16,6 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,8 +63,10 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
         ClassName dao;
         MethodSpec methodGetDao;
         String typeName;
+        List<ClassName> converters;
         for (int i = 0; i < N; i++) {
             typeElement = typeElements.get(i);
+
             typeName = getTypeNameOfTypeElement(typeElement);
 
             if (!packageName.equals(getTypeNameOfTypeElement(typeElement))) {
@@ -85,6 +88,33 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                     .build();
 
             classBuilder.addMethod(methodGetDao);
+
+            converters =
+                    AnnotationsUtils.getClassesValueFromAnnotation(
+                            typeElement, "converters");
+            if (converters != null) {
+                final int CN = converters.size();
+
+                StringBuilder converterClasses = new StringBuilder();
+                converterClasses.append("{ ");
+
+
+                for (int j = 0; j < CN; j++) {
+                    converterClasses.append(converters.get(j).simpleName());
+                    converterClasses.append(".class");
+
+                    if (j < CN - 1) {
+                        converterClasses.append(", ");
+                    }
+                }
+
+                converterClasses.append(" }");
+
+                classBuilder.addAnnotation(AnnotationSpec.builder(TypeConverters.class).
+                        addMember("value", "$N", converterClasses.toString())
+                        .build());
+            }
+
         }
 
         entityClasses.append(" }");

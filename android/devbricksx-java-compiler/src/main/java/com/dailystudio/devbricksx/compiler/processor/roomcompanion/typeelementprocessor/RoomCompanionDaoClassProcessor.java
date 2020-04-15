@@ -13,6 +13,7 @@ import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcess
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
+import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
@@ -38,25 +39,17 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
             return null;
         }
 
-        ClassName daoExtension = null;
-        TypeMirror daoExtensionTypeMirror = null;
-        try {
-            companionAnnotation.extension();
-        } catch( MirroredTypeException mte ) {
-            daoExtensionTypeMirror = mte.getTypeMirror();
-        }
-
-        if (daoExtensionTypeMirror != null) {
-            daoExtension = ClassName.bestGuess(
-                    daoExtensionTypeMirror.toString());
-        }
+        ClassName daoExtension =
+                AnnotationsUtils.getClassValueFromAnnotation(typeElement,
+                        "extension");
+        debug("dao extension = [%s]", daoExtension);
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addModifiers(Modifier.ABSTRACT)
                 .addAnnotation(Dao.class);
 
-        if (daoExtension != null && !daoExtension.simpleName().equals("Void")) {
+        if (daoExtension != null && !TypeNamesUtils.getVoidTypeName().equals(daoExtension)) {
             classBuilder.superclass(
                     ClassName.get(daoExtension.packageName(),
                             GeneratedNames.getDaoExtensionCompanionName(daoExtension.simpleName())));

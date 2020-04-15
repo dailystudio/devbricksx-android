@@ -59,7 +59,7 @@ public class LogUtils {
                 getCallingMethodName(2), format);
 
         if (kind == Diagnostic.Kind.OTHER) {
-            System.out.println(String.format(compose, args));
+            System.out.print(String.format(compose, args));
         } else {
             messager.printMessage(kind,
                     String.format(compose, args));

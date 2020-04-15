@@ -10,13 +10,13 @@ import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcess
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
+import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,19 +45,12 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             return null;
         }
 
-        TypeMirror entityTypeMirror = null;
-        try {
-            daoExtension.entity();
-        } catch( MirroredTypeException mte ) {
-            entityTypeMirror = mte.getTypeMirror();
-        }
-
-        if (entityTypeMirror == null) {
+        ClassName object = AnnotationsUtils.getClassValueFromAnnotation(typeElement,
+                "entity");
+        debug("object = %s", object);
+        if (object == null) {
             return null;
         }
-
-        ClassName object = ClassName.bestGuess(
-                entityTypeMirror.toString());
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(extension)
