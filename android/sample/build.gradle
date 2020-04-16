@@ -43,6 +43,7 @@ dependencies {
 
     implementation project(":devbricksx")
 
+    kapt project(':devbricksx-kotlin-compiler')
     kapt project(':devbricksx-java-compiler')
     kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
