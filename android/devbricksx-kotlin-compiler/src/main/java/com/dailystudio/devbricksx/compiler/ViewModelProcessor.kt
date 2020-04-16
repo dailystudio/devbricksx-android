@@ -42,10 +42,15 @@ class ViewModelProcessor : AbstractProcessor() {
         val className = element.simpleName.toString()
         val pack = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val fileName = "${className}ViewModel"
-        val fileBuilder= FileSpec.builder(pack, fileName)
+        val fileName = GeneratedNames.getViewModelName(className)
         val classBuilder = TypeSpec.classBuilder(fileName)
+                .superclass(TypeNamesUtils.getAndroidViewModelTypeName())
+                .addSuperclassConstructorParameter("application")
+                .primaryConstructor(FunSpec.constructorBuilder()
+                    .addParameter("application", TypeNamesUtils.getApplicationTypeName())
+                    .build())
 
+        val fileBuilder= FileSpec.builder(pack, fileName)
         val file = fileBuilder.addType(classBuilder.build()).build()
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         file.writeTo(File(kaptKotlinGeneratedDir))
