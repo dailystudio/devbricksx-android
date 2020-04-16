@@ -28,31 +28,29 @@ object Logger {
 
     private fun output(
         format: String,
-        token: LogToken,
+        token: LogToken?,
         vararg args: Any?
     ) {
-        var token: LogToken? = token
+        var logToken: LogToken? = token
         val compose = String.format(
             DEBUG_MSG_TEMPL,
             getCallingMethodName(2), format
         )
-        if (token == null) {
-            token = LogToken.LOG_D
+
+        if (logToken == null) {
+            logToken = LogToken.LOG_D
         }
+
         var tag = getCallingSimpleClassName(2)
         if (TextUtils.isEmpty(tag)) {
             tag = UNKNOWN_TAG
         }
-        if (token == LogToken.LOG_D
-            || token == LogToken.LOG_SD
-        ) {
-            Log.d(tag, String.format(compose, *args))
-        } else if (token == LogToken.LOG_W) {
-            Log.w(tag, String.format(compose, *args))
-        } else if (token == LogToken.LOG_I) {
-            Log.i(tag, String.format(compose, *args))
-        } else if (token == LogToken.LOG_E) {
-            Log.e(tag, String.format(compose, *args))
+
+        when (logToken) {
+            LogToken.LOG_D,  LogToken.LOG_SD -> Log.d(tag, String.format(compose, *args))
+            LogToken.LOG_W -> Log.w(tag, String.format(compose, *args))
+            LogToken.LOG_I -> Log.i(tag, String.format(compose, *args))
+            LogToken.LOG_E -> Log.e(tag, String.format(compose, *args))
         }
     }
 
@@ -90,8 +88,8 @@ object Logger {
         return isTagFileExisted(forceTagFile)
     }
 
-    private fun isTagFileExisted(tagfile: String): Boolean {
-        if (TextUtils.isEmpty(tagfile)) {
+    private fun isTagFileExisted(tagFile: String): Boolean {
+        if (TextUtils.isEmpty(tagFile)) {
             return false
         }
         val state = Environment.getExternalStorageState()
@@ -99,9 +97,9 @@ object Logger {
             val externalStorage =
                 Environment.getExternalStorageDirectory()
             if (externalStorage != null) {
-                val supfile = File(externalStorage, tagfile)
-                if (supfile.exists()
-                    && supfile.isFile
+                val supFile = File(externalStorage, tagFile)
+                if (supFile.exists()
+                    && supFile.isFile
                 ) {
                     return true
                 }
@@ -169,7 +167,7 @@ object Logger {
         return element.methodName
     }
 
-    val callingClassName: String
+    val callingClassName: String?
         get() = getCallingClassName(1)
 
     val callingSimpleClassName: String
@@ -177,7 +175,7 @@ object Logger {
 
     private fun getCallingSimpleClassName(traceLevel: Int): String {
         val className = getCallingClassName(traceLevel + 1) ?: return UNKNOWN_CLASS
-        var kls: Class<*>? = null
+        var kls: Class<*>?
         kls = try {
             Class.forName(className)
         } catch (e: ClassNotFoundException) {
@@ -186,7 +184,7 @@ object Logger {
         return kls?.simpleName ?: UNKNOWN_CLASS
     }
 
-    private fun getCallingClassName(traceLevel: Int): String {
+    private fun getCallingClassName(traceLevel: Int): String? {
         val element = getCallingElement(traceLevel + 1) ?: return UNKNOWN_CLASS
         return element.className
     }
