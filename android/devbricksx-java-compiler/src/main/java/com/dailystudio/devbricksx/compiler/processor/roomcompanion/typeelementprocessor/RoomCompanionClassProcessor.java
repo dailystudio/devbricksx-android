@@ -66,10 +66,15 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                         GeneratedNames.getTableName(typeName));
 
         String foreignKeyStrings = buildForeignKeysString(typeElement);
-
         if (!TextUtils.isEmpty(foreignKeyStrings)) {
             entityAnnotationBuilder.addMember("foreignKeys", "$N",
                     foreignKeyStrings);
+        }
+
+        String indicesStrings = buildIndicesString(typeElement);
+        if (!TextUtils.isEmpty(indicesStrings)) {
+            entityAnnotationBuilder.addMember("indices", "$N",
+                    indicesStrings);
         }
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
@@ -276,6 +281,38 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         foreignKeyStrings.append(" }");
 
         return foreignKeyStrings.toString();
+    }
+
+    private String buildIndicesString(TypeElement typeElement) {
+        List<AnnotationMirror> indices = AnnotationsUtils.getAnnotationValueFromAnnotation(
+                typeElement, "indices");
+        debug("indices = [%s]", indices);
+        if (indices == null) {
+            return null;
+        }
+
+        StringBuilder indexStrings = new StringBuilder();
+
+        indexStrings.append("{ ");
+
+        final int N = indices.size();
+
+        AnnotationMirror mirror;
+        String indexString;
+        for (int i = 0; i < N; i++) {
+            mirror = indices.get(i);
+            indexString = mirror.toString();
+
+            indexStrings.append(indexString);
+
+            if (i < N - 1) {
+                indexStrings.append(", ");
+            }
+        }
+
+        indexStrings.append(" }");
+
+        return indexStrings.toString();
     }
 
 

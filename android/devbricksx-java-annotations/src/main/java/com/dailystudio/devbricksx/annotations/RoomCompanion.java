@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.annotations;
 
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,5 +16,6 @@ public @interface RoomCompanion {
     Class<?> extension() default Void.class;
     Class<?>[] converters() default {};
     ForeignKey[] foreignKeys() default {};
+    Index[] indices() default {};
 }
 
