@@ -3,20 +3,25 @@ package com.dailystudio.devbricksx.sample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.sample.db.UserDatabase
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.Group
+import com.dailystudio.devbricksx.sample.ui.UserViewModel
 import kotlinx.coroutines.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: UserViewModel
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var userDatabase = UserDatabase.getDatabase(this)
+        viewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         val usersObserver = Observer<List<User>> { users ->
             Logger.debug("users = $users")
@@ -27,26 +32,26 @@ class MainActivity : AppCompatActivity() {
         }
 
         GlobalScope.launch {
-            userDatabase.clearAllTables()
+            UserDatabase.getDatabase(this@MainActivity).clearAllTables()
 
             withContext(Dispatchers.Main) {
-                userDatabase.userDao().allLive.observe(this@MainActivity, usersObserver);
-                userDatabase.groupDao().allLive.observe(this@MainActivity, groupsObserver);
+                viewModel.allUsers.observe(this@MainActivity, usersObserver);
+                viewModel.allGroups.observe(this@MainActivity, groupsObserver);
             }
 
             val group = Group(UUID.randomUUID(), "coi")
             group.createdTime = Date()
             Logger.debug("group = $group")
-            userDatabase.groupDao().insert(group)
+            viewModel.insertGroup(group)
 
             val user = User(UUID.randomUUID(), "dailystudio")
             user.groupId = group.id
             Logger.debug("user = $user")
-            userDatabase.userDao().insert(user)
+            viewModel.insertUser(user)
 
             delay(1000)
 
-            userDatabase.groupDao().delete(group)
+            viewModel.delete(group)
         }
     }
 }
