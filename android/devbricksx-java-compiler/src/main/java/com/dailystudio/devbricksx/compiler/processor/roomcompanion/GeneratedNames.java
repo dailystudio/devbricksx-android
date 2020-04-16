@@ -10,6 +10,7 @@ public class GeneratedNames {
     private final static String COMPANION_PREFIX = "_";
     private final static String DATABASE_SUFFIX = "Database";
     private final static String DAO_SUFFIX = "Dao";
+    private final static String REPOSITORY_SUFFIX = "Repository";
 
     public static String getShadowMethodName(String method) {
         StringBuilder builder = new StringBuilder(method);
@@ -59,6 +60,14 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getRoomCompanionRepositoryName(String className) {
+        StringBuilder builder = new StringBuilder(className);
+
+        builder.append(REPOSITORY_SUFFIX);
+
+        return builder.toString();
+    }
+
     public static String getRoomCompanionDatabaseName(String className) {
         StringBuilder builder = new StringBuilder(className);
 
@@ -77,6 +86,15 @@ public class GeneratedNames {
         if (!database.endsWith(DATABASE_SUFFIX)) {
             builder.append(DATABASE_SUFFIX);
         }
+
+        return builder.toString();
+    }
+
+    public static String getRepositoryAllObjectsMethodName(String className) {
+        StringBuilder builder = new StringBuilder("getAll");
+
+        builder.append(className);
+        builder.append('s');
 
         return builder.toString();
     }

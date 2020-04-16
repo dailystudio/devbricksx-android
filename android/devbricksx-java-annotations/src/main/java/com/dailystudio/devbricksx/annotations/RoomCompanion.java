@@ -17,5 +17,8 @@ public @interface RoomCompanion {
     Class<?>[] converters() default {};
     ForeignKey[] foreignKeys() default {};
     Index[] indices() default {};
+
+    boolean repository() default true;
+    String repositoryPackage() default "";
 }
 

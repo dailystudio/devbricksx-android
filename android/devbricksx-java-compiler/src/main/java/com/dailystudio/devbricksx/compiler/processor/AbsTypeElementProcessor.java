@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.compiler.processor;
 
 import com.dailystudio.devbricksx.compiler.utils.LogUtils;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -10,6 +11,19 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 public abstract class AbsTypeElementProcessor {
+
+    public static class GeneratedResult {
+
+        public String packageName;
+        public TypeSpec.Builder builder;
+
+        public GeneratedResult(String packageName,
+                               TypeSpec.Builder builder) {
+            this.packageName = packageName;
+            this.builder = builder;
+        }
+
+    }
 
     protected Types mTypes;
     protected Filer mFiler;

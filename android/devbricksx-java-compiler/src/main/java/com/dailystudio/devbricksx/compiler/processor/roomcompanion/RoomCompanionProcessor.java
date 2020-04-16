@@ -9,6 +9,7 @@ import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementpr
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionDaoClassProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionDatabaseClassProcessor;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor.RoomCompanionRepositoryClassProcessor;
 import com.google.auto.service.AutoService;
 
 import java.lang.annotation.Annotation;
@@ -38,6 +39,7 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         singleProcessors = new ArrayList<>();
         singleProcessors.add(new RoomCompanionClassProcessor());
         singleProcessors.add(new RoomCompanionDaoClassProcessor());
+        singleProcessors.add(new RoomCompanionRepositoryClassProcessor());
 
         ELEMENT_PROCESSORS.put(RoomCompanion.class, singleProcessors);
 

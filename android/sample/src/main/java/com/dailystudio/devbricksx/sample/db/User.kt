@@ -11,7 +11,8 @@ import java.util.*
                 parentColumns = ["id"],
                 childColumns = ["group_id"],
                 onDelete = ForeignKey.CASCADE
-        )]
+        )],
+        repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
 )
 class User (
         @JvmField val id: UUID,

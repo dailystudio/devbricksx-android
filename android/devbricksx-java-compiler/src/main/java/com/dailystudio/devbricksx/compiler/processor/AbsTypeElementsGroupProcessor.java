@@ -11,19 +11,6 @@ import javax.lang.model.element.TypeElement;
 
 public abstract class AbsTypeElementsGroupProcessor extends AbsTypeElementProcessor {
 
-    public static class GeneratedResult {
-
-        public String packageName;
-        public TypeSpec.Builder builder;
-
-        public GeneratedResult(String packageName,
-                               TypeSpec.Builder builder) {
-            this.packageName = packageName;
-            this.builder = builder;
-        }
-
-    }
-
     public void process(List<TypeElement> typeElements,
                         RoundEnvironment roundEnv,
                         Object preResults) {
@@ -31,14 +18,14 @@ public abstract class AbsTypeElementsGroupProcessor extends AbsTypeElementProces
             return;
         }
 
-        List<GeneratedResult> generatedPairs =
+        List<GeneratedResult> generatedResults =
                 onProcess(typeElements, roundEnv, preResults);
 
-        if (generatedPairs == null) {
+        if (generatedResults == null) {
             return;
         }
 
-        for (GeneratedResult result: generatedPairs) {
+        for (GeneratedResult result: generatedResults) {
             try {
                 JavaFile.builder(result.packageName,
                         result.builder.build())

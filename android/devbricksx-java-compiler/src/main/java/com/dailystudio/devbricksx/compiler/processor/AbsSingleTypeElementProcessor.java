@@ -1,12 +1,8 @@
 package com.dailystudio.devbricksx.compiler.processor;
 
 import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.TypeElement;
@@ -19,28 +15,30 @@ public abstract class AbsSingleTypeElementProcessor extends AbsTypeElementProces
         String packageName = getPackageNameOfTypeElement(typeElement);
         String typeName = getTypeNameOfTypeElement(typeElement);
 
-        TypeSpec.Builder classBuilder =
+        GeneratedResult result =
                 onProcess(typeElement, packageName, typeName, roundEnv, preResults);
-        if (classBuilder == null) {
+        if (result == null) {
             warn("no class generated for %s", typeElement);
 
             return;
         }
 
         try {
-            JavaFile.builder(packageName,
-                    classBuilder.build())
+            JavaFile.builder(result.packageName,
+                    result.builder.build())
                     .build()
                     .writeTo(mFiler);
         } catch (IOException e) {
-            error("generate class for %s failed: %s", typeElement, e.toString());
+            error("generate class for [pkg: %s, builder: %s] failed: %s",
+                    result.packageName, result.builder, e.toString());
         }
+
     }
 
-    protected abstract TypeSpec.Builder onProcess(TypeElement typeElement,
-                                                  String packageName,
-                                                  String typeName,
-                                                  RoundEnvironment roundEnv,
-                                                  Object preResults);
+    protected abstract GeneratedResult onProcess(TypeElement typeElement,
+                                                 String packageName,
+                                                 String typeName,
+                                                 RoundEnvironment roundEnv,
+                                                 Object preResults);
 
 }

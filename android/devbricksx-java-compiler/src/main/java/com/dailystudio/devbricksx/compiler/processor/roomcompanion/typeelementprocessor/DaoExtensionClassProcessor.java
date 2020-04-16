@@ -17,10 +17,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -29,17 +27,15 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.TypeMirror;
 
 public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
-    protected TypeSpec.Builder onProcess(TypeElement typeElement,
-                                         String packageName,
-                                         String typeName,
-                                         RoundEnvironment roundEnv,
-                                         Object preResults) {
+    protected GeneratedResult onProcess(TypeElement typeElement,
+                                        String packageName,
+                                        String typeName,
+                                        RoundEnvironment roundEnv,
+                                        Object preResults) {
         ClassName extension =  ClassName
                 .get(packageName, typeName);
         ClassName generatedClassName = ClassName
@@ -92,7 +88,7 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             }
         }
 
-        return classBuilder;
+        return new GeneratedResult(packageName, classBuilder);
     }
 
     private boolean isTypeNameOfList(TypeName typeName) {

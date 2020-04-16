@@ -6,7 +6,8 @@ import java.util.*
 
 @RoomCompanion(primaryKey = "id",
         database = "user",
-        indices = [ Index(value = ["name"]) ]
+        indices = [ Index(value = ["name"])],
+        repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
 )
 data class Group(@JvmField val id: UUID,
                  @JvmField val name: String) {
