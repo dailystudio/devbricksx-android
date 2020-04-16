@@ -54,4 +54,5 @@ class MainActivity : AppCompatActivity() {
             viewModel.delete(group)
         }
     }
+
 }
