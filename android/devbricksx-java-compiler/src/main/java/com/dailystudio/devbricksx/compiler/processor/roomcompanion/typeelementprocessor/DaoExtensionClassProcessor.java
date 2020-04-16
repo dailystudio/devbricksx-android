@@ -17,8 +17,10 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -33,7 +35,11 @@ import javax.lang.model.type.TypeMirror;
 public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
-    protected TypeSpec.Builder onProcess(TypeElement typeElement, String packageName, String typeName, RoundEnvironment roundEnv) {
+    protected TypeSpec.Builder onProcess(TypeElement typeElement,
+                                         String packageName,
+                                         String typeName,
+                                         RoundEnvironment roundEnv,
+                                         Object preResults) {
         ClassName extension =  ClassName
                 .get(packageName, typeName);
         ClassName generatedClassName = ClassName

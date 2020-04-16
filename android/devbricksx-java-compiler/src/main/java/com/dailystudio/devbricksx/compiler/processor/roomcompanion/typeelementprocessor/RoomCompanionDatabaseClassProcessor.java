@@ -171,7 +171,9 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
     }
 
     @Override
-    protected List<GeneratedResult> onProcess(List<TypeElement> typeElements, RoundEnvironment roundEnv) {
+    protected List<GeneratedResult> onProcess(List<TypeElement> typeElements,
+                                              RoundEnvironment roundEnv,
+                                              Object preResults) {
         if (typeElements == null) {
             return null;
         }

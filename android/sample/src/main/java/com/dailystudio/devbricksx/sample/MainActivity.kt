@@ -7,10 +7,7 @@ import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.sample.db.UserDatabase
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.Group
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -37,14 +34,19 @@ class MainActivity : AppCompatActivity() {
                 userDatabase.groupDao().allLive.observe(this@MainActivity, groupsObserver);
             }
 
-            val user = User(UUID.randomUUID(), "dailystudio")
-            Logger.debug("user = $user")
-            userDatabase.userDao().insert(user)
-
             val group = Group(UUID.randomUUID(), "coi")
             group.createdTime = Date()
             Logger.debug("group = $group")
             userDatabase.groupDao().insert(group)
+
+            val user = User(UUID.randomUUID(), "dailystudio")
+            user.groupId = group.id
+            Logger.debug("user = $user")
+            userDatabase.userDao().insert(user)
+
+            delay(1000)
+
+            userDatabase.groupDao().delete(group)
         }
     }
 }

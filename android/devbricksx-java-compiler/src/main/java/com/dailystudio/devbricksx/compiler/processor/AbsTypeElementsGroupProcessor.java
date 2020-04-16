@@ -25,13 +25,14 @@ public abstract class AbsTypeElementsGroupProcessor extends AbsTypeElementProces
     }
 
     public void process(List<TypeElement> typeElements,
-                        RoundEnvironment roundEnv) {
+                        RoundEnvironment roundEnv,
+                        Object preResults) {
         if (typeElements == null) {
             return;
         }
 
         List<GeneratedResult> generatedPairs =
-                onProcess(typeElements, roundEnv);
+                onProcess(typeElements, roundEnv, preResults);
 
         if (generatedPairs == null) {
             return;
@@ -50,7 +51,8 @@ public abstract class AbsTypeElementsGroupProcessor extends AbsTypeElementProces
         }
     }
 
-    protected abstract List<GeneratedResult> onProcess(
-            List<TypeElement> typeElements, RoundEnvironment roundEnv);
+    protected abstract List<GeneratedResult> onProcess(List<TypeElement> typeElements,
+                                                       RoundEnvironment roundEnv,
+                                                       Object preResults);
 
 }

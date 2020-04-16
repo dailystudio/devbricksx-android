@@ -9,7 +9,9 @@ import java.util.*
         converters = [UUIDConverter::class, DateConverter::class],
         foreignKeys = [ForeignKey(entity = Group::class,
                 parentColumns = ["id"],
-                childColumns = ["group_id"])]
+                childColumns = ["group_id"],
+                onDelete = ForeignKey.CASCADE
+        )]
 )
 class User (
         @JvmField val id: UUID,
