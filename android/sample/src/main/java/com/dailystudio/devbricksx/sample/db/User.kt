@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.sample.db
 import androidx.room.ForeignKey
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
+import com.dailystudio.devbricksx.sample.repository.UserRepository
 import java.util.*
 
 @RoomCompanion(primaryKey = "id", database = "user",
@@ -15,7 +16,8 @@ import java.util.*
         )],
         repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
 )
-@ViewModel
+@ViewModel(group = "user",
+        packageName = "com.dailystudio.devbricksx.sample.model")
 class User (
         @JvmField val id: UUID,
         @JvmField val name: String) {

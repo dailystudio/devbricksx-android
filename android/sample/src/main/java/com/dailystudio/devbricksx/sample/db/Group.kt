@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.sample.db
 
 import androidx.room.Index
 import com.dailystudio.devbricksx.annotations.RoomCompanion
+import com.dailystudio.devbricksx.annotations.ViewModel
 import java.util.*
 
 @RoomCompanion(primaryKey = "id",
@@ -9,6 +10,7 @@ import java.util.*
         indices = [ Index(value = ["name"])],
         repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
 )
+@ViewModel(group = "user")
 data class Group(@JvmField val id: UUID,
                  @JvmField val name: String) {
 
