@@ -3,13 +3,12 @@ package com.dailystudio.devbricksx.sample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.sample.db.UserDatabase
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.Group
-import com.dailystudio.devbricksx.sample.ui.UserViewModel
+import com.dailystudio.devbricksx.sample.model.UserViewModel
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -51,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
             delay(1000)
 
-            viewModel.delete(group)
+            viewModel.deleteGroup(group)
         }
     }
 

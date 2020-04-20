@@ -16,11 +16,10 @@ import java.util.*
         )],
         repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
 )
-@ViewModel(group = "user",
-        packageName = "com.dailystudio.devbricksx.sample.model")
+@ViewModel(packageName = "com.dailystudio.devbricksx.sample.model")
 class User (
-        @JvmField val id: UUID,
-        @JvmField val name: String) {
+@JvmField val id: UUID,
+@JvmField val name: String) {
     @JvmField var firstName: String? = null
     @JvmField var lastName: String? = null
     @JvmField var age: Int = 0

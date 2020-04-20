@@ -58,5 +58,35 @@ class GeneratedNames {
             }
         }
 
+        fun getPluralMethodName(methodName: String,
+                                className: String): String {
+            return buildString {
+                this.append(methodName)
+                this.append(className.capitalize())
+                this.append('s')
+            }
+        }
+
+        fun getMethodName(methodName: String,
+                          className: String): String {
+            return buildString {
+                this.append(methodName)
+                this.append(className.capitalize())
+            }
+        }
+
+        fun getObjectVariableName(className: String): String {
+            return buildString {
+                this.append(className.lowerCamelCaseName())
+            }
+        }
+
+        fun getObjectsVariableName(className: String): String {
+            return buildString {
+                this.append(className.lowerCamelCaseName())
+                this.append('s')
+            }
+        }
+
     }
 }

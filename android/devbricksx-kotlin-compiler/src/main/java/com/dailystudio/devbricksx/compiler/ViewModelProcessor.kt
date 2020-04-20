@@ -27,8 +27,6 @@ class ViewModelProcessor : AbstractProcessor() {
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        println("hello world")
-
         val viewModelGroups = mutableMapOf<String, MutableList<TypeElement>>()
         roundEnv.getElementsAnnotatedWith(ViewModel::class.java)
                 .forEach {
@@ -108,16 +106,6 @@ class ViewModelProcessor : AbstractProcessor() {
             generateFacilitiesForElement(group, it, classBuilder)
         }
 
-//        classBuilder.addInitializerBlock(CodeBlock.of(
-//                "        val userDao = UserDatabase.getDatabase(application).userDao()\n" +
-//                "        val groupDao = UserDatabase.getDatabase(application).groupDao()\n" +
-//                "\n" +
-//                "        userRepository = UserRepository(userDao)\n" +
-//                "        groupRepository = GroupRepository(groupDao)\n" +
-//                "\n" +
-//                "        allUsers = userRepository.allUsers\n" +
-//                "        allGroups = groupRepository.allGroups\n"))
-
         return GeneratedResult(packageName, classBuilder)
     }
 
@@ -133,24 +121,85 @@ class ViewModelProcessor : AbstractProcessor() {
         val allName = GeneratedNames.getAllObjectPropertyName(typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
         val databaseName = GeneratedNames.getDatabaseName(group.capitalize())
+        val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
+        val objectsVariableName = GeneratedNames.getObjectsVariableName(typeName)
 
         val `object` = ClassName(packageName, typeName)
         val repo = ClassName(repoPackageName, repoName)
+        val liveOfObjects = TypeNamesUtils.getListOfTypeName(`object`)
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectName(`object`)
         val database = ClassName(packageName, databaseName)
+        val dispatchers = TypeNamesUtils.getDispatchersTypeName()
+        val viewModelScope = TypeNamesUtils.getViewModelScopeMemberName()
+        val launch = TypeNamesUtils.getLaunchMemberName()
+        val job = TypeNamesUtils.getJobTypeName()
 
         classBuilder.addProperty(repoVariableName, repo, KModifier.PRIVATE)
         classBuilder.addProperty(allName, liveDataOfListOfObjects)
 
         classBuilder.addInitializerBlock(CodeBlock.of(
-                "        val %N = %T.getDatabase(application).%N()\n" +
-                "        %N = %T(%N)\n" +
-                "        %N = %N.%N\n",
+                "   val %N = %T.getDatabase(application).%N()\n" +
+                "   %N = %T(%N)\n" +
+                "   %N = %N.%N\n",
                 daoVariableName, database, daoVariableName,
                 repoVariableName, repo, daoVariableName,
                 allName, repoVariableName, allName
         ))
 
+        val methodInsertOne = FunSpec.builder(GeneratedNames.getMethodName("insert", typeName))
+                .addParameter(objectVariableName, `object`)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.insert(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodInsertOne)
+
+        val methodInsertAll = FunSpec.builder(GeneratedNames.getPluralMethodName("insert", typeName))
+                .addParameter(objectsVariableName, liveOfObjects)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.insert(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectsVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodInsertAll)
+
+        val methodUpdateOne = FunSpec.builder(GeneratedNames.getMethodName("update", typeName))
+                .addParameter(objectVariableName, `object`)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.update(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodUpdateOne)
+
+        val methodUpdateAll = FunSpec.builder(GeneratedNames.getPluralMethodName("update", typeName))
+                .addParameter(objectsVariableName, liveOfObjects)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.update(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectsVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodUpdateAll)
+
+        val methodDeleteOne = FunSpec.builder(GeneratedNames.getMethodName("delete", typeName))
+                .addParameter(objectVariableName, `object`)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.delete(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodDeleteOne)
     }
 
     private fun writeToFile(result: GeneratedResult) {

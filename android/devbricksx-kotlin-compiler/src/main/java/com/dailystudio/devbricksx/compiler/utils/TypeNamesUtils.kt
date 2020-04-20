@@ -1,13 +1,29 @@
 package com.dailystudio.devbricksx.compiler.utils
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
-import java.lang.reflect.Type
 
 class TypeNamesUtils {
 
     companion object {
+
+        fun getViewModelScopeMemberName() : MemberName {
+            return MemberName("androidx.lifecycle", "viewModelScope")
+        }
+
+        fun getLaunchMemberName() : MemberName {
+            return MemberName("kotlinx.coroutines", "launch")
+        }
+
+        fun getJobTypeName() : ClassName {
+            return ClassName.bestGuess("kotlinx.coroutines.Job")
+        }
+
+        fun getDispatchersTypeName() : ClassName {
+            return ClassName.bestGuess("kotlinx.coroutines.Dispatchers")
+        }
 
         fun getAndroidViewModelTypeName(): ClassName {
             return ClassName.bestGuess("androidx.lifecycle.AndroidViewModel")
