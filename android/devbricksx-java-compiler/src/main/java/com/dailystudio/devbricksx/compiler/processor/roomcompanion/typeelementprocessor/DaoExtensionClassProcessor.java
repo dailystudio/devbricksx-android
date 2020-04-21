@@ -6,6 +6,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.dailystudio.devbricksx.annotations.DaoExtension;
+import com.dailystudio.devbricksx.annotations.Page;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
@@ -119,9 +120,19 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 TypeNamesUtils.getLiveDataOfListOfCompanionsTypeName(objectPackage, objectTypeName);
         TypeName liveDataOfCompanion =
                 TypeNamesUtils.getLiveDataOfCompanionTypeName(objectPackage, objectTypeName);
+        TypeName liveDataOfPagedObjectsList =
+                TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectPackage, objectTypeName);
+        TypeName dataSourceFactoryOfCompanions =
+                TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(objectPackage, objectTypeName);
 
         TypeName returnTypeName =
                 TypeName.get(executableElement.getReturnType());
+
+        int pageSize = Page.DEFAULT_PAGE_SIZE;
+        Page pageAnnotation = executableElement.getAnnotation(Page.class);
+        if (pageAnnotation != null) {
+            pageSize = pageAnnotation.pageSize();
+        }
 
         final boolean collectionOperation =
                 isTypeNameOfList(returnTypeName);
@@ -145,6 +156,8 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             methodSpecBuilder.returns(liveDataOfListOfCompanions);
         } else if (returnTypeName.equals(liveDataOfObject)) {
             methodSpecBuilder.returns(liveDataOfCompanion);
+        } else if (returnTypeName.equals(liveDataOfPagedObjectsList)) {
+            methodSpecBuilder.returns(dataSourceFactoryOfCompanions);
         }
 
         StringBuilder parametersBuilder = new StringBuilder();
@@ -196,6 +209,13 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         } else if (returnTypeName.equals(liveDataOfObject)) {
             MethodStatementsGenerator.outputLiveCompanionToLiveObject(
                     objectPackage, objectTypeName,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
+        } else if (returnTypeName.equals(liveDataOfPagedObjectsList)) {
+            MethodStatementsGenerator.outputDataSourceCompanionsToLiveObjects(
+                    objectPackage, objectTypeName,
+                    pageSize,
                     methodShadowSpecBuilder,
                     shadowMethodName, parametersBuilder.toString()
             );

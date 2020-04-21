@@ -37,7 +37,11 @@ dependencies {
     implementation "androidx.core:core-ktx:${project.ext.ktxCoreVersion}"
 
     // AppCompat
-    implementation "androidx.appcompat:appcompat:${project.ext.appCompatVersion}"
+    api "androidx.appcompat:appcompat:${project.ext.appCompatVersion}"
+
+    // Paging
+    api "androidx.paging:paging-runtime-ktx:${project.ext.pagingVersion}"
+    api "androidx.paging:paging-runtime:${project.ext.pagingVersion}"
 
     // Room relatives
     api "androidx.room:room-runtime:${project.ext.roomVersion}"

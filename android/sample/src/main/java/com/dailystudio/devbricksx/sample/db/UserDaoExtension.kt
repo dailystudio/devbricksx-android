@@ -1,11 +1,13 @@
 package com.dailystudio.devbricksx.sample.db
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.dailystudio.devbricksx.annotations.DaoExtension
+import com.dailystudio.devbricksx.annotations.Page
 
 @DaoExtension(entity = User::class)
 abstract class UserDaoExtension {
@@ -15,6 +17,10 @@ abstract class UserDaoExtension {
 
     @Query("SELECT * FROM user WHERE id IN (:ids)")
     abstract fun loadAllByIdsLive(ids: IntArray): LiveData<List<User>>
+
+    @Query("SELECT * FROM user WHERE id IN (:ids) ORDER BY id ASC")
+    @Page(pageSize = 50)
+    abstract fun loadAllByIdsLivePaged(ids: IntArray): LiveData<PagedList<User>>
 
     @Query("SELECT * FROM user WHERE id == :id")
     abstract fun findById(id: String): User
