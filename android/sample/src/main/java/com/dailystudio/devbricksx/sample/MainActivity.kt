@@ -38,15 +38,18 @@ class MainActivity : AppCompatActivity() {
                 userViewModel.allGroups.observe(this@MainActivity, groupsObserver);
             }
 
-            val group = Group(UUID.randomUUID(), "coi")
-            group.createdTime = Date()
-            Logger.debug("group = $group")
-            userViewModel.insertGroup(group)
+            for (i in 0..20) {
+                val group = Group(UUID.randomUUID(), "group_$i")
+                group.createdTime = Date()
+                Logger.debug("group = $group")
+                userViewModel.insertGroup(group)
+                delay(200)
+            }
 
-            val user = User(UUID.randomUUID(), "dailystudio")
-            user.groupId = group.id
-            Logger.debug("user = $user")
-            userViewModel.insertUser(user)
+//            val user = User(UUID.randomUUID(), "dailystudio")
+//            user.groupId = group.id
+//            Logger.debug("user = $user")
+//            userViewModel.insertUser(user)
 
 //            delay(1000)
 //

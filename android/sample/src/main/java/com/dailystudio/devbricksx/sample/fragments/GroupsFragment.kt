@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
 import com.dailystudio.devbricksx.R
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.Group
 import com.dailystudio.devbricksx.sample.model.UserViewModel
 
@@ -27,12 +29,17 @@ class GroupsFragment : AbsRecyclerViewFragment<PagedList<Group>, GroupsAdapter, 
         return viewModel.allGroupsPaged
     }
 
-    override fun getAdapter(): GroupsAdapter {
+    override fun onCreateAdapter(): GroupsAdapter {
         return GroupsAdapter()
     }
 
-    override fun submitData(adapter: RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>, data: PagedList<Group>) {
-        getAdapter().submitList(data)
+    override fun submitData(adapter: GroupsAdapter, data: PagedList<Group>) {
+        Logger.debug("submit data: $data")
+        adapter.submitList(data)
+    }
+
+    override fun onCreateLayoutManager(): RecyclerView.LayoutManager {
+        return LinearLayoutManager(context)
     }
 
 }
