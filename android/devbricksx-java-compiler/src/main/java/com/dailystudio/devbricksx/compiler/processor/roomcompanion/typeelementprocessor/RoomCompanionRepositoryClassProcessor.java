@@ -1,22 +1,11 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.Transaction;
-import androidx.room.Update;
-
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
-import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
-import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.dailystudio.devbricksx.compiler.utils.TextUtils;
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
@@ -63,6 +52,8 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
                 TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
         TypeName liveDataOfListOfObjects =
                 TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(packageName, typeName);
+        TypeName liveDataOfPagedListOfObjects =
+                TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(packageName, typeName);
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC);
@@ -88,6 +79,15 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
         methodGetAllLiveBuilder.addStatement("return $N.getAllLive()", daoFieldName);
 
         classBuilder.addMethod(methodGetAllLiveBuilder.build());
+
+        MethodSpec.Builder methodGetAllLivePagedBuilder =
+                MethodSpec.methodBuilder(GeneratedNames.getRepositoryAllObjectsPagedMethodName(typeName))
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(liveDataOfPagedListOfObjects);
+
+        methodGetAllLivePagedBuilder.addStatement("return $N.getAllLivePaged()", daoFieldName);
+
+        classBuilder.addMethod(methodGetAllLivePagedBuilder.build());
 
         MethodSpec methodInsertOne = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)

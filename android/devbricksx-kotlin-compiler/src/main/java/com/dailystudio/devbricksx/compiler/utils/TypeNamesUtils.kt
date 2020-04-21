@@ -37,6 +37,10 @@ class TypeNamesUtils {
             return ClassName("kotlin.collections", "List")
         }
 
+        fun getPagedListTypeName(): ClassName {
+            return ClassName("androidx.paging", "PagedList")
+        }
+
         fun getArrayListTypeName(): ClassName {
             return ClassName("kotlin.collections", "ArrayList")
         }
@@ -57,8 +61,18 @@ class TypeNamesUtils {
             return liveData.parameterizedBy(typeName)
         }
 
-        fun getLiveDataOfListOfObjectName(typeName: TypeName): TypeName {
+        fun getLiveDataOfListOfObjectTypeName(typeName: TypeName): TypeName {
             return getLiveDataOfTypeName(getListOfTypeName(typeName))
+        }
+
+        fun getPageListOfTypeName(typeClassName: TypeName): TypeName {
+            val pagedList = getPagedListTypeName()
+
+            return pagedList.parameterizedBy(typeClassName)
+        }
+
+        fun getLiveDataOfPagedListOfObjectsTypeName(typeName: TypeName): TypeName {
+            return getLiveDataOfTypeName(getPageListOfTypeName(typeName))
         }
 
     }

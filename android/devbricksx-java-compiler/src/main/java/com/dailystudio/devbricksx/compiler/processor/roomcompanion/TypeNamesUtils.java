@@ -72,9 +72,9 @@ public class TypeNamesUtils {
     }
 
     public static TypeName getPageListOfTypeName(TypeName typeClassName) {
-        ClassName factory = ClassName.get("androidx.paging", "PagedList");
+        ClassName pagedList = ClassName.get("androidx.paging", "PagedList");
 
-        return ParameterizedTypeName.get(factory, typeClassName);
+        return ParameterizedTypeName.get(pagedList, typeClassName);
     }
 
     public static ClassName getPagedListBuilderTypeName() {

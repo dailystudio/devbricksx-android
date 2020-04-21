@@ -118,7 +118,8 @@ class ViewModelProcessor : AbstractProcessor() {
         val repoName = GeneratedNames.getRepositoryName(typeName)
         val repoVariableName = repoName.lowerCamelCaseName()
         val repoPackageName = GeneratedNames.getRepositoryPackageName(packageName)
-        val allName = GeneratedNames.getAllObjectPropertyName(typeName)
+        val allName = GeneratedNames.getAllObjectsPropertyName(typeName)
+        val allPagedName = GeneratedNames.getAllObjectsPagedPropertyName(typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
         val databaseName = GeneratedNames.getDatabaseName(group.capitalize())
         val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
@@ -127,7 +128,8 @@ class ViewModelProcessor : AbstractProcessor() {
         val `object` = ClassName(packageName, typeName)
         val repo = ClassName(repoPackageName, repoName)
         val liveOfObjects = TypeNamesUtils.getListOfTypeName(`object`)
-        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectName(`object`)
+        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectTypeName(`object`)
+        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(`object`)
         val database = ClassName(packageName, databaseName)
         val dispatchers = TypeNamesUtils.getDispatchersTypeName()
         val viewModelScope = TypeNamesUtils.getViewModelScopeMemberName()
@@ -136,14 +138,17 @@ class ViewModelProcessor : AbstractProcessor() {
 
         classBuilder.addProperty(repoVariableName, repo, KModifier.PRIVATE)
         classBuilder.addProperty(allName, liveDataOfListOfObjects)
+        classBuilder.addProperty(allPagedName, liveDataOfPagedListOfObjects)
 
         classBuilder.addInitializerBlock(CodeBlock.of(
                 "   val %N = %T.getDatabase(application).%N()\n" +
                 "   %N = %T(%N)\n" +
+                "   %N = %N.%N\n" +
                 "   %N = %N.%N\n",
                 daoVariableName, database, daoVariableName,
                 repoVariableName, repo, daoVariableName,
-                allName, repoVariableName, allName
+                allName, repoVariableName, allName,
+                allPagedName, repoVariableName, allPagedName
         ))
 
         val methodInsertOne = FunSpec.builder(GeneratedNames.getMethodName("insert", typeName))

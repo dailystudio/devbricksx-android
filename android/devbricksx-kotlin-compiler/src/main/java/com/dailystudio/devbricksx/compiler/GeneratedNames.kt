@@ -50,11 +50,20 @@ class GeneratedNames {
             }.lowerCamelCaseName()
         }
 
-        fun getAllObjectPropertyName(className: String) : String {
+        fun getAllObjectsPropertyName(className: String) : String {
             return buildString {
                 this.append("all")
                 this.append(className)
                 this.append("s")
+            }
+        }
+
+        fun getAllObjectsPagedPropertyName(className: String) : String {
+            return buildString {
+                this.append("all")
+                this.append(className)
+                this.append("s")
+                this.append("Paged")
             }
         }
 

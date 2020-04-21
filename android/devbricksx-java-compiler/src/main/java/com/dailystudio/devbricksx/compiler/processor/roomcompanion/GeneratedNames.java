@@ -99,4 +99,14 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getRepositoryAllObjectsPagedMethodName(String className) {
+        StringBuilder builder = new StringBuilder("getAll");
+
+        builder.append(className);
+        builder.append('s');
+        builder.append("Paged");
+
+        return builder.toString();
+    }
+
 }

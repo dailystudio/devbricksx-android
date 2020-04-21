@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 
-open abstract class AbsRecyclerViewFragment<T, VH : RecyclerView.ViewHolder?> : Fragment() {
+open abstract class AbsRecyclerViewFragment<T, A : RecyclerView.Adapter<VH>, VH : RecyclerView.ViewHolder?> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,7 +22,7 @@ open abstract class AbsRecyclerViewFragment<T, VH : RecyclerView.ViewHolder?> : 
     }
 
     abstract fun getLiveData(): LiveData<T>
-    abstract fun getAdapter(): RecyclerView.Adapter<VH>
+    abstract fun getAdapter(): A
     abstract fun submitData(adapter: RecyclerView.Adapter<VH>,
                             data: T)
 
