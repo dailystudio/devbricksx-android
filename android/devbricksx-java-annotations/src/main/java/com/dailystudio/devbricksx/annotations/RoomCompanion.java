@@ -12,12 +12,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface RoomCompanion {
     String primaryKey();
-    String database() default "";
     Class<?> extension() default Void.class;
     Class<?>[] converters() default {};
     ForeignKey[] foreignKeys() default {};
     Index[] indices() default {};
 
+    // database settings
+    String database() default "";
+
+    // dao settings
+    int pageSize() default 10;
+
+    // repository settings
     boolean repository() default true;
     String repositoryPackage() default "";
 }

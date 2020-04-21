@@ -65,6 +65,24 @@ public class TypeNamesUtils {
         return ParameterizedTypeName.get(list, typeClassName);
     }
 
+    public static TypeName getDataSourceFactoryOfTypeName(TypeName typeClassName) {
+        ClassName factory = ClassName.get("androidx.paging.DataSource", "Factory");
+
+        return ParameterizedTypeName.get(factory, ClassName.get(Integer.class), typeClassName);
+    }
+
+    public static TypeName getPageListOfTypeName(TypeName typeClassName) {
+        ClassName factory = ClassName.get("androidx.paging", "PagedList");
+
+        return ParameterizedTypeName.get(factory, typeClassName);
+    }
+
+    public static ClassName getPagedListBuilderTypeName() {
+        ClassName builder = ClassName.get("androidx.paging", "LivePagedListBuilder");
+
+        return builder;
+    }
+
     public static ClassName getObjectTypeName(String packageName, String typeElementName) {
         return ClassName.get(packageName, typeElementName);
     }
@@ -96,6 +114,30 @@ public class TypeNamesUtils {
     public static ClassName getCompanionTypeName(String packageName, String typeElementName) {
         return ClassName.get(packageName,
                 GeneratedNames.getRoomCompanionName(typeElementName));
+    }
+
+    public static TypeName getDataSourceFactoryOfCompanionsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getDataSourceFactoryOfTypeName(getCompanionTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getDataSourceFactoryOfObjectsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getDataSourceFactoryOfTypeName(getObjectTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getPagedListOfObjectsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getPageListOfTypeName(getObjectTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getPagedListOfCompanionsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getPageListOfTypeName(getCompanionTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getLiveDataOfPagedListOfObjectsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getLiveDataOfTypeName(getPagedListOfObjectsTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getLiveDataOfPagedListOfCompanionsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getLiveDataOfTypeName(getPagedListOfCompanionsTypeName(packageName, typeElementName));
     }
 
 }

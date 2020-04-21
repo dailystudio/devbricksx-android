@@ -57,6 +57,13 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                             GeneratedNames.getDaoExtensionCompanionName(daoExtension.simpleName())));
         }
 
+        int pageSize = companionAnnotation.pageSize();
+        if (pageSize <= 0) {
+            error("page size must be positive.");
+
+            return null;
+        }
+
         String tableName = GeneratedNames.getTableName(typeName);
         ClassName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
         ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
@@ -69,6 +76,8 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 TypeNamesUtils.getLiveDataOfListOfCompanionsTypeName(packageName, typeName);
         TypeName liveDataOfListOfObjects =
                 TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(packageName, typeName);
+        TypeName dataSourceFactoryOfCompanions =
+                TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(packageName, typeName);
 
         MethodSpec methodGetAll = MethodSpec.methodBuilder("_getAll")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -91,6 +100,17 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 ).build();
 
         classBuilder.addMethod(methodGetAllLive);
+
+        MethodSpec methodGetAllDataSourceFactory = MethodSpec.methodBuilder("_getAllDataSource")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .returns(dataSourceFactoryOfCompanions)
+                .addAnnotation(AnnotationSpec.builder(Query.class)
+                        .addMember("value", "$S",
+                                "SELECT * FROM `" + tableName + "`")
+                        .build()
+                ).build();
+
+        classBuilder.addMethod(methodGetAllDataSourceFactory);
 
         MethodSpec methodInsertOne = MethodSpec.methodBuilder("_insert")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -199,6 +219,20 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 methodGetAllLive.name);
 
         classBuilder.addMethod(methodGetAllLiveWrapperBuilder.build());
+
+        MethodSpec.Builder methodGetAllLivePagedWrapperBuilder =
+                MethodSpec.methodBuilder("getAllLivePaged")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(liveDataOfListOfObjects);
+
+        MethodStatementsGenerator.outputDataSourceCompanionsToLiveObjects(
+                packageName,
+                typeName,
+                pageSize,
+                methodGetAllLivePagedWrapperBuilder,
+                methodGetAllDataSourceFactory.name);
+
+        classBuilder.addMethod(methodGetAllLivePagedWrapperBuilder.build());
 
         MethodSpec methodInsertOneWrapper = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)

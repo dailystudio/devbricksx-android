@@ -14,9 +14,10 @@ import java.util.*
                 childColumns = ["group_id"],
                 onDelete = ForeignKey.CASCADE
         )],
-        repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
+        repositoryPackage = "com.dailystudio.devbricksx.sample.repository",
+        pageSize = 50
 )
-@ViewModel(packageName = "com.dailystudio.devbricksx.sample.model")
+@ViewModel(group = "user", packageName = "com.dailystudio.devbricksx.sample.model")
 class User (
 @JvmField val id: UUID,
 @JvmField val name: String) {

@@ -10,6 +10,7 @@ import java.util.*
         indices = [ Index(value = ["name"])],
         repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
 )
+@ViewModel(group = "user")
 data class Group(@JvmField val id: UUID,
                  @JvmField val name: String) {
 
