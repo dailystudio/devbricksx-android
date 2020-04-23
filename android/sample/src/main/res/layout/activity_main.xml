@@ -7,7 +7,7 @@
     tools:context="com.dailystudio.devbricksx.sample.MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.sample.fragments.GroupsFragment"
+        android:name="com.dailystudio.devbricksx.sample.fragment.GroupsFragment"
         android:id="@+id/fragment_groups"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

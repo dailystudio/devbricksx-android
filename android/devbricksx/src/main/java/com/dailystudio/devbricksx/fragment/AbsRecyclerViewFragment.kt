@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 
-open abstract class AbsRecyclerViewFragment<T, A : RecyclerView.Adapter<VH>, VH : RecyclerView.ViewHolder?> : Fragment() {
+open abstract class AbsRecyclerViewFragment<T, A : RecyclerView.Adapter<*>> : Fragment() {
 
     private var adapter: A? = null
 

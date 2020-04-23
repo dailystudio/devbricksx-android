@@ -2,9 +2,10 @@ package com.dailystudio.devbricksx.sample.db
 
 import androidx.room.ForeignKey
 import com.dailystudio.devbricksx.annotations.Adapter
+import com.dailystudio.devbricksx.annotations.Fragment
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
-import com.dailystudio.devbricksx.sample.repository.UserRepository
+import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.ui.UserViewHolder
 import java.util.*
 
@@ -20,7 +21,8 @@ import java.util.*
         pageSize = 50
 )
 @ViewModel(group = "user", packageName = "com.dailystudio.devbricksx.sample.model")
-@Adapter(viewHolder = UserViewHolder::class)
+@Adapter(layout = R.layout.layout_user, viewHolder = UserViewHolder::class)
+@Fragment
 class User (
 @JvmField val id: UUID,
 @JvmField val name: String) {

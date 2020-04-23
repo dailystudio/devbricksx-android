@@ -6,6 +6,7 @@ class GeneratedNames {
     companion object {
         private const val VIEW_MODEL_SUFFIX = "ViewModel"
         private const val ADAPTER_SUFFIX = "Adapter"
+        private const val FRAGMENT_SUFFIX = "Fragment"
         private const val REPOSITORY_SUFFIX = "Repository"
         private const val DATABASE_SUFFIX = "Database"
         private const val DAO_SUFFIX = "Dao"
@@ -13,12 +14,25 @@ class GeneratedNames {
 
         private const val DATABASE_PACKAGE_SUFFIX = ".db"
         private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
+        private const val VIEW_MODEL_PACKAGE_SUFFIX = ".model"
         private const val UI_PACKAGE_SUFFIX = ".ui"
+        private const val FRAGMENT_PACKAGE_SUFFIX = ".fragment"
 
-        fun getViewModelName(groupName: String) : String {
+        fun getViewModelName(className: String) : String {
             return buildString {
-                this.append(groupName.capitalize())
+                this.append(className.capitalize())
                 this.append(VIEW_MODEL_SUFFIX)
+            }
+        }
+
+        fun getViewModelPackageName(packageName: String) : String {
+            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
+                return packageName
+            }
+
+            return buildString {
+                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
+                this.append(VIEW_MODEL_PACKAGE_SUFFIX)
             }
         }
 
@@ -27,6 +41,14 @@ class GeneratedNames {
                 this.append(className.capitalize())
                 this.append('s')
                 this.append(ADAPTER_SUFFIX)
+            }
+        }
+
+        fun getFragmentName(className: String) : String {
+            return buildString {
+                this.append(className.capitalize())
+                this.append('s')
+                this.append(FRAGMENT_SUFFIX)
             }
         }
 
@@ -56,6 +78,17 @@ class GeneratedNames {
             return buildString {
                 this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
                 this.append(UI_PACKAGE_SUFFIX)
+            }
+        }
+
+        fun getFragmentPackageName(packageName: String) : String {
+            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
+                return packageName
+            }
+
+            return buildString {
+                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
+                this.append(FRAGMENT_PACKAGE_SUFFIX)
             }
         }
 

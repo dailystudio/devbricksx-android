@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compiler.kotlin.utils
 
+import com.dailystudio.devbricksx.compiler.kotlin.GeneratedNames
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -8,6 +9,53 @@ import com.squareup.kotlinpoet.TypeName
 class TypeNamesUtils {
 
     companion object {
+
+        fun getDevbrickxRTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx", "R")
+        }
+
+        fun getViewTypeName() : ClassName {
+            return ClassName("android.view", "View")
+        }
+
+        fun getBundleTypeName() : ClassName {
+            return ClassName("android.os", "Bundle")
+        }
+
+        fun getViewModelProviderTypeName() : ClassName {
+            return ClassName("androidx.lifecycle", "ViewModelProvider")
+        }
+
+        fun getLayoutManagerTypeName() : ClassName {
+            return ClassName("androidx.recyclerview.widget.RecyclerView", "LayoutManager")
+        }
+
+        fun getLinearLayoutManagerTypeName() : ClassName {
+            return ClassName("androidx.recyclerview.widget", "LinearLayoutManager")
+        }
+
+        fun getGridLayoutManagerTypeName() : ClassName {
+            return ClassName("androidx.recyclerview.widget", "GridLayoutManager")
+        }
+
+        fun getAbsRecyclerViewFragmentTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
+        }
+
+        fun getAbsRecyclerViewFragmentOfTypeName(dataTypeName: TypeName,
+                                                 adapterTypeName: TypeName): TypeName {
+            val fragment = getAbsRecyclerViewFragmentTypeName()
+
+            return fragment.parameterizedBy(dataTypeName, adapterTypeName)
+        }
+
+        fun getViewGroupTypeName(): ClassName {
+            return ClassName("android.view", "ViewGroup")
+        }
+
+        fun getLayoutInflaterTypeName(): ClassName {
+            return ClassName("android.view", "LayoutInflater")
+        }
 
         fun getViewModelScopeMemberName() : MemberName {
             return MemberName("androidx.lifecycle", "viewModelScope")
@@ -94,6 +142,18 @@ class TypeNamesUtils {
             val itemCallback = getItemCallbackTypeName()
 
             return itemCallback.parameterizedBy(typeName)
+        }
+
+        fun getAdapterTypeName(className: String,
+                               packageName: String) : ClassName {
+            return ClassName(GeneratedNames.getAdapterPackageName(packageName),
+                    GeneratedNames.getAdapterName(className))
+        }
+
+        fun getViewModelTypeName(className: String,
+                                 packageName: String) : ClassName {
+            return ClassName(GeneratedNames.getViewModelPackageName(packageName),
+                    GeneratedNames.getViewModelName(className))
         }
 
     }

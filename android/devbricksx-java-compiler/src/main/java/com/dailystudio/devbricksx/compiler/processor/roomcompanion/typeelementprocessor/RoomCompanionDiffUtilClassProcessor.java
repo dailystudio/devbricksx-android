@@ -83,11 +83,6 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
         }
 
         ClassName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
-        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
-        TypeName listOfCompanions =
-                TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
-        TypeName listOfObjects =
-                TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
         TypeName itemCallbackOfObject = TypeNamesUtils.getItemCallbackOfTypeName(object);
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)

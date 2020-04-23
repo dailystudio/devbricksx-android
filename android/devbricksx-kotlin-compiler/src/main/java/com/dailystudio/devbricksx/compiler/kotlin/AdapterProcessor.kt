@@ -46,6 +46,7 @@ class AdapterProcessor : BaseProcessor() {
 
         val annotation = element.getAnnotation(Adapter::class.java)
         val paged = annotation.paged
+        val layout = annotation.layout
 
         val viewHolder = AnnotationsUtils.getClassValueFromAnnotation(element, "viewHolder")
                 ?: return null
@@ -56,13 +57,13 @@ class AdapterProcessor : BaseProcessor() {
         val pagedListAdapter = TypeNamesUtils.getPageListAdapterOfTypeName(objectTypeName, viewHolder)
         val itemCallback = TypeNamesUtils.getItemCallbackOfTypeName(objectTypeName)
         val diffUtils  = ClassName(packageName, GeneratedNames.getDiffUtilName(typeName))
+        val viewGroup = TypeNamesUtils.getViewGroupTypeName()
+        val layoutInflater = TypeNamesUtils.getLayoutInflaterTypeName()
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(pagedListAdapter)
                 .addSuperclassConstructorParameter("DIFF_CALLBACK")
-//                .primaryConstructor(FunSpec.constructorBuilder()
-//                        .addParameter("application", TypeNamesUtils.getApplicationTypeName())
-//                        .build()
+                .addModifiers(KModifier.OPEN)
 
         val classCompanionBuilder = TypeSpec.companionObjectBuilder();
 
@@ -71,6 +72,28 @@ class AdapterProcessor : BaseProcessor() {
                 .build())
 
         classBuilder.addType(classCompanionBuilder.build())
+
+        val methodOnCreateViewBuilder = FunSpec.builder("onCreateViewHolder")
+                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter("parent", viewGroup)
+                .addParameter("viewType", Int::class)
+                .addStatement("val layoutInflater = %T.from(parent.context)", layoutInflater)
+                .addStatement("val view = layoutInflater.inflate(%L, null)", layout)
+                .addStatement("return %T(view)", viewHolder)
+                .returns(viewHolder)
+
+        classBuilder.addFunction(methodOnCreateViewBuilder.build())
+
+        val methodOnBindViewBuilder = FunSpec.builder("onBindViewHolder")
+                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.OVERRIDE)
+                .addParameter("holder", viewHolder)
+                .addParameter("position", Int::class)
+                .addStatement("val item = getItem(position) ?: return")
+                .addStatement("holder.bind(item)")
+
+        classBuilder.addFunction(methodOnBindViewBuilder.build())
 
         return GeneratedResult(
                 GeneratedNames.getAdapterPackageName(packageName),
