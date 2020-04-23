@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
@@ -39,7 +40,7 @@ class GroupsFragment : AbsRecyclerViewFragment<PagedList<Group>, GroupsAdapter, 
     }
 
     override fun onCreateLayoutManager(): RecyclerView.LayoutManager {
-        return LinearLayoutManager(context)
+        return GridLayoutManager(context, 2)
     }
 
 }

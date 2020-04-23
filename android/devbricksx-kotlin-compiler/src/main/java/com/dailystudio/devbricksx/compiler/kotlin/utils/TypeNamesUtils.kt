@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.compiler.utils
+package com.dailystudio.devbricksx.compiler.kotlin.utils
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
@@ -31,6 +31,17 @@ class TypeNamesUtils {
 
         fun getApplicationTypeName(): ClassName {
             return ClassName.bestGuess("android.app.Application")
+        }
+
+        fun getPageListAdapterTypeName(): ClassName {
+            return ClassName("androidx.paging", "PagedListAdapter")
+        }
+
+        fun getPageListAdapterOfTypeName(`object`: TypeName,
+                                         viewHolder: TypeName): TypeName {
+            val listAdapter = getPageListAdapterTypeName()
+
+            return listAdapter.parameterizedBy(`object`, viewHolder)
         }
 
         fun getListTypeName(): ClassName {

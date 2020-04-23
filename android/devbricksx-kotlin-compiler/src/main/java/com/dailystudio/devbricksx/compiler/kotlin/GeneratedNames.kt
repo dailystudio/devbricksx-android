@@ -1,20 +1,31 @@
-package com.dailystudio.devbricksx.compiler
+package com.dailystudio.devbricksx.compiler.kotlin
 
-import com.dailystudio.devbricksx.compiler.utils.lowerCamelCaseName
+import com.dailystudio.devbricksx.compiler.kotlin.utils.lowerCamelCaseName
 
 class GeneratedNames {
     companion object {
         private const val VIEW_MODEL_SUFFIX = "ViewModel"
+        private const val ADAPTER_SUFFIX = "Adapter"
         private const val REPOSITORY_SUFFIX = "Repository"
         private const val DATABASE_SUFFIX = "Database"
         private const val DAO_SUFFIX = "Dao"
+
         private const val DATABASE_PACKAGE_SUFFIX = ".db"
         private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
+        private const val UI_PACKAGE_SUFFIX = ".ui"
 
         fun getViewModelName(groupName: String) : String {
             return buildString {
                 this.append(groupName.capitalize())
                 this.append(VIEW_MODEL_SUFFIX)
+            }
+        }
+
+        fun getAdapterName(className: String) : String {
+            return buildString {
+                this.append(className.capitalize())
+                this.append('s')
+                this.append(ADAPTER_SUFFIX)
             }
         }
 
@@ -33,6 +44,17 @@ class GeneratedNames {
             return buildString {
                 this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
                 this.append(REPOSITORY_PACKAGE_SUFFIX)
+            }
+        }
+
+        fun getAdapterPackageName(packageName: String) : String {
+            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
+                return packageName
+            }
+
+            return buildString {
+                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
+                this.append(UI_PACKAGE_SUFFIX)
             }
         }
 

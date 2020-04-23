@@ -1,30 +1,22 @@
-package com.dailystudio.devbricksx.compiler
+package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.ViewModel
-import com.dailystudio.devbricksx.compiler.utils.TypeNamesUtils
-import com.dailystudio.devbricksx.compiler.utils.lowerCamelCaseName
+import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
+import com.dailystudio.devbricksx.compiler.kotlin.utils.lowerCamelCaseName
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
-import java.io.File
-import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
 @AutoService(Processor::class)
-class ViewModelProcessor : AbstractProcessor() {
-    companion object {
-        const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
-    }
+class ViewModelProcessor : BaseProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(ViewModel::class.java.name)
     }
-
-    override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         val viewModelGroups = mutableMapOf<String, MutableList<TypeElement>>()
@@ -205,21 +197,6 @@ class ViewModelProcessor : AbstractProcessor() {
                 .returns(job)
                 .build()
         classBuilder.addFunction(methodDeleteOne)
-    }
-
-    private fun writeToFile(result: GeneratedResult) {
-        val typeSpec = result.classBuilder.build()
-
-        typeSpec.name?.let { name ->
-            val fileBuilder = FileSpec.builder(
-                    result.packageName,
-                    name)
-
-            val file = fileBuilder.addType(typeSpec).build()
-
-            val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
-            file.writeTo(File(kaptKotlinGeneratedDir))
-        }
     }
 
 }

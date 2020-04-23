@@ -16,8 +16,6 @@ class GroupsAdapter : PagedListAdapter<Group, GroupsAdapter.GroupViewHolder> (DI
     companion object {
         private val DIFF_CALLBACK = object :
                 DiffUtil.ItemCallback<Group>() {
-            // Contact event details may have changed if reloaded from the database,
-            // but ID is fixed.
             override fun areItemsTheSame(
                     oldGroup: Group,
                     newGroup: Group

@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.compiler.utils
+package com.dailystudio.devbricksx.compiler.kotlin.utils
 
 import java.lang.StringBuilder
 
