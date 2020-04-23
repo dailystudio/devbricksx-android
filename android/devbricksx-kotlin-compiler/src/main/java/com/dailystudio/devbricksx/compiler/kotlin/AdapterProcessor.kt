@@ -54,6 +54,8 @@ class AdapterProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val pagedListAdapter = TypeNamesUtils.getPageListAdapterOfTypeName(objectTypeName, viewHolder)
+        val itemCallback = TypeNamesUtils.getItemCallbackOfTypeName(objectTypeName)
+        val diffUtils  = ClassName(packageName, GeneratedNames.getDiffUtilName(typeName))
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(pagedListAdapter)
@@ -61,6 +63,14 @@ class AdapterProcessor : BaseProcessor() {
 //                .primaryConstructor(FunSpec.constructorBuilder()
 //                        .addParameter("application", TypeNamesUtils.getApplicationTypeName())
 //                        .build()
+
+        val classCompanionBuilder = TypeSpec.companionObjectBuilder();
+
+        classCompanionBuilder.addProperty(PropertySpec.builder("DIFF_CALLBACK", itemCallback)
+                .initializer("%T()", diffUtils)
+                .build())
+
+        classBuilder.addType(classCompanionBuilder.build())
 
         return GeneratedResult(
                 GeneratedNames.getAdapterPackageName(packageName),

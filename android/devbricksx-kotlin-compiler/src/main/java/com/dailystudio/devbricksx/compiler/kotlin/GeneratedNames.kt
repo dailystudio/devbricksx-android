@@ -9,6 +9,7 @@ class GeneratedNames {
         private const val REPOSITORY_SUFFIX = "Repository"
         private const val DATABASE_SUFFIX = "Database"
         private const val DAO_SUFFIX = "Dao"
+        private const val DIFF_UTIL_SUFFIX = "DiffUtil"
 
         private const val DATABASE_PACKAGE_SUFFIX = ".db"
         private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
@@ -55,6 +56,13 @@ class GeneratedNames {
             return buildString {
                 this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
                 this.append(UI_PACKAGE_SUFFIX)
+            }
+        }
+
+        fun getDiffUtilName(className: String) : String {
+            return buildString {
+                this.append(className)
+                this.append(DIFF_UTIL_SUFFIX)
             }
         }
 

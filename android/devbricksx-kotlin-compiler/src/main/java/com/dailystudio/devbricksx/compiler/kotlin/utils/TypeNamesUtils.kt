@@ -86,5 +86,15 @@ class TypeNamesUtils {
             return getLiveDataOfTypeName(getPageListOfTypeName(typeName))
         }
 
+        fun getItemCallbackTypeName(): ClassName {
+            return ClassName("androidx.recyclerview.widget.DiffUtil", "ItemCallback")
+        }
+
+        fun getItemCallbackOfTypeName(typeName: TypeName): TypeName {
+            val itemCallback = getItemCallbackTypeName()
+
+            return itemCallback.parameterizedBy(typeName)
+        }
+
     }
 }
