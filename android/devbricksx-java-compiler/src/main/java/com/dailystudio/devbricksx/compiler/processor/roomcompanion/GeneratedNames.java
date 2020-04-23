@@ -11,6 +11,7 @@ public class GeneratedNames {
     private final static String DATABASE_SUFFIX = "Database";
     private final static String DAO_SUFFIX = "Dao";
     private final static String REPOSITORY_SUFFIX = "Repository";
+    private final static String DIFF_UTIL_PREFIX = "DiffUtil";
 
     public static String getShadowMethodName(String method) {
         StringBuilder builder = new StringBuilder(method);
@@ -48,6 +49,14 @@ public class GeneratedNames {
         StringBuilder builder = new StringBuilder(className);
 
         builder.insert(0, COMPANION_PREFIX);
+
+        return builder.toString();
+    }
+
+    public static String getDiffUtilName(String className) {
+        StringBuilder builder = new StringBuilder(className);
+
+        builder.insert(0, DIFF_UTIL_PREFIX);
 
         return builder.toString();
     }

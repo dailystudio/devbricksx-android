@@ -49,6 +49,16 @@ public class TypeNamesUtils {
         return ClassName.get("java.util", "ArrayList");
     }
 
+    public static ClassName getItemCallbackTypeName() {
+        return ClassName.get("androidx.recyclerview.widget.DiffUtil", "ItemCallback");
+    }
+
+    public static TypeName getItemCallbackOfTypeName(TypeName typeClassName) {
+        ClassName itemCallback = getItemCallbackTypeName();
+
+        return ParameterizedTypeName.get(itemCallback, typeClassName);
+    }
+
     public static TypeName getListOfTypeName(Class<?> primitiveClass) {
         return ParameterizedTypeName.get(List.class, primitiveClass);
     }
