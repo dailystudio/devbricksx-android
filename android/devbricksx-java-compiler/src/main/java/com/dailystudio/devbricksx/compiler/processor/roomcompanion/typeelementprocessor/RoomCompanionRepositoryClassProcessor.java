@@ -33,10 +33,8 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
             return null;
         }
 
-        String targetPackage = companionAnnotation.repositoryPackage();
-        if (TextUtils.isEmpty(targetPackage)) {
-            targetPackage = packageName;
-        }
+        String targetPackage =
+                GeneratedNames.getRoomCompanionRepositoryPackageName(packageName);
 
         ClassName generatedClassName = ClassName
                 .get(targetPackage, GeneratedNames.getRoomCompanionRepositoryName(typeName));

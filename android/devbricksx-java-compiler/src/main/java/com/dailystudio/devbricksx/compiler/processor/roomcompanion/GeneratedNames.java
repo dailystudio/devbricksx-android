@@ -10,8 +10,12 @@ public class GeneratedNames {
     private final static String COMPANION_PREFIX = "_";
     private final static String DATABASE_SUFFIX = "Database";
     private final static String DAO_SUFFIX = "Dao";
-    private final static String REPOSITORY_SUFFIX = "Repository";
     private final static String DIFF_UTIL_SUFFIX = "DiffUtil";
+    private final static String REPOSITORY_SUFFIX = "Repository";
+
+    private final static String DATABASE_PACKAGE_SUFFIX = ".db";
+    private final static String REPOSITORY_PACKAGE_SUFFIX = ".repository";
+
 
     public static String getShadowMethodName(String method) {
         StringBuilder builder = new StringBuilder(method);
@@ -73,6 +77,23 @@ public class GeneratedNames {
         StringBuilder builder = new StringBuilder(className);
 
         builder.append(REPOSITORY_SUFFIX);
+
+        return builder.toString();
+    }
+
+    public static String getRoomCompanionRepositoryPackageName(String packageName) {
+        if (TextUtils.isEmpty(packageName)) {
+            return packageName;
+        }
+
+        if (packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
+            packageName = packageName.substring(0,
+                    packageName.length() - DATABASE_PACKAGE_SUFFIX.length());
+        }
+
+        StringBuilder builder = new StringBuilder(packageName);
+
+        builder.append(REPOSITORY_PACKAGE_SUFFIX);
 
         return builder.toString();
     }

@@ -12,8 +12,7 @@ import java.util.*
 
 @RoomCompanion(primaryKey = "id",
         database = "user",
-        indices = [ Index(value = ["name"])],
-        repositoryPackage = "com.dailystudio.devbricksx.sample.repository"
+        indices = [ Index(value = ["name"])]
 )
 @ViewModel(group = "user")
 @Adapter(layout = R.layout.layout_group, viewHolder = GroupViewHolder::class)

@@ -44,6 +44,7 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
         debug("group for database = [%s]", database);
 
         String packageName = getPackageNameOfTypeElement(typeElements.get(0));
+        debug("packageName for database = [%s]", packageName);
 
         ClassName generatedClassName = ClassName
                 .get(packageName, GeneratedNames.databaseToClassName(database));
@@ -68,9 +69,11 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
             typeElement = typeElements.get(i);
 
             typeName = getTypeNameOfTypeElement(typeElement);
+            debug("packageName of typeElement[%s]: %s",
+                    typeElement, getPackageNameOfTypeElement(typeElement));
 
-            if (!packageName.equals(getTypeNameOfTypeElement(typeElement))) {
-                warn("typeElement[%s] has different package name [%s] with rest ones in the same database.",
+            if (!packageName.equals(getPackageNameOfTypeElement(typeElement))) {
+                error("typeElement[%s] has different package name [%s] with rest ones in the same database.",
                         typeElement, packageName);
             }
 

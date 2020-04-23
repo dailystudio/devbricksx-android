@@ -12,10 +12,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface RoomCompanion {
     String primaryKey();
-    Class<?> extension() default Void.class;
     Class<?>[] converters() default {};
     ForeignKey[] foreignKeys() default {};
     Index[] indices() default {};
+
+    Class<?> extension() default Void.class;
 
     // database settings
     String database() default "";
@@ -25,6 +26,5 @@ public @interface RoomCompanion {
 
     // repository settings
     boolean repository() default true;
-    String repositoryPackage() default "";
 }
 

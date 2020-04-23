@@ -17,7 +17,6 @@ import java.util.*
                 childColumns = ["group_id"],
                 onDelete = ForeignKey.CASCADE
         )],
-        repositoryPackage = "com.dailystudio.devbricksx.sample.repository",
         pageSize = 50
 )
 @ViewModel(group = "user", packageName = "com.dailystudio.devbricksx.sample.model")
