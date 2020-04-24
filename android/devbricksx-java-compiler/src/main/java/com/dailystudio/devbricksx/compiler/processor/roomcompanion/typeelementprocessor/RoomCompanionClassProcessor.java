@@ -108,7 +108,14 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                 );
 
                 if (primaryKey.equals(varName)) {
-                    fieldSpecBuilder.addAnnotation(PrimaryKey.class);
+                    AnnotationSpec.Builder primaryKeySpecBuilder =
+                            AnnotationSpec.builder(PrimaryKey.class);
+
+                    if (companionAnnotation.autoGenerate()) {
+                        primaryKeySpecBuilder.addMember("autoGenerate", "$L", true);
+                    }
+
+                    fieldSpecBuilder.addAnnotation(primaryKeySpecBuilder.build());
                     fieldSpecBuilder.addAnnotation(NonNull.class);
                 }
 
@@ -119,7 +126,15 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
             } else if (subElement instanceof ExecutableElement) {
                 if (Constants.CONSTRUCTOR_NAME.equals(subElement.getSimpleName().toString())) {
                     debug("processing constructor: %s", subElement);
-                    constructorElement = (ExecutableElement) subElement;
+                    if (constructorElement == null) {
+                        constructorElement = (ExecutableElement) subElement;
+                    } else {
+                        final int newParamsCount = getParametersCount((ExecutableElement) subElement);
+                        final int oldParamsCount = getParametersCount(constructorElement);
+                        if (newParamsCount > oldParamsCount) {
+                            constructorElement = (ExecutableElement) subElement;
+                        }
+                    }
                 }
             }
         }
@@ -228,6 +243,12 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         classBuilder.addField(fieldListMapFunc.build());
 
         return new GeneratedResult(packageName, classBuilder);
+    }
+
+    private int getParametersCount(ExecutableElement executableElement) {
+        List<? extends VariableElement> params = executableElement.getParameters();
+
+        return params == null ? 0 : params.size();
     }
 
     private String buildForeignKeysString(TypeElement typeElement) {

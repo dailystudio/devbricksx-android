@@ -6,8 +6,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.sample.db.Event
 import com.dailystudio.devbricksx.sample.db.Group
 import com.dailystudio.devbricksx.sample.db.UserDatabase
+import com.dailystudio.devbricksx.sample.model.EventViewModel
 import com.dailystudio.devbricksx.sample.model.UserViewModel
 import kotlinx.coroutines.*
 import java.util.*
@@ -15,12 +17,14 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
+    private lateinit var eventViewModel: EventViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+        eventViewModel = ViewModelProvider(this).get(EventViewModel::class.java)
 
         val usersObserver = Observer<List<User>> { users ->
             Logger.debug("users = $users")
@@ -44,6 +48,12 @@ class MainActivity : AppCompatActivity() {
                 Logger.debug("group = $group")
                 userViewModel.insertGroup(group)
                 delay(200)
+            }
+
+            for (i in 0..10) {
+                val event = Event()
+
+                eventViewModel.insertEvent(event)
             }
 
 //            val user = User(UUID.randomUUID(), "dailystudio")

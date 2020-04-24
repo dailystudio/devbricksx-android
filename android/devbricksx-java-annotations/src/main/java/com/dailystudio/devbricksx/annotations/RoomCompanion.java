@@ -3,6 +3,8 @@ package com.dailystudio.devbricksx.annotations;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,6 +14,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface RoomCompanion {
     String primaryKey();
+    boolean autoGenerate() default false;
+
     Class<?>[] converters() default {};
     ForeignKey[] foreignKeys() default {};
     Index[] indices() default {};
