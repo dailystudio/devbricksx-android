@@ -31,5 +31,7 @@ It is quite similar as calling **Log** interfaces, but TAG is automatically gene
 ...
 ```
 
-If you derive you application from  **DevBricksApplication** , it enables or disables debug outputs according to your build type. But you can use **`setDebugEnabled()`** and **`setSecureDebugEnabled()`** to force enable or disable debug logging anywhere in your code.
+If you derive you application from  **DevBricksApplication** , it enables or disables debug outputs according to your build type. But you can use **`setDebugEnabled()`** and **`setSecureDebugEnabled()`** to force enable debug logging anywhere in your code.
+
+#
 

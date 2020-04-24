@@ -61,7 +61,7 @@ Then declare it in your **`AndroidMenifest.xml`**:
 <manifest>
 	...
 	<application
-        android:name=".MyApplication">
+		android:name=".MyApplication">
 		...
 	</application>
 	...
@@ -72,8 +72,13 @@ Then declare it in your **`AndroidMenifest.xml`**:
 Now you can enjoy this library in your own way. The facilities provided in this library include different topics, please read the instructions carefully in each topic for deatils.
 
 - [Logging](./docs/logging.md)
+> An enhanced logging system which can turn on/off debug outputs automatically.
+
 - [Gloabl Context](./docs/globalcontext.md)
+> A global context that you can use anywhere in your code without memory leaks.
+
 - [Database](./docs/database.md)
+> A set of utilities to simplify the usage of Android Room components. It can generate Room, Dao, Database, and Repository for a class through one annotation.
 
 ## License
 	Copyright 2020 Daily Studio.
