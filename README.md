@@ -1,2 +1,8 @@
-# devbricksx
-Devbricks eXetrems
+# DevBricks X
+[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19)
+
+**DevBricksX** is remake version of [DevBricks](https://github.com/dailystudio/devbricks). It provides plenty of useful classes which will be used in daily Android development. With these "bricks", your development will become:
+
+- **Efficient** : The classes provided by DevBricks almost cover all of the aspect in daily development, from low-end database to user interface. You do not need to waste your time on those repeating work.
+- **Reliable** :  It has been integrated into enuormous products. Your work will stand on stable foundation. 
+- **Consistent** : It includes unified logging system, database accessing, UI elements and styles. This make all of your applications has consistency at primary impression.
