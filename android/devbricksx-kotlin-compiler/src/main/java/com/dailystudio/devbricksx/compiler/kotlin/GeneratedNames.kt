@@ -66,36 +66,15 @@ class GeneratedNames {
         }
 
         fun getRepositoryPackageName(packageName: String) : String {
-            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
-                return packageName
-            }
-
-            return buildString {
-                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
-                this.append(REPOSITORY_PACKAGE_SUFFIX)
-            }
+            return getPackageName(packageName, REPOSITORY_PACKAGE_SUFFIX)
         }
 
         fun getAdapterPackageName(packageName: String) : String {
-            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
-                return packageName
-            }
-
-            return buildString {
-                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
-                this.append(UI_PACKAGE_SUFFIX)
-            }
+            return getPackageName(packageName, UI_PACKAGE_SUFFIX)
         }
 
         fun getFragmentPackageName(packageName: String) : String {
-            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
-                return packageName
-            }
-
-            return buildString {
-                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
-                this.append(FRAGMENT_PACKAGE_SUFFIX)
-            }
+            return getPackageName(packageName, FRAGMENT_PACKAGE_SUFFIX)
         }
 
         fun getDiffUtilName(className: String) : String {
