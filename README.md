@@ -7,8 +7,6 @@
 - **Reliable** :  It has been integrated into enuormous products. Your work will stand on stable foundation. 
 - **Consistent** : It includes unified logging system, database accessing, UI elements and styles. This make all of your applications has consistency at primary impression.
 
--
-
 #### Projects
 
 Now it only includes libraries for **Android**. It will be extended to support more libraries on **Node.js**, **Python** and **Flutter**.
