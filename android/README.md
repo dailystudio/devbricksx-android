@@ -32,7 +32,7 @@ This step helps you to integrate parts of utilities automatically, such as Loggi
 Extends you appication from **DevBricksApplication**:
 
 ```kotlin
-class DemoApplication : DevBricksApplication() {
+class MyApplication : DevBricksApplication() {
 
     override fun isDebugBuild(): Boolean {
         return BuildConfig.DEBUG
@@ -55,3 +55,9 @@ Then declare it in your **`AndroidMenifest.xml`**:
 </manifest>
 ```
 
+## Usage
+Now you can enjoy this library in your own way. The facilities provided in this library include different topics, please read the instructions carefully in each topic for deatils.
+
+- [Logging](./docs/logging.md)
+- [Gloabl Context](./docs/globalcontext.md)
+- [Database](./docs/database.md)
