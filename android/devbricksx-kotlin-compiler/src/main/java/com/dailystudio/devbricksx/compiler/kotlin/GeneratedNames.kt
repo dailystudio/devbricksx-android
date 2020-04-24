@@ -18,6 +18,19 @@ class GeneratedNames {
         private const val UI_PACKAGE_SUFFIX = ".ui"
         private const val FRAGMENT_PACKAGE_SUFFIX = ".fragment"
 
+        private fun getPackageName(packageName: String, suffix: String) : String {
+            var basePackage = if (packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
+                packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX)
+            } else {
+                packageName
+            }
+
+            return buildString {
+                this.append(basePackage)
+                this.append(suffix)
+            }
+        }
+
         fun getViewModelName(className: String) : String {
             return buildString {
                 this.append(className.capitalize())
@@ -26,14 +39,7 @@ class GeneratedNames {
         }
 
         fun getViewModelPackageName(packageName: String) : String {
-            if (!packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
-                return packageName
-            }
-
-            return buildString {
-                this.append(packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX))
-                this.append(VIEW_MODEL_PACKAGE_SUFFIX)
-            }
+            return getPackageName(packageName, VIEW_MODEL_PACKAGE_SUFFIX)
         }
 
         fun getAdapterName(className: String) : String {
@@ -101,7 +107,7 @@ class GeneratedNames {
 
         fun getDatabaseName(className: String) : String {
             return buildString {
-                this.append(className)
+                this.append(className.capitalize())
                 this.append(DATABASE_SUFFIX)
             }
         }

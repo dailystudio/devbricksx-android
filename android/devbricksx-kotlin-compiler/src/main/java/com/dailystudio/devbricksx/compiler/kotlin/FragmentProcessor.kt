@@ -55,11 +55,7 @@ class FragmentProcessor : BaseProcessor() {
             GeneratedNames.getViewModelName(typeName)
         }
 
-        val viewModelPackage = if (viewModelAnnotation.packageName.isNotBlank()) {
-            viewModelAnnotation.packageName
-        } else {
-            GeneratedNames.getViewModelPackageName(packageName)
-        }
+        val viewModelPackage = GeneratedNames.getViewModelPackageName(packageName)
         println("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
 
         val viewModel= ClassName(viewModelPackage, viewModelName)

@@ -9,6 +9,7 @@ targetCompatibility = 1.7
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':devbricksx-kotlin-annotations')
+    implementation project(':devbricksx-java-annotations')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

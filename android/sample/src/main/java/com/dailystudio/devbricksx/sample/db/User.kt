@@ -19,7 +19,7 @@ import java.util.*
         )],
         pageSize = 50
 )
-@ViewModel(group = "user", packageName = "com.dailystudio.devbricksx.sample.model")
+@ViewModel(group = "user")
 @Adapter(layout = R.layout.layout_user, viewHolder = UserViewHolder::class)
 @Fragment
 class User (

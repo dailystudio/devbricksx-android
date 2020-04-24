@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
+import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.lowerCamelCaseName
@@ -73,19 +74,10 @@ class ViewModelProcessor : BaseProcessor() {
 
         val generatedClassName = GeneratedNames.getViewModelName(group)
         var packageName = processingEnv.elementUtils.getPackageOf(elements[0]).toString()
-        if (elements.size == 1) {
-            val annotation = elements[0].getAnnotation(ViewModel::class.java)
-            if (annotation.packageName.isNotBlank()) {
-                packageName = annotation.packageName
-            }
-        } else {
-            elements.forEach {
-                val annotation = it.getAnnotation(ViewModel::class.java)
-                if (annotation.packageName.isNotBlank()) {
-                    packageName = annotation.packageName
-                }
-            }
-        }
+
+        val viewModelPackageName =
+                GeneratedNames.getViewModelPackageName(packageName)
+        println("group = $group, packageName = $packageName， viewModelPackage = $viewModelPackageName, generatedClassName = $generatedClassName")
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(TypeNamesUtils.getAndroidViewModelTypeName())
@@ -98,7 +90,7 @@ class ViewModelProcessor : BaseProcessor() {
             generateFacilitiesForElement(group, it, classBuilder)
         }
 
-        return GeneratedResult(packageName, classBuilder)
+        return GeneratedResult(viewModelPackageName, classBuilder)
     }
 
     private fun generateFacilitiesForElement(`group`: String,
@@ -106,6 +98,14 @@ class ViewModelProcessor : BaseProcessor() {
                                              classBuilder: TypeSpec.Builder) {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+        println("typeName = $typeName, group = $group")
+
+        val roomCompanion = element.getAnnotation(RoomCompanion::class.java)
+        val databaseName = if (roomCompanion != null && roomCompanion.database.isNotBlank()) {
+            GeneratedNames.getDatabaseName(roomCompanion.database)
+        } else {
+            GeneratedNames.getDatabaseName(typeName)
+        }
 
         val repoName = GeneratedNames.getRepositoryName(typeName)
         val repoVariableName = repoName.lowerCamelCaseName()
@@ -113,7 +113,6 @@ class ViewModelProcessor : BaseProcessor() {
         val allName = GeneratedNames.getAllObjectsPropertyName(typeName)
         val allPagedName = GeneratedNames.getAllObjectsPagedPropertyName(typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
-        val databaseName = GeneratedNames.getDatabaseName(group.capitalize())
         val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
         val objectsVariableName = GeneratedNames.getObjectsVariableName(typeName)
 
