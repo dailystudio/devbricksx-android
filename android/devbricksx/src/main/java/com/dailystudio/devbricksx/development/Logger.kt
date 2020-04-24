@@ -4,6 +4,7 @@ import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import com.dailystudio.devbricksx.BuildConfig
+import com.dailystudio.devbricksx.GlobalContextWrapper
 import java.io.File
 
 object Logger {
@@ -55,56 +56,33 @@ object Logger {
     }
 
     val isDebugSuppressed: Boolean
-        get() = isDebugSuppressed(SUPPRESS_FILE)
-
-    fun isPackageDebugSuppressed(pkg: String?): Boolean {
-        if (TextUtils.isEmpty(pkg)) {
-            return false
-        }
-        val sb = StringBuilder(SUPPRESS_FILE)
-        sb.append('.')
-        sb.append(pkg)
-        return isDebugSuppressed(sb.toString())
-    }
-
-    private fun isDebugSuppressed(supTagFile: String): Boolean {
-        return isTagFileExisted(supTagFile)
-    }
+        get() = isTagFileExisted(SUPPRESS_FILE)
 
     val isDebugForced: Boolean
-        get() = isDebugSuppressed(FORCE_FILE)
-
-    fun isPackageDebugForced(pkg: String?): Boolean {
-        if (TextUtils.isEmpty(pkg)) {
-            return false
-        }
-        val sb = StringBuilder(FORCE_FILE)
-        sb.append('.')
-        sb.append(pkg)
-        return isDebugForced(sb.toString())
-    }
-
-    private fun isDebugForced(forceTagFile: String): Boolean {
-        return isTagFileExisted(forceTagFile)
-    }
+        get() = isTagFileExisted(FORCE_FILE)
 
     private fun isTagFileExisted(tagFile: String): Boolean {
         if (TextUtils.isEmpty(tagFile)) {
             return false
         }
-        val state = Environment.getExternalStorageState()
-        if (Environment.MEDIA_MOUNTED == state || Environment.MEDIA_MOUNTED_READ_ONLY == state) {
-            val externalStorage =
-                Environment.getExternalStorageDirectory()
-            if (externalStorage != null) {
-                val supFile = File(externalStorage, tagFile)
-                if (supFile.exists()
-                    && supFile.isFile
-                ) {
-                    return true
+
+        when (Environment.getExternalStorageState()) {
+            Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY -> {
+                val context = GlobalContextWrapper.context
+
+                context?.let {
+                    val filesDir = it.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+
+                    if (filesDir != null) {
+                        val supFile = File(filesDir, tagFile)
+                        if (supFile.exists() && supFile.isFile) {
+                            return true
+                        }
+                    }
                 }
             }
         }
+
         return false
     }
 
@@ -139,39 +117,16 @@ object Logger {
         val elements =
             Thread.currentThread().stackTrace ?: return null
 
-//		dumpStackTraceElements(elements);
         val length = elements.size
         return if (TRACE_BASE_INDEX + traceLevel >= length) {
             null
         } else elements[TRACE_BASE_INDEX + traceLevel]
     }
 
-    /*	private static void dumpStackTraceElements(StackTraceElement[] elements) {
-		if (elements == null) {
-			return;
-		}
-
-		final int length = elements.length;
-		for (int i = 0; i < length; i++) {
-			Log.d(Logger.class.getSimpleName(),
-					String.format("dumpStackTraceElements(): [%03d]: element[%s]",
-							i, elements[i]));
-		}
-	}
-*/
-    val callingMethodName: String
-        get() = getCallingMethodName(1)
-
     private fun getCallingMethodName(traceLevel: Int): String {
         val element = getCallingElement(traceLevel + 1) ?: return UNKNOWN_METHOD
         return element.methodName
     }
-
-    val callingClassName: String?
-        get() = getCallingClassName(1)
-
-    val callingSimpleClassName: String
-        get() = getCallingSimpleClassName(1)
 
     private fun getCallingSimpleClassName(traceLevel: Int): String {
         val className = getCallingClassName(traceLevel + 1) ?: return UNKNOWN_CLASS

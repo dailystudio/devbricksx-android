@@ -9,10 +9,13 @@ open class DevBricksApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         val appContext = applicationContext
+
         GlobalContextWrapper.bindContext(appContext)
         checkAndSetDebugEnabled()
-        Logger.debug(
+
+        Logger.info(
             "current application is running in [%s] mode",
             if (isDebugBuild()) "debug" else "release"
         )
@@ -26,18 +29,17 @@ open class DevBricksApplication : Application() {
 
     private fun checkAndSetDebugEnabled() {
         var handled = false
-        if (Logger.isDebugSuppressed
-            || Logger.isPackageDebugSuppressed(packageName)
-        ) {
+
+        if (Logger.isDebugSuppressed) {
             Logger.isDebugEnabled = false
             handled = true
         }
-        if (Logger.isDebugForced
-            || Logger.isPackageDebugForced(packageName)
-        ) {
+
+        if (Logger.isDebugForced) {
             Logger.isDebugEnabled = true
             handled = true
         }
+
         if (!handled) {
             Logger.isDebugEnabled  = isDebugBuild()
         }
