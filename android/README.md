@@ -8,7 +8,7 @@ To use **DevBricks X** Libraries in your application, follow steps below.
 Libraries are distributed via jcenter. Add the following dependencies in build.gradle of your application.
 
 
-#### Jcenter repository
+#### Jcenter
 
 ```groovy
 repositories { 
@@ -24,7 +24,8 @@ dependencies {
 	implementation "com.dailystudio:devbricksx:$devbricksx_version"
 
 	// Annotations and processors to generate low-level facilities, such as Dao, Database, etc.
- 	implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"	kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
+ 	implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
+ 	kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
 
 	// Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
 	implementation "com.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
