@@ -1,5 +1,5 @@
 # DevBricks X - Android
-[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19)
+[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx-java-compiler/images/download.svg?version=0.5.1) ](https://bintray.com/dailystudio/maven/devbricksx-java-compiler/0.5.1/link)
 
 ## Quick Setup
 To use **DevBricks X** Libraries in your application, follow steps below.
@@ -25,3 +25,33 @@ dependencies {
 	kapt "com.dailystudio:devbricksx-kotlin-compiler:0.5.1"
 }
 ```
+
+### Step 2: Application initialization (Optional)
+This step helps you to integrate parts of utilities automatically, such as Logging facilities. 
+
+Extends you appication from **DevBricksApplication**:
+
+```kotlin
+class DemoApplication : DevBricksApplication() {
+
+    override fun isDebugBuild(): Boolean {
+        return BuildConfig.DEBUG
+    }
+    
+}
+```
+The **BuildConfig** is the one generated for your top-level application not those for modules. It provides information of your build type to the library.
+
+Then declare it in your **`AndroidMenifest.xml`**:
+
+``` xml
+<manifest>
+	...
+	<application
+        android:name=".MyApplication">
+		...
+	</application>
+	...
+</manifest>
+```
+

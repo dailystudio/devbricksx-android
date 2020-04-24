@@ -7,4 +7,5 @@ class SampleApplication : DevBricksApplication() {
     override fun isDebugBuild(): Boolean {
         return BuildConfig.DEBUG
     }
+
 }
