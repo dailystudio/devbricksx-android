@@ -2,7 +2,13 @@ package com.dailystudio.devbricksx.sample.db
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
+import java.util.*
 
-@RoomCompanion(primaryKey = "id", autoGenerate = true)
+@RoomCompanion(primaryKeys = ["id"],
+        autoGenerate = true,
+        converters = [DateConverter::class]
+)
 @ViewModel
-data class Event(@JvmField val id: Int? = null)
+data class Event(@JvmField val id: Int? = null) {
+    @JvmField var createdTime: Date? = null
+}

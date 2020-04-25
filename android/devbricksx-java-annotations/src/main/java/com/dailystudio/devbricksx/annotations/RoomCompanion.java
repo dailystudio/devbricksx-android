@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface RoomCompanion {
-    String primaryKey();
+    String[] primaryKeys();
     boolean autoGenerate() default false;
 
     Class<?>[] converters() default {};

@@ -9,7 +9,7 @@ import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.ui.UserViewHolder
 import java.util.*
 
-@RoomCompanion(primaryKey = "id", database = "user",
+@RoomCompanion(primaryKeys = ["id"], database = "user",
         extension = UserDaoExtension::class,
         converters = [UUIDConverter::class, DateConverter::class],
         foreignKeys = [ForeignKey(entity = Group::class,

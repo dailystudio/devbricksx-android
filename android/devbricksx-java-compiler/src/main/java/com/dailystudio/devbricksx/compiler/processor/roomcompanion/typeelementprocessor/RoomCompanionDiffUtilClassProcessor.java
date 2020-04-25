@@ -54,9 +54,15 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
             return null;
         }
 
-        String primaryKey = companionAnnotation.primaryKey();
-        if (TextUtils.isEmpty(primaryKey)) {
+        String[] primaryKeys = companionAnnotation.primaryKeys();
+        if (primaryKeys == null || primaryKeys.length <= 0) {
+            error("primary keys are not specified for [%s]", typeName);
             return null;
+        }
+
+        Set<String> primaryKeySet = new HashSet();
+        for (String key: primaryKeys) {
+            primaryKeySet.add(key);
         }
 
         List<? extends Element> subElements = typeElement.getEnclosedElements();
@@ -76,7 +82,7 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
 
                 fields.put(varName, fieldType);
 
-                if (primaryKey.equals(varName)) {
+                if (primaryKeySet.contains(varName)) {
                     primaryFields.put(varName, fieldType);
                 }
             }

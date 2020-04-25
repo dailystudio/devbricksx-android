@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.dailystudio.devbricksx.sample.db.User
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.sample.db.Event
-import com.dailystudio.devbricksx.sample.db.Group
-import com.dailystudio.devbricksx.sample.db.UserDatabase
+import com.dailystudio.devbricksx.sample.db.*
+import com.dailystudio.devbricksx.sample.model.DeviceViewModel
 import com.dailystudio.devbricksx.sample.model.EventViewModel
 import com.dailystudio.devbricksx.sample.model.UserViewModel
 import kotlinx.coroutines.*
@@ -18,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
     private lateinit var eventViewModel: EventViewModel
+    private lateinit var deviceViewModel: DeviceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         eventViewModel = ViewModelProvider(this).get(EventViewModel::class.java)
+        deviceViewModel = ViewModelProvider(this).get(DeviceViewModel::class.java)
 
         val usersObserver = Observer<List<User>> { users ->
             Logger.debug("users = $users")
@@ -52,8 +52,17 @@ class MainActivity : AppCompatActivity() {
 
             for (i in 0..10) {
                 val event = Event()
+                event.createdTime = Date()
 
                 eventViewModel.insertEvent(event)
+            }
+
+            for (i in 0..10) {
+                for (j in 0..10) {
+                    val device = Device("type$i", "seq$j")
+
+                    deviceViewModel.insertDevice(device)
+                }
             }
 
 //            val user = User(UUID.randomUUID(), "dailystudio")

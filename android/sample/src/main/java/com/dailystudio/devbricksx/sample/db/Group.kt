@@ -10,7 +10,7 @@ import com.dailystudio.devbricksx.sample.ui.GroupViewHolder
 import com.dailystudio.devbricksx.sample.ui.UserViewHolder
 import java.util.*
 
-@RoomCompanion(primaryKey = "id",
+@RoomCompanion(primaryKeys = ["id"],
         database = "user",
         indices = [ Index(value = ["name"])]
 )

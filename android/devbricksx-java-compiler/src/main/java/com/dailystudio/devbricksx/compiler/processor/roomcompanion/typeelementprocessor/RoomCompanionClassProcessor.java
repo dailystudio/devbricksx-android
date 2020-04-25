@@ -56,14 +56,23 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
             return null;
         }
 
-        String primaryKey = companionAnnotation.primaryKey();
-        if (TextUtils.isEmpty(primaryKey)) {
+        String[] primaryKeys = companionAnnotation.primaryKeys();
+        if (primaryKeys == null || primaryKeys.length <= 0) {
+            error("primary keys are not specified for [%s]", typeName);
             return null;
         }
 
+        Set<String> primaryKeySet = new HashSet();
+        for (String key: primaryKeys) {
+            primaryKeySet.add(key);
+        }
+
+        String primaryKeysString = buildPrimaryKeysString(primaryKeys);
+
         AnnotationSpec.Builder entityAnnotationBuilder = AnnotationSpec.builder(Entity.class)
                 .addMember("tableName", "$S",
-                        GeneratedNames.getTableName(typeName));
+                        GeneratedNames.getTableName(typeName))
+                .addMember("primaryKeys", "$L", primaryKeysString);
 
         String foreignKeyStrings = buildForeignKeysString(typeElement);
         if (!TextUtils.isEmpty(foreignKeyStrings)) {
@@ -107,15 +116,7 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                         .build()
                 );
 
-                if (primaryKey.equals(varName)) {
-                    AnnotationSpec.Builder primaryKeySpecBuilder =
-                            AnnotationSpec.builder(PrimaryKey.class);
-
-                    if (companionAnnotation.autoGenerate()) {
-                        primaryKeySpecBuilder.addMember("autoGenerate", "$L", true);
-                    }
-
-                    fieldSpecBuilder.addAnnotation(primaryKeySpecBuilder.build());
+                if (primaryKeySet.contains(varName)) {
                     fieldSpecBuilder.addAnnotation(NonNull.class);
                 }
 
@@ -249,6 +250,24 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         List<? extends VariableElement> params = executableElement.getParameters();
 
         return params == null ? 0 : params.size();
+    }
+
+    private String buildPrimaryKeysString(String[] primaryKeys) {
+        StringBuilder prKeysBuilder = new StringBuilder("{ ");
+
+        for (int i = 0; i < primaryKeys.length; i++) {
+            prKeysBuilder.append("\"");
+            prKeysBuilder.append(primaryKeys[i]);
+            prKeysBuilder.append("\"");
+
+            if (i < primaryKeys.length - 1) {
+                prKeysBuilder.append(", ");
+            }
+        }
+
+        prKeysBuilder.append(" }");
+
+        return prKeysBuilder.toString();
     }
 
     private String buildForeignKeysString(TypeElement typeElement) {
