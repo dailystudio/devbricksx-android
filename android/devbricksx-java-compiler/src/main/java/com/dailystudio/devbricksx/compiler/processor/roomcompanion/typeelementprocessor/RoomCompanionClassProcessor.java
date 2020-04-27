@@ -56,6 +56,25 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
             return null;
         }
 
+        TypeName superType = null;
+        RoomCompanion superRoomCompanion = null;
+
+        TypeMirror superClass = typeElement.getSuperclass();
+        if (superClass != null) {
+            Element superElement = mTypesUtils.asElement(superClass);
+
+            superRoomCompanion = superElement.getAnnotation(RoomCompanion.class);
+            debug("super class annotation: %s", superRoomCompanion);
+            if (superRoomCompanion != null) {
+                String superTypePackage = getPackageNameOfTypeElement((TypeElement)superElement);
+                String superTypeName = getTypeNameOfTypeElement((TypeElement)superElement);
+
+                superType = ClassName.get(
+                        superTypePackage,
+                        GeneratedNames.getRoomCompanionName(superTypeName));
+            }
+        }
+
         String[] primaryKeys = companionAnnotation.primaryKeys();
         if (primaryKeys == null || primaryKeys.length <= 0) {
             error("primary keys are not specified for [%s]", typeName);
@@ -71,8 +90,11 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
         AnnotationSpec.Builder entityAnnotationBuilder = AnnotationSpec.builder(Entity.class)
                 .addMember("tableName", "$S",
-                        GeneratedNames.getTableName(typeName))
-                .addMember("primaryKeys", "$L", primaryKeysString);
+                        GeneratedNames.getTableName(typeName));
+
+        if (primaryKeySet.size() > 1) {
+            entityAnnotationBuilder.addMember("primaryKeys", "$L", primaryKeysString);
+        }
 
         String foreignKeyStrings = buildForeignKeysString(typeElement);
         if (!TextUtils.isEmpty(foreignKeyStrings)) {
@@ -89,6 +111,10 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(entityAnnotationBuilder.build());
+
+        if (superType != null) {
+            classBuilder.superclass(superType);
+        }
 
         List<? extends Element> subElements = typeElement.getEnclosedElements();
 
@@ -108,7 +134,7 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                 TypeMirror fieldType = varElement.asType();
 
                 FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(TypeName.get(fieldType),
-                        varName);
+                        varName).addModifiers(Modifier.PUBLIC);
 
                 fieldSpecBuilder.addAnnotation(AnnotationSpec.builder(ColumnInfo.class)
                         .addMember("name", "$S",
@@ -118,6 +144,16 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
                 if (primaryKeySet.contains(varName)) {
                     fieldSpecBuilder.addAnnotation(NonNull.class);
+                    if (primaryKeySet.size() == 1) {
+                        AnnotationSpec.Builder primaryKeySpecBuilder =
+                                AnnotationSpec.builder(PrimaryKey.class);
+
+                        if (companionAnnotation.autoGenerate()) {
+                            primaryKeySpecBuilder.addMember("autoGenerate", "$L", true);
+                        }
+
+                        fieldSpecBuilder.addAnnotation(primaryKeySpecBuilder.build());
+                    }
                 }
 
                 fieldSpecs.add(fieldSpecBuilder.build());
@@ -178,14 +214,24 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
         methodToObjectBuilder.addStatement("$T object = new $T($N)",
                 object, object, constParamsBuilder.toString());
+        methodToObjectBuilder.addStatement("copyFieldsToObject(object)");
+        methodToObjectBuilder.addStatement("return object");
+
+        MethodSpec.Builder methodCopyFieldsToObjectBuilder = MethodSpec.methodBuilder("copyFieldsToObject")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(object,"object");
+
+        if (superType != null) {
+            methodCopyFieldsToObjectBuilder.addStatement("super.copyFieldsToObject(object)");
+        }
 
         for (String fieldName: fieldsOutsideConstructor) {
-            methodToObjectBuilder.addStatement("object.$N = this.$N",
+            methodCopyFieldsToObjectBuilder.addStatement("object.$N = this.$N",
                     fieldName,
                     fieldName);
         }
 
-        methodToObjectBuilder.addStatement("return object");
+        classBuilder.addMethod(methodCopyFieldsToObjectBuilder.build());
 
         MethodSpec.Builder methodToCompanionBuilder = MethodSpec.methodBuilder("fromObject")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -193,14 +239,25 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                 .addStatement("$T companion = new $T()", generatedClassName, generatedClassName)
                 .returns(generatedClassName);
 
+        methodToCompanionBuilder.addStatement("companion.copyFieldsFromObject($N)",
+                NameUtils.lowerCamelCaseName(typeName));
+        methodToCompanionBuilder.addStatement("return companion");
+
+        MethodSpec.Builder methodCopyFieldsFromObjectBuilder = MethodSpec.methodBuilder("copyFieldsFromObject")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(object,"object");
+
+        if (superType != null) {
+            methodCopyFieldsFromObjectBuilder.addStatement("super.copyFieldsFromObject(object)");
+        }
+
         for (String fieldName: fields) {
-            methodToCompanionBuilder.addStatement("companion.$N = $N.$N",
+            methodCopyFieldsFromObjectBuilder.addStatement("this.$N = object.$N",
                     fieldName,
-                    NameUtils.lowerCamelCaseName(typeName),
                     fieldName);
         }
 
-        methodToCompanionBuilder.addStatement("return companion");
+        classBuilder.addMethod(methodCopyFieldsFromObjectBuilder.build());
 
         for (FieldSpec fieldSpec: fieldSpecs) {
             classBuilder.addField(fieldSpec);

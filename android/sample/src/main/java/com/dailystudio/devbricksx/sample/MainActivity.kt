@@ -6,73 +6,41 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.*
-import com.dailystudio.devbricksx.sample.model.DeviceViewModel
-import com.dailystudio.devbricksx.sample.model.EventViewModel
+import com.dailystudio.devbricksx.sample.model.NotebookViewModel
 import com.dailystudio.devbricksx.sample.model.UserViewModel
+import com.dailystudio.devbricksx.sample.ui.NotebookViewHolder
 import kotlinx.coroutines.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var eventViewModel: EventViewModel
-    private lateinit var deviceViewModel: DeviceViewModel
+    private lateinit var notebookViewModel: NotebookViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
-        eventViewModel = ViewModelProvider(this).get(EventViewModel::class.java)
-        deviceViewModel = ViewModelProvider(this).get(DeviceViewModel::class.java)
-
-        val usersObserver = Observer<List<User>> { users ->
-            Logger.debug("users = $users")
+        val notebookObserver = Observer<List<Notebook>> { notebooks ->
+            Logger.debug("notebooks = $notebooks")
         }
 
-        val groupsObserver = Observer<List<Group>> { groups ->
-            Logger.debug("groups = $groups")
-        }
+        notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
+        notebookViewModel.allNotebooks.observe(this@MainActivity, notebookObserver);
 
         GlobalScope.launch {
             UserDatabase.getDatabase(this@MainActivity).clearAllTables()
 
-            withContext(Dispatchers.Main) {
-                userViewModel.allUsers.observe(this@MainActivity, usersObserver);
-                userViewModel.allGroups.observe(this@MainActivity, groupsObserver);
-            }
-
             for (i in 0..20) {
-                val group = Group(UUID.randomUUID(), "group_$i")
-                group.createdTime = Date()
-                Logger.debug("group = $group")
-                userViewModel.insertGroup(group)
+                val notebook = Notebook()
+                notebook.name = "nb$i"
+                notebook.created = Date()
+                notebook.lastModified = Date()
+                Logger.debug("notebook = $notebook")
+
+                notebookViewModel.insertNotebook(notebook)
                 delay(200)
             }
 
-            for (i in 0..10) {
-                val event = Event()
-                event.createdTime = Date()
-
-                eventViewModel.insertEvent(event)
-            }
-
-            for (i in 0..10) {
-                for (j in 0..10) {
-                    val device = Device("type$i", "seq$j")
-
-                    deviceViewModel.insertDevice(device)
-                }
-            }
-
-//            val user = User(UUID.randomUUID(), "dailystudio")
-//            user.groupId = group.id
-//            Logger.debug("user = $user")
-//            userViewModel.insertUser(user)
-
-//            delay(1000)
-//
-//            viewModel.deleteGroup(group)
         }
     }
 

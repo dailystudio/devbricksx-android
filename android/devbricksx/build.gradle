@@ -59,6 +59,8 @@ dependencies {
     // Libraries
     api project(':devbricksx-java-annotations')
     api project(':devbricksx-kotlin-annotations')
+    kapt project(':devbricksx-kotlin-compiler')
+    kapt project(':devbricksx-java-compiler')
 
     // Test helpers
     testImplementation 'junit:junit:4.12'

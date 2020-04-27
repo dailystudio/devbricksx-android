@@ -7,8 +7,8 @@
     tools:context="com.dailystudio.devbricksx.sample.MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.sample.fragment.GroupsFragment"
-        android:id="@+id/fragment_groups"
+        android:name="com.dailystudio.devbricksx.sample.fragment.NotebooksFragment"
+        android:id="@+id/fragment_notebooks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

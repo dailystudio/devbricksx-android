@@ -28,6 +28,7 @@ public abstract class AbsTypeElementProcessor {
     protected Types mTypes;
     protected Filer mFiler;
     protected Elements mElementUtils;
+    protected Types mTypesUtils;
     protected Messager mMessager;
 
     public void attachToProcessEnvironment(ProcessingEnvironment processingEnv) {
@@ -38,6 +39,7 @@ public abstract class AbsTypeElementProcessor {
         mTypes = processingEnv.getTypeUtils();
         mFiler = processingEnv.getFiler();
         mElementUtils = processingEnv.getElementUtils();
+        mTypesUtils = processingEnv.getTypeUtils();
         mMessager = processingEnv.getMessager();
     }
 

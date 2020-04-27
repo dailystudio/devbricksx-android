@@ -1,27 +1,14 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
-import com.dailystudio.devbricksx.compiler.processor.Constants;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
-import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
-import com.dailystudio.devbricksx.compiler.utils.NameUtils;
-import com.dailystudio.devbricksx.compiler.utils.TextUtils;
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,9 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -52,6 +37,25 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
         RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
         if (companionAnnotation == null) {
             return null;
+        }
+
+        TypeName superType = null;
+        RoomCompanion superRoomCompanion = null;
+
+        TypeMirror superClass = typeElement.getSuperclass();
+        if (superClass != null) {
+            Element superElement = mTypesUtils.asElement(superClass);
+
+            superRoomCompanion = superElement.getAnnotation(RoomCompanion.class);
+            debug("super class annotation: %s", superRoomCompanion);
+            if (superRoomCompanion != null) {
+                String superTypePackage = getPackageNameOfTypeElement((TypeElement)superElement);
+                String superTypeName = getTypeNameOfTypeElement((TypeElement)superElement);
+
+                superType = ClassName.get(
+                        superTypePackage,
+                        GeneratedNames.getDiffUtilName(superTypeName));
+            }
         }
 
         String[] primaryKeys = companionAnnotation.primaryKeys();
@@ -101,7 +105,13 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
                 .addParameter(object, "newObject")
                 .returns(TypeName.BOOLEAN);
 
-        attachFieldEqualsStatement(methodItemsSameBuilder, primaryFields);
+        if (superType != null) {
+            methodItemsSameBuilder.addStatement("return new $T().areItemsTheSame(oldObject, newObject) && $L",
+                    superType,
+                    buildFieldEqualsStatement(primaryFields));
+        } else {
+            methodItemsSameBuilder.addStatement("return $L", buildFieldEqualsStatement(primaryFields));
+        }
 
         classBuilder.addMethod(methodItemsSameBuilder.build());
 
@@ -111,17 +121,22 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
                 .addParameter(object, "newObject")
                 .returns(TypeName.BOOLEAN);
 
-        attachFieldEqualsStatement(methodContentsSameBuilder, fields);
+        if (superType != null) {
+            methodContentsSameBuilder.addStatement("return new $T().areContentsTheSame(oldObject, newObject) && $L",
+                    superType,
+                    buildFieldEqualsStatement(fields));
+        } else {
+            methodContentsSameBuilder.addStatement("return $L", buildFieldEqualsStatement(fields));
+        }
 
         classBuilder.addMethod(methodContentsSameBuilder.build());
 
         return new GeneratedResult(packageName, classBuilder);
     }
 
-    private void attachFieldEqualsStatement(MethodSpec.Builder methodBuilder,
-                                            Map<String, TypeMirror> fields) {
-        if (methodBuilder == null || fields == null || fields.size() <= 0) {
-            return;
+    private String buildFieldEqualsStatement(Map<String, TypeMirror> fields) {
+        if (fields == null || fields.size() <= 0) {
+            return "true";
         }
 
         Set<String> keys = fields.keySet();
@@ -156,7 +171,7 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
             i++;
         }
 
-        methodBuilder.addStatement("return $L", builder.toString());
+        return builder.toString();
     }
 
 }
