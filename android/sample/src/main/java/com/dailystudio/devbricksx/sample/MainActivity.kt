@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.*
 import com.dailystudio.devbricksx.sample.model.NotebookViewModel
-import com.dailystudio.devbricksx.sample.model.UserViewModel
-import com.dailystudio.devbricksx.sample.ui.NotebookViewHolder
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -28,7 +26,8 @@ class MainActivity : AppCompatActivity() {
         notebookViewModel.allNotebooks.observe(this@MainActivity, notebookObserver);
 
         GlobalScope.launch {
-            UserDatabase.getDatabase(this@MainActivity).clearAllTables()
+            NotesDatabase.getDatabase(this@MainActivity).clearAllTables()
+            delay(2000)
 
             for (i in 0..20) {
                 val notebook = Notebook()

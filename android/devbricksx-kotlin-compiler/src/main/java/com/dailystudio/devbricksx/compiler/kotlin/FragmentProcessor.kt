@@ -122,9 +122,15 @@ class FragmentProcessor : BaseProcessor() {
                 .addParameter("inflater", layoutInflater)
                 .addParameter("container", viewGroup.copy(nullable = true))
                 .addParameter("savedInstanceState", bundle.copy(nullable = true))
-                .addStatement("return inflater.inflate(%T.layout.fragment_recycler_view, container, false)",
-                        devbricksxR)
                 .returns(view.copy(nullable = true))
+
+        if (layout != -1) {
+            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%L, container, false)",
+                    layout)
+        } else {
+            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_recycler_view, container, false)",
+                    devbricksxR)
+        }
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())
 

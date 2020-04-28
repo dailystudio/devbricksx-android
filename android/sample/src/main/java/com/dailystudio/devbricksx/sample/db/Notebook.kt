@@ -15,7 +15,7 @@ import com.dailystudio.devbricksx.sample.ui.NotebookViewHolder
         database = "notes")
 @ViewModel
 @Adapter(layout = R.layout.layout_notebook, viewHolder = NotebookViewHolder::class)
-@Fragment
+@Fragment(layout = R.layout.fragment_notebooks)
 class Notebook(id: Int = 0) : Record(id) {
     @JvmField var name: String? = null
 }

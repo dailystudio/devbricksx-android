@@ -56,6 +56,9 @@ dependencies {
     // MultiDex
     api "androidx.multidex:multidex:${project.ext.multiDexVersion}"
 
+    // Material Design Components
+    api "com.google.android.material:material:${project.ext.mdcVersion}"
+
     // Libraries
     api project(':devbricksx-java-annotations')
     api project(':devbricksx-kotlin-annotations')
