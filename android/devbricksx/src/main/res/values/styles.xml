@@ -33,6 +33,39 @@
 	</style>
 
 	<style name="DefaultRecyclerView" parent="DefaultAdapterView">
+		<item name="android:padding">@dimen/lv_content_padding</item>
 	</style>
+
+	<style name="DefaultListItemText" parent="DefaultText">
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textSize">@dimen/lv_item_font_size</item>
+		<item name="android:padding">@dimen/lv_item_padding</item>
+		<item name="android:singleLine">true</item>
+	</style>
+
+	<style name="DefaultListItemText1stLine" parent="DefaultListItemText">
+		<item name="android:paddingLeft">@dimen/lv_item_padding</item>
+		<item name="android:paddingRight">@dimen/lv_item_padding</item>
+		<item name="android:paddingTop">0dp</item>
+		<item name="android:paddingBottom">0dp</item>
+	</style>
+
+	<style name="DefaultListItemText2ndLine">
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textColor">@color/gray</item>
+		<item name="android:textSize">@dimen/lv_item_2nd_font_size</item>
+		<item name="android:paddingLeft">@dimen/lv_item_padding</item>
+		<item name="android:paddingRight">@dimen/lv_item_padding</item>
+		<item name="android:paddingTop">@dimen/lv_item_2nd_padding_v</item>
+		<item name="android:paddingBottom">@dimen/lv_item_2nd_padding_v</item>
+		<item name="android:singleLine">true</item>
+	</style>
+
+	<style name="DefaultCardView">
+		<item name="cardCornerRadius">5dp</item>
+		<item name="cardElevation">3dp</item>
+		<item name="cardUseCompatPadding">true</item>
+	</style>
+
 
 </resources>

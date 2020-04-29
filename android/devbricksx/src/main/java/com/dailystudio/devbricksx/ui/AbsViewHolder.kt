@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.fragment
+package com.dailystudio.devbricksx.ui
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

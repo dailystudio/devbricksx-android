@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.Adapter
+import com.dailystudio.devbricksx.annotations.ViewType
 import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.google.auto.service.AutoService
@@ -47,6 +48,7 @@ class AdapterProcessor : BaseProcessor() {
         val annotation = element.getAnnotation(Adapter::class.java)
         val paged = annotation.paged
         val layout = annotation.layout
+        val viewType = annotation.viewType
 
         val viewHolder = AnnotationsUtils.getClassValueFromAnnotation(element, "viewHolder")
                 ?: return null
@@ -79,9 +81,19 @@ class AdapterProcessor : BaseProcessor() {
                 .addParameter("parent", viewGroup)
                 .addParameter("viewType", Int::class)
                 .addStatement("val layoutInflater = %T.from(parent.context)", layoutInflater)
-                .addStatement("val view = layoutInflater.inflate(%L, null)", layout)
-                .addStatement("return %T(view)", viewHolder)
                 .returns(viewHolder)
+
+        when (viewType) {
+            ViewType.SingleLine -> {
+                methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.list_item_single_line, null)",
+                        TypeNamesUtils.getDevbrickxRTypeName())
+            }
+            else -> {
+                methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%L, null)", layout)
+            }
+        }
+
+        methodOnCreateViewBuilder.addStatement("return %T(view)", viewHolder)
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())
 

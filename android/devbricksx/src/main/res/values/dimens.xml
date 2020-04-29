@@ -13,11 +13,16 @@
 	<dimen name="default_title_font_size">18dp</dimen>
 	<dimen name="default_title_bottom_padding">10dp</dimen>
 
+	<dimen name="lv_content_padding">8dp</dimen>
+
+	<dimen name="lv_item_space">4dp</dimen>
 	<dimen name="lv_item_font_size">20dp</dimen>
 	<dimen name="lv_item_2nd_font_size">14dp</dimen>
 	<dimen name="lv_item_padding">5dp</dimen>
 	<dimen name="lv_item_2nd_padding_v">3dp</dimen>
 	<dimen name="lv_item_icon_size">48dp</dimen>
+
+	<dimen name="lv_single_line_item_height">64dp</dimen>
 			
 	<dimen name="lv_index_font_size">18dp</dimen>
 	<dimen name="lv_index_padding">0dp</dimen>

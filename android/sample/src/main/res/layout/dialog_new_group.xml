@@ -17,8 +17,7 @@
     <EditText
         android:id="@+id/notebook_name"
         style="@style/DefaultEditText"
-        android:defaultFocusHighlightEnabled="true"
-        android:focusedByDefault="true"
+        android:inputType="text"
         android:maxLines="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

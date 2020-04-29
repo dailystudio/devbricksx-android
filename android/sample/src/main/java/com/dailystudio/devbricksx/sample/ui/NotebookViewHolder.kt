@@ -1,17 +1,21 @@
 package com.dailystudio.devbricksx.sample.ui
 
+import android.graphics.drawable.Drawable
 import android.view.View
-import android.widget.TextView
-import com.dailystudio.devbricksx.fragment.AbsViewHolder
 import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.db.Notebook
+import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
+import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
-class NotebookViewHolder(itemView: View) : AbsViewHolder<Notebook>(itemView) {
+class NotebookViewHolder(itemView: View) : AbsSingleLineViewHolder<Notebook>(itemView) {
 
-    override fun bind(item: Notebook) {
-        val nameView: TextView = itemView.findViewById(R.id.notebook_name)
+    override fun getIcon(item: Notebook): Drawable? {
+        return ResourcesCompatUtils.getDrawable(itemView.context,
+                R.drawable.ic_notebook)
+    }
 
-        nameView.text = item.name
+    override fun getText(item: Notebook): CharSequence? {
+        return item.name?.capitalize()
     }
 
 }

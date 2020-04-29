@@ -2,7 +2,7 @@ package com.dailystudio.devbricksx.sample.ui
 
 import android.view.View
 import android.widget.TextView
-import com.dailystudio.devbricksx.fragment.AbsViewHolder
+import com.dailystudio.devbricksx.ui.AbsViewHolder
 import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.db.User
 
