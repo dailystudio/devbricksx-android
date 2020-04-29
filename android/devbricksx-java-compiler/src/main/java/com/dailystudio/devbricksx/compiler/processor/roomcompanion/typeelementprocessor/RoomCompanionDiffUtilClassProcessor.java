@@ -156,11 +156,29 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
                 builder.append("newObject.");
                 builder.append(fieldName);
             } else {
+                builder.append("(");
+                builder.append("oldObject.");
+                builder.append(fieldName);
+                builder.append(" == null");
+                builder.append(" && ");
+                builder.append("newObject.");
+                builder.append(fieldName);
+                builder.append(" == null");
+                builder.append(" || ");
+                builder.append("oldObject.");
+                builder.append(fieldName);
+                builder.append(" != null");
+                builder.append(" && ");
+                builder.append("newObject.");
+                builder.append(fieldName);
+                builder.append(" != null");
+                builder.append(" && ");
                 builder.append("oldObject.");
                 builder.append(fieldName);
                 builder.append(".equals(");
                 builder.append("newObject.");
                 builder.append(fieldName);
+                builder.append(")");
                 builder.append(")");
             }
 

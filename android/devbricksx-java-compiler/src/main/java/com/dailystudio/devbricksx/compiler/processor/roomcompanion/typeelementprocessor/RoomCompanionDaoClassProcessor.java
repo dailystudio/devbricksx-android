@@ -182,6 +182,11 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 .addStatement("updateList.add(companions.get(i))")
                 .endControlFlow()
                 .endControlFlow()
+                .beginControlFlow("if (updateList.size() > 0)")
+                .beginControlFlow("for (int i = 0; i < updateList.size(); i++)")
+                .addStatement("$N(updateList.get(i))", methodUpdateOne.name)
+                .endControlFlow()
+                .endControlFlow()
                 .build();
 
         classBuilder.addMethod(methodInsertOrUpdateAll);
