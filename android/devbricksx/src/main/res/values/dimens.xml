@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	
+	<dimen name="default_font_size">16dp</dimen>
+
+	<dimen name="default_content_padding">20dp</dimen>
+	<dimen name="default_content_padding_h">20dp</dimen>
+	<dimen name="default_content_padding_v">20dp</dimen>
+
+	<dimen name="default_label_padding">10dp</dimen>
+
+	<dimen name="default_title_font_size">18dp</dimen>
+	<dimen name="default_title_bottom_padding">10dp</dimen>
+
+	<dimen name="lv_item_font_size">20dp</dimen>
+	<dimen name="lv_item_2nd_font_size">14dp</dimen>
+	<dimen name="lv_item_padding">5dp</dimen>
+	<dimen name="lv_item_2nd_padding_v">3dp</dimen>
+	<dimen name="lv_item_icon_size">48dp</dimen>
+			
+	<dimen name="lv_index_font_size">18dp</dimen>
+	<dimen name="lv_index_padding">0dp</dimen>
+	<dimen name="lv_index_width">60dp</dimen>
+
+	<dimen name="card_corner_radius">3dp</dimen>
+	<dimen name="card_content_text_size">16dp</dimen>
+	<dimen name="card_title_text_size">14dp</dimen>
+	<dimen name="card_item_padding_h">16dp</dimen>
+	<dimen name="card_item_padding_v">8dp</dimen>
+	<dimen name="card_content_height">165dp</dimen>
+	<dimen name="card_content_height_mini">150dp</dimen>
+
+
+</resources>

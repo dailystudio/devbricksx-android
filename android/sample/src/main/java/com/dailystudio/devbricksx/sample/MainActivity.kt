@@ -26,19 +26,19 @@ class MainActivity : AppCompatActivity() {
         notebookViewModel.allNotebooks.observe(this@MainActivity, notebookObserver);
 
         GlobalScope.launch {
-            NotesDatabase.getDatabase(this@MainActivity).clearAllTables()
-            delay(2000)
-
-            for (i in 0..20) {
-                val notebook = Notebook()
-                notebook.name = "nb$i"
-                notebook.created = Date()
-                notebook.lastModified = Date()
-                Logger.debug("notebook = $notebook")
-
-                notebookViewModel.insertNotebook(notebook)
-                delay(200)
-            }
+//            NotesDatabase.getDatabase(this@MainActivity).clearAllTables()
+//            delay(2000)
+//
+//            for (i in 0..20) {
+//                val notebook = Notebook()
+//                notebook.name = "nb$i"
+//                notebook.created = Date()
+//                notebook.lastModified = Date()
+//                Logger.debug("notebook = $notebook")
+//
+//                notebookViewModel.insertNotebook(notebook)
+//                delay(200)
+//            }
 
         }
     }

@@ -7,8 +7,41 @@
     <color name="black">#FF000000</color>
     <color name="orange">#FFFF6600</color>
     <color name="blue">#FF0000FF</color>
-   	<color name="green">#FF33CC33</color>
-   	<color name="gray">#FF808080</color>
-   	<color name="red">#FFFF0000</color>
+    <color name="green">#FF33CC33</color>
+    <color name="gray">#FF808080</color>
+    <color name="red">#FFFF0000</color>
+
+    <color name="semi_white">#CCFFFFFF</color>
+    <color name="semi_black">#80000000</color>
+    <color name="light_white">#FFEEEEEE</color>
+    <color name="light_gray">#FF999999</color>
+    <color name="light_black">#FF262626</color>
+
+    <color name="royal_blue">#FF31527B</color>
+    <color name="tomato_red">#FFDE5229</color>
+    <color name="dark_red">#FF9D3D35</color>
+    <color name="gold_yellow">#FFEFB55A</color>
+    <color name="see_green">#FF2E8B5C</color>
+
+    <color name="android_blue">#FF30B3E4</color>
+    <color name="android_blue_light">#ff33B5E5</color>
+
+    <color name="fadeText">#20ffffff</color>
+
+    <color name="transparent_background">@color/transparent</color>
+    <color name="translucent_background">#e0000000</color>
+
+    <color name="action_bar_text_color">@color/light_white</color>
+    <color name="action_bar_text_disable_color">#FF888888</color>
+    <color name="action_bar_bg_color">@color/light_black</color>
+    <color name="action_bar_popup_content_overlay">#90000000</color>
+
+    <color name="snack_bar_bg_color">#C0000000</color>
+    <color name="card_title_bg_color">@color/light_black</color>
+    <color name="default_ripple_color">@color/light_white</color>
+
+    <color name="colorPrimary">@color/light_black</color>
+    <color name="colorPrimaryDark">@color/light_black</color>
+    <color name="colorAccent">@color/light_black</color>
 
 </resources>

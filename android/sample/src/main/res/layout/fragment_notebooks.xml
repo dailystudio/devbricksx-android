@@ -15,6 +15,7 @@
         android:id="@+id/fab"
         app:srcCompat="@drawable/ic_fab_new"
         app:tint="@color/white"
+        app:backgroundTint="@color/colorPrimary"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="16dp"

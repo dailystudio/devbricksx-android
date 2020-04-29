@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingStart="@dimen/default_content_padding_h"
+    android:paddingEnd="@dimen/default_content_padding_h"
+    android:paddingTop="@dimen/default_content_padding_v"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/dialog_title_new_notebook"
+        style="@style/DefaultTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/notebook_name"
+        style="@style/DefaultEditText"
+        android:defaultFocusHighlightEnabled="true"
+        android:focusedByDefault="true"
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <requestFocus/>
+    </EditText>
+
+</LinearLayout>
