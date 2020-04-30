@@ -7,10 +7,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.ui.AbsRecyclerAdapter
+import com.dailystudio.devbricksx.ui.OnItemClickListener
 
-open abstract class AbsRecyclerViewFragment<T, A : RecyclerView.Adapter<*>> : Fragment() {
+abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter> : Fragment()
+        where Adapter: RecyclerView.Adapter<*>, Adapter: AbsRecyclerAdapter<Item> {
 
-    private var adapter: A? = null
+    private var adapterView: RecyclerView? = null
+    private lateinit var adapter: Adapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -21,11 +25,13 @@ open abstract class AbsRecyclerViewFragment<T, A : RecyclerView.Adapter<*>> : Fr
     }
 
     private fun setupViews(view: View) {
-        val recyclerView: RecyclerView = view.findViewById(android.R.id.list)
+        adapterView = view.findViewById(android.R.id.list)
 
         adapter = onCreateAdapter()
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = onCreateLayoutManager()
+        adapter.setOnItemClickListener(itemClickListener)
+
+        adapterView?.adapter = adapter
+        adapterView?.layoutManager = onCreateLayoutManager()
     }
 
     protected fun applyBindings() {
@@ -41,15 +47,32 @@ open abstract class AbsRecyclerViewFragment<T, A : RecyclerView.Adapter<*>> : Fr
         })
     }
 
-    fun getAdapter(): A? {
+    fun getAdapter(): Adapter? {
         return adapter
     }
 
-    protected abstract fun getLiveData(): LiveData<T>
-    protected abstract fun submitData(adapter: A,
-                                      data: T)
+    protected open fun onItemClick(recyclerView: RecyclerView,
+                                   itemView: View,
+                                   position: Int,
+                                   item: Item,
+                                   id: Long) {
+    }
 
-    protected abstract fun onCreateAdapter(): A
+    protected abstract fun getLiveData(): LiveData<ItemList>
+    protected abstract fun submitData(adapter: Adapter,
+                                      data: ItemList)
+
+    protected abstract fun onCreateAdapter(): Adapter
     protected abstract fun onCreateLayoutManager(): RecyclerView.LayoutManager
+
+    private val itemClickListener: OnItemClickListener<Item> = object : OnItemClickListener<Item> {
+
+        override fun onItemClick(itemView: View, position: Int, item: Item, id: Long) {
+            adapterView?.let {
+                this@AbsRecyclerViewFragment.onItemClick(it, itemView, position, item, id)
+            }
+        }
+
+    }
 
 }

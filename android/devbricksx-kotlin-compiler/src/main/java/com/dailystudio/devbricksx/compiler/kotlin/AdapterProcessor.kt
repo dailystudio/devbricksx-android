@@ -56,7 +56,7 @@ class AdapterProcessor : BaseProcessor() {
         val generatedClassName = GeneratedNames.getAdapterName(typeName)
 
         val objectTypeName = ClassName(packageName, typeName)
-        val pagedListAdapter = TypeNamesUtils.getPageListAdapterOfTypeName(objectTypeName, viewHolder)
+        val pagedListAdapter = TypeNamesUtils.getAbsPageListAdapterOfTypeName(objectTypeName, viewHolder)
         val itemCallback = TypeNamesUtils.getItemCallbackOfTypeName(objectTypeName)
         val diffUtils  = ClassName(packageName, GeneratedNames.getDiffUtilName(typeName))
         val viewGroup = TypeNamesUtils.getViewGroupTypeName()
@@ -102,6 +102,7 @@ class AdapterProcessor : BaseProcessor() {
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("holder", viewHolder)
                 .addParameter("position", Int::class)
+                .addStatement("super.onBindViewHolder(holder, position)")
                 .addStatement("val item = getItem(position) ?: return")
                 .addStatement("holder.bind(item)")
 

@@ -6,9 +6,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.dailystudio.devbricksx.R
 
-open abstract class AbsSingleLineViewHolder<T>(itemView: View) : AbsViewHolder<T>(itemView) {
+open abstract class AbsSingleLineViewHolder<Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
-    override fun bind(item: T) {
+    override fun bind(item: Item) {
         val iconView : ImageView = itemView.findViewById(R.id.list_item_icon)
 
         iconView?.setImageDrawable(getIcon(item))
@@ -17,7 +17,7 @@ open abstract class AbsSingleLineViewHolder<T>(itemView: View) : AbsViewHolder<T
         textView?.text = getText(item)
     }
 
-    abstract fun getIcon(item: T) : Drawable?
-    abstract fun getText(item: T) : CharSequence?
+    abstract fun getIcon(item: Item) : Drawable?
+    abstract fun getText(item: Item) : CharSequence?
 
 }

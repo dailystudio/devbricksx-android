@@ -42,11 +42,12 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
         }
 
-        fun getAbsRecyclerViewFragmentOfTypeName(dataTypeName: TypeName,
+        fun getAbsRecyclerViewFragmentOfTypeName(objectTypeName: TypeName,
+                                                 dataTypeName: TypeName,
                                                  adapterTypeName: TypeName): TypeName {
             val fragment = getAbsRecyclerViewFragmentTypeName()
 
-            return fragment.parameterizedBy(dataTypeName, adapterTypeName)
+            return fragment.parameterizedBy(objectTypeName, dataTypeName, adapterTypeName)
         }
 
         fun getViewGroupTypeName(): ClassName {
@@ -85,9 +86,20 @@ class TypeNamesUtils {
             return ClassName("androidx.paging", "PagedListAdapter")
         }
 
+        fun getAbsPageListAdapterTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.ui", "AbsPagedListAdapter")
+        }
+
         fun getPageListAdapterOfTypeName(`object`: TypeName,
                                          viewHolder: TypeName): TypeName {
             val listAdapter = getPageListAdapterTypeName()
+
+            return listAdapter.parameterizedBy(`object`, viewHolder)
+        }
+
+        fun getAbsPageListAdapterOfTypeName(`object`: TypeName,
+                                         viewHolder: TypeName): TypeName {
+            val listAdapter = getAbsPageListAdapterTypeName()
 
             return listAdapter.parameterizedBy(`object`, viewHolder)
         }

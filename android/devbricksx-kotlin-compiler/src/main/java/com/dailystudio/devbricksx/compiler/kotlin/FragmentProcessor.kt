@@ -66,7 +66,7 @@ class FragmentProcessor : BaseProcessor() {
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
         val superFragment = TypeNamesUtils.getAbsRecyclerViewFragmentOfTypeName(
-                pagedList, adapter)
+                objectTypeName, pagedList, adapter)
         val layoutManager = TypeNamesUtils.getLayoutManagerTypeName()
         val linearLayoutManager = TypeNamesUtils.getLinearLayoutManagerTypeName()
         val gridLayoutManager = TypeNamesUtils.getGridLayoutManagerTypeName()

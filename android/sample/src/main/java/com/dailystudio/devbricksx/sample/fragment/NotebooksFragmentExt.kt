@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.db.Notebook
@@ -12,7 +13,7 @@ import com.dailystudio.devbricksx.sample.model.NotebookViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class ExtNotebooksFragment : NotebooksFragment() {
+class NotebooksFragmentExt : NotebooksFragment() {
 
     private lateinit var notebookViewModel: NotebookViewModel
 
@@ -58,6 +59,16 @@ class ExtNotebooksFragment : NotebooksFragment() {
                     }
                 }
                 .show()
+    }
+
+    override fun onItemClick(recyclerView: RecyclerView,
+                             itemView: View,
+                             position: Int,
+                             item: Notebook,
+                             id: Long) {
+        super.onItemClick(recyclerView, itemView, position, item, id)
+
+        Logger.debug("click on position [$position]: item = $item")
     }
 
 }
