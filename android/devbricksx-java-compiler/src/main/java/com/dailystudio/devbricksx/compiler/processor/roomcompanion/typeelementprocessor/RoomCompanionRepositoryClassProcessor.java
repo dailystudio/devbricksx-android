@@ -57,7 +57,7 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
                 .addModifiers(Modifier.PUBLIC);
 
         FieldSpec daoField = FieldSpec.builder(dao, daoFieldName)
-                .addModifiers(Modifier.PRIVATE)
+                .addModifiers(Modifier.PROTECTED)
                 .build();
         classBuilder.addField(daoField);
 

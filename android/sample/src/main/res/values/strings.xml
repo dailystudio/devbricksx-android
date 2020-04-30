@@ -3,6 +3,6 @@
     <string name="app_name">DevbricksX Sample</string>
 
     <string name="dialog_title_new_notebook">New notebook</string>
-    <string name="hint_new_notebook">e.g. work.</string>
+    <string name="hint_new_notebook">Name</string>
 
 </resources>

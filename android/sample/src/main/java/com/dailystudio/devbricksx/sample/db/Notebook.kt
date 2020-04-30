@@ -9,6 +9,7 @@ import com.dailystudio.devbricksx.sample.ui.NotebookViewHolder
 @RoomCompanion(primaryKeys = ["id"],
         autoGenerate = true,
         converters = [DateConverter::class],
+        extension = NotebookDaoExtension::class,
         database = "notes")
 @ViewModel
 @Adapter(viewType = ViewType.SingleLine, viewHolder = NotebookViewHolder::class)

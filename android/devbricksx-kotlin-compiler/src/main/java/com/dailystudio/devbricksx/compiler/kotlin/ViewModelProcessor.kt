@@ -82,6 +82,7 @@ class ViewModelProcessor : BaseProcessor() {
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(TypeNamesUtils.getAndroidViewModelTypeName())
                 .addSuperclassConstructorParameter("application")
+                .addModifiers(KModifier.OPEN)
                 .primaryConstructor(FunSpec.constructorBuilder()
                     .addParameter("application", TypeNamesUtils.getApplicationTypeName())
                     .build())

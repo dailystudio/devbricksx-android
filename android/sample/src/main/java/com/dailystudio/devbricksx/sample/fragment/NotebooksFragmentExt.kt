@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.db.Notebook
 import com.dailystudio.devbricksx.sample.model.NotebookViewModel
+import com.dailystudio.devbricksx.sample.model.NotebookViewModelExt
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -23,6 +26,12 @@ class NotebooksFragmentExt : NotebooksFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
+    }
+
+    override fun getLiveData(): LiveData<PagedList<Notebook>> {
+        val viewModel = ViewModelProvider(this).get(NotebookViewModelExt::class.java)
+
+        return viewModel.allNotebooksOrderByName
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,12 +60,18 @@ class NotebooksFragmentExt : NotebooksFragment() {
                     nbNameView?.let {
                         val name = it.text.toString()
                         Logger.debug("create a new notebook: $name")
+                        if (name.isBlank()) {
+                            Logger.warn("notebook name is empty, skip")
+                            return@setPositiveButton
+                        }
 
                         val notebook = Notebook()
                         notebook.name = name
 
                         notebookViewModel.insertNotebook(notebook)
                     }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
                 }
                 .show()
     }

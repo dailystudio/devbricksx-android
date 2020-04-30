@@ -12,8 +12,9 @@
 
 	<style name="DefaultTitleText">
 		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textStyle">bold</item>
 		<item name="android:textSize">@dimen/default_title_font_size</item>
-		<item name="android:textColor">@color/colorPrimary</item>
+		<item name="android:textColor">@color/black</item>
 		<item name="android:paddingBottom">@dimen/default_title_bottom_padding</item>
 	</style>
 

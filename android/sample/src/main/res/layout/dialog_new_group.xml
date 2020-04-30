@@ -17,6 +17,7 @@
     <EditText
         android:id="@+id/notebook_name"
         style="@style/DefaultEditText"
+        android:hint="@string/hint_new_notebook"
         android:inputType="text"
         android:maxLines="1"
         android:layout_width="match_parent"

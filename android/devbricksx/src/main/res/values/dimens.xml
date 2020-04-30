@@ -2,7 +2,7 @@
 
 <resources>
 	
-	<dimen name="default_font_size">16dp</dimen>
+	<dimen name="default_font_size">18dp</dimen>
 
 	<dimen name="default_content_padding">20dp</dimen>
 	<dimen name="default_content_padding_h">20dp</dimen>
@@ -10,7 +10,7 @@
 
 	<dimen name="default_label_padding">10dp</dimen>
 
-	<dimen name="default_title_font_size">18dp</dimen>
+	<dimen name="default_title_font_size">20dp</dimen>
 	<dimen name="default_title_bottom_padding">10dp</dimen>
 
 	<dimen name="lv_content_padding">8dp</dimen>

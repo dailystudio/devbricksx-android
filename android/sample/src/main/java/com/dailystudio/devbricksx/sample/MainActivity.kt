@@ -8,7 +8,6 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.db.*
 import com.dailystudio.devbricksx.sample.model.NotebookViewModel
 import kotlinx.coroutines.*
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
