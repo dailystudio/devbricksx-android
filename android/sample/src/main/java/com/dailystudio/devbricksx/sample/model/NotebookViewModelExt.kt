@@ -16,7 +16,7 @@ class NotebookViewModelExt (application: Application): NotebookViewModel(applica
     init {
         val notebookDao = NotesDatabase.getDatabase(application).notebookDao()
         notebookRepositoryExt = NotebookRepositoryExt(notebookDao)
-        allNotebooksOrderByName = notebookRepositoryExt.allNotebooksPaged
+        allNotebooksOrderByName = notebookRepositoryExt.allOrderedByNamePaged
     }
 
 }
