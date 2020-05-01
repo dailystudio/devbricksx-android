@@ -42,11 +42,11 @@ import javax.lang.model.type.TypeMirror;
 public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
-    protected GeneratedResult onProcess(TypeElement typeElement,
-                                        String packageName,
-                                        String typeName,
-                                        RoundEnvironment roundEnv,
-                                        Object preResults) {
+    protected List<GeneratedResult> onProcess(TypeElement typeElement,
+                                              String packageName,
+                                              String typeName,
+                                              RoundEnvironment roundEnv,
+                                              Object preResults) {
         ClassName generatedClassName = ClassName
                 .get(packageName, GeneratedNames.getRoomCompanionName(typeName));
         debug("generated class = [%s]", generatedClassName);
@@ -300,7 +300,7 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
         classBuilder.addField(fieldListMapFunc.build());
 
-        return new GeneratedResult(packageName, classBuilder);
+        return singleResult(packageName, classBuilder);
     }
 
     private int getParametersCount(ExecutableElement executableElement) {

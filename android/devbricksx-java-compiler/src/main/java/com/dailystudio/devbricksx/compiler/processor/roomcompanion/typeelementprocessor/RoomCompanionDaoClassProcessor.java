@@ -20,6 +20,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.List;
+
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -27,11 +29,11 @@ import javax.lang.model.element.TypeElement;
 public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
-    protected GeneratedResult onProcess(TypeElement typeElement,
-                                        String packageName,
-                                        String typeName,
-                                        RoundEnvironment roundEnv,
-                                        Object preResults) {
+    protected List<GeneratedResult> onProcess(TypeElement typeElement,
+                                              String packageName,
+                                              String typeName,
+                                              RoundEnvironment roundEnv,
+                                              Object preResults) {
         ClassName generatedClassName = ClassName
                 .get(packageName, GeneratedNames.getRoomCompanionDaoName(typeName));
         debug("generated class = [%s]", generatedClassName);
@@ -352,7 +354,7 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
 
         classBuilder.addMethod(methodDeleteWrapper);
 
-        return new GeneratedResult(packageName, classBuilder);
+        return singleResult(packageName, classBuilder);
     }
 
 }

@@ -32,11 +32,11 @@ import javax.lang.model.element.VariableElement;
 public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
-    protected GeneratedResult onProcess(TypeElement typeElement,
-                                        String packageName,
-                                        String typeName,
-                                        RoundEnvironment roundEnv,
-                                        Object preResults) {
+    protected List<GeneratedResult> onProcess(TypeElement typeElement,
+                                              String packageName,
+                                              String typeName,
+                                              RoundEnvironment roundEnv,
+                                              Object preResults) {
         ClassName extension =  ClassName
                 .get(packageName, typeName);
         ClassName generatedClassName = ClassName
@@ -89,7 +89,7 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             }
         }
 
-        return new GeneratedResult(packageName, classBuilder);
+        return singleResult(packageName, classBuilder);
     }
 
     private boolean isTypeNameOfList(TypeName typeName) {

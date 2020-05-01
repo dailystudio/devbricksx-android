@@ -5,12 +5,13 @@ import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcess
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
-import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+
+import java.util.List;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Modifier;
@@ -19,11 +20,11 @@ import javax.lang.model.element.TypeElement;
 public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementProcessor {
 
     @Override
-    protected GeneratedResult onProcess(TypeElement typeElement,
-                                        String packageName,
-                                        String typeName,
-                                        RoundEnvironment roundEnv,
-                                        Object preResults) {
+    protected List<GeneratedResult> onProcess(TypeElement typeElement,
+                                              String packageName,
+                                              String typeName,
+                                              RoundEnvironment roundEnv,
+                                              Object preResults) {
         RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
         if (companionAnnotation == null) {
             return null;
@@ -145,7 +146,7 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
 
         classBuilder.addMethod(methodDelete);
 
-        return new GeneratedResult(targetPackage, classBuilder);
+        return singleResult(targetPackage, classBuilder);
     }
 
 }
