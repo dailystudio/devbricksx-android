@@ -1,9 +1,11 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
+import com.dailystudio.devbricksx.annotations.DaoExtension;
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
+import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -11,7 +13,9 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Modifier;
@@ -33,6 +37,10 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
         if (!companionAnnotation.repository()) {
             return null;
         }
+
+        TypeElement daoExtensionElement = findDaoExtensionTypeElement(preResults, typeElement);
+        debug("find daoExtension[%s] for element: %s",
+                daoExtensionElement, typeElement);
 
         String targetPackage =
                 GeneratedNames.getRoomCompanionRepositoryPackageName(packageName);
@@ -147,6 +155,33 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
         classBuilder.addMethod(methodDelete);
 
         return singleResult(targetPackage, classBuilder);
+    }
+
+    private TypeElement findDaoExtensionTypeElement(Object preResults,
+                                                    TypeElement targetElement) {
+        if (preResults instanceof Map == false) {
+            return null;
+        }
+
+        Map<Class<? extends Annotation>, List<TypeElement>> typeElementsMap =
+                (Map<Class<? extends Annotation>, List<TypeElement>>) preResults;
+
+        List<TypeElement> typeElements = typeElementsMap.get(DaoExtension.class);
+        if (typeElements == null || typeElements.size() <= 0) {
+            return null;
+        }
+
+        ClassName entityClass;
+        for (TypeElement typeElement: typeElements) {
+            entityClass = AnnotationsUtils.getClassValueFromAnnotation(
+                    typeElement, "entity");
+
+            if (entityClass.equals(ClassName.get(targetElement))) {
+                return typeElement;
+            }
+        }
+
+        return null;
     }
 
 }

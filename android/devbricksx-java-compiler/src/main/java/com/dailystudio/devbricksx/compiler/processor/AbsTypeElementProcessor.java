@@ -3,6 +3,8 @@ package com.dailystudio.devbricksx.compiler.processor;
 import com.dailystudio.devbricksx.compiler.utils.LogUtils;
 import com.squareup.javapoet.TypeSpec;
 
+import java.lang.annotation.Annotation;
+
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -80,5 +82,6 @@ public abstract class AbsTypeElementProcessor {
 
         return typeElement.getSimpleName().toString();
     }
+
 
 }

@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.TypeElement;
 
 @AutoService(Processor.class)
 public class RoomCompanionProcessor extends AbsBaseProcessor {
@@ -73,6 +74,11 @@ public class RoomCompanionProcessor extends AbsBaseProcessor {
         return new HashSet<>(Arrays.asList(
                 RoomCompanion.class.getCanonicalName(),
                 DaoExtension.class.getCanonicalName()));
+    }
+
+    @Override
+    protected Object preProcessTypeElements(Map<Class<? extends Annotation>, List<TypeElement>> typeElementsMap) {
+        return typeElementsMap;
     }
 
     @Override
