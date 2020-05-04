@@ -8,6 +8,14 @@ import java.util.List;
 
 public class TypeNamesUtils {
 
+    public static boolean isTypeNameVoid(TypeName typeName) {
+        return (getVoidTypeName().equals(typeName));
+    }
+
+    public static boolean isTypeNameOfList(TypeName typeName) {
+        return (typeName.toString().contains("java.util.List<"));
+    }
+
     public static TypeName getVoidTypeName() {
         return ClassName.VOID;
     }

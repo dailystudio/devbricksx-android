@@ -92,14 +92,6 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         return singleResult(packageName, classBuilder);
     }
 
-    private boolean isTypeNameOfList(TypeName typeName) {
-        return (typeName.toString().contains("java.util.List<"));
-    }
-
-    private boolean isTypeNameVoid(TypeName typeName) {
-        return (TypeNamesUtils.getVoidTypeName().equals(typeName));
-    }
-
     private void handleQueryMethod(String objectPackage,
                                    String objectTypeName,
                                    ExecutableElement executableElement,
@@ -133,9 +125,6 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         if (pageAnnotation != null) {
             pageSize = pageAnnotation.pageSize();
         }
-
-        final boolean collectionOperation =
-                isTypeNameOfList(returnTypeName);
 
         MethodSpec.Builder methodSpecBuilder;
         MethodSpec.Builder methodShadowSpecBuilder;
@@ -242,10 +231,12 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         TypeName returnTypeName =
                 TypeName.get(executableElement.getReturnType());
 
-        final boolean hasReturn = (isTypeNameVoid(returnTypeName) == false) && !alwaysReturnVoid;
+        final boolean hasReturn =
+                (!TypeNamesUtils.isTypeNameVoid(returnTypeName))
+                        && !alwaysReturnVoid;
 
         final boolean collectionOperation =
-                isTypeNameOfList(returnTypeName);
+                TypeNamesUtils.isTypeNameOfList(returnTypeName);
 
         MethodSpec.Builder methodSpecBuilder;
         MethodSpec.Builder methodShadowSpecBuilder;

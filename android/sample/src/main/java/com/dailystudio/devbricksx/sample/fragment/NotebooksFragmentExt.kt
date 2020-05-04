@@ -31,7 +31,7 @@ class NotebooksFragmentExt : NotebooksFragment() {
     override fun getLiveData(): LiveData<PagedList<Notebook>> {
         val viewModel = ViewModelProvider(this).get(NotebookViewModelExt::class.java)
 
-        return viewModel.allNotebooksOrderByName
+        return viewModel.allNotebooksOrderedByName
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

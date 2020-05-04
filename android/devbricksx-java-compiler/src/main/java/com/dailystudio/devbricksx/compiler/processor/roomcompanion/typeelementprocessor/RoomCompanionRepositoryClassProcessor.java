@@ -3,10 +3,12 @@ package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementp
 import com.dailystudio.devbricksx.annotations.DaoExtension;
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
+import com.dailystudio.devbricksx.compiler.processor.Constants;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
 import com.dailystudio.devbricksx.compiler.utils.NameUtils;
+import com.dailystudio.devbricksx.compiler.utils.TextUtils;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
@@ -18,8 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 
 public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementProcessor {
 
@@ -154,7 +159,107 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
 
         classBuilder.addMethod(methodDelete);
 
+        attachExtendMethods(packageName, typeName, daoExtensionElement, classBuilder);
+
         return singleResult(targetPackage, classBuilder);
+
+    }
+
+    private void attachExtendMethods(String objectPackage,
+                                     String objectTypeName,
+                                     TypeElement daoExtensionElement,
+                                     TypeSpec.Builder classBuilder) {
+        if (daoExtensionElement == null) {
+            return;
+        }
+
+        DaoExtension daoExtension = daoExtensionElement.getAnnotation(DaoExtension.class);
+        if (daoExtension == null) {
+            return;
+        }
+
+        List<? extends Element> subElements = daoExtensionElement.getEnclosedElements();
+
+        ExecutableElement executableElement;
+        for (Element subElement: subElements) {
+            if (subElement instanceof ExecutableElement) {
+                debug("processing method: %s", subElement);
+                if (Constants.CONSTRUCTOR_NAME.equals(subElement.getSimpleName().toString())) {
+                    debug("constructor method, skip", subElement);
+                    continue;
+                }
+
+                executableElement = (ExecutableElement) subElement;
+                handleMethod(objectPackage, objectTypeName,
+                        executableElement, classBuilder);
+            }
+        }
+    }
+
+    private void handleMethod(String objectPackage,
+                              String objectTypeName,
+                              ExecutableElement executableElement,
+                              TypeSpec.Builder classBuilder) {
+        String daoFieldName =
+                NameUtils.lowerCamelCaseName(GeneratedNames.getRoomCompanionDaoName(objectTypeName));
+        String methodName = executableElement.getSimpleName().toString();
+        TypeName returnTypeName =
+                TypeName.get(executableElement.getReturnType());
+
+        final boolean hasReturn = (!TypeNamesUtils.isTypeNameVoid(returnTypeName));
+
+        MethodSpec.Builder methodSpecBuilder;
+        List<? extends VariableElement> parameters;
+
+        methodSpecBuilder = MethodSpec.methodBuilder(methodName)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(returnTypeName);
+
+        StringBuilder parametersBuilder = new StringBuilder();
+
+        parameters = executableElement.getParameters();
+        if (parameters != null && parameters.size() > 0) {
+            final int N = parameters.size();
+
+            String paramName;
+            VariableElement param;
+            for (int i = 0; i < N; i++) {
+                param = parameters.get(i);
+
+                paramName = param.getSimpleName().toString();
+
+                methodSpecBuilder.addParameter(
+                        TypeName.get(param.asType()),
+                        paramName);
+
+                parametersBuilder.append(paramName);
+                if (i < N - 1) {
+                    parametersBuilder.append(", ");
+                }
+            }
+        }
+
+        String methodParameters = parametersBuilder.toString();
+
+        if (hasReturn) {
+            if (!TextUtils.isEmpty(methodParameters)) {
+                methodSpecBuilder.addStatement("return $N.$N($N)",
+                        daoFieldName, methodName, methodParameters);
+            } else {
+                methodSpecBuilder.addStatement("return $N.$N()",
+                        daoFieldName, methodName);
+            }
+        } else {
+            if (!TextUtils.isEmpty(methodParameters)) {
+                methodSpecBuilder.addStatement("$N.$N($N)",
+                        daoFieldName, methodName, methodParameters);
+            } else {
+                methodSpecBuilder.addStatement("$N.$N()",
+                        daoFieldName, methodName);
+            }
+        }
+
+        classBuilder.addMethod(methodSpecBuilder.build());
     }
 
     private TypeElement findDaoExtensionTypeElement(Object preResults,
@@ -182,6 +287,14 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
         }
 
         return null;
+    }
+
+    private boolean isTypeNameOfList(TypeName typeName) {
+        return (typeName.toString().contains("java.util.List<"));
+    }
+
+    private boolean isTypeNameVoid(TypeName typeName) {
+        return (TypeNamesUtils.getVoidTypeName().equals(typeName));
     }
 
 }

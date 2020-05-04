@@ -128,7 +128,7 @@ class ViewModelProcessor : BaseProcessor() {
         val launch = TypeNamesUtils.getLaunchMemberName()
         val job = TypeNamesUtils.getJobTypeName()
 
-        classBuilder.addProperty(repoVariableName, repo, KModifier.PRIVATE)
+        classBuilder.addProperty(repoVariableName, repo, KModifier.PROTECTED)
         classBuilder.addProperty(allName, liveDataOfListOfObjects)
         classBuilder.addProperty(allPagedName, liveDataOfPagedListOfObjects)
 

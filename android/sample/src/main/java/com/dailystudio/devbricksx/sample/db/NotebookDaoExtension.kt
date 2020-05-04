@@ -11,6 +11,6 @@ abstract class NotebookDaoExtension {
 
     @Query("SELECT * FROM notebook ORDER BY name ASC")
     @Page(pageSize = 50)
-    abstract fun loadAllOderByNameLivePaged(): LiveData<PagedList<Notebook>>
+    abstract fun getAllOrderedByNameLivePaged(): LiveData<PagedList<Notebook>>
 
 }
