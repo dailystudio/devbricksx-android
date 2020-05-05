@@ -12,7 +12,6 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.db.Notebook
 import com.dailystudio.devbricksx.sample.model.NotebookViewModel
-import com.dailystudio.devbricksx.sample.model.NotebookViewModelExt
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -23,15 +22,10 @@ class NotebooksFragmentExt : NotebooksFragment() {
     private var fab: FloatingActionButton? = null
     private var nbNameView: EditText? = null
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
-    }
-
     override fun getLiveData(): LiveData<PagedList<Notebook>> {
-        val viewModel = ViewModelProvider(this).get(NotebookViewModelExt::class.java)
+        notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
 
-        return viewModel.allNotebooksOrderedByName
+        return notebookViewModel.getAllOrderedByNameLivePaged()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
