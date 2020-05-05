@@ -185,7 +185,7 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
             if (subElement instanceof ExecutableElement) {
                 debug("processing method: %s", subElement);
                 if (Constants.CONSTRUCTOR_NAME.equals(subElement.getSimpleName().toString())) {
-                    debug("constructor method, skip", subElement);
+                    debug("constructor method, skip");
                     continue;
                 }
 

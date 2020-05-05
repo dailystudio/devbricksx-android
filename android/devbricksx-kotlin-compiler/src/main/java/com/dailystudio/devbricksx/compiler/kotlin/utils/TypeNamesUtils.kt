@@ -3,12 +3,25 @@ package com.dailystudio.devbricksx.compiler.kotlin.utils
 import com.dailystudio.devbricksx.compiler.kotlin.GeneratedNames
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 
 class TypeNamesUtils {
 
     companion object {
+
+        fun isTypeNameUnit(typeName: TypeName): Boolean {
+            return getUnitTypeName() == typeName
+        }
+
+        fun getArrayTypeName(typeName: TypeName): TypeName {
+            return ClassName("kotlin", "Array")
+        }
+
+        fun getUnitTypeName(): TypeName {
+            return ClassName("kotlin", "Unit")
+        }
 
         fun getDevbrickxRTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx", "R")
@@ -104,6 +117,16 @@ class TypeNamesUtils {
             return listAdapter.parameterizedBy(`object`, viewHolder)
         }
 
+        fun getJavaListTypeName() : ClassName {
+            return ClassName("java.util", "List")
+        }
+
+        fun getJavaListOfTypeName(typeName: TypeName): TypeName {
+            val list = getJavaListTypeName()
+
+            return list.parameterizedBy(typeName)
+        }
+
         fun getListTypeName(): ClassName {
             return ClassName("kotlin.collections", "List")
         }
@@ -136,6 +159,10 @@ class TypeNamesUtils {
             return getLiveDataOfTypeName(getListOfTypeName(typeName))
         }
 
+        fun getLiveDataOfJavaListOfObjectTypeName(typeName: TypeName): TypeName {
+            return getLiveDataOfTypeName(getJavaListOfTypeName(typeName))
+        }
+
         fun getPageListOfTypeName(typeClassName: TypeName): TypeName {
             val pagedList = getPagedListTypeName()
 
@@ -166,6 +193,22 @@ class TypeNamesUtils {
                                  packageName: String) : ClassName {
             return ClassName(GeneratedNames.getViewModelPackageName(packageName),
                     GeneratedNames.getViewModelName(className))
+        }
+
+        fun getJavaLongTypeName(): ClassName {
+            return ClassName("java.lang", "Long")
+        }
+
+        fun getJavaStringTypeName(): ClassName {
+            return ClassName("java.lang", "String")
+        }
+
+        fun getLongTypeName(): ClassName {
+            return ClassName("kotlin", "Long")
+        }
+
+        fun getStringTypeName(): ClassName {
+            return ClassName("kotlin", "String")
         }
 
     }

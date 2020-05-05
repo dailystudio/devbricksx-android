@@ -18,3 +18,11 @@ fun String.lowerCamelCaseName(): String {
 
     return builder.toString()
 }
+
+fun String.kotlinGetterName(): String {
+    if (!startsWith("get")) {
+        return this
+    }
+
+    return this.removePrefix("get").lowerCamelCaseName()
+}
