@@ -36,8 +36,8 @@ class User (
 ```
 Then you will get two auto-generated classes **UserDao** and **UserDatabase** under the same package of **User**. Only two things you need to do are:
 
-1. Add @RoomCompanion annotation on your class and set few parameters
-2. Add @JvmField annotation on each field of the class to make it accessible from Java code
+1. Add **@RoomCompanion** annotation on your class and set few parameters
+2. Add **@JvmField** annotation on each field of the class to make it accessible from Java code
 
 To save a user object, you can use the following snappit:
 
@@ -84,5 +84,5 @@ We do not prevent developer to extend the interfaces of these two classes. For m
 	    kapt "androidx.room:room-compiler:2.2.5"
 	```
 
-2. *[The latest version of Kapt (Kotlin Annotation Processor) does not support multiple rounds for the generated Kotlin files](https://kotlinlang.org/docs/reference/kapt.html)*. The means the codes generated which is related with are in **Java** format. For more information, please refer to the document of [devbricks-java-compiler](). 
+2. *[The latest version of Kapt (Kotlin Annotation Processor) does not support multiple rounds for the generated Kotlin files](https://kotlinlang.org/docs/reference/kapt.html#generating-kotlin-sources)*. The means the codes generated which is related with are in **Java** format. For more information, please refer to the document of [devbricks-java-compiler](). 
 
