@@ -54,20 +54,26 @@ Everyting is done. You just have saved about **100 lines codes** which you may c
 ## Generated interfaces
 For an object, e.g. **User**, we generate two classes UserDao and UserDatabase automatically. At the same time, these two classes also includes built-in interfaces for ease of use.
 
-Class            | Interfaces | Descriptions
-:--              | :--        | :--
-**UserDao**      | getAll()   | Retrieve all the users in a List   
-                 | getAllLive() | Retrieve a LiveData of all the users
-                 | getAllLivePaged() | Retrieve a LiveData of PagedList of users
-                 | insert(user) | Insert a user
-                 | insert(users) | Insert a list of users
-                 | update(user) | Update a user
-                 | update(users) | Update a list of users
-                 | insertOrUpdate(user) | Insert a user or update if it exists
-                 | insertOrUpdate(users) | Insert a list of users or update them if they are alreay existed
-                 | delete(user) | Delete a user
-**UserDatabase** | getDatabase(context) | Get a singlinton instance of user database
-                 | getDatabase(context, migrations) | Get a singlinton instance of user database with database mirgrations support
+### 1. UserDao
+
+Interfaces | Descriptions
+:--        | :--
+getAll()   | Retrieve all the users in a List   
+getAllLive() | Retrieve a LiveData of all the users
+getAllLivePaged() | Retrieve a LiveData of PagedList of users
+insert(user) | Insert a user
+insert(users) | Insert a list of users
+update(user) | Update a user
+update(users) | Update a list of users
+insertOrUpdate(user) | Insert a user or update if it exists
+insertOrUpdate(users) | Insert a list of users or update them if they are alreay existed
+delete(user) | Delete a user
+
+### 2. UserDatabase
+Interfaces | Descriptions
+:--        | :--
+getDatabase(context) | Get a singlinton instance of user database
+getDatabase(context, migrations) | Get a singlinton instance of user database with database mirgrations support
 
 We do not prevent developer to extend the interfaces of these two classes. For more information, please refer to the document of [devbricks-java-compiler](). 
 
