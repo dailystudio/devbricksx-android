@@ -23,11 +23,14 @@ dependencies {
 	// Basic Library for Android development
 	implementation "com.dailystudio:devbricksx:$devbricksx_version"
 
-	// Annotations and processors to generate low-level facilities, such as Dao, Database, etc.
+	// (Optional) Annotations and processors to generate low-level facilities, such as Dao, Database, etc. 
  	implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
  	kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
 
-	// Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
+ 	// (Optional) If you use the feature above, DO NOT forget this line 
+ 	kapt "androidx.room:room-compiler:2.2.5"
+
+	// (Optional) Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
 	implementation "com.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
 	kapt "com.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
 }
