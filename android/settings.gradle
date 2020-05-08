@@ -1,4 +1,4 @@
-include ':sample'
+include ':sample-notebook'
 include ':devbricksx'
 include ':devbricksx-kotlin-annotations'
 include ':devbricksx-kotlin-compiler'

@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">Sample Notebook</string>
+
+    <string name="dialog_title_new_notebook">New notebook</string>
+    <string name="hint_new_notebook">Name</string>
+
+</resources>
