@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.devbricksx.devbricksxsample
+package com.dailystudio.devbricksx.notebook
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.dailystudio.devbrickx.devbricksx.devbricksxsample", appContext.packageName)
+        assertEquals("com.dailystudio.devbricksx.notebook", appContext.packageName)
     }
 }
