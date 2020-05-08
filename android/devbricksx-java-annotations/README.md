@@ -59,7 +59,7 @@ Since the code genereated in this library are Jave codes, **@JvmField** should b
 ### RoomCompanion
 It is the core annotation of this library and will help you generate companion classes which will be used by Android Room Library. Here is a complete example:
 
-#####User.kt
+####User.kt
 
 ```kotlin
 @RoomCompanion(primaryKeys = ["id"], 
@@ -84,7 +84,7 @@ data class User (@JvmField val id: UUID,
 }
 ```
 
-#####Group.kt
+####Group.kt
 
 ```kotlin
 @RoomCompanion(primaryKeys = ["id"],

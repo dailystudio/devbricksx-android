@@ -75,7 +75,7 @@ Interfaces | Descriptions
 getDatabase(context) | Get a singlinton instance of user database
 getDatabase(context, migrations) | Get a singlinton instance of user database with database mirgrations support
 
-We do not prevent developer to extend the interfaces of these two classes. For more information, please refer to the document of [devbricks-java-annotations](../devbricksx-java-annotations/README.md). 
+We do not prevent developer to extend the interfaces of these two classes. For more information, please refer to the document of [devbricksx-java-annotations](../devbricksx-java-annotations/README.md). 
 
 ## Limitations
 1. Since we are basing on the Android Room Library rather than rewriting it, generated codes also need to be compiled with Room compiler. Do not forget the following line in your build.gradle:
@@ -84,5 +84,5 @@ We do not prevent developer to extend the interfaces of these two classes. For m
 	    kapt "androidx.room:room-compiler:2.2.5"
 	```
 
-2. *[The latest version of Kapt (Kotlin Annotation Processor) does not support multiple rounds for the generated Kotlin files](https://kotlinlang.org/docs/reference/kapt.html#generating-kotlin-sources)*. The means the codes generated which is related with are in **Java** format. For more information, please refer to the document of [devbricks-java-annotations](../devbricksx-java-annotations/README.md). 
+2. *[The latest version of Kapt (Kotlin Annotation Processor) does not support multiple rounds for the generated Kotlin files](https://kotlinlang.org/docs/reference/kapt.html#generating-kotlin-sources)*. The means the codes generated which is related with are in **Java** format. For more information, please refer to the document of [devbricksx-java-annotations](../devbricksx-java-annotations/README.md). 
 
