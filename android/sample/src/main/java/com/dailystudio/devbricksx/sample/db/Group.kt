@@ -7,7 +7,6 @@ import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.sample.R
 import com.dailystudio.devbricksx.sample.ui.GroupViewHolder
-import com.dailystudio.devbricksx.sample.ui.UserViewHolder
 import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],

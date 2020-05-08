@@ -22,9 +22,8 @@ import java.util.*
 @ViewModel(group = "user")
 @Adapter(layout = R.layout.layout_user, viewHolder = UserViewHolder::class)
 @Fragment
-class User (
-@JvmField val id: UUID,
-@JvmField val name: String) {
+data class User (@JvmField val id: UUID,
+                 @JvmField val name: String) {
     @JvmField var firstName: String? = null
     @JvmField var lastName: String? = null
     @JvmField var age: Int = 0
