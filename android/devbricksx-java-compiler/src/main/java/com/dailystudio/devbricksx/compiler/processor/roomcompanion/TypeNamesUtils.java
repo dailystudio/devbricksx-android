@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion;
 
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -103,6 +104,18 @@ public class TypeNamesUtils {
 
     public static ClassName getObjectTypeName(String packageName, String typeElementName) {
         return ClassName.get(packageName, typeElementName);
+    }
+
+    public static TypeName getArrayOfTypeName(TypeName typeName) {
+        return ArrayTypeName.of(typeName);
+    }
+
+    public static TypeName getArrayOfObjectsTypeName(String packageName, String typeElementName) {
+        return getArrayOfTypeName(getObjectTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getArrayOfCompanionsTypeName(String packageName, String typeElementName) {
+        return getArrayOfTypeName(getCompanionTypeName(packageName, typeElementName));
     }
 
     public static TypeName getListOfObjectsTypeName(String packageName, String typeElementName) {

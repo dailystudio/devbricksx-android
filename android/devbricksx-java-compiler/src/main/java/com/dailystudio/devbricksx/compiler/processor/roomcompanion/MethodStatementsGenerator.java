@@ -157,10 +157,10 @@ public class MethodStatementsGenerator {
                 .endControlFlow();
     }
 
-    public static void inputObjectsToCompanions(String packageName, String typeName,
-                                                MethodSpec.Builder methodSpecBuilder,
-                                                String parameterName,
-                                                String shadowParameterName) {
+    public static void inputObjectListToCompanionList(String packageName, String typeName,
+                                                      MethodSpec.Builder methodSpecBuilder,
+                                                      String parameterName,
+                                                      String shadowParameterName) {
         ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
         ClassName arrayList = TypeNamesUtils.getArrayListTypeName();
         TypeName listOfCompanions =
@@ -178,10 +178,38 @@ public class MethodStatementsGenerator {
 
     }
 
+    public static void inputObjectArrayToCompanionArray(String packageName, String typeName,
+                                                        MethodSpec.Builder methodSpecBuilder,
+                                                        String parameterName,
+                                                        String shadowParameterName) {
+        String listName = new StringBuilder(shadowParameterName).insert(0, "listOf").toString();
+
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
+        ClassName arrayList = TypeNamesUtils.getArrayListTypeName();
+        TypeName listOfCompanions =
+                TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
+        TypeName arrayOfCompanions =
+                TypeNamesUtils.getArrayOfCompanionsTypeName(packageName, typeName);
+
+        methodSpecBuilder.addStatement("$T $N = new $T<>()",
+                listOfCompanions, listName, arrayList)
+                .beginControlFlow("if ($N != null)", parameterName)
+                .beginControlFlow("for (int i = 0; i < $N.length; i++)",
+                        parameterName)
+                .addStatement("$N.add($T.fromObject($N[i]))",
+                        listName, companion, parameterName)
+                .endControlFlow()
+                .endControlFlow()
+                .addStatement("$T $N = $N.toArray(new $T[0])",
+                        arrayOfCompanions, shadowParameterName, listName, companion);
+
+    }
+
     public static void mapInputObjectAndObjects(String packageName, String typeName,
                                                 MethodSpec.Builder methodSpecBuilder,
                                                 Set<String> objectTypeParameters,
                                                 Set<String> objectsListTypeParameters,
+                                                Set<String> objectsArrayTypeParameters,
                                                 String shadowMethodName,
                                                 String methodParameters,
                                                 boolean hasReturn) {
@@ -195,7 +223,16 @@ public class MethodStatementsGenerator {
         }
 
         for (String objectParam: objectsListTypeParameters) {
-            MethodStatementsGenerator.inputObjectsToCompanions(
+            MethodStatementsGenerator.inputObjectListToCompanionList(
+                    packageName,
+                    typeName,
+                    methodSpecBuilder,
+                    objectParam,
+                    GeneratedNames.getShadowParameterName(objectParam));
+        }
+
+        for (String objectParam: objectsArrayTypeParameters) {
+            MethodStatementsGenerator.inputObjectArrayToCompanionArray(
                     packageName,
                     typeName,
                     methodSpecBuilder,

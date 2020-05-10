@@ -227,6 +227,10 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 objectPackage, objectTypeName);
         TypeName listOfCompanions = TypeNamesUtils.getListOfCompanionsTypeName(
                 objectPackage, objectTypeName);
+        TypeName arrayOfObjects = TypeNamesUtils.getArrayOfObjectsTypeName(
+                objectPackage, objectTypeName);
+        TypeName arrayOfCompanions = TypeNamesUtils.getArrayOfCompanionsTypeName(
+                objectPackage, objectTypeName);
 
         TypeName returnTypeName =
                 TypeName.get(executableElement.getReturnType());
@@ -263,6 +267,7 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         StringBuilder parametersBuilder = new StringBuilder();
         Set<String> objectTypeParameters = new HashSet<>();
         Set<String> objectsListTypeParameters = new HashSet<>();
+        Set<String> objectsArrayTypeParameters = new HashSet<>();
 
         parameters = executableElement.getParameters();
         if (parameters != null && parameters.size() > 0) {
@@ -290,6 +295,13 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                             paramName);
 
                     objectsListTypeParameters.add(param.getSimpleName().toString());
+                } else if (arrayOfObjects.equals(paramTypeName)) {
+                    paramName = GeneratedNames.getShadowParameterName(param);
+                    methodSpecBuilder.addParameter(
+                            arrayOfCompanions,
+                            paramName);
+
+                    objectsArrayTypeParameters.add(param.getSimpleName().toString());
                 } else {
                     paramName = param.getSimpleName().toString();
                     methodSpecBuilder.addParameter(
@@ -313,6 +325,7 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 methodShadowSpecBuilder,
                 objectTypeParameters,
                 objectsListTypeParameters,
+                objectsArrayTypeParameters,
                 shadowMethodName,
                 parametersBuilder.toString(),
                 hasReturn);
