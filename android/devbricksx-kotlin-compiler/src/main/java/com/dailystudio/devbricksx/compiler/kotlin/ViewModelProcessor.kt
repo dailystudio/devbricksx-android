@@ -24,8 +24,8 @@ class ViewModelProcessor : BaseProcessor() {
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         val daoExtElements = mutableMapOf<ClassName, TypeElement>()
         roundEnv.getElementsAnnotatedWith(DaoExtension::class.java).forEach {
-            if (it.kind != ElementKind.CLASS) {
-                processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
+            if (it.kind != ElementKind.CLASS && it.kind != ElementKind.INTERFACE) {
+                processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes or interfaces can be annotated")
                 return true
             }
 

@@ -56,9 +56,20 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         }
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .superclass(extension)
                 .addModifiers(Modifier.ABSTRACT)
                 .addModifiers(Modifier.PUBLIC);
+
+        switch (typeElement.getKind()) {
+            case CLASS:
+                classBuilder.superclass(extension);
+                break;
+            case INTERFACE:
+                classBuilder.addSuperinterface(extension);
+                break;
+            default:
+                error("only classes or interfaces can be annotated.");
+                return null;
+        }
 
         List<? extends Element> subElements = typeElement.getEnclosedElements();
 
