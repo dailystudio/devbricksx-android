@@ -1,5 +1,5 @@
 # Global Context
-As you know **Context** is an important thing in Android application. Your code can do few things without **Context**. Latest interfaces in Android SDK prvoide sufficient way to help developers avoid holding an instance of Context. **DevBricksX** also provides you an interface to bind a global application context - **GlobalContextWrapper**. You can retrieve it at anywhere in your application. 
+As you know **Context** is an important thing in Android application. Your code can do few things without **Context**. The latest interfaces in Android SDK provide sufficient ways to help developers avoid holding an instance of Context. **DevBricksX** also provides you an interface to bind a global application context - **GlobalContextWrapper**. You can retrieve it anywhere in your application. 
 
 ## Bind context
 
@@ -18,7 +18,7 @@ open class MyApplication : Application() {
 
 }
 ```
-**GlobalContextWrapper** will bind an application context rather than an activity context. Even you pass an Activity object as second parameter to **`bindContext()`**, it will call **`getApplicationContext()`** of Activity to retrieve correct application context for further operation. That means you needn't to worry about memory leak of this global context holder. Each application process only has one application context instance and will not hold any information about view root.
+**GlobalContextWrapper** will bind an application context rather than an activity context. Even you pass an Activity object as second parameter to **`bindContext()`**, it will call **`getApplicationContext()`** of Activity to retrieve correct application context for further operation. That means you needn't worry about the memory leak of this global context holder. Each application process only has one application context instance and will not hold any information about the view root.
 
 ## Usage context
 Once, you have bound the application context. You can call **`getContext()`** whenever you need a **`Context`** instance. Here is an example:
