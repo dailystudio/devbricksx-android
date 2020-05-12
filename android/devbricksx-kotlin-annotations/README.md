@@ -79,7 +79,10 @@ class UserViewHolder(itemView: View): AbsSingleLineViewHolder<User>(itemView) {
 
 }
 ```
-With a few lines of codes, you get a fragment named **UsersFragment**. You only need to add three annotations @ViewModel, @Adapter, and @ListFragment on **User** class and create a UserViewHolder class to map the data fields into the UI elements.
+With a few lines of codes, you get a fragment named **UsersFragment**. You only need to add three annotations @ViewModel, @Adapter, and @ListFragment on **User** class and create a UserViewHolder class to map the data fields into the UI elements. Then you will get an UI like this:
+
+![](../docs/assets/samples.gif)
+
 
 ## Annotations
 
