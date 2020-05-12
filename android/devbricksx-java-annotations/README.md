@@ -137,7 +137,7 @@ Here we defined two classes **User** and **Group** and their relationship. Both 
     
 - **repository**
 
-    Indicate whether an auto-generated **Repository** class is required. By default, a Repository class will also be auto-generated with **Dao** and **Database**. If you do not need a Repository, it will be a bit complex when you are using our high-level annotations like @ViewModel.
+    Indicate whether an auto-generated **Repository** class is required. By default, a Repository class will also be auto-generated with **Dao** and **Database**. If you do not need a **Repository**, you can set it to false. But it will be a bit complex when you are using our high-level annotations like **@ViewModel**.
 
 - **pageSize**
 

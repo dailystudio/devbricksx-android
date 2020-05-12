@@ -207,6 +207,28 @@ class ViewModelProcessor : BaseProcessor() {
                 .build()
         classBuilder.addFunction(methodUpdateAll)
 
+        val methodInsertOrUpdateOne = FunSpec.builder(GeneratedNames.getMethodName("insertOrUpdate", typeName))
+                .addParameter(objectVariableName, `object`)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.insertOrUpdate(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodInsertOrUpdateOne)
+
+        val methodInsertOrUpdateAll = FunSpec.builder(GeneratedNames.getPluralMethodName("insertOrUpdate", typeName))
+                .addParameter(objectsVariableName, listOfObjects)
+                .addStatement("return %M.%M(%T.IO) {\n" +
+                        "   %N.update(%N)\n" +
+                        "}",
+                        viewModelScope, launch, dispatchers,
+                        repoVariableName, objectsVariableName)
+                .returns(job)
+                .build()
+        classBuilder.addFunction(methodInsertOrUpdateAll)
+
         val methodDeleteOne = FunSpec.builder(GeneratedNames.getMethodName("delete", typeName))
                 .addParameter(objectVariableName, `object`)
                 .addStatement("return %M.%M(%T.IO) {\n" +
