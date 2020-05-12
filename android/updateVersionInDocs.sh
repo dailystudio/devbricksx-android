@@ -20,6 +20,7 @@ echo "Retrieving version from $VERSION_PROPERTIES: [${version}]"
 files="
   README.md
   devbricksx-java-annotations/README.md
+  devbricksx-kotlin-annotations/README.md
 "
 
 for f in ${files}; do
