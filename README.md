@@ -7,6 +7,8 @@
 - **Reliable**:  It has been integrated into enormous products. Your work will stand on a stable foundation. 
 - **Consistent**: It includes a unified logging system, database accessing, UI elements, and styles. This makes all of your applications have consistency at the primary impression.
 
+![](android/docs/assets/samples.png)
+
 #### Projects
 
 Now it only includes libraries for **Android**. It will be extended to support more libraries on **Node.js**, **Python**, and **Flutter**.
