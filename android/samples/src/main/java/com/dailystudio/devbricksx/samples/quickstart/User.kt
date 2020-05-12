@@ -34,7 +34,7 @@ class UserViewHolder(itemView: View): AbsSingleLineViewHolder<User>(itemView) {
 
     override fun getIcon(item: User): Drawable? {
         return ResourcesCompatUtils.getDrawable(itemView.context,
-                R.mipmap.ic_launcher)
+                R.mipmap.ic_user)
     }
 
     override fun getText(item: User): CharSequence? {
