@@ -24,11 +24,10 @@ dependencies {
     implementation "com.dailystudio:devbricksx:$devbricksx_version"
 
     // (Optional) Annotations and processors to generate low-level facilities, such as Dao, Database, etc. 
-     implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
-     kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
-
-     // (Optional) If you use the feature above, DO NOT forget this line 
-     kapt "androidx.room:room-compiler:2.2.5"
+    implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
+    kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
+    // (Optional) If you use the feature above, DO NOT forget this line 
+    kapt "androidx.room:room-compiler:2.2.5"
 
     // (Optional) Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
     implementation "com.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
@@ -85,6 +84,10 @@ Now you can enjoy this library in your way. The facilities provided in this libr
 - [**Database**](./docs/database.md)
     
     A set of utilities to simplify the usage of Android Room components. It can generate Room, Dao, Database, and Repository for a class through one annotation.
+
+- [**UI**](./docs/ui.md)
+    
+    Plenty of classes to simplify high-level development. Combine with [**Database**](./docs/database.md) facilities, you can save an object in database and then represent it in a list view with less than 20 lines of code.
 
 ## License
     Copyright 2020 Daily Studio.
