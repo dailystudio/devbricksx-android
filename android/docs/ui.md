@@ -13,8 +13,8 @@ How to setup your builde.gradle, see the installation section of [devbricksx](..
 ## Components
 - ViewModel	
 
-	With annotations's support, you can generate a ViewModal and a Fragment with RecyclerView automatically for a object class. Visit [devbricksx-kotlin-annotation](devbricksx-kotlin-annotation/README.md) for more details.
+	With annotations's support, you can generate a ViewModal and a Fragment with RecyclerView automatically for a object class. Visit [devbricksx-kotlin-annotations](../devbricksx-kotlin-annotations/README.md) for more details.
 	
 - Fragment
 
-	With annotations's support, you can generate a Fragment with RecyclerView automatically for a object class. Visit [devbricksx-kotlin-annotation](devbricksx-kotlin-annotation/README.md) for more details.
+	With annotations's support, you can generate a Fragment with RecyclerView automatically for a object class. Visit [devbricksx-kotlin-annotations](../devbricksx-kotlin-annotations/README.md) for more details.
