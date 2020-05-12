@@ -51,6 +51,7 @@ dependencies {
     // LifeCycle relatives
     api "androidx.lifecycle:lifecycle-extensions:${project.ext.archLifecycleVersion}"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:${project.ext.archLifecycleVersion}"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:${project.ext.archLifecycleVersion}"
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 
     // MultiDex

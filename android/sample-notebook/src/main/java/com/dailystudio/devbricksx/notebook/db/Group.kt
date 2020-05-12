@@ -2,7 +2,7 @@ package com.dailystudio.devbricksx.notebook.db
 
 import androidx.room.Index
 import com.dailystudio.devbricksx.annotations.Adapter
-import com.dailystudio.devbricksx.annotations.Fragment
+import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.notebook.R
@@ -15,7 +15,7 @@ import java.util.*
 )
 @ViewModel(group = "user")
 @Adapter(layout = R.layout.layout_group, viewHolder = GroupViewHolder::class)
-@Fragment
+@ListFragment
 data class Group(@JvmField val id: UUID,
                  @JvmField val name: String) {
 

@@ -11,7 +11,7 @@ enum class ViewType {
 @Target(AnnotationTarget.CLASS)
 annotation class Adapter(
         val viewHolder: KClass<*>,
-        val viewType: ViewType = ViewType.Customized,
+        val viewType: ViewType = ViewType.SingleLine,
         val layout: Int = -1,
-        val paged: Boolean = false
+        val paged: Boolean = true
 )

@@ -11,7 +11,9 @@ open abstract class AbsSingleLineViewHolder<Item>(itemView: View) : AbsViewHolde
     override fun bind(item: Item) {
         val iconView : ImageView = itemView.findViewById(R.id.list_item_icon)
 
-        iconView?.setImageDrawable(getIcon(item))
+        val drawable = getIcon(item)
+        iconView?.setImageDrawable(drawable)
+        iconView?.visibility = if (drawable == null) View.GONE else View.VISIBLE
 
         val textView : TextView = itemView.findViewById(R.id.list_item_text_line_1st)
         textView?.text = getText(item)

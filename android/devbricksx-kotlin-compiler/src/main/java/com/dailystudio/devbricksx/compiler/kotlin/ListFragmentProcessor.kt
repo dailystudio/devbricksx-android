@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
-import com.dailystudio.devbricksx.annotations.Fragment
+import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.google.auto.service.AutoService
@@ -13,14 +13,14 @@ import javax.tools.Diagnostic
 
 
 @AutoService(Processor::class)
-class FragmentProcessor : BaseProcessor() {
+class ListFragmentProcessor : BaseProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(Fragment::class.java.name)
+        return mutableSetOf(ListFragment::class.java.name)
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        roundEnv.getElementsAnnotatedWith(Fragment::class.java)
+        roundEnv.getElementsAnnotatedWith(ListFragment::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
                         processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
@@ -44,8 +44,10 @@ class FragmentProcessor : BaseProcessor() {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val fragmentAnnotation = element.getAnnotation(Fragment::class.java)
+        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
         val layout = fragmentAnnotation.layout
+        val isGradLayout = fragmentAnnotation.gridLayout
+        val columns = fragmentAnnotation.columns
 
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
 
@@ -101,8 +103,16 @@ class FragmentProcessor : BaseProcessor() {
         val methodOnCreateLayoutManagerBuilder = FunSpec.builder("onCreateLayoutManager")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
-                .addStatement("return %T(context, 2)", gridLayoutManager)
                 .returns(layoutManager)
+        if (isGradLayout) {
+            methodOnCreateLayoutManagerBuilder.addStatement(
+                    "return %T(context, %L)", gridLayoutManager, columns
+            )
+        } else {
+            methodOnCreateLayoutManagerBuilder.addStatement(
+                    "return %T(context)", linearLayoutManager
+            )
+        }
 
         classBuilder.addFunction(methodOnCreateLayoutManagerBuilder.build())
 

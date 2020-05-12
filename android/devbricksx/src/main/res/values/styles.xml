@@ -37,6 +37,14 @@
 		<item name="android:padding">@dimen/lv_content_padding</item>
 	</style>
 
+	<style name="DefaultListIcon">
+		<item name="android:layout_width">@dimen/lv_item_icon_size</item>
+		<item name="android:layout_height">@dimen/lv_item_icon_size</item>
+		<item name="android:paddingStart">@dimen/lv_item_icon_padding</item>
+		<item name="android:paddingEnd">@dimen/lv_item_icon_padding</item>
+	</style>
+
+
 	<style name="DefaultListItemText" parent="DefaultText">
 		<item name="android:gravity">left|center_vertical</item>
 		<item name="android:textSize">@dimen/lv_item_font_size</item>
