@@ -121,6 +121,7 @@ class ListFragmentProcessor : BaseProcessor() {
                 .addModifiers(KModifier.OVERRIDE)
                 .addStatement("val viewModel = %T(this).get(%T::class.java)",
                         viewModelProvider, viewModel)
+//                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
                 .addStatement("return viewModel.%N", GeneratedNames.getAllObjectsPagedPropertyName(typeName))
                 .returns(liveDataOfPagedListOfObjects)
 

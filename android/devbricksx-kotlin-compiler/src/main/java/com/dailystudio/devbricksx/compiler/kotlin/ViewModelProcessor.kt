@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.DaoExtension
+import com.dailystudio.devbricksx.annotations.InMemoryRepository
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
@@ -128,11 +129,17 @@ class ViewModelProcessor : BaseProcessor() {
             GeneratedNames.getDatabaseName(typeName)
         }
 
+        val inMemoryRepository = (element.getAnnotation(InMemoryRepository::class.java) != null)
+
         val repoName = GeneratedNames.getRepositoryName(typeName)
         val repoVariableName = repoName.lowerCamelCaseName()
         val repoPackageName = GeneratedNames.getRepositoryPackageName(packageName)
         val allName = GeneratedNames.getAllObjectsPropertyName(typeName)
         val allPagedName = GeneratedNames.getAllObjectsPagedPropertyName(typeName)
+        val repoAllName = GeneratedNames.getAllObjectsPropertyName(
+                if (inMemoryRepository) "Object" else typeName)
+        val repoAllPagedName = GeneratedNames.getAllObjectsPagedPropertyName(
+                if (inMemoryRepository) "Object" else typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
         val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
         val objectsVariableName = GeneratedNames.getObjectsVariableName(typeName)
@@ -152,16 +159,27 @@ class ViewModelProcessor : BaseProcessor() {
         classBuilder.addProperty(allName, liveDataOfListOfObjects)
         classBuilder.addProperty(allPagedName, liveDataOfPagedListOfObjects)
 
-        classBuilder.addInitializerBlock(CodeBlock.of(
-                "   val %N = %T.getDatabase(application).%N()\n" +
-                "   %N = %T(%N)\n" +
-                "   %N = %N.%N\n" +
-                "   %N = %N.%N\n",
-                daoVariableName, database, daoVariableName,
-                repoVariableName, repo, daoVariableName,
-                allName, repoVariableName, allName,
-                allPagedName, repoVariableName, allPagedName
-        ))
+        if (inMemoryRepository) {
+            classBuilder.addInitializerBlock(CodeBlock.of(
+                    "   %N = %T\n" +
+                            "   %N = %N.%N\n" +
+                            "   %N = %N.%N\n",
+                    repoVariableName, repo,
+                    allName, repoVariableName, repoAllName,
+                    allPagedName, repoVariableName, repoAllPagedName
+            ))
+        } else {
+            classBuilder.addInitializerBlock(CodeBlock.of(
+                    "   val %N = %T.getDatabase(application).%N()\n" +
+                        "   %N = %T(%N)\n" +
+                        "   %N = %N.%N\n" +
+                        "   %N = %N.%N\n",
+                    daoVariableName, database, daoVariableName,
+                    repoVariableName, repo, daoVariableName,
+                    allName, repoVariableName, repoAllName,
+                    allPagedName, repoVariableName, repoAllPagedName
+            ))
+        }
 
         val methodInsertOne = FunSpec.builder(GeneratedNames.getMethodName("insert", typeName))
                 .addParameter(objectVariableName, `object`)

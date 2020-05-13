@@ -183,6 +183,14 @@ class TypeNamesUtils {
             return itemCallback.parameterizedBy(typeName)
         }
 
+        fun getAbsObjectRepositoryOfTypeName(keyTypeName: TypeName,
+                                             objectTypeName: TypeName): TypeName {
+            val repository = ClassName("com.dailystudio.devbricksx.repository",
+            "ObjectRepository")
+
+            return repository.parameterizedBy(keyTypeName, objectTypeName)
+        }
+
         fun getAdapterTypeName(className: String,
                                packageName: String) : ClassName {
             return ClassName(GeneratedNames.getAdapterPackageName(packageName),
@@ -209,6 +217,10 @@ class TypeNamesUtils {
 
         fun getStringTypeName(): ClassName {
             return ClassName("kotlin", "String")
+        }
+
+        fun getLoggerTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.development", "Logger")
         }
 
     }

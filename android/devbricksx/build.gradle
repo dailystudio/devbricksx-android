@@ -54,6 +54,9 @@ dependencies {
     api "androidx.lifecycle:lifecycle-runtime-ktx:${project.ext.archLifecycleVersion}"
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 
+    // LiveDat relatives
+    api "androidx.lifecycle:lifecycle-livedata-ktx:${project.ext.liveDataVersion}"
+
     // MultiDex
     api "androidx.multidex:multidex:${project.ext.multiDexVersion}"
 

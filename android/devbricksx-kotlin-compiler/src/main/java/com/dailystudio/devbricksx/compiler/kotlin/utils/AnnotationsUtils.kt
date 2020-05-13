@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.compiler.kotlin.utils
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.asTypeName
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
@@ -18,7 +19,7 @@ class AnnotationsUtils {
                 return null
             }
 
-            return ClassName.bestGuess(value.toString())
+            return value.asTypeName() as ClassName
         }
 
         private fun findPropertyInAnnotation(typeElement: TypeElement,
