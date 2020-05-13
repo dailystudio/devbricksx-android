@@ -1,7 +1,6 @@
 #!/bin/sh
 
 VERSION_PROPERTIES=version.properties
-TEMP_FILE=file.tmp
 
 function getProperty {
    PROP_KEY=$1
@@ -29,7 +28,8 @@ for f in ${files}; do
   fi
 
   echo "updating version in file [${f}]..."
-  sed "s/devbricksx_version\ =\ \".*\"/devbricksx_version\ =\ \"${version}\"/g" ${f} >> ${TEMP_FILE}
-  mv ${TEMP_FILE} ${f}
+  sed -i "" "s/devbricksx_version\ =\ \".*\"/devbricksx_version\ =\ \"${version}\"/g" ${f}
+  sed -i "" "s/download.svg\?version=[0-9]\.[0-9]\.[0-9]/download.svg\?version=${version}/g" ${f}
+  sed -i "" "s/maven\/devbricksx\/[0-9]\.[0-9]\.[0-9]\//maven\/devbricksx\/${version}\//g" ${f}
 done
 
