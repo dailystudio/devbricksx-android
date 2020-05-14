@@ -8,6 +8,7 @@ class GeneratedNames {
         private const val ADAPTER_SUFFIX = "Adapter"
         private const val FRAGMENT_SUFFIX = "Fragment"
         private const val REPOSITORY_SUFFIX = "Repository"
+        private const val MANAGER_SUFFIX = "Manager"
         private const val DATABASE_SUFFIX = "Database"
         private const val DAO_SUFFIX = "Dao"
         private const val DIFF_UTIL_SUFFIX = "DiffUtil"
@@ -62,6 +63,13 @@ class GeneratedNames {
             return buildString {
                 this.append(className)
                 this.append(REPOSITORY_SUFFIX)
+            }
+        }
+
+        fun getManagerName(className: String) : String {
+            return buildString {
+                this.append(className)
+                this.append(MANAGER_SUFFIX)
             }
         }
 

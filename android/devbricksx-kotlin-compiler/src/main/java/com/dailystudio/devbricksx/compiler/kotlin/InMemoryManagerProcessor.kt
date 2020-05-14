@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
-import com.dailystudio.devbricksx.annotations.InMemoryRepository
+import com.dailystudio.devbricksx.annotations.InMemoryManager
 import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.google.auto.service.AutoService
@@ -13,14 +13,14 @@ import javax.tools.Diagnostic
 
 
 @AutoService(Processor::class)
-class InMemoryRepositoryProcessor : BaseProcessor() {
+class InMemoryManagerProcessor : BaseProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(InMemoryRepository::class.java.name)
+        return mutableSetOf(InMemoryManager::class.java.name)
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        roundEnv.getElementsAnnotatedWith(InMemoryRepository::class.java)
+        roundEnv.getElementsAnnotatedWith(InMemoryManager::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
                         processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
@@ -28,7 +28,7 @@ class InMemoryRepositoryProcessor : BaseProcessor() {
                     }
 
                     if (element is TypeElement) {
-                       val result = generateInMemoryRepository(element)
+                       val result = generateInMemoryManager(element)
 
                         result?.let {
                             writeToFile(it)
@@ -40,29 +40,23 @@ class InMemoryRepositoryProcessor : BaseProcessor() {
         return true
     }
 
-    private fun generateInMemoryRepository(element: TypeElement) : GeneratedResult? {
+    private fun generateInMemoryManager(element: TypeElement) : GeneratedResult? {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val annotation = element.getAnnotation(InMemoryRepository::class.java)
-        val pageSize = annotation.pageSize
         val key = AnnotationsUtils.getClassValueFromAnnotation(element, "key") ?: return null
 
-        val generatedClassName = GeneratedNames.getRepositoryName(typeName)
+        val generatedClassName = GeneratedNames.getManagerName(typeName)
 
         val objectTypeName = ClassName(packageName, typeName)
-        val repositoryTypeName = TypeNamesUtils.getObjectRepositoryOfTypeName(
+        val managerTypeName = TypeNamesUtils.getObjectMangerOfTypeName(
                 key, objectTypeName)
-        val managerTypeName = ClassName(packageName,
-                GeneratedNames.getManagerName(typeName))
 
-        val classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .superclass(repositoryTypeName)
-                .addSuperclassConstructorParameter("%T", managerTypeName)
-                .addSuperclassConstructorParameter("%L", pageSize)
+        val classBuilder = TypeSpec.objectBuilder(generatedClassName)
+                .superclass(managerTypeName)
 
         return GeneratedResult(
-                GeneratedNames.getRepositoryPackageName(packageName),
+                packageName,
                 classBuilder)
     }
 

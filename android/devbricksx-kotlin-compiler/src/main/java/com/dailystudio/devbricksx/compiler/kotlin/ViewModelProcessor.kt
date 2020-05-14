@@ -161,7 +161,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         if (inMemoryRepository) {
             classBuilder.addInitializerBlock(CodeBlock.of(
-                    "   %N = %T\n" +
+                    "   %N = %T()\n" +
                             "   %N = %N.%N\n" +
                             "   %N = %N.%N\n",
                     repoVariableName, repo,

@@ -3,7 +3,6 @@ package com.dailystudio.devbricksx.compiler.kotlin.utils
 import com.dailystudio.devbricksx.compiler.kotlin.GeneratedNames
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 
@@ -183,12 +182,20 @@ class TypeNamesUtils {
             return itemCallback.parameterizedBy(typeName)
         }
 
-        fun getAbsObjectRepositoryOfTypeName(keyTypeName: TypeName,
-                                             objectTypeName: TypeName): TypeName {
+        fun getObjectRepositoryOfTypeName(keyTypeName: TypeName,
+                                          objectTypeName: TypeName): TypeName {
             val repository = ClassName("com.dailystudio.devbricksx.repository",
             "ObjectRepository")
 
             return repository.parameterizedBy(keyTypeName, objectTypeName)
+        }
+
+        fun getObjectMangerOfTypeName(keyTypeName: TypeName,
+                                      objectTypeName: TypeName): TypeName {
+            val manager = ClassName("com.dailystudio.devbricksx.inmemory",
+            "InMemoryObjectManager")
+
+            return manager.parameterizedBy(keyTypeName, objectTypeName)
         }
 
         fun getAdapterTypeName(className: String,
