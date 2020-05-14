@@ -7,6 +7,8 @@
 - **Reliable**:  It has been integrated into enormous products. Your work will stand on a stable foundation. 
 - **Consistent**: It includes a unified logging system, database accessing, UI elements, and styles. This makes all of your applications have consistency at the primary impression.
 
+With only around 40 lines, you save **User** objects into database and represent them in a list:
+
 ![](android/docs/assets/samples.png)
 
 #### Projects
