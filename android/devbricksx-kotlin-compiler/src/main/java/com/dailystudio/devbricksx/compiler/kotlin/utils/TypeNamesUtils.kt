@@ -230,5 +230,17 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.development", "Logger")
         }
 
+        fun javaToKotlinTypeName(origTypeName: TypeName): TypeName {
+            val javaString = TypeNamesUtils.getJavaStringTypeName()
+
+            when (origTypeName) {
+                javaString -> {
+                    return TypeNamesUtils.getStringTypeName()
+                }
+            }
+
+            return origTypeName
+        }
+
     }
 }

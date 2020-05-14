@@ -52,7 +52,7 @@ class InMemoryRepositoryProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val repositoryTypeName = TypeNamesUtils.getObjectRepositoryOfTypeName(
-                key, objectTypeName)
+                TypeNamesUtils.javaToKotlinTypeName(key), objectTypeName)
         val managerTypeName = ClassName(packageName,
                 GeneratedNames.getManagerName(typeName))
 

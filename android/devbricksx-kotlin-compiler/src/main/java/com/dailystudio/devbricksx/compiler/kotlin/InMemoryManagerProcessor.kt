@@ -28,7 +28,7 @@ class InMemoryManagerProcessor : BaseProcessor() {
                     }
 
                     if (element is TypeElement) {
-                       val result = generateInMemoryManager(element)
+                        val result = generateInMemoryManager(element)
 
                         result?.let {
                             writeToFile(it)
@@ -40,17 +40,18 @@ class InMemoryManagerProcessor : BaseProcessor() {
         return true
     }
 
-    private fun generateInMemoryManager(element: TypeElement) : GeneratedResult? {
+    private fun generateInMemoryManager(element: TypeElement): GeneratedResult? {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
         val key = AnnotationsUtils.getClassValueFromAnnotation(element, "key") ?: return null
+        println("keyClass = $key")
 
         val generatedClassName = GeneratedNames.getManagerName(typeName)
 
         val objectTypeName = ClassName(packageName, typeName)
         val managerTypeName = TypeNamesUtils.getObjectMangerOfTypeName(
-                key, objectTypeName)
+                TypeNamesUtils.javaToKotlinTypeName(key), objectTypeName)
 
         val classBuilder = TypeSpec.objectBuilder(generatedClassName)
                 .superclass(managerTypeName)

@@ -40,8 +40,8 @@ class UserViewHolder(itemView: View): AbsSingleLineViewHolder<User>(itemView) {
     override fun getText(item: User): CharSequence? {
         return buildString {
             append(item.firstName)
-            append('.')
-            append(item.lastName)
+            append(' ')
+            append(item.lastName?.toUpperCase())
         }
     }
 

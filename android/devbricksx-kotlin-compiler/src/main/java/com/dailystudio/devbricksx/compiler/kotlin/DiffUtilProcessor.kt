@@ -64,7 +64,7 @@ class DiffUtilProcessor : BaseProcessor() {
                 .addParameter("newObject", objectTypeName)
                 .returns(Boolean::class)
 
-        methodItemsSameBuilder.addStatement("return newObject.getKey() == oldObject.getKey()")
+        methodItemsSameBuilder.addStatement("return (newObject.getKey() == oldObject.getKey())")
 
         classBuilder.addFunction(methodItemsSameBuilder.build())
 
@@ -75,7 +75,7 @@ class DiffUtilProcessor : BaseProcessor() {
                 .addParameter("newObject", objectTypeName)
                 .returns(Boolean::class)
 
-        methodContentsSameBuilder.addStatement("return newObject == oldObject")
+        methodContentsSameBuilder.addStatement("return (newObject == oldObject)")
 
         classBuilder.addFunction(methodContentsSameBuilder.build())
 
