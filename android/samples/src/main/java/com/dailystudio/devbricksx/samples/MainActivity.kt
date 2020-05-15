@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.dailystudio.devbricksx.samples.model.SampleCaseViewModel
+import com.dailystudio.devbricksx.samples.usecase.UseCase
+import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -20,21 +21,21 @@ class MainActivity : AppCompatActivity() {
     private fun generateCases() {
         lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@MainActivity)
-                    .get(SampleCaseViewModel::class.java)
+                    .get(UseCaseViewModel::class.java)
 
-            var case = SampleCase("quickstart",
+            var case = UseCase("quickstart",
                     "quickstart",
                     "Quick Start",
                     R.mipmap.ic_case_quick_start, "")
 
-            viewModel.insertSampleCase(case)
+            viewModel.insertUseCase(case)
 
-            case = SampleCase("inmemory",
+            case = UseCase("inmemory",
                     "inmemory",
                     "In-Memory Objects",
                     R.mipmap.ic_case_in_memory, "")
 
-            viewModel.insertSampleCase(case)
+            viewModel.insertUseCase(case)
         }
     }
 

@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.fragment.SampleCaseFragmentExt"
+        android:name="com.dailystudio.devbricksx.samples.usecase.fragment.UseCasesFragmentExt"
         android:id="@+id/fragment_cases"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

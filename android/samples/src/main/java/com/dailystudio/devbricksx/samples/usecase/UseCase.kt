@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.samples
+package com.dailystudio.devbricksx.samples.usecase
 
 import android.graphics.drawable.Drawable
 import android.view.View
@@ -10,14 +10,14 @@ import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 @InMemoryManager(key = String::class)
 @InMemoryRepository(key = String::class)
 @DiffUtil
-@Adapter(viewHolder = SampleCaseViewHolder::class)
+@Adapter(viewHolder = UseCaseViewHolder::class)
 @ViewModel
 @ListFragment
-data class SampleCase(val name: String,
-                      val `package`: String,
-                      val title: String,
-                      val icon: Int,
-                      val desc: String) : InMemoryObject<String> {
+data class UseCase(val name: String,
+                   val `package`: String,
+                   val title: String,
+                   val icon: Int,
+                   val desc: String) : InMemoryObject<String> {
 
     override fun getKey(): String {
         return name
@@ -25,14 +25,14 @@ data class SampleCase(val name: String,
 
 }
 
-class SampleCaseViewHolder(itemView: View): AbsSingleLineViewHolder<SampleCase>(itemView) {
+class UseCaseViewHolder(itemView: View): AbsSingleLineViewHolder<UseCase>(itemView) {
 
-    override fun getIcon(item: SampleCase): Drawable? {
+    override fun getIcon(item: UseCase): Drawable? {
         return ResourcesCompatUtils.getDrawable(
                 itemView.context, item.icon)
     }
 
-    override fun getText(item: SampleCase): CharSequence? {
+    override fun getText(item: UseCase): CharSequence? {
         return item.title
     }
 
