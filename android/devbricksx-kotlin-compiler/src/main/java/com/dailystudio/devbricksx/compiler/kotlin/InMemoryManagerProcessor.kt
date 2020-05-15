@@ -23,7 +23,7 @@ class InMemoryManagerProcessor : BaseProcessor() {
         roundEnv.getElementsAnnotatedWith(InMemoryManager::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
+                        error("Only classes can be annotated")
                         return true
                     }
 
@@ -45,7 +45,7 @@ class InMemoryManagerProcessor : BaseProcessor() {
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
         val key = AnnotationsUtils.getClassValueFromAnnotation(element, "key") ?: return null
-        println("keyClass = $key")
+        debug("key class: $key")
 
         val generatedClassName = GeneratedNames.getManagerName(typeName)
 

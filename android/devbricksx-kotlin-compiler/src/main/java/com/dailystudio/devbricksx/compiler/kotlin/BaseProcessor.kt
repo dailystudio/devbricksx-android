@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
+import com.dailystudio.devbricksx.compiler.kotlin.utils.LogUtils
 import com.squareup.kotlinpoet.FileSpec
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
@@ -12,6 +13,22 @@ open abstract class BaseProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
+
+    open fun debug(format: String?, vararg args: Any?) {
+        LogUtils.debug(processingEnv.messager, format, *args)
+    }
+
+    open fun info(format: String?, vararg args: Any?) {
+        LogUtils.info(processingEnv.messager, format, *args)
+    }
+
+    open fun error(format: String?, vararg args: Any?) {
+        LogUtils.error(processingEnv.messager, format, *args)
+    }
+
+    open fun warn(format: String?, vararg args: Any?) {
+        LogUtils.warn(processingEnv.messager, format, *args)
+    }
 
     protected fun writeToFile(result: GeneratedResult) {
         val typeSpec = result.classBuilder.build()

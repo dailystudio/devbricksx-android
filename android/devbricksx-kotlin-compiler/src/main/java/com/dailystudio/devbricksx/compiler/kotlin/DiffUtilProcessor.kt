@@ -1,15 +1,12 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.DiffUtil
-import com.dailystudio.devbricksx.annotations.InMemoryRepository
-import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
-import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
@@ -25,7 +22,7 @@ class DiffUtilProcessor : BaseProcessor() {
         roundEnv.getElementsAnnotatedWith(DiffUtil::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
+                        error("Only classes can be annotated")
                         return true
                     }
 
@@ -46,8 +43,6 @@ class DiffUtilProcessor : BaseProcessor() {
         val typeName = element.simpleName.toString()
 
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
-        val annotation = element.getAnnotation(DiffUtil::class.java)
-        val key = AnnotationsUtils.getClassValueFromAnnotation(element, "key") ?: return null
 
         val generatedClassName = GeneratedNames.getDiffUtilName(typeName)
         val objectTypeName = ClassName(packageName, typeName)

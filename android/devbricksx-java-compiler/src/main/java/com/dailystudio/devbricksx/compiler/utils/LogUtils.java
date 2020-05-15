@@ -5,6 +5,8 @@ import javax.tools.Diagnostic;
 
 public class LogUtils {
 
+    private static final boolean DEBUG = false;
+
     private static final String UNKNOWN_METHOD = "UnknownMethod";
     private static final String UNKNOWN_CLASS = "UnknownClass";
     private static final String UNKNOWN_TAG = "Unknown";
@@ -17,7 +19,9 @@ public class LogUtils {
             return;
         }
 
-        output(messager, Diagnostic.Kind.OTHER, String.format(format, args));
+        if (DEBUG) {
+            output(messager, Diagnostic.Kind.OTHER, String.format(format, args));
+        }
     }
 
     public static void info(Messager messager, String format, Object... args) {

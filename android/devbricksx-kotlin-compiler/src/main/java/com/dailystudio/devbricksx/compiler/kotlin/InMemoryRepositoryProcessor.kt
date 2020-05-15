@@ -23,7 +23,7 @@ class InMemoryRepositoryProcessor : BaseProcessor() {
         roundEnv.getElementsAnnotatedWith(InMemoryRepository::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
+                        error("Only classes can be annotated")
                         return true
                     }
 

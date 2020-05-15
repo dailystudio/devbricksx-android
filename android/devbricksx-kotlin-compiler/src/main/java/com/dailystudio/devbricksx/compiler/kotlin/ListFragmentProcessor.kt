@@ -23,7 +23,7 @@ class ListFragmentProcessor : BaseProcessor() {
         roundEnv.getElementsAnnotatedWith(ListFragment::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
+                        error("Only classes can be annotated")
                         return true
                     }
 
@@ -58,7 +58,7 @@ class ListFragmentProcessor : BaseProcessor() {
         }
 
         val viewModelPackage = GeneratedNames.getViewModelPackageName(packageName)
-        println("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
+        debug("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
 
         val viewModel= ClassName(viewModelPackage, viewModelName)
         val generatedClassName = GeneratedNames.getFragmentName(typeName)

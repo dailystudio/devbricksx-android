@@ -26,7 +26,7 @@ class ViewModelProcessor : BaseProcessor() {
         val daoExtElements = mutableMapOf<ClassName, TypeElement>()
         roundEnv.getElementsAnnotatedWith(DaoExtension::class.java).forEach {
             if (it.kind != ElementKind.CLASS && it.kind != ElementKind.INTERFACE) {
-                processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes or interfaces can be annotated")
+                error("Only classes or interfaces can be annotated")
                 return true
             }
 
@@ -38,13 +38,13 @@ class ViewModelProcessor : BaseProcessor() {
                 }
             }
         }
-        println("daoExtElements: $daoExtElements")
+        debug("daoExtElements: $daoExtElements")
 
         val viewModelGroups = mutableMapOf<String, MutableList<TypeElement>>()
         roundEnv.getElementsAnnotatedWith(ViewModel::class.java)
                 .forEach {
                     if (it.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
+                        error("Only classes can be annotated")
                         return true
                     }
 
@@ -98,7 +98,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val viewModelPackageName =
                 GeneratedNames.getViewModelPackageName(packageName)
-        println("group = $group, packageName = $packageName， viewModelPackage = $viewModelPackageName, generatedClassName = $generatedClassName")
+        debug("group = $group, packageName = $packageName， viewModelPackage = $viewModelPackageName, generatedClassName = $generatedClassName")
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(TypeNamesUtils.getAndroidViewModelTypeName())
@@ -120,7 +120,7 @@ class ViewModelProcessor : BaseProcessor() {
                                              daoExtElements: Map<ClassName, TypeElement>) {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
-        println("typeName = $typeName, packageName = $packageName")
+        debug("typeName = $typeName, packageName = $packageName")
 
         val roomCompanion = element.getAnnotation(RoomCompanion::class.java)
         val databaseName = if (roomCompanion != null && roomCompanion.database.isNotBlank()) {
@@ -266,9 +266,9 @@ class ViewModelProcessor : BaseProcessor() {
         var executableElement: ExecutableElement
         for (subElement in subElements) {
             if (subElement is ExecutableElement) {
-                println("processing method: $subElement")
+                debug("processing method: $subElement")
                 if (Constants.CONSTRUCTOR_NAME == subElement.getSimpleName().toString()) {
-                    println("constructor method, skip")
+                    debug("constructor method, skip")
                     continue
                 }
 
@@ -286,7 +286,7 @@ class ViewModelProcessor : BaseProcessor() {
 //        val methodName = executableElement.simpleName.toString().kotlinGetterName()
         val methodName = executableElement.simpleName.toString()
         var returnTypeName = javaToKotlinTypeName(objectTypeName, executableElement.returnType.asTypeName())
-        println("returnTypeName = $returnTypeName")
+        debug("returnTypeName = $returnTypeName")
 
         val hasReturn: Boolean = !TypeNamesUtils.isTypeNameUnit(returnTypeName)
 
@@ -341,17 +341,8 @@ class ViewModelProcessor : BaseProcessor() {
     private fun javaToKotlinTypeName(objectTypeName: TypeName,
                                      origTypeName: TypeName): TypeName {
         val array = TypeNamesUtils.getArrayTypeName(objectTypeName)
-        val javaListOfObjects = TypeNamesUtils.getJavaListOfTypeName(objectTypeName)
         val javaLong = TypeNamesUtils.getJavaLongTypeName()
         val javaString = TypeNamesUtils.getJavaStringTypeName()
-
-        println("origTypeName = $origTypeName, " +
-                "object = $objectTypeName, " +
-                "array = $array, " +
-                "javaListOfObjects = $javaListOfObjects, " +
-                "javaLong = $javaLong" +
-                "javaString = $javaString"
-        )
 
         when (origTypeName) {
             is ParameterizedTypeName -> {
@@ -359,8 +350,8 @@ class ViewModelProcessor : BaseProcessor() {
                 val javaListTypeName = TypeNamesUtils.getJavaListTypeName()
                 val listTypeName = TypeNamesUtils.getListTypeName()
 
-                println("rawType = ${origTypeName.rawType}")
-                println("typeArguments = ${origTypeName.typeArguments}")
+                debug("rawType = ${origTypeName.rawType}")
+                debug("typeArguments = ${origTypeName.typeArguments}")
 
                 val rawType = origTypeName.rawType
                 val typeArguments = origTypeName.typeArguments
@@ -387,7 +378,6 @@ class ViewModelProcessor : BaseProcessor() {
                     array -> {
                         if (typeArguments.isNotEmpty()) {
                             val ta0Name = typeArguments[0].toString()
-                            println("ta0Name = $ta0Name")
                             when (ta0Name) {
                                 "kotlin.Int" -> {
                                     val primitiveType = ta0Name.removePrefix("kotlin")

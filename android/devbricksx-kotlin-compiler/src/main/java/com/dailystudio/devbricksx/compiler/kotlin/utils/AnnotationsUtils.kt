@@ -45,12 +45,4 @@ class AnnotationsUtils {
 
     }
 
-    class OwnValueVisitor : SimpleAnnotationValueVisitor7<Any?, Void?>() {
-
-        fun visitAnnotation(a: AnnotationMirror, p: Void): Any {
-            System.out.printf(">> annotationTypeValue: %s\n", a.toString())
-            return a
-        }
-    }
-
 }
