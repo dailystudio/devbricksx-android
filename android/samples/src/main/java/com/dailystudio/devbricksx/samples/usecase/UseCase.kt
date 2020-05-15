@@ -7,7 +7,7 @@ import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
-@InMemoryManager(key = String::class)
+@InMemoryManager(key = String::class, ordering = Ordering.Descending)
 @InMemoryRepository(key = String::class)
 @DiffUtil
 @Adapter(viewHolder = UseCaseViewHolder::class)

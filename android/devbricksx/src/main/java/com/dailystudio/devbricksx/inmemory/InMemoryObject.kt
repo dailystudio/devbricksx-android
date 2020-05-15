@@ -7,7 +7,7 @@ import com.dailystudio.devbricksx.development.Logger
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
-interface InMemoryObject<Key> {
+interface InMemoryObject<Key: Comparable<Key>> {
 
     fun getKey(): Key
 
@@ -41,7 +41,7 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
 
 }
 
-open class InMemoryObjectManager<Key, Object : InMemoryObject<Key>> {
+open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<Key>> {
 
     private val mapOfObjects: MutableMap<Key, Object> = mutableMapOf()
 
@@ -117,7 +117,13 @@ open class InMemoryObjectManager<Key, Object : InMemoryObject<Key>> {
     }
 
     fun toList(): List<Object> {
-        return mapOfObjects.values.toList()
+        return sortList(mapOfObjects.values.toList())
+    }
+
+    protected open fun sortList(objects: List<Object>): List<Object> {
+        return objects.sortedBy {
+            it.getKey()
+        }
     }
 
     fun addObserver(observer: InMemoryObjectObserver) {

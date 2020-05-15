@@ -7,7 +7,7 @@ import androidx.paging.PagedList
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.inmemory.InMemoryObjectManager
 
-open class ObjectRepository<Key, Object: InMemoryObject<Key>>(
+open class ObjectRepository<Key: Comparable<Key>, Object: InMemoryObject<Key>>(
         private val manager: InMemoryObjectManager<Key, Object>,
         private val pageSize: Int) {
 
