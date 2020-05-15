@@ -14,6 +14,7 @@ import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 @ViewModel
 @ListFragment
 data class SampleCase(val name: String,
+                      val `package`: String,
                       val title: String,
                       val icon: Int,
                       val desc: String) : InMemoryObject<String> {
