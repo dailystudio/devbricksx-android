@@ -5,12 +5,14 @@ import android.view.View
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 @ViewModel
-@Adapter(viewHolder = CardViewHolder::class)
-@ListFragment
+@Adapter(viewHolder = CardViewHolder::class,
+        viewType = ViewType.Card)
+@ListFragment(gridLayout = true)
 @DiffUtil
 @InMemoryRepository(key = Int::class)
 @InMemoryManager(key = Int::class)
@@ -23,17 +25,19 @@ data class Card(val id: Int,
 }
 
 
-class CardViewHolder(itemView: View): AbsSingleLineViewHolder<Card>(itemView) {
+class CardViewHolder(itemView: View): AbsCardViewHolder<Card>(itemView) {
 
-    override fun getIcon(item: Card): Drawable? {
+    override fun getMedia(item: Card): Drawable? {
         return ResourcesCompatUtils.getDrawable(itemView.context,
-                R.mipmap.ic_user)
+                R.drawable.card_media)
     }
 
-    override fun getText(item: Card): CharSequence? {
-        return buildString {
-            append(item.title)
-        }
+    override fun getTitle(item: Card): CharSequence? {
+        return item.title
+    }
+
+    override fun getSupportingText(item: Card): CharSequence? {
+        return item.desc
     }
 
 }

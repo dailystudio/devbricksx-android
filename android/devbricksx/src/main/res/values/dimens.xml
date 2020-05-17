@@ -3,6 +3,7 @@
 <resources>
 	
 	<dimen name="default_font_size">18dp</dimen>
+	<dimen name="default_padding">8dp</dimen>
 
 	<dimen name="default_content_padding">20dp</dimen>
 	<dimen name="default_content_padding_h">20dp</dimen>
@@ -30,13 +31,19 @@
 	<dimen name="lv_index_padding">0dp</dimen>
 	<dimen name="lv_index_width">60dp</dimen>
 
-	<dimen name="card_corner_radius">3dp</dimen>
-	<dimen name="card_content_text_size">16dp</dimen>
-	<dimen name="card_title_text_size">14dp</dimen>
-	<dimen name="card_item_padding_h">16dp</dimen>
-	<dimen name="card_item_padding_v">8dp</dimen>
-	<dimen name="card_content_height">165dp</dimen>
-	<dimen name="card_content_height_mini">150dp</dimen>
+	<dimen name="card_media_height">150dp</dimen>
+	<dimen name="card_title_font_size">@dimen/default_font_size</dimen>
+	<dimen name="card_supporting_text_font_size">14dp</dimen>
+
+	<!--
+        <dimen name="card_corner_radius">3dp</dimen>
+        <dimen name="card_content_text_size">16dp</dimen>
+        <dimen name="card_title_text_size">14dp</dimen>
+        <dimen name="card_item_padding_h">16dp</dimen>
+        <dimen name="card_item_padding_v">8dp</dimen>
+        <dimen name="card_content_height">165dp</dimen>
+        <dimen name="card_content_height_mini">150dp</dimen>
+    -->
 
 
 </resources>

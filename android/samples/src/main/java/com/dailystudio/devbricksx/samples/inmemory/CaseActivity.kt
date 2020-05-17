@@ -29,7 +29,7 @@ class CaseActivity : AppCompatActivity() {
             val viewModel = ViewModelProvider(this@CaseActivity).get(CardViewModel::class.java)
 
             for (i in 0..CARDS_COUNT) {
-                val user = Card(i, "Card$i")
+                val user = Card(i, "Card$i", "This is a card with color blocks in it.")
 
                 viewModel.insertCard(user)
 

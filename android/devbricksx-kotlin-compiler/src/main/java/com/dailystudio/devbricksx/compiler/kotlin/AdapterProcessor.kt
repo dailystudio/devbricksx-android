@@ -88,6 +88,10 @@ class AdapterProcessor : BaseProcessor() {
                 methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.list_item_single_line, null)",
                         TypeNamesUtils.getDevbrickxRTypeName())
             }
+            ViewType.Card -> {
+                methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.card_view, null)",
+                        TypeNamesUtils.getDevbrickxRTypeName())
+            }
             else -> {
                 methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%L, null)", layout)
             }
