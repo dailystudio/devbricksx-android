@@ -4,12 +4,22 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.usecase.UseCase
+import com.dailystudio.devbricksx.samples.usecase.UseCaseJsonDeserializer
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModel
+import com.dailystudio.devbricksx.utils.JSONUtils
+import com.google.gson.JsonDeserializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+
+        const val SAMPLES_FILE = "samples.json"
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,22 +30,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateCases() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val viewModel = ViewModelProvider(this@MainActivity)
-                    .get(UseCaseViewModel::class.java)
+            val adapters: Map<Class<*>, JsonDeserializer<*>> =
+                    mapOf(UseCase::class.java to UseCaseJsonDeserializer())
+            val cases = JSONUtils.fromAsset(this@MainActivity,
+                    SAMPLES_FILE,
+                    Array<UseCase>::class.java,
+                    adapters)
+            Logger.debug("cases: $cases")
 
-            var case = UseCase("quickstart",
-                    "quickstart",
-                    "Quick Start",
-                    R.mipmap.ic_case_quick_start, "")
+            cases?.let {
+                val viewModel = ViewModelProvider(this@MainActivity)
+                        .get(UseCaseViewModel::class.java)
 
-            viewModel.insertUseCase(case)
-
-            case = UseCase("inmemory",
-                    "inmemory",
-                    "In-Memory Objects",
-                    R.mipmap.ic_case_in_memory, "")
-
-            viewModel.insertUseCase(case)
+                for (case in cases) {
+                    viewModel.insertUseCase(case)
+                }
+            }
         }
     }
 

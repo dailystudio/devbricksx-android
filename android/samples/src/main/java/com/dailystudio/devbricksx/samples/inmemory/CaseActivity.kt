@@ -26,6 +26,7 @@ class CaseActivity : AppCompatActivity() {
 
     private fun generateCards() {
         lifecycleScope.launch(Dispatchers.IO) {
+
             val viewModel = ViewModelProvider(this@CaseActivity).get(CardViewModel::class.java)
 
             for (i in 0..CARDS_COUNT) {

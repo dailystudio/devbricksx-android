@@ -1,0 +1,16 @@
+[
+  {
+    "name": "quickstart",
+    "package": "quickstart",
+    "title": "Quick Start",
+    "icon": "ic_case_quick_start",
+    "desc": ""
+  },
+  {
+    "name": "inmemory",
+    "package": "inmemory",
+    "title": "In-Memory Objects",
+    "icon": "ic_case_in_memory",
+    "desc": ""
+  }
+]

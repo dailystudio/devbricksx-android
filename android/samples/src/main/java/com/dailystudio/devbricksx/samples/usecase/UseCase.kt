@@ -1,11 +1,21 @@
 package com.dailystudio.devbricksx.samples.usecase
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
+import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import java.lang.IllegalStateException
+import java.lang.reflect.Type
+
 
 @InMemoryManager(key = String::class, ordering = Ordering.Descending)
 @InMemoryRepository(key = String::class)
@@ -21,6 +31,34 @@ data class UseCase(val name: String,
 
     override fun getKey(): String {
         return name
+    }
+
+}
+
+class UseCaseJsonDeserializer : JsonDeserializer<UseCase> {
+
+    @Throws(JsonParseException::class)
+    override fun deserialize(json: JsonElement, typeOfT: Type?,
+                             context: JsonDeserializationContext?): UseCase {
+        val jsonObject = json.asJsonObject
+        Logger.debug("jsonObject: $jsonObject")
+
+        var icon: Int = 0
+
+        val context: Context? = GlobalContextWrapper.context
+        context?.let {
+            icon = it.resources.getIdentifier(
+                    jsonObject["icon"].asString,
+                    "mipmap",
+                    it.packageName)
+        }
+
+        return UseCase(
+                jsonObject["name"].asString,
+                jsonObject["package"].asString,
+                jsonObject["title"].asString,
+                icon,
+                jsonObject["desc"].asString)
     }
 
 }

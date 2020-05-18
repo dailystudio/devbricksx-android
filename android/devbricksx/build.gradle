@@ -63,6 +63,12 @@ dependencies {
     // Material Design Components
     api "com.google.android.material:material:${project.ext.mdcVersion}"
 
+    // Encoding detection
+    api "com.github.albfernandez:juniversalchardet:${project.ext.juniversalchardetVersion}"
+
+    // GSon
+    api "com.google.code.gson:gson:${project.ext.gsonVersion}"
+
     // Libraries
     api project(':devbricksx-java-annotations')
     api project(':devbricksx-kotlin-annotations')
