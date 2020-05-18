@@ -18,5 +18,5 @@ publish {
     desc = 'DevBricks eXetrems Annotations'
     bintrayUser = BINTRAY_USER
     bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx'
+    website = 'https://github.com/dailystudio/devbricksx-android'
 }

@@ -23,5 +23,5 @@ publish {
     desc = 'DevBricks eXetrems Annotation Processor'
     bintrayUser = BINTRAY_USER
     bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx'
+    website = 'https://github.com/dailystudio/devbricksx-android'
 }

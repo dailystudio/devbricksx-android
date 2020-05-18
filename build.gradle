@@ -51,8 +51,8 @@ ext {
     VERSION_CODE = versionCode().toInteger()
 
     // Publishing Parameters
-    SITE_URL = 'https://github.com/dailystudio/devbricksx'
-    GIT_URL = 'https://github.com/dailystudio/devbricksx.git'
+    SITE_URL = 'https://github.com/dailystudio/devbricksx-android'
+    GIT_URL = 'https://github.com/dailystudio/devbricksx-android.git'
     GROUP_NAME = 'com.dailystudio'
     DESCRIPTION = 'Provide utils classes commonly used in Android application development.'
     DEVELOPER_ID = 'dailystudio'
