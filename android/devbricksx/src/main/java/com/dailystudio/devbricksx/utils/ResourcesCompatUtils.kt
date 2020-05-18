@@ -3,19 +3,16 @@ package com.dailystudio.devbricksx.utils
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
+import androidx.core.content.res.ResourcesCompat
 
-class ResourcesCompatUtils {
+object ResourcesCompatUtils {
 
-    companion object {
+    fun getDrawable(context: Context, resId: Int) : Drawable? {
+        return ResourcesCompat.getDrawable(context.resources, resId, context.theme)
+    }
 
-        fun getDrawable(context: Context, resId: Int) : Drawable {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                return context.resources.getDrawable(resId, context.theme);
-            } else {
-                return context.resources.getDrawable(resId);
-            }
-        }
-
+    fun getColor(context: Context, resId: Int) : Int {
+        return ResourcesCompat.getColor(context.resources, resId, context.theme)
     }
 
 }

@@ -1,13 +1,17 @@
 package com.dailystudio.devbricksx.samples.inmemory
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
+import com.dailystudio.devbricksx.utils.ColorUtils
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import java.util.*
 
 @ViewModel
 @Adapter(viewHolder = CardViewHolder::class,
@@ -27,9 +31,18 @@ data class Card(val id: Int,
 
 class CardViewHolder(itemView: View): AbsCardViewHolder<Card>(itemView) {
 
+    companion object {
+        private val RAND : Random = Random(System.currentTimeMillis())
+    }
+
     override fun getMedia(item: Card): Drawable? {
-        return ResourcesCompatUtils.getDrawable(itemView.context,
-                R.drawable.card_media)
+
+        val color = Color.argb(255,
+                RAND.nextInt(255),
+                RAND.nextInt(255),
+                RAND.nextInt(255))
+
+        return ColorUtils.getColorDrawable(itemView.context, color)
     }
 
     override fun getTitle(item: Card): CharSequence? {
