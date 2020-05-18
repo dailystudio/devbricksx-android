@@ -1,5 +1,15 @@
 # DevBricks X - Android
-[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=0.6.8) ](https://bintray.com/dailystudio/maven/devbricksx/0.6.8/link)
+[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=0.6.9) ](https://bintray.com/dailystudio/maven/devbricksx/0.6.9/link)
+
+**DevBricksX** is a remake and extended version of [DevBricks](https://github.com/dailystudio/devbricks). It provides plenty of useful classes that will be used in daily Android development. With these "bricks", your development will become:
+
+- **Efficient**: The classes provided by DevBricks almost cover all of the aspects in daily development, from the low-end database to the user interface. You do not need to waste your time on those repeating work.
+- **Reliable**:  It has been integrated into enormous products. Your work will stand on a stable foundation. 
+- **Consistent**: It includes a unified logging system, database accessing, UI elements, and styles. This makes all of your applications have consistency at the primary impression.
+
+With only a few lines, you can save in memory **User** objects into database and represent them in a list:
+
+![](docs/assets/samples.png)
 
 ## Quick Setup
 To use **DevBricks X** Libraries in your application, follow the steps below.
@@ -38,7 +48,7 @@ dependencies {
 #### Latest version
 
 ```groovy
-devbricksx_version = "0.6.8"
+devbricksx_version = "0.6.9"
 ```
 
 ### Step 2: Application initialization (Optional)
