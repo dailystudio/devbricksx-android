@@ -10,13 +10,20 @@ open abstract class AbsSingleLineViewHolder<Item>(itemView: View) : AbsViewHolde
 
     override fun bind(item: Item) {
         val iconView : ImageView = itemView.findViewById(R.id.list_item_icon)
+        bindIcon(item, iconView)
 
+        val textView : TextView = itemView.findViewById(R.id.list_item_text_line_1st)
+        bindText(item, textView)
+    }
+
+    protected open fun bindIcon(item: Item, iconView: ImageView?) {
         val drawable = getIcon(item)
         iconView?.setImageDrawable(drawable)
         iconView?.visibility = if (drawable == null) View.GONE else View.VISIBLE
+    }
 
-        val textView : TextView = itemView.findViewById(R.id.list_item_text_line_1st)
-        textView?.text = getText(item)
+    protected open fun bindText(item: Item, titleView: TextView?) {
+        titleView?.text = getText(item)
     }
 
     abstract fun getIcon(item: Item) : Drawable?
