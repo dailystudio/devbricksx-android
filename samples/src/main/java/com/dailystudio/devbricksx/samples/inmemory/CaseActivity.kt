@@ -30,7 +30,9 @@ class CaseActivity : AppCompatActivity() {
             val viewModel = ViewModelProvider(this@CaseActivity).get(CardViewModel::class.java)
 
             for (i in 0..CARDS_COUNT) {
-                val user = Card(i, "Card$i", "This is a card with color blocks in it.")
+                val user = Card(i,
+                        "Card$i",
+                        "This is a card with color blocks in it. If you display it in a card view, you will see only 3 lines of supporting text, whereas 6 lines in a informative card view.")
 
                 viewModel.insertCard(user)
 

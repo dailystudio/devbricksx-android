@@ -5,6 +5,7 @@ import kotlin.reflect.KClass
 enum class ViewType {
     SingleLine,
     Card,
+    CardInformative,
     Customized
 }
 

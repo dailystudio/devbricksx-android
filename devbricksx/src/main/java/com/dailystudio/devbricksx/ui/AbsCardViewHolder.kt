@@ -9,13 +9,16 @@ import com.dailystudio.devbricksx.R
 open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
-        val iconView : ImageView = itemView.findViewById(R.id.card_media)
+        val iconView: ImageView = itemView.findViewById(R.id.card_media)
         bindMedia(item, iconView)
 
-        val titleView : TextView = itemView.findViewById(R.id.card_title)
+        val divider: View = itemView.findViewById(R.id.card_divider)
+        divider?.visibility = if (shouldDisplayDivider()) View.VISIBLE else View.GONE
+
+        val titleView: TextView = itemView.findViewById(R.id.card_title)
         bindTitle(item, titleView)
 
-        val supportingTextView : TextView = itemView.findViewById(R.id.card_supporting_text)
+        val supportingTextView: TextView = itemView.findViewById(R.id.card_supporting_text)
         bindSupportingText(item, supportingTextView)
     }
 
@@ -33,6 +36,10 @@ open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item
         val supportingText = getSupportingText(item) ?: ""
         supportingTextView?.text = supportingText
         supportingTextView?.visibility = if (supportingText.isBlank()) View.GONE else View.VISIBLE
+    }
+
+    protected open fun shouldDisplayDivider(): Boolean {
+        return false
     }
 
     abstract fun getMedia(item: Item) : Drawable?

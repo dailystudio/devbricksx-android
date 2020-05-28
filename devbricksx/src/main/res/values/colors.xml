@@ -44,4 +44,8 @@
     <color name="colorPrimaryDark">@color/light_black</color>
     <color name="colorAccent">@color/light_black</color>
 
+    <color name="card_text_background_color">@color/white</color>
+    <color name="card_title_text_color">@color/black</color>
+    <color name="card_supporting_text_color">@color/light_black</color>
+
 </resources>
