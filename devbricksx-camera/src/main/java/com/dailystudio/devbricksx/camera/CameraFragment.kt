@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.camera
 
-import android.content.Context
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,20 +10,19 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
 import kotlinx.android.synthetic.main.fragment_camera.*
 
-class CameraFragment: Fragment() {
+class CameraFragment: AbsPermissionsFragment() {
+
+    companion object {
+        val PERMISSIONS_REQUIRED = arrayOf(
+                Manifest.permission.CAMERA)
+    }
 
     private var preview: Preview? = null
     private var camera: Camera? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        startCamera()
-    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -60,6 +59,22 @@ class CameraFragment: Fragment() {
             }
 
         }, ContextCompat.getMainExecutor(context))
+    }
+
+
+    override fun onPermissionsGranted(newlyGranted: Boolean) {
+        startCamera()
+    }
+
+    override fun onPermissionsDenied() {
+    }
+
+    override fun getPermissionsPromptViewId(): Int {
+        return R.id.permission_prompt
+    }
+
+    override fun getRequiredPermissions(): Array<String> {
+        return PERMISSIONS_REQUIRED
     }
 
 }

@@ -3,12 +3,9 @@ package com.dailystudio.devbricksx.fragment
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.utils.ArrayUtils
 
@@ -16,7 +13,7 @@ abstract class AbsPermissionsFragment : Fragment() {
 
     companion object {
 
-        private const val REQUEST_PERMISSIONS = 10
+        private const val REQUEST_PERMISSIONS = 553
 
         fun hasPermissions(context: Context,
                            permissions: Array<String>): Boolean {
@@ -37,7 +34,6 @@ abstract class AbsPermissionsFragment : Fragment() {
         }
     }
 
-    private var mRootView: View? = null
     private var mPromptView: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,17 +46,15 @@ abstract class AbsPermissionsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_permissions, null)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mRootView = view.findViewById(R.id.fragment_view_root)
-        mRootView?.setOnClickListener { requestPermissions() }
+        val promptViewId = getPermissionsPromptViewId()
+        if (promptViewId > 0) {
+            mPromptView = view.findViewById(promptViewId)
+        }
 
-        mPromptView = view.findViewById(android.R.id.empty)
+        mPromptView?.setOnClickListener { requestPermissions() }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -99,17 +93,14 @@ abstract class AbsPermissionsFragment : Fragment() {
     }
 
     private fun requestPermissions() {
-        if (mPromptView != null) {
-            mPromptView!!.visibility = View.GONE
-        }
-
         Logger.debug("request required permissions")
 
+        mPromptView?.visibility = View.GONE
         requestPermissions(getRequiredPermissions(), REQUEST_PERMISSIONS)
     }
 
+    abstract fun getPermissionsPromptViewId(): Int
     abstract fun getRequiredPermissions(): Array<String>
-
     abstract fun onPermissionsGranted(newlyGranted: Boolean)
     abstract fun onPermissionsDenied()
 
