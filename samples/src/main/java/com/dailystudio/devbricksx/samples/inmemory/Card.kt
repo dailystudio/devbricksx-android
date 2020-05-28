@@ -3,19 +3,16 @@ package com.dailystudio.devbricksx.samples.inmemory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
-import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
-import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
+import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
 import com.dailystudio.devbricksx.utils.ColorUtils
-import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import java.util.*
 
 @ViewModel
 @Adapter(viewHolder = CardViewHolder::class,
-        viewType = ViewType.Card)
+        viewType = ViewType.CardInformative)
 @ListFragment(gridLayout = true)
 @DiffUtil
 @InMemoryRepository(key = Int::class)
@@ -29,14 +26,13 @@ data class Card(val id: Int,
 }
 
 
-class CardViewHolder(itemView: View): AbsCardViewHolder<Card>(itemView) {
+class CardViewHolder(itemView: View): AbsInformativeCardViewHolder<Card>(itemView) {
 
     companion object {
         private val RAND : Random = Random(System.currentTimeMillis())
     }
 
     override fun getMedia(item: Card): Drawable? {
-
         val color = Color.argb(255,
                 RAND.nextInt(255),
                 RAND.nextInt(255),

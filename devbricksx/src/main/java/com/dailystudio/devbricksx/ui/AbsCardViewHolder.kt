@@ -17,9 +17,6 @@ open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item
 
         val titleView: TextView = itemView.findViewById(R.id.card_title)
         bindTitle(item, titleView)
-
-        val supportingTextView: TextView = itemView.findViewById(R.id.card_supporting_text)
-        bindSupportingText(item, supportingTextView)
     }
 
     protected open fun bindMedia(item: Item, iconView: ImageView?) {
@@ -32,18 +29,11 @@ open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item
         titleView?.text = getTitle(item)
     }
 
-    protected open fun bindSupportingText(item: Item, supportingTextView: TextView?) {
-        val supportingText = getSupportingText(item) ?: ""
-        supportingTextView?.text = supportingText
-        supportingTextView?.visibility = if (supportingText.isBlank()) View.GONE else View.VISIBLE
-    }
-
     protected open fun shouldDisplayDivider(): Boolean {
         return false
     }
 
     abstract fun getMedia(item: Item) : Drawable?
     abstract fun getTitle(item: Item) : CharSequence?
-    abstract fun getSupportingText(item: Item) : CharSequence?
 
 }

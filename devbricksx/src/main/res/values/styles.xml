@@ -88,7 +88,10 @@
 		<item name="android:textSize">@dimen/card_title_font_size</item>
 		<item name="android:textColor">@color/card_title_text_color</item>
 		<item name="android:background">@color/card_text_background_color</item>
-		<item name="android:padding">@dimen/default_padding</item>
+		<item name="android:paddingStart">@dimen/card_content_outer_padding</item>
+		<item name="android:paddingEnd">@dimen/card_content_outer_padding</item>
+		<item name="android:paddingTop">@dimen/card_content_outer_padding</item>
+		<item name="android:paddingBottom">@dimen/card_content_outer_padding</item>
 		<item name="android:maxLines">1</item>
 		<item name="android:ellipsize">marquee</item>
 	</style>
@@ -96,17 +99,23 @@
 	<style name="DefaultCardViewSupportingText">
 		<item name="android:gravity">left|center_vertical</item>
 		<item name="android:textSize">@dimen/card_supporting_text_font_size</item>
+		<item name="android:lineSpacingExtra">@dimen/card_supporting_text_line_height</item>
 		<item name="android:textColor">@color/card_supporting_text_color</item>
 		<item name="android:background">@color/card_text_background_color</item>
-		<item name="android:paddingStart">@dimen/default_padding</item>
-		<item name="android:paddingEnd">@dimen/default_padding</item>
-		<item name="android:paddingBottom">@dimen/default_padding</item>
+		<item name="android:paddingTop">@dimen/card_content_inner_padding</item>
+		<item name="android:paddingStart">@dimen/card_content_outer_padding</item>
+		<item name="android:paddingEnd">@dimen/card_content_outer_padding</item>
+		<item name="android:paddingBottom">@dimen/card_content_outer_padding</item>
 		<item name="android:maxLines">3</item>
 		<item name="android:ellipsize">marquee</item>
 	</style>
 
 	<style name="InformativeCardViewMedia" parent="DefaultCardViewMedia">
 		<item name="android:layout_height">@dimen/card_media_height_informative</item>
+	</style>
+
+	<style name="InformativeCardViewTitle" parent="DefaultCardViewTitle">
+		<item name="android:paddingBottom">@dimen/card_content_inner_padding</item>
 	</style>
 
 	<style name="InformativeCardViewSupportingText" parent="DefaultCardViewSupportingText">
