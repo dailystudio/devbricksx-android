@@ -1,36 +1,27 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion COMPILE_SDK
     buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
-        applicationId "com.dailystudio.devbricksx.samples"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode VERSION_CODE
         versionName VERSION_NAME
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
     }
 
@@ -50,10 +41,22 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(":devbricksx")
-    implementation project(":devbricksx-camera")
 
-    kapt project(':devbricksx-kotlin-compiler')
-    kapt project(':devbricksx-java-compiler')
-    kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
-    kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
+    // CameraX
+    api "androidx.camera:camera-core:${project.ext.cameraXVersion}"
+    api "androidx.camera:camera-camera2:${project.ext.cameraXVersion}"
+    api "androidx.camera:camera-lifecycle:${project.ext.cameraXVersion}"
+    // CameraX View class
+    api "androidx.camera:camera-view:${project.ext.cameraXViewVersion}"
+}
+
+publish {
+    userOrg = 'dailystudio'
+    groupId = 'com.dailystudio'
+    artifactId = 'devbricksx-camera'
+    publishVersion = VERSION_NAME
+    desc = 'DevBricks eXetrems Camera Library'
+    bintrayUser = BINTRAY_USER
+    bintrayKey = BINTRAY_KEY
+    website = 'https://github.com/dailystudio/devbricksx'
 }

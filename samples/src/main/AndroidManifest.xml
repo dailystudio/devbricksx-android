@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dailystudio.devbricksx.samples">
 
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:name=".SamplesApplication"
@@ -21,6 +24,7 @@
 
         <activity android:name=".quickstart.CaseActivity"/>
         <activity android:name=".inmemory.CaseActivity"/>
+        <activity android:name=".camera.CaseActivity"/>
 
     </application>
 

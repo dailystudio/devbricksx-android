@@ -10,6 +10,14 @@
 		<item name="android:textSize">@dimen/default_font_size</item>
 	</style>
 
+	<style name="DefaultLabel">
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textColor">@color/light_black</item>
+		<item name="android:textSize">@dimen/default_font_size</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:padding">@dimen/default_label_padding</item>
+	</style>
+
 	<style name="DefaultTitleText">
 		<item name="android:gravity">left|center_vertical</item>
 		<item name="android:textStyle">bold</item>
@@ -121,5 +129,13 @@
 	<style name="InformativeCardViewSupportingText" parent="DefaultCardViewSupportingText">
 		<item name="android:maxLines">6</item>
 	</style>
+
+	<style name="DefaultEmptyText" parent="DefaultLabel">
+		<item name="android:gravity">center</item>
+		<item name="android:textColor">@color/light_gray</item>
+		<item name="android:textSize">@dimen/default_empty_text_font_size</item>
+		<item name="android:textStyle">bold|italic</item>
+	</style>
+
 
 </resources>

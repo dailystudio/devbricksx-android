@@ -1,0 +1,5 @@
+<resources>
+
+    <string name="label_permissions_denied">Required permissions are NOT granted!</string>
+
+</resources>

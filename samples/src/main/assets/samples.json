@@ -12,5 +12,12 @@
     "title": "In-Memory Objects",
     "icon": "ic_case_in_memory",
     "desc": ""
+  },
+  {
+    "name": "camera",
+    "package": "camera",
+    "title": "Camera Prview",
+    "icon": "ic_case_camera",
+    "desc": ""
   }
 ]
