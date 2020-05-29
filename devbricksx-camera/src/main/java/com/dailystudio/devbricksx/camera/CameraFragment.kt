@@ -36,7 +36,7 @@ open class CameraFragment: AbsPermissionsFragment() {
     private var cameraSelectorView: ImageView? = null
 
     private var displayId: Int = -1
-    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    protected var lensFacing: Int = CameraSelector.LENS_FACING_BACK
 
     private val useCases: MutableList<UseCase> = mutableListOf()
 

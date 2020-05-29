@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.view.View
 import androidx.camera.core.*
+import androidx.camera.core.ImageCapture.Metadata
 import androidx.core.content.ContextCompat
 import com.dailystudio.devbricksx.camera.CameraFragment
 import com.dailystudio.devbricksx.development.Logger
@@ -113,8 +114,15 @@ class ImageAnalysisFragment : CameraFragment() {
                 SimpleDateFormat(FILENAME_FORMAT, Locale.US)
                         .format(System.currentTimeMillis()) + ".jpg")
 
+        val metadata = Metadata().apply {
+            // Mirror image when using the front camera
+            isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+        }
+
         // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+                .setMetadata(metadata)
+                .build()
 
         // Setup image capture listener which is triggered after photo has
         // been taken
