@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.dailystudio.devbricksx.development.Logger
@@ -65,8 +66,8 @@ abstract class AbsPermissionsFragment : Fragment() {
                     ArrayUtils.stringArrayToString(permissions),
                     ArrayUtils.intArrayToString(grantResults))
             if (isAllPermissionsGranted(grantResults)) {
-                // Take the user to the success fragment when permission is granted
                 Logger.warn("All of required permissions are granted")
+                mPromptView?.visibility = View.GONE
 
                 onPermissionsGranted(true)
             } else {
@@ -95,7 +96,6 @@ abstract class AbsPermissionsFragment : Fragment() {
     private fun requestPermissions() {
         Logger.debug("request required permissions")
 
-        mPromptView?.visibility = View.GONE
         requestPermissions(getRequiredPermissions(), REQUEST_PERMISSIONS)
     }
 

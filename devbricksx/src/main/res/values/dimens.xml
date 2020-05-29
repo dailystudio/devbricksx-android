@@ -40,7 +40,8 @@
 	<dimen name="card_content_inner_padding">4dp</dimen>
 
 	<dimen name="default_empty_text_font_size">24dp</dimen>
-	<dimen name="default_prompt_text_font_size">24dp</dimen>
+	<dimen name="default_prompt_text_font_size">@dimen/default_font_size</dimen>
+	<dimen name="default_prompt_padding">12dp</dimen>
 
 	<!--
         <dimen name="card_corner_radius">3dp</dimen>
