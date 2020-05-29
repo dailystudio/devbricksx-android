@@ -11,6 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <include layout="@layout/layout_permission_prompt"/>
+    <include
+        layout="@layout/layout_permission_prompt"/>
+
+    <Button
+        android:id="@+id/capture"
+        android:text="@string/label_capture"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/default_content_padding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

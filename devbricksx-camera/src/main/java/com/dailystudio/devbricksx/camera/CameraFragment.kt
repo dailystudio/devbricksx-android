@@ -10,10 +10,10 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
-import kotlinx.android.synthetic.main.fragment_camera.*
 
 open class CameraFragment: AbsPermissionsFragment() {
 
@@ -27,9 +27,9 @@ open class CameraFragment: AbsPermissionsFragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_camera, container, false)
+            inflater.inflate(getLayoutResId(), container, false)
 
-    private fun startCamera() {
+    protected fun startCamera() {
         val context = context ?: return
 
         val cameraProviderFuture =
@@ -87,11 +87,24 @@ open class CameraFragment: AbsPermissionsFragment() {
         for (case in boundCases) {
             when (case) {
                 is Preview -> {
-                    case.setSurfaceProvider(
-                            viewFinder.createSurfaceProvider(camera?.cameraInfo))
+                    val previewView: PreviewView? =
+                            view?.findViewById(getPreviewResId())
+
+                    previewView?.let {
+                        case.setSurfaceProvider(
+                                it.createSurfaceProvider(camera?.cameraInfo))
+                    }
                 }
             }
         }
+    }
+
+    protected open fun getLayoutResId(): Int {
+        return R.layout.fragment_camera
+    }
+
+    protected open fun getPreviewResId(): Int {
+        return R.id.camera_preview
     }
 
 }
