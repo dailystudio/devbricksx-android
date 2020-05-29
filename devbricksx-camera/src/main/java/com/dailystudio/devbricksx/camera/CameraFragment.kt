@@ -8,20 +8,20 @@ import android.view.ViewGroup
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
 import kotlinx.android.synthetic.main.fragment_camera.*
 
-class CameraFragment: AbsPermissionsFragment() {
+open class CameraFragment: AbsPermissionsFragment() {
 
     companion object {
         val PERMISSIONS_REQUIRED = arrayOf(
                 Manifest.permission.CAMERA)
     }
 
-    private var preview: Preview? = null
     private var camera: Camera? = null
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -39,9 +39,6 @@ class CameraFragment: AbsPermissionsFragment() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Preview
-            preview = Preview.Builder().build()
-
             // Select back camera
             val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
@@ -49,18 +46,21 @@ class CameraFragment: AbsPermissionsFragment() {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
-                // Bind use cases to camera
-                camera = cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview)
-                preview?.setSurfaceProvider(
-                        viewFinder.createSurfaceProvider(camera?.cameraInfo))
+                val cases = buildUseCases()
+
+                for (case in cases) {
+                    // Bind use cases to camera
+                    camera = cameraProvider.bindToLifecycle(
+                            this, cameraSelector, case)
+                }
+
+                postConfigurationOfUseCases(cases)
             } catch(exc: Exception) {
                 Logger.error("Use case binding failed", exc)
             }
 
         }, ContextCompat.getMainExecutor(context))
     }
-
 
     override fun onPermissionsGranted(newlyGranted: Boolean) {
         startCamera()
@@ -75,6 +75,23 @@ class CameraFragment: AbsPermissionsFragment() {
 
     override fun getRequiredPermissions(): Array<String> {
         return PERMISSIONS_REQUIRED
+    }
+
+    protected open fun buildUseCases(): MutableList<UseCase> {
+        val preview = Preview.Builder().build()
+
+        return mutableListOf(preview)
+    }
+
+    protected open fun postConfigurationOfUseCases(boundCases: List<UseCase>) {
+        for (case in boundCases) {
+            when (case) {
+                is Preview -> {
+                    case.setSurfaceProvider(
+                            viewFinder.createSurfaceProvider(camera?.cameraInfo))
+                }
+            }
+        }
     }
 
 }
