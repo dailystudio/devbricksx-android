@@ -69,10 +69,13 @@ class ImageAnalysisFragment : CameraFragment() {
         }
     }
 
-    override fun buildUseCases(): MutableList<UseCase> {
-        val cases = super.buildUseCases()
+    override fun buildUseCases(screenAspectRatio: Int, rotation: Int): MutableList<UseCase> {
+        val cases = super.buildUseCases(screenAspectRatio, rotation)
 
-        val imageAnalyzer = ImageAnalysis.Builder().build()
+        val imageAnalyzer = ImageAnalysis.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetRotation(rotation)
+                .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
                         Logger.debug("Average luminosity: $luma")
@@ -82,7 +85,10 @@ class ImageAnalysisFragment : CameraFragment() {
         cases.add(imageAnalyzer)
 
         val imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetRotation(rotation)
                 .build()
+
         cases.add(imageCapture)
 
         return cases

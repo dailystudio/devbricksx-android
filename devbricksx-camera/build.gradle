@@ -58,5 +58,5 @@ publish {
     desc = 'DevBricks eXetrems Camera Library'
     bintrayUser = BINTRAY_USER
     bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx'
+    website = 'https://github.com/dailystudio/devbricksx-android'
 }

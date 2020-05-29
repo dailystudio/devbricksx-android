@@ -6,11 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+    <include layout="@layout/layout_camera_preview"/>
+    <include layout="@layout/layout_camera_len_selector"/>
     <include layout="@layout/layout_permission_prompt"/>
 
 </RelativeLayout>

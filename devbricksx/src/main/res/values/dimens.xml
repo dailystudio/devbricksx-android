@@ -14,6 +14,8 @@
 	<dimen name="default_title_font_size">20dp</dimen>
 	<dimen name="default_title_bottom_padding">10dp</dimen>
 
+	<dimen name="default_action_icon_size">48dp</dimen>
+
 	<dimen name="lv_content_padding">8dp</dimen>
 
 	<dimen name="lv_item_space_h">6dp</dimen>
