@@ -1,9 +1,12 @@
 package com.dailystudio.devbricksx.samples.camera
 
 import android.os.Bundle
-import androidx.camera.core.*
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.UseCase
 import com.dailystudio.devbricksx.camera.CameraFragment
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.R
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

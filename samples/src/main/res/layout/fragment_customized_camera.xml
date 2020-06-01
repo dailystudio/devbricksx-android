@@ -10,7 +10,7 @@
     <include layout="@layout/layout_camera_len_selector"/>
 
     <Button
-        android:id="@+id/capture"
+        android:id="@+id/camera_capture"
         android:text="@string/label_capture"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"

@@ -47,6 +47,7 @@ open class CameraFragment: AbsPermissionsFragment() {
     private var previewView: PreviewView? = null
     private var cameraSelectorView: ImageView? = null
     private var captureView: View? = null
+    private var captureLayout: View? = null
 
     private lateinit var cameraSwitchAnim: Animation
 
@@ -54,8 +55,6 @@ open class CameraFragment: AbsPermissionsFragment() {
 
     private var displayId: Int = -1
     protected var lensFacing: Int = CameraSelector.LENS_FACING_BACK
-
-    private var captureEnabled: Boolean = true
 
     /**
      * We need a display listener for orientation changes that do not trigger a configuration
@@ -109,13 +108,14 @@ open class CameraFragment: AbsPermissionsFragment() {
             }
         }
 
-        if (captureEnabled) {
-            captureView = view.findViewById(R.id.camera_capture)
-            captureView?.setOnClickListener {
-                Logger.debug("taking photo")
-                takePhoto()
-            }
+        captureView = view.findViewById(R.id.camera_capture)
+        captureView?.setOnClickListener {
+            Logger.debug("taking photo")
+            takePhoto()
         }
+
+        captureLayout = view.findViewById(R.id.camera_capture_layout)
+        captureLayout?.visibility = if (isCaptureEnabled()) View.VISIBLE else View.GONE
     }
 
     override fun onDestroy() {
@@ -214,6 +214,10 @@ open class CameraFragment: AbsPermissionsFragment() {
         return PERMISSIONS_REQUIRED
     }
 
+    protected open fun isCaptureEnabled(): Boolean {
+        return true
+    }
+
     protected open fun buildUseCases(screenAspectRatio: Int,
                                      rotation: Int): MutableList<UseCase> {
         val preview = Preview.Builder()
@@ -223,7 +227,7 @@ open class CameraFragment: AbsPermissionsFragment() {
 
         val cases: MutableList<UseCase> = mutableListOf(preview)
 
-        if (captureEnabled) {
+        if (isCaptureEnabled()) {
             val imageCapture = ImageCapture.Builder()
                     .setTargetAspectRatio(screenAspectRatio)
                     .setTargetRotation(rotation)
