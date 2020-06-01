@@ -8,6 +8,7 @@
 
     <include layout="@layout/layout_camera_preview"/>
     <include layout="@layout/layout_camera_len_selector"/>
+    <include layout="@layout/layout_camera_capture"/>
     <include layout="@layout/layout_permission_prompt"/>
 
 </RelativeLayout>

@@ -3,12 +3,16 @@ package com.dailystudio.devbricksx.camera
 import android.Manifest
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -16,9 +20,15 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
 
 open class CameraFragment: AbsPermissionsFragment() {
 
@@ -28,17 +38,24 @@ open class CameraFragment: AbsPermissionsFragment() {
 
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
+
+        private const val DEFAULT_CAPTURE_FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var previewView: PreviewView? = null
     private var cameraSelectorView: ImageView? = null
+    private var captureView: View? = null
+
+    private lateinit var cameraSwitchAnim: Animation
+
+    private val useCases: MutableList<UseCase> = mutableListOf()
 
     private var displayId: Int = -1
     protected var lensFacing: Int = CameraSelector.LENS_FACING_BACK
 
-    private val useCases: MutableList<UseCase> = mutableListOf()
+    private var captureEnabled: Boolean = true
 
     /**
      * We need a display listener for orientation changes that do not trigger a configuration
@@ -81,19 +98,22 @@ open class CameraFragment: AbsPermissionsFragment() {
 
         cameraSelectorView = view.findViewById(getCameraSelectorResId())
         cameraSelectorView?.let {
+            cameraSwitchAnim = AnimationUtils.loadAnimation(context,
+                    R.anim.camera_switch)
+
             it.isEnabled = false
 
             // Listener for button used to switch cameras. Only called if the button is enabled
             it.setOnClickListener {
-                lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
-                    CameraSelector.LENS_FACING_BACK
-                } else {
-                    CameraSelector.LENS_FACING_FRONT
-                }
+                toggleCameraLens()
+            }
+        }
 
-                Logger.debug("current lens facing: $lensFacing")
-                // Re-bind use cases to update selected camera
-                setupUseCases()
+        if (captureEnabled) {
+            captureView = view.findViewById(R.id.camera_capture)
+            captureView?.setOnClickListener {
+                Logger.debug("taking photo")
+                takePhoto()
             }
         }
     }
@@ -121,7 +141,7 @@ open class CameraFragment: AbsPermissionsFragment() {
                 else -> throw IllegalStateException("Back and front camera are unavailable")
             }
 
-            updateCameraSelector()
+            updateCameraSelector(true)
 
             setupUseCases()
         }, ContextCompat.getMainExecutor(context))
@@ -146,15 +166,36 @@ open class CameraFragment: AbsPermissionsFragment() {
 
             val cases = buildUseCases(screenAspectRatio, rotation)
 
+            useCases.clear()
             for (case in cases) {
                 // Bind use cases to camera
                 camera = cameraProvider?.bindToLifecycle(
                         this, cameraSelector, case)
+
+                useCases.add(case)
             }
 
             postConfigurationOfUseCases(cases)
         } catch(exc: Exception) {
             Logger.error("Use case binding failed", exc)
+        }
+    }
+
+    protected open fun setCameraLens(newFacing: Int) {
+        lensFacing = newFacing
+
+        Logger.debug("toggle lens facing to: $lensFacing")
+
+        updateCameraSelector()
+        // Re-bind use cases to update selected camera
+        setupUseCases()
+    }
+
+    protected open fun toggleCameraLens() {
+        if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
+            setCameraLens(CameraSelector.LENS_FACING_BACK)
+        } else {
+            setCameraLens(CameraSelector.LENS_FACING_FRONT)
         }
     }
 
@@ -180,7 +221,18 @@ open class CameraFragment: AbsPermissionsFragment() {
                 .setTargetRotation(rotation)
                 .build()
 
-        return mutableListOf(preview)
+        val cases: MutableList<UseCase> = mutableListOf(preview)
+
+        if (captureEnabled) {
+            val imageCapture = ImageCapture.Builder()
+                    .setTargetAspectRatio(screenAspectRatio)
+                    .setTargetRotation(rotation)
+                    .build()
+
+            cases.add(imageCapture)
+        }
+
+        return cases
     }
 
     protected open fun postConfigurationOfUseCases(boundCases: List<UseCase>) {
@@ -199,22 +251,85 @@ open class CameraFragment: AbsPermissionsFragment() {
         }
     }
 
-    private fun updateCameraSelector() {
+    private fun findImageCaptureUseCase(): ImageCapture? {
+        var imageCapture: ImageCapture? = null
+        for (case in useCases) {
+            Logger.debug("processing case: $case")
+            if (case is ImageCapture) {
+                if (imageCapture != null) {
+                    Logger.warn("there are more than one image capture case exists: old($imageCapture), new($case)")
+                }
+
+                imageCapture = case
+            }
+        }
+
+        return imageCapture
+    }
+
+    protected open fun getCaptureFile(): File? {
+        val outputDirectory = getOutputDirectory(requireContext())
+        // Create timestamped output file to hold the image
+        return File(outputDirectory,
+                SimpleDateFormat(DEFAULT_CAPTURE_FILENAME_FORMAT, Locale.US)
+                        .format(System.currentTimeMillis()) + ".jpg")
+    }
+
+    protected open fun getOutputDirectory(context: Context): File? {
+        return context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    }
+
+    protected open fun takePhoto() {
+        val imageCapture = findImageCaptureUseCase() ?: return
+        Logger.debug("capture case: $imageCapture")
+        val photoFile = getCaptureFile() ?: return
+        Logger.debug("photo file: $photoFile")
+
+        val metadata = ImageCapture.Metadata().apply {
+            // Mirror image when using the front camera
+            isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+        }
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+                .setMetadata(metadata)
+                .build()
+
+        // Setup image capture listener which is triggered after photo has
+        // been taken
+        imageCapture.takePicture(
+                outputOptions, ContextCompat.getMainExecutor(requireContext()), object : ImageCapture.OnImageSavedCallback {
+
+            override fun onError(exc: ImageCaptureException) {
+                Logger.error("Photo capture failed: ${exc.message}")
+            }
+
+            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                val savedUri = Uri.fromFile(photoFile)
+
+                Logger.info("Photo capture succeeded: $savedUri")
+            }
+        })
+    }
+
+    private fun updateCameraSelector(initialize: Boolean = false) {
         cameraSelectorView?.let {
             try {
                 it.isEnabled = hasBackCamera() && hasFrontCamera()
                 when (lensFacing) {
                     CameraSelector.LENS_FACING_BACK -> {
-                        it.setImageResource(R.drawable.ic_front_camera)
+                        it.setImageResource(R.drawable.ic_switch_camera)
                     }
                     CameraSelector.LENS_FACING_FRONT -> {
-                        it.setImageResource(R.drawable.ic_back_camera)
+                        it.setImageResource(R.drawable.ic_switch_camera)
                     }
                 }
             } catch (exception: CameraInfoUnavailableException) {
                 it.isEnabled = false
             }
         }
+
+        onCameraLenChanged(lensFacing, initialize)
     }
 
     private fun updateUseCasesRotation(useCases: List<UseCase>, rotation: Int) {
@@ -236,6 +351,14 @@ open class CameraFragment: AbsPermissionsFragment() {
 
     protected open fun getCameraSelectorResId(): Int {
         return R.id.camera_len_selector
+    }
+
+    protected open fun onCameraLenChanged(lensFacing: Int,
+                                          initialize: Boolean) {
+        if (!initialize) {
+            cameraSelectorView?.clearAnimation()
+            cameraSelectorView?.startAnimation(cameraSwitchAnim)
+        }
     }
 
     private fun hasBackCamera(): Boolean {

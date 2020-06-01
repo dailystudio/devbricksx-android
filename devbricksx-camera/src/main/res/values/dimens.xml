@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	
+	<dimen name="camera_len_selector_margin_v">30dp</dimen>
+	<dimen name="camera_len_selector_margin_h">@dimen/camera_len_selector_margin_v</dimen>
+
+	<dimen name="camera_capture_button_margin">20dp</dimen>
+	<dimen name="capture_button_outer_size">64dp</dimen>
+	<dimen name="capture_button_inner_size">48dp</dimen>
+
+</resources>
