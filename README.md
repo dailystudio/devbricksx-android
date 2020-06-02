@@ -1,5 +1,5 @@
 # DevBricks X - Android
-[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=0.7.7) ](https://bintray.com/dailystudio/maven/devbricksx/0.7.7/link)
+[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=0.7.8) ](https://bintray.com/dailystudio/maven/devbricksx/0.7.8/link)
 
 **DevBricksX** is a remake and extended version of [DevBricks](https://github.com/dailystudio/devbricks). It provides plenty of useful classes that will be used in daily Android development. With these "bricks", your development will become:
 
@@ -48,7 +48,7 @@ dependencies {
 #### Latest version
 
 ```groovy
-devbricksx_version = "0.7.7"
+devbricksx_version = "0.7.8"
 ```
 
 ### Step 2: Application initialization (Optional)
