@@ -26,7 +26,7 @@ class ImageAnalysisFragment : CameraFragment() {
         }
 
         override fun analyze(image: ImageProxy) {
-
+            Logger.debug("image dimen: ${image.width} x ${image.height}")
             val buffer = image.planes[0].buffer
             val data = buffer.toByteArray()
             val pixels = data.map { it.toInt() and 0xFF }

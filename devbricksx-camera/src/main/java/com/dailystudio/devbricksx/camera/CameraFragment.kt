@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
@@ -148,12 +149,12 @@ open class CameraFragment: AbsPermissionsFragment() {
     }
 
     private fun setupUseCases() {
-        // Get screen metrics used to setup camera for full screen resolution
-        val metrics = DisplayMetrics().also {
-            previewView?.display?.getRealMetrics(it)
-        }
+        val desiredPreviewSize = getDesiredPreviewSize()
+        Logger.debug("desired preview size: ${desiredPreviewSize.width} x ${desiredPreviewSize.height}")
 
-        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+        val screenAspectRatio = aspectRatio (
+                desiredPreviewSize.width, desiredPreviewSize.height)
+        Logger.debug("screen aspect ratio: $screenAspectRatio")
 
         val rotation = previewView?.display?.rotation ?: Surface.ROTATION_0
 
@@ -351,6 +352,15 @@ open class CameraFragment: AbsPermissionsFragment() {
 
     protected open fun getPreviewResId(): Int {
         return R.id.camera_preview
+    }
+
+    protected open fun getDesiredPreviewSize(): Size {
+        // Get screen metrics used to setup camera for full screen resolution
+        val metrics = DisplayMetrics().also {
+            previewView?.display?.getRealMetrics(it)
+        }
+
+        return Size(metrics.widthPixels, metrics.heightPixels)
     }
 
     protected open fun getCameraSelectorResId(): Int {
