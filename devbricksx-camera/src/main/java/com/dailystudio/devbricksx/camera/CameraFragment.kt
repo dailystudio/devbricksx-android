@@ -391,4 +391,14 @@ open class CameraFragment: AbsPermissionsFragment() {
         return AspectRatio.RATIO_16_9
     }
 
+    protected fun displayRotationToDegree(rotation: Int): Int {
+        return when (rotation) {
+            Surface.ROTATION_270 -> 270
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_90 -> 90
+            else -> 0
+        }
+    }
+
+
 }
