@@ -6,7 +6,6 @@ import android.graphics.Bitmap.CompressFormat
 import android.media.Image
 import android.text.TextUtils
 import android.util.Base64
-import android.view.Surface
 import android.view.View
 import android.view.View.MeasureSpec
 import com.dailystudio.devbricksx.development.Logger
@@ -17,21 +16,19 @@ import kotlin.math.roundToInt
 
 object ImageUtils {
 
-    fun estimateSampleSize(filePath: String?,
+    fun estimateSampleSize(filePath: String,
                            destWidth: Int, destHeight: Int): Int {
         return estimateSampleSize(filePath, destWidth, destHeight, 0)
     }
 
-    fun estimateSampleSize(filePath: String?,
+    fun estimateSampleSize(filePath: String,
                            destWidth: Int,
                            destHeight: Int,
                            orientation: Int): Int {
-        if (filePath == null) {
-            return 0
-        }
         if (destWidth <= 0 || destHeight <= 0) {
             return 0
         }
+
         var sw = 0
         var sh = 0
         val opts = BitmapFactory.Options()
@@ -62,7 +59,7 @@ object ImageUtils {
         return min(sw / destWidth, sh / destHeight)
     }
 
-    fun rotateBitmap(source: Bitmap?, degrees: Int): Bitmap? {
+    fun rotateBitmap(source: Bitmap, degrees: Int): Bitmap {
         var source = source
         if (degrees != 0 && source != null) {
             val m = Matrix()
@@ -86,13 +83,9 @@ object ImageUtils {
         return source
     }
 
-    fun scaleBitmapRatioLocked(bitmap: Bitmap?,
+    fun scaleBitmapRatioLocked(bitmap: Bitmap,
                                destWidth: Int,
-                               destHeight: Int): Bitmap? {
-        if (bitmap == null) {
-            return null
-        }
-
+                               destHeight: Int): Bitmap {
         val destMin = min(destWidth, destHeight)
         if (destMin <= 0) {
             Logger.warn("incorrect dest dimen: [%d, %d]",
@@ -123,13 +116,9 @@ object ImageUtils {
         return scaleBitmap(bitmap, tw, th)
     }
 
-    fun scaleBitmap(bitmap: Bitmap?,
+    fun scaleBitmap(bitmap: Bitmap,
                     destWidth: Int,
-                    destHeight: Int): Bitmap? {
-        if (bitmap == null) {
-            return null
-        }
-
+                    destHeight: Int): Bitmap {
         if (destWidth <= 0 || destHeight <= 0) {
             return bitmap
         }
@@ -180,44 +169,35 @@ object ImageUtils {
         return newBitmap
     }
 
-    private fun createScaledBitmap(bitmap: Bitmap?, scale: Float,
-                                   width: Int, height: Int): Bitmap? {
-        if (bitmap == null) {
-            return null
-        }
+    private fun createScaledBitmap(bitmap: Bitmap,
+                                   scale: Float,
+                                   width: Int, height: Int): Bitmap {
         val matrix = Matrix()
         matrix.postScale(scale, scale)
         return Bitmap.createBitmap(bitmap, 0, 0, width, height,
                 matrix, true)
     }
 
-    fun createClippedBitmap(bitmap: Bitmap?, x: Int, y: Int,
-                            width: Int, height: Int): Bitmap? {
-        return if (bitmap == null) {
-            null
-        } else Bitmap.createBitmap(bitmap, x, y, width, height)
+    fun createClippedBitmap(bitmap: Bitmap,
+                            x: Int, y: Int,
+                            width: Int, height: Int): Bitmap {
+        return Bitmap.createBitmap(bitmap, x, y, width, height)
     }
 
-    fun saveBitmap(bitmap: Bitmap?, filename: String?): Boolean {
+    fun saveBitmap(bitmap: Bitmap, filename: String): Boolean {
         return saveBitmap(bitmap, filename, 100)
     }
 
-    fun saveBitmap(bitmap: Bitmap?, filename: String?, quailty: Int): Boolean {
-        if (filename == null) {
-            return false
-        }
+    fun saveBitmap(bitmap: Bitmap, filename: String, quailty: Int): Boolean {
         val file = File(filename)
         return saveBitmap(bitmap, file, quailty)
     }
 
-    fun saveBitmap(bitmap: Bitmap?, file: File?): Boolean {
+    fun saveBitmap(bitmap: Bitmap, file: File): Boolean {
         return saveBitmap(bitmap, file, 100)
     }
 
-    fun saveBitmap(bitmap: Bitmap?, file: File?, quailty: Int): Boolean {
-        if (bitmap == null || file == null) {
-            return false
-        }
+    fun saveBitmap(bitmap: Bitmap, file: File, quailty: Int): Boolean {
         var success = false
         success = try {
             val out = FileOutputStream(file)
@@ -232,37 +212,43 @@ object ImageUtils {
             Logger.debug("save bitmap failure: %s", e.toString())
             false
         }
+
         return success
     }
 
-    fun createColorFilteredBitmap(origBitmap: Bitmap?,
-                                  cm: ColorMatrix?): Bitmap? {
-        if (origBitmap == null || cm == null) {
+    fun createColorFilteredBitmap(origBitmap: Bitmap,
+                                  cm: ColorMatrix?): Bitmap {
+        if (cm == null) {
             return origBitmap
         }
+
         val width = origBitmap.width
         val height = origBitmap.height
         if (width <= 0 || height <= 0) {
             return origBitmap
         }
+
         val filteredBitmap = Bitmap.createBitmap(width,
                 height, Bitmap.Config.ARGB_8888)
+
         val c = Canvas(filteredBitmap)
         val f = ColorMatrixColorFilter(cm)
         val paint = Paint()
+
         paint.colorFilter = f
         c.drawBitmap(origBitmap, 0f, 0f, paint)
+
         return filteredBitmap
     }
 
-    fun createGrayScaledBitmap(origBitmap: Bitmap?): Bitmap? {
+    fun createGrayScaledBitmap(origBitmap: Bitmap): Bitmap {
         val cm = ColorMatrix()
         cm.setSaturation(0f)
+
         return createColorFilteredBitmap(origBitmap, cm)
     }
 
-    fun createViewSnapshot(context: Context?,
-                           view: View?,
+    fun createViewSnapshot(view: View?,
                            desireWidth: Int, desireHeight: Int): Bitmap? {
         if (view == null) {
             return null
@@ -309,16 +295,15 @@ object ImageUtils {
 
         val canvas = Canvas(bitmap)
         view.draw(canvas)
+
         return bitmap
     }
 
-    fun bitmapToBase64String(bitmap: Bitmap?): String? {
-        if (bitmap == null) {
-            return null
-        }
+    fun bitmapToBase64String(bitmap: Bitmap): String {
         val baos = ByteArrayOutputStream()
         var bytes: ByteArray? = null
-        var base64str: String? = null
+        var base64str = ""
+
         try {
             bitmap.compress(CompressFormat.PNG, 100, baos)
             bytes = baos.toByteArray()
@@ -326,15 +311,16 @@ object ImageUtils {
         } catch (e: OutOfMemoryError) {
             Logger.debug("convert bitmap failure : %s",
                     e.toString())
-            base64str = null
         }
+
         return base64str
     }
 
-    fun bitmapFromBase64String(base64String: String?): Bitmap? {
+    fun bitmapFromBase64String(base64String: String): Bitmap? {
         if (TextUtils.isEmpty(base64String)) {
             return null
         }
+
         var bitmap: Bitmap? = null
         try {
             val bytes = Base64.decode(base64String, Base64.DEFAULT)
@@ -350,15 +336,8 @@ object ImageUtils {
         return bitmap
     }
 
-    fun compositeDrawableWithMask(
-            rgbBitmap: Bitmap?, alphaBitmap: Bitmap?): Bitmap? {
-        if (rgbBitmap == null) {
-            return null
-        }
-        if (alphaBitmap == null) {
-            return rgbBitmap
-        }
-
+    fun compositeDrawableWithMask(rgbBitmap: Bitmap,
+                                  alphaBitmap: Bitmap): Bitmap {
         val rgbW = rgbBitmap.width
         val rgbH = rgbBitmap.height
         val alphaW = alphaBitmap.width
@@ -388,35 +367,27 @@ object ImageUtils {
         return destBitmap
     }
 
-    fun compositeBitmaps(bitmap1: Bitmap?, bitmap2: Bitmap?): Bitmap? {
+    fun compositeBitmaps(bitmap1: Bitmap, bitmap2: Bitmap): Bitmap {
         return compositeBitmaps(false, bitmap1, bitmap2)
     }
 
-    fun compositeBitmaps(scale: Boolean, bitmap1: Bitmap?, bitmap2: Bitmap?): Bitmap? {
+    fun compositeBitmaps(scale: Boolean, bitmap1: Bitmap, bitmap2: Bitmap): Bitmap {
         return compositeBitmaps(scale, *arrayOf(bitmap1, bitmap2))
     }
 
-    fun compositeBitmaps(vararg bitmaps: Bitmap?): Bitmap? {
+    fun compositeBitmaps(vararg bitmaps: Bitmap): Bitmap {
         return compositeBitmaps(false, *bitmaps)
     }
 
-    fun compositeBitmaps(scale: Boolean, vararg bitmaps: Bitmap?): Bitmap? {
-        if (bitmaps == null) {
-            return null
-        }
-
+    fun compositeBitmaps(scale: Boolean, vararg bitmaps: Bitmap): Bitmap {
         val N = bitmaps.size
         if (N == 1) {
             return bitmaps[0]
         }
 
-        if (bitmaps[0] == null) {
-            return bitmaps[0]
-        }
-
-        var bw = bitmaps[0]!!.width
-        var bh = bitmaps[0]!!.height
-        val config = bitmaps[0]!!.config
+        var bw = bitmaps[0].width
+        var bh = bitmaps[0].height
+        val config = bitmaps[0].config
         if (!scale) {
             val dimension = findMaxDimension(*bitmaps)
             if (dimension != null) {
@@ -476,11 +447,12 @@ object ImageUtils {
         return finalBitmap
     }
 
-    fun loadAssetBitmap(context: Context, assetFile: String?): Bitmap? {
+    fun loadAssetBitmap(context: Context, assetFile: String): Bitmap? {
         val assetManager = context.assets ?: return null
         if (TextUtils.isEmpty(assetFile)) {
             return null
         }
+
         var istream: InputStream? = null
         var bitmap: Bitmap? = null
         try {
@@ -504,22 +476,17 @@ object ImageUtils {
             } catch (e: IOException) {
             }
         }
+
         return bitmap
     }
 
-    fun findMaxDimension(vararg bitmaps: Bitmap?): IntArray? {
-        if (bitmaps == null) {
-            return null
-        }
-
+    fun findMaxDimension(vararg bitmaps: Bitmap): IntArray {
         val dimension = intArrayOf(0, 0)
         val N = bitmaps.size
         if (N == 1) {
-            return if (bitmaps[0] == null) {
-                dimension
-            } else {
-                dimension[0] = bitmaps[0]!!.width
-                dimension[1] = bitmaps[0]!!.height
+            return run {
+                dimension[0] = bitmaps[0].width
+                dimension[1] = bitmaps[0].height
                 dimension
             }
         }
@@ -527,9 +494,6 @@ object ImageUtils {
         var bitmap: Bitmap? = null
         for (i in 0 until N) {
             bitmap = bitmaps[i]
-            if (bitmap == null) {
-                continue
-            }
             if (bitmap.width > dimension[0]) {
                 dimension[0] = bitmap.width
             }
@@ -541,7 +505,7 @@ object ImageUtils {
         return dimension
     }
 
-    fun getRoundBitmap(source: Bitmap, radius: Int): Bitmap? {
+    fun getRoundBitmap(source: Bitmap, radius: Int): Bitmap {
         val scaledBitmap: Bitmap? = if (source.width != radius || source.height != radius) {
             scaleBitmap(source, radius * 2, radius * 2)
         } else {
@@ -567,11 +531,7 @@ object ImageUtils {
         return output
     }
 
-    fun calculateBrightnessEstimate(bitmap: Bitmap?, pixelSpacing: Int): Int {
-        if (bitmap == null) {
-            return 0
-        }
-
+    fun calculateBrightnessEstimate(bitmap: Bitmap, pixelSpacing: Int): Int {
         val width = bitmap.width
         val height = bitmap.height
         if (width <= 0 || height <= 0) {
@@ -599,16 +559,15 @@ object ImageUtils {
         return (r + b + g) / (n * 3)
     }
 
-    fun calculateBrightness(bitmap: Bitmap?): Int {
+    fun calculateBrightness(bitmap: Bitmap): Int {
         return calculateBrightnessEstimate(bitmap, 1)
     }
 
-    fun paddingBitmap(origin: Bitmap?,
+    fun paddingBitmap(origin: Bitmap,
                       padding: Int,
                       paddingBackground: Int,
-                      expand: Boolean): Bitmap? {
-        if (origin == null
-                || padding <= 0) {
+                      expand: Boolean): Bitmap {
+        if (padding <= 0) {
             return origin
         }
         val w = origin.width
@@ -626,21 +585,27 @@ object ImageUtils {
             destW += padding * 2
             destH += padding * 2
         }
+
         val newOne = Bitmap.createBitmap(destW, destH, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(newOne)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
         canvas.drawColor(paddingBackground)
         canvas.drawBitmap(origin,
                 Rect(0, 0, w, h),
                 Rect(padding, padding, destW - padding, destH - padding),
                 paint)
+
         return newOne
     }
 
-    fun extendBitmap(origin: Bitmap?, destW: Int, destH: Int, backgroundColor: Int): Bitmap? {
-        if (origin == null || destW <= 0 || destH <= 0) {
+    fun extendBitmap(origin: Bitmap,
+                     destW: Int, destH: Int,
+                     backgroundColor: Int): Bitmap {
+        if (destW <= 0 || destH <= 0) {
             return origin
         }
+
         val w = origin.width
         val h = origin.height
         if (destW < w || destH < h) {
@@ -673,14 +638,11 @@ object ImageUtils {
     private val sSumG = IntArray(256)
     private val sSumB = IntArray(256)
 
-    fun oilPaintBitmap(bitmap: Bitmap?): Bitmap? {
+    fun oilPaintBitmap(bitmap: Bitmap): Bitmap {
         return oilPaintBitmap(bitmap, DEFAULT_RADIUS, DEFAULT_INTENSITY)
     }
 
-    fun oilPaintBitmap(bitmap: Bitmap?, radius: Int, intensity: Int): Bitmap? {
-        if (bitmap == null) {
-            return null
-        }
+    fun oilPaintBitmap(bitmap: Bitmap, radius: Int, intensity: Int): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
         Logger.debug("oil paint: [%d x %d], radius = %d, intensity = %d",
@@ -765,13 +727,9 @@ object ImageUtils {
         return dest
     }
 
-    fun concatBitmap(bitmap1: Bitmap?, bitmap2: Bitmap?): Bitmap? {
+    fun concatBitmap(bitmap1: Bitmap, bitmap2: Bitmap): Bitmap? {
         var bitmap1 = bitmap1
         var bitmap2 = bitmap2
-
-        if (bitmap1 == null || bitmap2 == null) {
-            return null
-        }
 
         val w1 = bitmap1.width
         val h1 = bitmap1.height
@@ -798,7 +756,7 @@ object ImageUtils {
             if (w2 != w) {
                 bitmap2 = scaleBitmapRatioLocked(bitmap2, w, w)
             }
-            h = bitmap1!!.height + bitmap2!!.height
+            h = bitmap1.height + bitmap2.height
         } else {
             h = min(h1, h2)
             if (h1 != h) {
@@ -807,14 +765,10 @@ object ImageUtils {
             if (h2 != h) {
                 bitmap2 = scaleBitmapRatioLocked(bitmap2, h, h)
             }
-            w = bitmap1!!.width + bitmap2!!.width
+            w = bitmap1.width + bitmap2.width
         }
 
         Logger.debug("concat bitmap: dimen = [%d x %d]", w, h)
-        if (bitmap1 == null
-                || bitmap2 == null) {
-            return null
-        }
 
         var newBitmap: Bitmap? = null
         try {
@@ -838,15 +792,16 @@ object ImageUtils {
             }
         } catch (e: OutOfMemoryError) {
             Logger.error("concat bitmaps failed: %s", e.toString())
-            newBitmap = null
         }
+
         return newBitmap
     }
 
-    fun clipBitmapByPath(src: Bitmap?, path: Path?): Bitmap? {
-        if (src == null || path == null) {
+    fun clipBitmapByPath(src: Bitmap, path: Path?): Bitmap {
+        if (path == null) {
             return src
         }
+
         val resized = resizePath(path, src.width.toFloat(), src.height.toFloat())
         val output = Bitmap.createBitmap(src.width,
                 src.height, Bitmap.Config.ARGB_8888)

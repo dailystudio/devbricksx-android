@@ -45,8 +45,9 @@ class ImageAnalysisFragment : CameraFragment() {
 
                 val rotated = ImageUtils.rotateBitmap(bitmap,
                         image.imageInfo.rotationDegrees)
-                rotated?.let {
-                    ImageUtils.saveBitmap(it, file)
+
+                file?.let {
+                    ImageUtils.saveBitmap(rotated, it)
                 }
             }
 
