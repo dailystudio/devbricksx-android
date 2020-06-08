@@ -38,8 +38,6 @@ object Logger {
             getCallingMethodName(2), format
         )
 
-        val escapedCompose = compose.replace("%", "%%")
-
         if (logToken == null) {
             logToken = LogToken.LOG_D
         }
@@ -49,11 +47,16 @@ object Logger {
             tag = UNKNOWN_TAG
         }
 
-        when (logToken) {
-            LogToken.LOG_D,  LogToken.LOG_SD -> Log.d(tag, String.format(escapedCompose, *args))
-            LogToken.LOG_W -> Log.w(tag, String.format(escapedCompose, *args))
-            LogToken.LOG_I -> Log.i(tag, String.format(escapedCompose, *args))
-            LogToken.LOG_E -> Log.e(tag, String.format(escapedCompose, *args))
+        try {
+
+            when (logToken) {
+                LogToken.LOG_D, LogToken.LOG_SD -> Log.d(tag, String.format(compose, *args))
+                LogToken.LOG_W -> Log.w(tag, String.format(compose, *args))
+                LogToken.LOG_I -> Log.i(tag, String.format(compose, *args))
+                LogToken.LOG_E -> Log.e(tag, String.format(compose, *args))
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "failed to print log with compose [$compose]: $e")
         }
     }
 
