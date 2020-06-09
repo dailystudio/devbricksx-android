@@ -1,18 +1,24 @@
 package com.dailystudio.devbricksx.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
 import android.media.Image
+import android.os.Build
+import android.renderscript.*
 import android.text.TextUtils
 import android.util.Base64
 import android.view.View
 import android.view.View.MeasureSpec
+import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
+import java.nio.ByteBuffer
 import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
+
 
 object ImageUtils {
 
@@ -828,116 +834,108 @@ object ImageUtils {
     }
 
     fun Image.toBitmap(): Bitmap {
-        val yBuffer = planes[0].buffer // Y
-        val uBuffer = planes[1].buffer // U
-        val vBuffer = planes[2].buffer // V
+        val nv21 = getDataFromImage(this, 2)
 
-        yBuffer.rewind()
-        uBuffer.rewind()
-        vBuffer.rewind()
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
 
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
-
-        val nv21 = ByteArray(ySize + uSize + vSize)
-
-        //U and V are swapped
-        yBuffer.get(nv21, 0, ySize)
-        vBuffer.get(nv21, ySize, vSize)
-        uBuffer.get(nv21, ySize + vSize, uSize)
-
-        yBuffer.rewind()
-        uBuffer.rewind()
-        vBuffer.rewind()
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, this.width, this.height, null)
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
         val imageBytes = out.toByteArray()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
-    // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
-    // are normalized to eight bits.
-    private const val kMaxChannelValue = 262143
+    private const val COLOR_FormatI420 = 1
+    private const val COLOR_FormatNV21 = 2
 
-    /**
-     * Utility method to compute the allocated size in bytes of a YUV420SP image of the given
-     * dimensions.
-     */
-    fun getYUVByteSize(width: Int, height: Int): Int {
-        // The luminance plane requires 1 byte per pixel.
-        val ySize = width * height
+    private fun isImageFormatSupported(image: Image): Boolean {
+        when (image.format) {
+            ImageFormat.YUV_420_888, ImageFormat.NV21, ImageFormat.YV12 -> return true
+        }
 
-        // The UV plane works on 2x2 blocks, so dimensions with odd size must be rounded up.
-        // Each 2x2 block takes 2 bytes to encode, one each for U and V.
-        val uvSize = (width + 1) / 2 * ((height + 1) / 2) * 2
-        return ySize + uvSize
+        return false
     }
 
-    fun convertYUV420SPToARGB8888(input: ByteArray, width: Int, height: Int, output: IntArray) {
-        val frameSize = width * height
-        var j = 0
-        var yp = 0
-        while (j < height) {
-            var uvp = frameSize + (j shr 1) * width
-            var u = 0
-            var v = 0
-            var i = 0
-            while (i < width) {
-                val y = 0xff and input[yp].toInt()
-                if (i and 1 == 0) {
-                    v = 0xff and input[uvp++].toInt()
-                    u = 0xff and input[uvp++].toInt()
+    private fun getDataFromImage(image: Image,
+                                 colorFormat: Int): ByteArray? {
+        if (colorFormat != COLOR_FormatI420 && colorFormat != COLOR_FormatNV21) {
+            Logger.error("supported color format: I420 or NV21")
+
+            return null
+        }
+
+
+        if (!isImageFormatSupported(image)) {
+            Logger.error("can't convert Image to byte array, format ${image.format}")
+        }
+
+        val crop = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            image.cropRect
+        } else {
+            Logger.warn("crop rect is only supported on ${Build.VERSION_CODES.LOLLIPOP}, using fallback solution")
+            Rect(0, 0, image.width, image.height)
+        }
+
+        val format = image.format
+        val width = crop.width()
+        val height = crop.height()
+        val planes = image.planes
+        val data = ByteArray(width * height * ImageFormat.getBitsPerPixel(format) / 8)
+        val rowData = ByteArray(planes[0].rowStride)
+
+        var channelOffset = 0
+        var outputStride = 1
+        for (i in planes.indices) {
+            when (i) {
+                0 -> {
+                    channelOffset = 0
+                    outputStride = 1
                 }
-                output[yp] = yuvToRGB(y, u, v)
-                i++
-                yp++
+                1 -> if (colorFormat == COLOR_FormatI420) {
+                    channelOffset = width * height
+                    outputStride = 1
+                } else if (colorFormat == COLOR_FormatNV21) {
+                    channelOffset = width * height + 1
+                    outputStride = 2
+                }
+                2 -> if (colorFormat == COLOR_FormatI420) {
+                    channelOffset = (width * height * 1.25).toInt()
+                    outputStride = 1
+                } else if (colorFormat == COLOR_FormatNV21) {
+                    channelOffset = width * height
+                    outputStride = 2
+                }
             }
-            j++
-        }
-    }
 
-    private fun yuvToRGB(y: Int, u: Int, v: Int): Int {
-        // Adjust and check YUV values
-        var y = y
-        var u = u
-        var v = v
-        y = if (y - 16 < 0) 0 else y - 16
-        u -= 128
-        v -= 128
+            val buffer: ByteBuffer = planes[i].buffer
+            val rowStride = planes[i].rowStride
+            val pixelStride = planes[i].pixelStride
 
-        // This is the floating point equivalent. We do the conversion in integer
-        // because some Android devices do not have floating point in hardware.
-        // nR = (int)(1.164 * nY + 2.018 * nU);
-        // nG = (int)(1.164 * nY - 0.813 * nV - 0.391 * nU);
-        // nB = (int)(1.164 * nY + 1.596 * nV);
-        val y1192 = 1192 * y
-        var r = y1192 + 1634 * v
-        var g = y1192 - 833 * v - 400 * u
-        var b = y1192 + 2066 * u
-
-        // Clipping RGB values to be inside boundaries [ 0 , kMaxChannelValue ]
-        r = if (r > kMaxChannelValue) kMaxChannelValue else if (r < 0) 0 else r
-        g = if (g > kMaxChannelValue) kMaxChannelValue else if (g < 0) 0 else g
-        b = if (b > kMaxChannelValue) kMaxChannelValue else if (b < 0) 0 else b
-        return -0x1000000 or (r shl 6 and 0xff0000) or (g shr 2 and 0xff00) or (b shr 10 and 0xff)
-    }
-
-    fun convertYUV420ToARGB8888(yData: ByteArray, uData: ByteArray, vData: ByteArray,
-                                width: Int, height: Int,
-                                yRowStride: Int, uvRowStride: Int, uvPixelStride: Int,
-                                out: IntArray) {
-        var yp = 0
-        for (j in 0 until height) {
-            val pY = yRowStride * j
-            val pUV = uvRowStride * (j shr 1)
-            for (i in 0 until width) {
-                val uv_offset = pUV + (i shr 1) * uvPixelStride
-                out[yp++] = yuvToRGB(0xff and yData[pY + i].toInt(), 0xff and uData[uv_offset].toInt(), 0xff and vData[uv_offset].toInt())
+            val shift = if (i == 0) 0 else 1
+            val w = width shr shift
+            val h = height shr shift
+            buffer.position(rowStride * (crop.top shr shift) + pixelStride * (crop.left shr shift))
+            for (row in 0 until h) {
+                var length: Int
+                if (pixelStride == 1 && outputStride == 1) {
+                    length = w
+                    buffer.get(data, channelOffset, length)
+                    channelOffset += length
+                } else {
+                    length = (w - 1) * pixelStride + 1
+                    buffer.get(rowData, 0, length)
+                    for (col in 0 until w) {
+                        data[channelOffset] = rowData[col * pixelStride]
+                        channelOffset += outputStride
+                    }
+                }
+                if (row < h - 1) {
+                    buffer.position(buffer.position() + rowStride - length)
+                }
             }
-        }
-    }
 
+            buffer.rewind()
+        }
+
+        return data
+    }
 }
