@@ -26,6 +26,7 @@
         <activity android:name=".quickstart.CaseActivity"/>
         <activity android:name=".inmemory.CaseActivity"/>
         <activity android:name=".camera.CaseActivity"/>
+        <activity android:name=".imagematrix.CaseActivity"/>
 
     </application>
 

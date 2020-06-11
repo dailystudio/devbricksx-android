@@ -19,5 +19,12 @@
     "title": "Camera Prview",
     "icon": "ic_case_camera",
     "desc": ""
+  },
+  {
+    "name": "imagematrix",
+    "package": "imagematrix",
+    "title": "Image Matrix",
+    "icon": "ic_case_image_matrix",
+    "desc": ""
   }
 ]

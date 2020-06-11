@@ -9,13 +9,16 @@ import android.os.Build
 import android.renderscript.*
 import android.text.TextUtils
 import android.util.Base64
+import android.util.Size
 import android.view.View
 import android.view.View.MeasureSpec
+import android.widget.CalendarView
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
 import java.nio.ByteBuffer
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -173,6 +176,47 @@ object ImageUtils {
         }
 
         return newBitmap
+    }
+
+    fun createTransformedBitmap(bitmap: Bitmap,
+                                matrix: Matrix,
+                                dstWidth: Int = 0,
+                                dstHeight: Int = 0): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+
+        val rect = RectF(0f, 0f, width.toFloat(), height.toFloat())
+        Logger.debug("original rect: $rect")
+        matrix.mapRect(rect)
+        Logger.debug("mapped rect: $rect")
+
+        val transformed = if (dstWidth != 0 && dstHeight != 0) {
+            Bitmap.createBitmap(dstWidth, dstHeight,
+                    bitmap.config)
+        } else {
+            val widthCropped: Float = if (rect.left < 0) {
+                (abs(rect.left) * 2)
+            } else {
+                0f
+            }
+
+            val heightCropped: Float = if (rect.top < 0) {
+                (abs(rect.top) * 2)
+            } else {
+                0f
+            }
+
+            Bitmap.createBitmap(
+                    (rect.width() - widthCropped).roundToInt(),
+                    (rect.height() - heightCropped).roundToInt(),
+                    bitmap.config)
+        }
+
+        val canvas = Canvas(transformed)
+
+        canvas.drawBitmap(bitmap, matrix, Paint())
+
+        return transformed
     }
 
     private fun createScaledBitmap(bitmap: Bitmap,
