@@ -4,13 +4,12 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import com.dailystudio.devbricksx.annotations.*
-import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.ui.AbsPageViewHolder
 import com.nostra13.universalimageloader.core.ImageLoader
 
-@ViewPagerFragment
+@ViewPagerFragment(offscreenPageLimit = 2)
 @Adapter(viewHolder = ImageViewHolder::class,
         viewType = ViewType.Page
 )
@@ -56,15 +55,15 @@ class ImageViewHolder(itemView: View): AbsPageViewHolder<Image>(itemView) {
                 append("\n")
                 append("\n")
                 append("$it")
-                append("\n")
             }
 
             item.cameraParam1?.let {
-                append("$it")
                 append("\n")
+                append("$it")
             }
 
             item.cameraParam2?.let {
+                append("\n")
                 append("$it")
             }
         }

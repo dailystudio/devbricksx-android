@@ -45,6 +45,7 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
 
         val fragmentAnnotation = element.getAnnotation(ViewPagerFragment::class.java)
         val layout = fragmentAnnotation.layout
+        val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
 
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
 
@@ -76,6 +77,15 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(superFragment)
                 .addModifiers(KModifier.OPEN)
+
+        if (offscreenPageLimit > 1) {
+            val methodSetupViewsBuilder = FunSpec.builder("setupViews")
+                    .addModifiers(KModifier.OVERRIDE)
+                    .addParameter("fragmentView", view)
+                    .addStatement("super.setupViews(fragmentView)")
+                    .addStatement("viewPager?.offscreenPageLimit = %L", offscreenPageLimit)
+            classBuilder.addFunction(methodSetupViewsBuilder.build())
+        }
 
         val methodOnCreateAdapterBuilder = FunSpec.builder("onCreateAdapter")
                 .addModifiers(KModifier.PUBLIC)
