@@ -118,6 +118,10 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsPagedListAdapter")
         }
 
+        fun getAbsListAdapterTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.ui", "AbsListAdapter")
+        }
+
         fun getPageListAdapterOfTypeName(`object`: TypeName,
                                          viewHolder: TypeName): TypeName {
             val listAdapter = getPageListAdapterTypeName()
@@ -128,6 +132,13 @@ class TypeNamesUtils {
         fun getAbsPageListAdapterOfTypeName(`object`: TypeName,
                                          viewHolder: TypeName): TypeName {
             val listAdapter = getAbsPageListAdapterTypeName()
+
+            return listAdapter.parameterizedBy(`object`, viewHolder)
+        }
+
+        fun getAbsListAdapterOfTypeName(`object`: TypeName,
+                                        viewHolder: TypeName): TypeName {
+            val listAdapter = getAbsListAdapterTypeName()
 
             return listAdapter.parameterizedBy(`object`, viewHolder)
         }
@@ -186,6 +197,10 @@ class TypeNamesUtils {
 
         fun getLiveDataOfPagedListOfObjectsTypeName(typeName: TypeName): TypeName {
             return getLiveDataOfTypeName(getPageListOfTypeName(typeName))
+        }
+
+        fun getLiveDataOfListOfObjectsTypeName(typeName: TypeName): TypeName {
+            return getLiveDataOfTypeName(getListOfTypeName(typeName))
         }
 
         fun getItemCallbackTypeName(): ClassName {

@@ -57,13 +57,14 @@ class AdapterProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val pagedListAdapter = TypeNamesUtils.getAbsPageListAdapterOfTypeName(objectTypeName, viewHolder)
+        val listAdapter = TypeNamesUtils.getAbsListAdapterOfTypeName(objectTypeName, viewHolder)
         val itemCallback = TypeNamesUtils.getItemCallbackOfTypeName(objectTypeName)
         val diffUtils  = ClassName(packageName, GeneratedNames.getDiffUtilName(typeName))
         val viewGroup = TypeNamesUtils.getViewGroupTypeName()
         val layoutInflater = TypeNamesUtils.getLayoutInflaterTypeName()
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .superclass(pagedListAdapter)
+                .superclass(if (paged) pagedListAdapter else listAdapter)
                 .addSuperclassConstructorParameter("DIFF_CALLBACK")
                 .addModifiers(KModifier.OPEN)
 

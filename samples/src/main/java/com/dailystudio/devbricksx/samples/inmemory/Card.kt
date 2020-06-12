@@ -12,7 +12,8 @@ import java.util.*
 
 @ViewModel
 @Adapter(viewHolder = CardViewHolder::class,
-        viewType = ViewType.CardInformative)
+        viewType = ViewType.CardInformative,
+        paged = false)
 @ListFragment(gridLayout = true)
 @DiffUtil
 @InMemoryRepository(key = Int::class)

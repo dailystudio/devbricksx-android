@@ -19,7 +19,7 @@ import java.lang.reflect.Type
 @InMemoryManager(key = String::class, ordering = Ordering.Ascending)
 @InMemoryRepository(key = String::class)
 @DiffUtil
-@Adapter(viewHolder = UseCaseViewHolder::class)
+@Adapter(viewHolder = UseCaseViewHolder::class, paged = false)
 @ViewModel
 @ListFragment
 data class UseCase(val name: String,

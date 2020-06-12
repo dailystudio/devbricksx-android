@@ -1,15 +1,13 @@
 package com.dailystudio.devbricksx.ui
 
 import android.view.View
-import androidx.paging.PagedList
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
+abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
-    : PagedListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
+    : ListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
 
     private var itemClickListener: OnItemClickListener<Item>? = null
 
