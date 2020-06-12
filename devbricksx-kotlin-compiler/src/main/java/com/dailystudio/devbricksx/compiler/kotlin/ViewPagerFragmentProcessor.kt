@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
+import com.dailystudio.devbricksx.annotations.Adapter
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.annotations.ViewPagerFragment
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
@@ -47,6 +48,10 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
         val layout = fragmentAnnotation.layout
         val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
 
+
+        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
+        val paged = adapterAnnotation?.paged ?: true
+
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
 
         val viewModelName = if (viewModelAnnotation.group.isNotBlank()) {
@@ -63,10 +68,14 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
+        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
+        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
         val superFragment = TypeNamesUtils.getAbsViewPagerFragmentOfTypeName(
-                objectTypeName, pagedList, adapter)
+                objectTypeName,
+                if (paged) pagedList else list,
+                adapter)
         val viewModelProvider = TypeNamesUtils.getViewModelProviderTypeName()
         val view = TypeNamesUtils.getViewTypeName()
         val bundle = TypeNamesUtils.getBundleTypeName()
@@ -99,7 +108,7 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("adapter", adapter)
-                .addParameter("data", pagedList)
+                .addParameter("data", if (paged) pagedList else list)
                 .addStatement("adapter.submitList(data)")
 
         classBuilder.addFunction(methodOnSubmitDataBuilder.build())
@@ -110,8 +119,13 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
                 .addStatement("val viewModel = %T(this).get(%T::class.java)",
                         viewModelProvider, viewModel)
 //                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
-                .addStatement("return viewModel.%N", GeneratedNames.getAllObjectsPagedPropertyName(typeName))
-                .returns(liveDataOfPagedListOfObjects)
+                .addStatement("return viewModel.%N",
+                        if (paged) {
+                            GeneratedNames.getAllObjectsPagedPropertyName(typeName)
+                        } else {
+                            GeneratedNames.getAllObjectsPropertyName(typeName)
+                        })
+                .returns(if (paged) liveDataOfPagedListOfObjects else liveDataOfListOfObjects)
 
         classBuilder.addFunction(methodGetLiveDataBuilder.build())
 

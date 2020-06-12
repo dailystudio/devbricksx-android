@@ -11,7 +11,8 @@ import com.nostra13.universalimageloader.core.ImageLoader
 
 @ViewPagerFragment(offscreenPageLimit = 2)
 @Adapter(viewHolder = ImageViewHolder::class,
-        viewType = ViewType.Page
+        viewType = ViewType.Page,
+        paged = false
 )
 @ViewModel
 @DiffUtil

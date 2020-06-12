@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class CaseActivity : AppCompatActivity() {
 
     companion object {
-        const val CARDS_COUNT = 20
+        const val CARDS_COUNT = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +36,7 @@ class CaseActivity : AppCompatActivity() {
 
                 viewModel.insertCard(card)
 
-                delay(200)
+                delay(500)
             }
         }
     }

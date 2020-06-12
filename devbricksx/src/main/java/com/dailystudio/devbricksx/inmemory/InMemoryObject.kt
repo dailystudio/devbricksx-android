@@ -117,7 +117,9 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
     }
 
     fun toList(): List<Object> {
-        return sortList(mapOfObjects.values.toList())
+        synchronized(mapOfObjects) {
+            return sortList(mapOfObjects.values.toList())
+        }
     }
 
     protected open fun sortList(objects: List<Object>): List<Object> {

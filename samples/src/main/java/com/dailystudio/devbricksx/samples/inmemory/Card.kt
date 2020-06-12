@@ -5,15 +5,13 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
-import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
 import com.dailystudio.devbricksx.utils.ColorUtils
 import java.util.*
 
 @ViewModel
 @Adapter(viewHolder = CardViewHolder::class,
-        viewType = ViewType.CardInformative,
-        paged = false)
+        viewType = ViewType.CardInformative)
 @ListFragment(gridLayout = true)
 @DiffUtil
 @InMemoryRepository(key = Int::class)

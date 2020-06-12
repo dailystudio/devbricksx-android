@@ -23,7 +23,7 @@ class CaseActivity : AppCompatActivity() {
         )
 
         val RANDOM = Random(System.currentTimeMillis())
-        const val NAMES_COUNT = 20
+        const val NAMES_COUNT = 50
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
