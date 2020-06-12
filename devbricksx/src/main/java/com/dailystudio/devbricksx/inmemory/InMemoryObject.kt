@@ -187,8 +187,9 @@ class InMemoryObjectDataSource<Object: InMemoryObject<*>>(
         val listOfObjects = manager.toList()
 
         val start = 0
-        val end = min(listOfObjects.size, params.requestedLoadSize)
-        Logger.debug("start: $start, end: $end")
+//        val end = min(listOfObjects.size, params.requestedLoadSize)
+        val end = listOfObjects.size
+        Logger.debug("start: $start, end: $end, size: ${listOfObjects.size}, req: ${params.requestedLoadSize}")
 
         val next = if (end < listOfObjects.size) end else null
 
@@ -200,7 +201,7 @@ class InMemoryObjectDataSource<Object: InMemoryObject<*>>(
 
         val start = params.key
         val end = min(listOfObjects.size.toLong(), start + params.requestedLoadSize)
-        Logger.debug("start: $start, end: $end")
+        Logger.debug("start: $start, end: $end, size: ${listOfObjects.size}, req: ${params.requestedLoadSize}")
 
         val next = if (end < listOfObjects.size) end else null
 

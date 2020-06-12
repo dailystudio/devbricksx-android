@@ -22,6 +22,7 @@ data class Card(val id: Int,
     override fun getKey(): Int {
         return id
     }
+
 }
 
 

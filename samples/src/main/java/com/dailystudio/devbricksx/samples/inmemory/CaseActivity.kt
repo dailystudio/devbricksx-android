@@ -29,14 +29,14 @@ class CaseActivity : AppCompatActivity() {
 
             val viewModel = ViewModelProvider(this@CaseActivity).get(CardViewModel::class.java)
 
-            for (i in 0..CARDS_COUNT) {
+            for (i in 0 until CARDS_COUNT) {
                 val card = Card(i,
                         "Card$i",
                         "This is a card with color blocks in it. If you display it in a card view, you will see only 3 lines of supporting text, whereas 6 lines in a informative card view.")
 
                 viewModel.insertCard(card)
 
-                delay(500)
+                delay(50)
             }
         }
     }

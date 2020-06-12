@@ -41,7 +41,7 @@ class CaseActivity : AppCompatActivity() {
 
             database.clearAllTables()
 
-            for (i in 0..NAMES_COUNT) {
+            for (i in 0 until NAMES_COUNT) {
                 val fIndex = RANDOM.nextInt(FIRST_NAMES.size)
                 val lIndex = RANDOM.nextInt(LAST_NAMES.size)
 
@@ -50,7 +50,7 @@ class CaseActivity : AppCompatActivity() {
                         LAST_NAMES[lIndex])
 
                 database.userDao().insert(user)
-                delay(200)
+                delay(50)
             }
         }
     }
