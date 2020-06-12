@@ -41,6 +41,10 @@
 	<dimen name="card_content_outer_padding">16dp</dimen>
 	<dimen name="card_content_inner_padding">4dp</dimen>
 
+	<dimen name="page_description_font_size">16dp</dimen>
+	<dimen name="page_content_outer_padding">16dp</dimen>
+	<dimen name="page_content_inner_padding">4dp</dimen>
+
 	<dimen name="default_empty_text_font_size">24dp</dimen>
 	<dimen name="default_prompt_text_font_size">@dimen/default_font_size</dimen>
 	<dimen name="default_prompt_padding">12dp</dimen>

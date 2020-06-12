@@ -13,11 +13,10 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
-import java.lang.IllegalStateException
 import java.lang.reflect.Type
 
 
-@InMemoryManager(key = String::class, ordering = Ordering.Descending)
+@InMemoryManager(key = String::class, ordering = Ordering.Ascending)
 @InMemoryRepository(key = String::class)
 @DiffUtil
 @Adapter(viewHolder = UseCaseViewHolder::class)

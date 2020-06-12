@@ -15,7 +15,7 @@ import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class NotebooksFragmentExt : NotebooksFragment() {
+class NotebooksFragmentExt : NotebooksListFragment() {
 
     private lateinit var notebookViewModel: NotebookViewModel
 

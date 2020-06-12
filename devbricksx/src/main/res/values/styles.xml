@@ -146,5 +146,25 @@
 		<item name="android:textStyle">italic</item>
 	</style>
 
+	<style name="DefaultPageTitle" parent="DefaultLabel">
+		<item name="android:textColor">@color/white</item>
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textSize">@dimen/default_font_size</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:paddingStart">@dimen/page_content_outer_padding</item>
+		<item name="android:paddingEnd">@dimen/page_content_outer_padding</item>
+		<item name="android:paddingTop">@dimen/page_content_outer_padding</item>
+		<item name="android:paddingBottom">@dimen/page_content_outer_padding</item>
+	</style>
+
+	<style name="DefaultPageDescription">
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textColor">@color/light_white</item>
+		<item name="android:textSize">@dimen/page_description_font_size</item>
+		<item name="android:paddingStart">@dimen/page_content_outer_padding</item>
+		<item name="android:paddingEnd">@dimen/page_content_outer_padding</item>
+		<item name="android:paddingTop">@dimen/page_content_inner_padding</item>
+		<item name="android:paddingBottom">@dimen/page_content_outer_padding</item>
+	</style>
 
 </resources>

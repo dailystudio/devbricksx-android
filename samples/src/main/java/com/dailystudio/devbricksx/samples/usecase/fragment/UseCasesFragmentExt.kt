@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 
-class UseCasesFragmentExt : UseCasesFragment() {
+class UseCasesFragmentExt : UseCasesListFragment() {
 
     override fun onItemClick(recyclerView: RecyclerView, itemView: View, position: Int, item: UseCase, id: Long) {
         super.onItemClick(recyclerView, itemView, position, item, id)

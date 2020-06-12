@@ -6,7 +6,8 @@ enum class ViewType {
     SingleLine,
     Card,
     CardInformative,
-    Customized
+    Page,
+    Customized,
 }
 
 @Retention(AnnotationRetention.SOURCE)

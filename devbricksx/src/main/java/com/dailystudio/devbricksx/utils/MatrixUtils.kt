@@ -24,10 +24,7 @@ object MatrixUtils {
                 return matrix
             }
 
-            // Translate so center of image is at origin.
             matrix.postTranslate(-srcWidth / 2.0f, -srcHeight / 2.0f)
-
-            // Rotate around origin.
             matrix.postRotate(rotation.toFloat())
         }
 
@@ -40,6 +37,7 @@ object MatrixUtils {
 
         val outWidth = if (srcInPortrait) min(dstWidth, dstHeight) else max(dstWidth, dstHeight)
         val outHeight = if (srcInPortrait) max(dstWidth, dstHeight) else min(dstWidth, dstHeight)
+        Logger.debug("outWidth = $outWidth, outHeight = $outHeight")
 
         if (inWidth != outWidth || inHeight != outHeight) {
             val scaleFactorX = outWidth / inWidth.toFloat()
@@ -59,7 +57,6 @@ object MatrixUtils {
             Logger.debug("scaleWidth = $scaledWidth, scaleHeight = $scaledHeight")
 
             if (rotation != 0) {
-                // Translate back from origin centered reference to destination frame.
                 matrix.postTranslate(scaledWidth / 2.0f, scaledHeight / 2.0f)
             }
 
@@ -67,6 +64,10 @@ object MatrixUtils {
             val translateY = (outHeight - scaledHeight) / 2.0f
             Logger.debug("translateX = $translateX, translateY = $translateY")
             matrix.postTranslate(translateX, translateY)
+        } else {
+            if (rotation != 0) {
+                matrix.postTranslate(outWidth / 2.0f, outHeight / 2.0f)
+            }
         }
 
         return matrix

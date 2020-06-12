@@ -1,7 +1,7 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
-import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.ViewModel
+import com.dailystudio.devbricksx.annotations.ViewPagerFragment
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
@@ -12,14 +12,14 @@ import javax.lang.model.element.TypeElement
 
 
 @AutoService(Processor::class)
-class ListFragmentProcessor : BaseProcessor() {
+class ViewPagerFragmentProcessor : BaseProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(ListFragment::class.java.name)
+        return mutableSetOf(ViewPagerFragment::class.java.name)
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        roundEnv.getElementsAnnotatedWith(ListFragment::class.java)
+        roundEnv.getElementsAnnotatedWith(ViewPagerFragment::class.java)
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
                         error("Only classes can be annotated")
@@ -43,10 +43,8 @@ class ListFragmentProcessor : BaseProcessor() {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
+        val fragmentAnnotation = element.getAnnotation(ViewPagerFragment::class.java)
         val layout = fragmentAnnotation.layout
-        val isGradLayout = fragmentAnnotation.gridLayout
-        val columns = fragmentAnnotation.columns
 
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
 
@@ -60,17 +58,14 @@ class ListFragmentProcessor : BaseProcessor() {
         debug("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
 
         val viewModel= ClassName(viewModelPackage, viewModelName)
-        val generatedClassName = GeneratedNames.getListFragmentName(typeName)
+        val generatedClassName = GeneratedNames.getPagerFragmentName(typeName)
 
         val objectTypeName = ClassName(packageName, typeName)
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
-        val superFragment = TypeNamesUtils.getAbsRecyclerViewFragmentOfTypeName(
+        val superFragment = TypeNamesUtils.getAbsViewPagerFragmentOfTypeName(
                 objectTypeName, pagedList, adapter)
-        val layoutManager = TypeNamesUtils.getLayoutManagerTypeName()
-        val linearLayoutManager = TypeNamesUtils.getLinearLayoutManagerTypeName()
-        val gridLayoutManager = TypeNamesUtils.getGridLayoutManagerTypeName()
         val viewModelProvider = TypeNamesUtils.getViewModelProviderTypeName()
         val view = TypeNamesUtils.getViewTypeName()
         val bundle = TypeNamesUtils.getBundleTypeName()
@@ -99,22 +94,6 @@ class ListFragmentProcessor : BaseProcessor() {
 
         classBuilder.addFunction(methodOnSubmitDataBuilder.build())
 
-        val methodOnCreateLayoutManagerBuilder = FunSpec.builder("onCreateLayoutManager")
-                .addModifiers(KModifier.PUBLIC)
-                .addModifiers(KModifier.OVERRIDE)
-                .returns(layoutManager)
-        if (isGradLayout) {
-            methodOnCreateLayoutManagerBuilder.addStatement(
-                    "return %T(context, %L)", gridLayoutManager, columns
-            )
-        } else {
-            methodOnCreateLayoutManagerBuilder.addStatement(
-                    "return %T(context)", linearLayoutManager
-            )
-        }
-
-        classBuilder.addFunction(methodOnCreateLayoutManagerBuilder.build())
-
         val methodGetLiveDataBuilder = FunSpec.builder("getLiveData")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
@@ -138,7 +117,7 @@ class ListFragmentProcessor : BaseProcessor() {
             methodOnCreateViewBuilder.addStatement("return inflater.inflate(%L, container, false)",
                     layout)
         } else {
-            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_recycler_view, container, false)",
+            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_view_pager, container, false)",
                     devbricksxR)
         }
 

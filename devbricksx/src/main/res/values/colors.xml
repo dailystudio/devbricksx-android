@@ -48,4 +48,6 @@
     <color name="card_title_text_color">@color/black</color>
     <color name="card_supporting_text_color">@color/light_black</color>
 
+    <color name="page_bottom_layout_background">#B0000000</color>
+
 </resources>

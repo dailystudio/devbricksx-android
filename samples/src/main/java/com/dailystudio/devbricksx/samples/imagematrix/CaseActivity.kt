@@ -33,13 +33,6 @@ class CaseActivity : AppCompatActivity() {
 
                 bitmap?.let { bitmap ->
                     Logger.debug("bitmap: ${bitmap.width} x ${bitmap.height}")
-//                    val matrix = Matrix()
-//
-//                    matrix.postTranslate(-bitmap.width / 2f, -bitmap.height / 2f)
-//                    matrix.postRotate(90f)
-//                    matrix.postScale(0.5f, 0.5f)
-//                    matrix.postTranslate(bitmap.height / 2f * 0.5f,
-//                            bitmap.width / 2f * 0.5f)
                     val matrix = MatrixUtils.getTransformationMatrix(
                             bitmap.width, bitmap.height,
                             640, 480,

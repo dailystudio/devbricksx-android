@@ -96,6 +96,14 @@ class AdapterProcessor : BaseProcessor() {
                 methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.card_view_informative, null)",
                         TypeNamesUtils.getDevbrickxRTypeName())
             }
+            ViewType.Page -> {
+                methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.page, null)",
+                        TypeNamesUtils.getDevbrickxRTypeName())
+                methodOnCreateViewBuilder.addStatement("view.layoutParams = %T(%T.MATCH_PARENT, %T.MATCH_PARENT)",
+                        TypeNamesUtils.getViewGroupLayoutParameterTypeName(),
+                        TypeNamesUtils.getViewGroupLayoutParameterTypeName(),
+                        TypeNamesUtils.getViewGroupLayoutParameterTypeName())
+            }
             else -> {
                 methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%L, null)", layout)
             }

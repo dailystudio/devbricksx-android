@@ -26,5 +26,12 @@
     "title": "Image Matrix",
     "icon": "ic_case_image_matrix",
     "desc": ""
+  },
+  {
+    "name": "viewpager",
+    "package": "viewpager",
+    "title": "View Pager",
+    "icon": "ic_case_view_pager",
+    "desc": ""
   }
 ]

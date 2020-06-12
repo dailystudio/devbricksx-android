@@ -1,0 +1,29 @@
+[
+  {
+    "id": 0,
+    "title": "Mandarins Fruit Citrus",
+    "url": "https://pixabay.com/photos/mandarins-fruit-citrus-sunlight-2043985/",
+    "asset": "assets://pixabay.com/mandarins_1280.jpg",
+    "author": "Daria-Yakovleva",
+    "camera": "Canon EOS 5d Mark IIi",
+    "cameraParam1": "EF50mm f/1.8 II",
+    "cameraParam2": "50.0mm · ƒ/3.5 · 1/125s · ISO 400"
+  },
+  {
+    "id": 1,
+    "title": "Girl Red Hair Make up",
+    "url": "https://pixabay.com/photos/girl-red-hair-makeup-russian-model-1828538/",
+    "asset": "assets://pixabay.com/girl_1280.jpg",
+    "author": "nastya_gepp",
+    "camera": "Canon EOS 70d",
+    "cameraParam1": "EF50mm f/1.4 USM",
+    "cameraParam2": "50.0mm · ƒ/2.2 · 1/200s · ISO 250"
+  },
+  {
+    "id": 2,
+    "title": "Mystery Island Secret",
+    "url": "https://pixabay.com/photos/mystery-island-secret-background-1599527/",
+    "asset": "assets://pixabay.com/mystery_1280.jpg",
+    "author": "intographics"
+  }
+]
