@@ -33,5 +33,12 @@
     "title": "View Pager",
     "icon": "ic_case_view_pager",
     "desc": ""
+  },
+  {
+    "name": "fragmentpager",
+    "package": "fragmentpager",
+    "title": "Fragment Pager",
+    "icon": "ic_case_fragment_pager",
+    "desc": ""
   }
 ]

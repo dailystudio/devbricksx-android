@@ -28,6 +28,7 @@
         <activity android:name=".camera.CaseActivity"/>
         <activity android:name=".imagematrix.CaseActivity"/>
         <activity android:name=".viewpager.CaseActivity"/>
+        <activity android:name=".fragmentpager.CaseActivity"/>
 
     </application>
 

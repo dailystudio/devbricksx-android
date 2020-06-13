@@ -67,7 +67,7 @@ class ViewModelProcessor : BaseProcessor() {
 
     private fun mapElement(element: TypeElement,
                            viewModelGroups: MutableMap<String, MutableList<TypeElement>>) {
-        val typeName = element.simpleName.toString()
+        val typeName = element.qualifiedName.toString()
 
         val annotation = element.getAnnotation(ViewModel::class.java)
         var group = annotation.group
@@ -93,7 +93,13 @@ class ViewModelProcessor : BaseProcessor() {
             return null
         }
 
-        val generatedClassName = GeneratedNames.getViewModelName(group)
+        var typeName = if (group.contains(".")) {
+             group.split(".").last()
+        } else {
+            group
+        }
+
+        val generatedClassName = GeneratedNames.getViewModelName(typeName)
         var packageName = processingEnv.elementUtils.getPackageOf(elements[0]).toString()
 
         val viewModelPackageName =
