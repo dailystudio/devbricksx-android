@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.app.activity.ActivityLauncher
+import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 
 class UseCasesFragmentExt : UseCasesListFragment() {
@@ -22,6 +23,8 @@ class UseCasesFragmentExt : UseCasesListFragment() {
                         append("CaseActivity")
                     }
             )
+
+            putExtra(Constants.EXTRA_TITLE, item.title)
         }
 
         ActivityLauncher.launchActivity(context, intent)

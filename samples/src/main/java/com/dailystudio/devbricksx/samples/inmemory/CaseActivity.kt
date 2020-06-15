@@ -1,16 +1,16 @@
 package com.dailystudio.devbricksx.samples.inmemory
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.samples.inmemory.model.CardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CaseActivity : AppCompatActivity() {
+class CaseActivity : BaseCaseActivity() {
 
     companion object {
         const val CARDS_COUNT = 100

@@ -1,14 +1,14 @@
 package com.dailystudio.devbricksx.samples.imagematrix
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.utils.ImageUtils
 import com.dailystudio.devbricksx.utils.MatrixUtils
 
-class CaseActivity : AppCompatActivity() {
+class CaseActivity : BaseCaseActivity() {
 
     companion object {
         private const val IMAGE_ASSET = "bicycle_1280.jpg"

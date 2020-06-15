@@ -1,15 +1,15 @@
 package com.dailystudio.devbricksx.samples.quickstart
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class CaseActivity : AppCompatActivity() {
+class CaseActivity : BaseCaseActivity() {
 
     companion object {
         val LAST_NAMES = arrayOf(

@@ -1,17 +1,17 @@
 package com.dailystudio.devbricksx.samples.fragmentpager
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.samples.fragmentpager.model.ImageViewModel
 import com.dailystudio.devbricksx.utils.JSONUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CaseActivity : AppCompatActivity() {
+class CaseActivity : BaseCaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

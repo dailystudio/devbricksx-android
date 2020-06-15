@@ -1,10 +1,10 @@
 package com.dailystudio.devbricksx.samples.camera
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 
-class CaseActivity : AppCompatActivity() {
+class CaseActivity : BaseCaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
