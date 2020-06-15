@@ -1,14 +1,18 @@
 package com.dailystudio.devbricksx.samples.fragmentpager
 
-import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.fragment.AbsPageFragment
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
-import com.dailystudio.devbricksx.ui.AbsPageViewHolder
 import com.nostra13.universalimageloader.core.ImageLoader
 
+@ViewPagerFragment(useFragment = true)
+@FragmentAdapter(pageFragment = ImageFragment::class)
 @ViewModel
 @DiffUtil
 @InMemoryRepository(key = Int::class)
@@ -26,44 +30,20 @@ data class Image(val id: Int,
     }
 }
 
-class ImageViewHolder(itemView: View): AbsPageViewHolder<Image>(itemView) {
+class ImageFragment(private val image: Image): AbsPageFragment<Image>(image) {
 
-    override fun bindMedia(item: Image, imageView: ImageView?) {
-        imageView?.let {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return ImageView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            )
+
+            scaleType = ImageView.ScaleType.CENTER_CROP
+        }.also {
             ImageLoader.getInstance().displayImage(
-                    item.asset, it, Constants.DEFAULT_IMAGE_LOADER_OPTIONS)
-        }
-    }
-
-    override fun getMedia(item: Image): Drawable? {
-        return null
-    }
-
-    override fun getTitle(item: Image): CharSequence? {
-        return item.title
-    }
-
-    override fun getDescription(item: Image): CharSequence? {
-        return buildString {
-            append("by ${item.author}")
-
-            item.camera?.let {
-                append("\n")
-                append("\n")
-                append("$it")
-            }
-
-            item.cameraParam1?.let {
-                append("\n")
-                append("$it")
-            }
-
-            item.cameraParam2?.let {
-                append("\n")
-                append("$it")
-            }
+                    image.asset, it, Constants.DEFAULT_IMAGE_LOADER_OPTIONS)
         }
     }
 
 }
-

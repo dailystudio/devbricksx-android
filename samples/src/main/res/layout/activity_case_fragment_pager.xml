@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.fragmentpager.ImagesPagerFragment"
+        android:name="com.dailystudio.devbricksx.samples.fragmentpager.fragment.ImagesPagerFragment"
         android:id="@+id/fragment_images"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

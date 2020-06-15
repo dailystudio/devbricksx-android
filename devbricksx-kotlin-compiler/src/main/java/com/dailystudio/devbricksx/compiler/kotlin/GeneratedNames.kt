@@ -6,6 +6,7 @@ class GeneratedNames {
     companion object {
         private const val VIEW_MODEL_SUFFIX = "ViewModel"
         private const val ADAPTER_SUFFIX = "Adapter"
+        private const val FRAGMENT_ADAPTER_SUFFIX = "FragmentAdapter"
         private const val LIST_FRAGMENT_SUFFIX = "ListFragment"
         private const val PAGER_FRAGMENT_SUFFIX = "PagerFragment"
         private const val REPOSITORY_SUFFIX = "Repository"
@@ -49,6 +50,14 @@ class GeneratedNames {
                 this.append(className.capitalize())
                 this.append('s')
                 this.append(ADAPTER_SUFFIX)
+            }
+        }
+
+        fun getFragmentAdapterName(className: String) : String {
+            return buildString {
+                this.append(className.capitalize())
+                this.append('s')
+                this.append(FRAGMENT_ADAPTER_SUFFIX)
             }
         }
 

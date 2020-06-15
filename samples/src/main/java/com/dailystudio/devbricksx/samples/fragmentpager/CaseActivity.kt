@@ -32,7 +32,7 @@ class CaseActivity : BaseCaseActivity() {
                 for (img in images) {
                     viewModel.insertImage(img)
 
-                    delay(2000)
+                    delay(200)
                 }
             }
         }

@@ -95,19 +95,27 @@ class TypeNamesUtils {
         }
 
         fun getJobTypeName() : ClassName {
-            return ClassName.bestGuess("kotlinx.coroutines.Job")
+            return ClassName("kotlinx.coroutines", "Job")
         }
 
         fun getDispatchersTypeName() : ClassName {
-            return ClassName.bestGuess("kotlinx.coroutines.Dispatchers")
+            return ClassName("kotlinx.coroutines", "Dispatchers")
         }
 
         fun getAndroidViewModelTypeName(): ClassName {
-            return ClassName.bestGuess("androidx.lifecycle.AndroidViewModel")
+            return ClassName("androidx.lifecycle", "AndroidViewModel")
         }
 
         fun getApplicationTypeName(): ClassName {
-            return ClassName.bestGuess("android.app.Application")
+            return ClassName("android.app", "Application")
+        }
+
+        fun getLifecycleTypeName(): ClassName {
+            return ClassName("androidx.lifecycle", "Lifecycle")
+        }
+
+        fun getFragmentManagerTypeName(): ClassName {
+            return ClassName("androidx.fragment.app", "FragmentManager")
         }
 
         fun getPageListAdapterTypeName(): ClassName {
@@ -116,6 +124,10 @@ class TypeNamesUtils {
 
         fun getAbsPageListAdapterTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsPagedListAdapter")
+        }
+
+        fun getAbsFragmentStateAdapterTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.ui", "AbsFragmentStateAdapter")
         }
 
         fun getAbsListAdapterTypeName(): ClassName {
@@ -141,6 +153,12 @@ class TypeNamesUtils {
             val listAdapter = getAbsListAdapterTypeName()
 
             return listAdapter.parameterizedBy(`object`, viewHolder)
+        }
+
+        fun getAbsFragmentStateAdapterOfTypeName(`object`: TypeName): TypeName {
+            val fragmentAdapter = getAbsFragmentStateAdapterTypeName()
+
+            return fragmentAdapter.parameterizedBy(`object`)
         }
 
         fun getJavaListTypeName() : ClassName {
@@ -233,6 +251,12 @@ class TypeNamesUtils {
                                packageName: String) : ClassName {
             return ClassName(GeneratedNames.getAdapterPackageName(packageName),
                     GeneratedNames.getAdapterName(className))
+        }
+
+        fun getFragmentAdapterTypeName(className: String,
+                                       packageName: String) : ClassName {
+            return ClassName(GeneratedNames.getAdapterPackageName(packageName),
+                    GeneratedNames.getFragmentAdapterName(className))
         }
 
         fun getViewModelTypeName(className: String,

@@ -47,10 +47,10 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
         val fragmentAnnotation = element.getAnnotation(ViewPagerFragment::class.java)
         val layout = fragmentAnnotation.layout
         val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
-
+        val useFragment = fragmentAnnotation.useFragment
 
         val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
+        val paged = adapterAnnotation?.paged ?: false
 
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
 
@@ -71,7 +71,11 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
         val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
-        val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
+        val adapter = if (useFragment) {
+            TypeNamesUtils.getFragmentAdapterTypeName(typeName, packageName)
+        } else {
+            TypeNamesUtils.getAdapterTypeName(typeName, packageName)
+        }
         val superFragment = TypeNamesUtils.getAbsViewPagerFragmentOfTypeName(
                 objectTypeName,
                 if (paged) pagedList else list,
@@ -99,8 +103,13 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
         val methodOnCreateAdapterBuilder = FunSpec.builder("onCreateAdapter")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
-                .addStatement("return %T()", adapter)
                 .returns(adapter)
+
+        if (useFragment) {
+            methodOnCreateAdapterBuilder.addStatement("return %T(parentFragmentManager, lifecycle)", adapter)
+        } else {
+            methodOnCreateAdapterBuilder.addStatement("return %T()", adapter)
+        }
 
         classBuilder.addFunction(methodOnCreateAdapterBuilder.build())
 

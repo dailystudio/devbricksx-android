@@ -18,3 +18,9 @@ annotation class Adapter(
         val layout: Int = -1,
         val paged: Boolean = true
 )
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+annotation class FragmentAdapter(
+        val pageFragment: KClass<*>
+)
