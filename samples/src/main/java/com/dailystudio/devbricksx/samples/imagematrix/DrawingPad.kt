@@ -121,19 +121,24 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
             val point = PointF(event.x, event.y)
             Logger.debug("new point: $point")
 
+            parent.requestDisallowInterceptTouchEvent(true);
+
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     val track = mutableListOf<PointF>().apply {
                         add(point)
                     }
 
-                    tracks.add(track)
+                    synchronized(tracks) {
+                        tracks.add(track)
+                    }
                 }
-
                 else -> {
-                    val track = tracks.last()
+                    synchronized(tracks) {
+                        val track = tracks.last()
 
-                    track.add(point)
+                        track.add(point)
+                    }
                 }
 
             }
@@ -198,6 +203,16 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         val hSpec = MeasureSpec.makeMeasureSpec(bitmap!!.height, MeasureSpec.EXACTLY)
 
         super.onMeasure(wSpec, hSpec)
+    }
+
+    fun getTracks(): List<List<PointF>> {
+        synchronized(tracks) {
+            val list = mutableListOf<List<PointF>>()
+
+            list.addAll(tracks)
+
+            return list
+        }
     }
 
 }

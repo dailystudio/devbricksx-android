@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 
-class DrawingPadFragment: Fragment() {
+class DrawingPadFragment(bundle: ImageBundle): ImageBundleFragment(bundle) {
 
     private var drawingPad: DrawingPad? = null
 
@@ -25,6 +26,9 @@ class DrawingPadFragment: Fragment() {
 
     private fun setupViews(view: View) {
         drawingPad = view.findViewById(R.id.drawing_pad)
+
+        Logger.debug("bitmap: ${item.bitmap}")
+        drawingPad?.setImage(item.bitmap)
     }
 
     fun setImage(bitmap: Bitmap) {

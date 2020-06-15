@@ -26,6 +26,7 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
     override fun onActive() {
         super.onActive()
 
+        postValue(manager.toList())
         manager.addObserver(this)
     }
 

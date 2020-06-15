@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.imagematrix.DrawingPadFragment"
+        android:name="com.dailystudio.devbricksx.samples.imagematrix.fragment.ImageBundlesPagerFragment"
         android:id="@+id/fragment_drawing_pad"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
