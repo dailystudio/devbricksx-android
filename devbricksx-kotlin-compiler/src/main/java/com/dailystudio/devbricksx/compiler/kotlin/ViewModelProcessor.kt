@@ -4,9 +4,7 @@ import com.dailystudio.devbricksx.annotations.DaoExtension
 import com.dailystudio.devbricksx.annotations.InMemoryRepository
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
-import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
-import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
-import com.dailystudio.devbricksx.compiler.kotlin.utils.lowerCamelCaseName
+import com.dailystudio.devbricksx.compiler.kotlin.utils.*
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -161,6 +159,19 @@ class ViewModelProcessor : BaseProcessor() {
         val launch = TypeNamesUtils.getLaunchMemberName()
         val job = TypeNamesUtils.getJobTypeName()
 
+        val primaryKeyFields = mutableMapOf<String, TypeName>()
+        if (roomCompanion != null) {
+            FieldsUtils.collectPrimaryKeyFields(element,
+                    `object`,
+                    primaryKeyFields,
+                    processingEnv.typeUtils)
+
+            debug("collected primaryKeyFields = $primaryKeyFields")
+        }
+
+        val getOneCallParameters = FieldsUtils.primaryKeyFieldsToFuncCallParameters(
+                primaryKeyFields)
+
         classBuilder.addProperty(repoVariableName, repo, KModifier.PROTECTED)
         classBuilder.addProperty(allName, liveDataOfListOfObjects)
         classBuilder.addProperty(allPagedName, liveDataOfPagedListOfObjects)
@@ -186,6 +197,28 @@ class ViewModelProcessor : BaseProcessor() {
                     allPagedName, repoVariableName, repoAllPagedName
             ))
         }
+
+        val methodGetOneBuilder = FunSpec.builder(GeneratedNames.getMethodName("get", typeName))
+                .addModifiers(KModifier.SUSPEND)
+                .returns(`object`.copy(nullable = true))
+
+        if (!inMemoryRepository) {
+            FieldsUtils.primaryKeyFieldsToMethodParameters(methodGetOneBuilder, primaryKeyFields)
+
+            methodGetOneBuilder.addStatement("return %N.%N(%L)",
+                    repoVariableName,
+                    GeneratedNames.getMethodName("get", typeName),
+                    getOneCallParameters)
+        } else {
+            val keyClass = AnnotationsUtils.getClassValueFromAnnotation(element, "key") ?: return
+
+            methodGetOneBuilder.addParameter("key",
+                    KotlinTypesUtils.javaToKotlinTypeName(`object`, keyClass))
+            methodGetOneBuilder.addStatement("return %N.get(key)",
+                    repoVariableName)
+        }
+
+        classBuilder.addFunction(methodGetOneBuilder.build())
 
         val methodInsertOne = FunSpec.builder(GeneratedNames.getMethodName("insert", typeName))
                 .addParameter(objectVariableName, `object`)
@@ -291,7 +324,7 @@ class ViewModelProcessor : BaseProcessor() {
                                      classBuilder: TypeSpec.Builder) {
 //        val methodName = executableElement.simpleName.toString().kotlinGetterName()
         val methodName = executableElement.simpleName.toString()
-        var returnTypeName = javaToKotlinTypeName(objectTypeName, executableElement.returnType.asTypeName())
+        var returnTypeName = KotlinTypesUtils.javaToKotlinTypeName(objectTypeName, executableElement.returnType.asTypeName())
         debug("returnTypeName = $returnTypeName")
 
         val hasReturn: Boolean = !TypeNamesUtils.isTypeNameUnit(returnTypeName)
@@ -312,7 +345,7 @@ class ViewModelProcessor : BaseProcessor() {
             paramName = param.simpleName.toString()
 
             methodSpecBuilder.addParameter(paramName,
-                    javaToKotlinTypeName(objectTypeName,
+                    KotlinTypesUtils.javaToKotlinTypeName(objectTypeName,
                             param.asType().asTypeName()))
 
             parametersBuilder.append(paramName)
@@ -342,69 +375,6 @@ class ViewModelProcessor : BaseProcessor() {
         }
 
         classBuilder.addFunction(methodSpecBuilder.build())
-    }
-
-    private fun javaToKotlinTypeName(objectTypeName: TypeName,
-                                     origTypeName: TypeName): TypeName {
-        val array = TypeNamesUtils.getArrayTypeName(objectTypeName)
-        val javaLong = TypeNamesUtils.getJavaLongTypeName()
-        val javaString = TypeNamesUtils.getJavaStringTypeName()
-
-        when (origTypeName) {
-            is ParameterizedTypeName -> {
-                val liveDataTypeName = TypeNamesUtils.getLiveDataTypeName()
-                val javaListTypeName = TypeNamesUtils.getJavaListTypeName()
-                val listTypeName = TypeNamesUtils.getListTypeName()
-
-                debug("rawType = ${origTypeName.rawType}")
-                debug("typeArguments = ${origTypeName.typeArguments}")
-
-                val rawType = origTypeName.rawType
-                val typeArguments = origTypeName.typeArguments
-
-                when (rawType) {
-                    javaListTypeName -> {
-                        if (typeArguments.isNotEmpty()) {
-                            val newTypeName = javaToKotlinTypeName(objectTypeName,
-                                    typeArguments[0])
-
-                            return listTypeName.parameterizedBy(newTypeName)
-                        }
-                    }
-
-                    liveDataTypeName -> {
-                        if (typeArguments.isNotEmpty()) {
-                            val newTypeName = javaToKotlinTypeName(objectTypeName,
-                                    typeArguments[0])
-
-                            return liveDataTypeName.parameterizedBy(newTypeName)
-                        }
-                    }
-
-                    array -> {
-                        if (typeArguments.isNotEmpty()) {
-                            val ta0Name = typeArguments[0].toString()
-                            when (ta0Name) {
-                                "kotlin.Int" -> {
-                                    val primitiveType = ta0Name.removePrefix("kotlin")
-                                    return ClassName("kotlin", "${primitiveType}Array")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            javaLong -> {
-                return TypeNamesUtils.getLongTypeName()
-            }
-
-            javaString -> {
-                return TypeNamesUtils.getStringTypeName()
-            }
-        }
-
-        return origTypeName
     }
 
 }

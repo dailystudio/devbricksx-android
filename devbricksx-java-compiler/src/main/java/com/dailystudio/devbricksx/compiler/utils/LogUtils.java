@@ -5,7 +5,7 @@ import javax.tools.Diagnostic;
 
 public class LogUtils {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final String UNKNOWN_METHOD = "UnknownMethod";
     private static final String UNKNOWN_CLASS = "UnknownClass";

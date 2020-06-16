@@ -19,6 +19,10 @@ open class ObjectRepository<Key: Comparable<Key>, Object: InMemoryObject<Key>>(
     val allObjectsPaged: LiveData<PagedList<Object>> =
             LivePagedListBuilder(manager.toDataSource(), pageSize).build()
 
+    fun get(key: Key): Object? {
+        return manager.get(key)
+    }
+
     fun insert(`object`: Object) {
         manager.add(`object`)
     }

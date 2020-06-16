@@ -269,12 +269,20 @@ class TypeNamesUtils {
             return ClassName("java.lang", "Long")
         }
 
+        fun getJavaIntegerTypeName(): ClassName {
+            return ClassName("java.lang", "Integer")
+        }
+
         fun getJavaStringTypeName(): ClassName {
             return ClassName("java.lang", "String")
         }
 
         fun getLongTypeName(): ClassName {
             return ClassName("kotlin", "Long")
+        }
+
+        fun getIntegerTypeName(): ClassName {
+            return ClassName("kotlin", "Int")
         }
 
         fun getStringTypeName(): ClassName {

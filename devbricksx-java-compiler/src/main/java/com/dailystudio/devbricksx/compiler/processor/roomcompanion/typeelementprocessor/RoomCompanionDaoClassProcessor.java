@@ -10,6 +10,7 @@ import androidx.room.Update;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.FieldsHelper;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.MethodStatementsGenerator;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
@@ -20,7 +21,9 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Modifier;
@@ -42,6 +45,12 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
         if (companionAnnotation == null) {
             return null;
         }
+
+        Map<String, TypeName> primaryKeyFields = new HashMap();
+
+        FieldsHelper.collectPrimaryKeyFields(typeElement,
+                primaryKeyFields,
+                mTypesUtils);
 
         ClassName daoExtension =
                 AnnotationsUtils.getClassValueFromAnnotation(typeElement,
@@ -70,6 +79,10 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
         ClassName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
         ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
         ClassName arrayList = ClassName.get("java.util", "ArrayList");
+        TypeName liveDataOfObject = TypeNamesUtils.getLiveDataOfObjectTypeName(
+                packageName, typeName);
+        TypeName liveDataOfCompanion = TypeNamesUtils.getLiveDataOfCompanionTypeName(
+                packageName, typeName);
         TypeName listOfCompanions =
                 TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
         TypeName listOfObjects =
@@ -80,6 +93,44 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(packageName, typeName);
         TypeName dataSourceFactoryOfCompanions =
                 TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(packageName, typeName);
+
+        String whereClauseForGetOneMethods =
+                FieldsHelper.primaryKeyFieldsToWhereClause(primaryKeyFields);
+
+        String getOneMethodCallParameters =
+                FieldsHelper.primaryKeyFieldsToFuncCallParameters(primaryKeyFields);
+
+        MethodSpec.Builder methodGetOneBuilder = MethodSpec.methodBuilder("_getOne")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .returns(companion);
+
+        FieldsHelper.primaryKeyFieldsToMethodParameters(methodGetOneBuilder, primaryKeyFields);
+
+        methodGetOneBuilder.addAnnotation(AnnotationSpec.builder(Query.class)
+                .addMember("value", "$S",
+                        "SELECT * FROM `" + tableName + "` " + whereClauseForGetOneMethods)
+                .build()
+        );
+
+        MethodSpec methodGetOne = methodGetOneBuilder.build();
+
+        classBuilder.addMethod(methodGetOne);
+
+        MethodSpec.Builder methodGetOneLiveBuilder = MethodSpec.methodBuilder("_getOneLive")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .returns(liveDataOfCompanion);
+
+        FieldsHelper.primaryKeyFieldsToMethodParameters(methodGetOneLiveBuilder, primaryKeyFields);
+
+        methodGetOneLiveBuilder.addAnnotation(AnnotationSpec.builder(Query.class)
+                .addMember("value", "$S",
+                        "SELECT * FROM `" + tableName + "` " + whereClauseForGetOneMethods)
+                .build()
+        );
+
+        MethodSpec methodGetOneLive = methodGetOneLiveBuilder.build();
+
+        classBuilder.addMethod(methodGetOneLive);
 
         MethodSpec methodGetAll = MethodSpec.methodBuilder("_getAll")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -200,6 +251,38 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 .build();
 
         classBuilder.addMethod(methodDeleteOne);
+
+        MethodSpec.Builder methodGetOneWrapperBuilder =
+                MethodSpec.methodBuilder("getOne")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(object);
+
+        FieldsHelper.primaryKeyFieldsToMethodParameters(methodGetOneWrapperBuilder, primaryKeyFields);
+
+        MethodStatementsGenerator.outputCompanionToObject(
+                packageName,
+                typeName,
+                methodGetOneWrapperBuilder,
+                methodGetOne.name,
+                getOneMethodCallParameters);
+
+        classBuilder.addMethod(methodGetOneWrapperBuilder.build());
+
+        MethodSpec.Builder methodGetOneLiveWrapperBuilder =
+                MethodSpec.methodBuilder("getOneLive")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(liveDataOfObject);
+
+        FieldsHelper.primaryKeyFieldsToMethodParameters(methodGetOneLiveWrapperBuilder, primaryKeyFields);
+
+        MethodStatementsGenerator.outputLiveCompanionToLiveObject(
+                packageName,
+                typeName,
+                methodGetOneLiveWrapperBuilder,
+                methodGetOneLive.name,
+                getOneMethodCallParameters);
+
+        classBuilder.addMethod(methodGetOneLiveWrapperBuilder.build());
 
         MethodSpec.Builder methodGetAllWrapperBuilder =
                 MethodSpec.methodBuilder("getAll")

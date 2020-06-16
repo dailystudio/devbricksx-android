@@ -4,6 +4,7 @@ import com.dailystudio.devbricksx.annotations.DaoExtension;
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.Constants;
+import com.dailystudio.devbricksx.compiler.processor.roomcompanion.FieldsHelper;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
 import com.dailystudio.devbricksx.compiler.utils.AnnotationsUtils;
@@ -16,6 +17,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +45,12 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
             return null;
         }
 
+        Map<String, TypeName> primaryKeyFields = new HashMap();
+
+        FieldsHelper.collectPrimaryKeyFields(typeElement,
+                primaryKeyFields,
+                mTypesUtils);
+
         TypeElement daoExtensionElement = findDaoExtensionTypeElement(preResults, typeElement);
         debug("find daoExtension[%s] for element: %s",
                 daoExtensionElement, typeElement);
@@ -60,6 +68,8 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
                 NameUtils.lowerCamelCaseName(dao.simpleName());
         ClassName object = TypeNamesUtils.getObjectTypeName(packageName, typeName);
         ClassName arrayList = ClassName.get("java.util", "ArrayList");
+        TypeName liveDataOfObject = TypeNamesUtils.getLiveDataOfObjectTypeName(
+                packageName, typeName);
         TypeName listOfObjects =
                 TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
         TypeName liveDataOfListOfObjects =
@@ -82,6 +92,35 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
                 .build();
 
         classBuilder.addMethod(constructorMethod);
+
+        String getOneMethodCallParameters =
+                FieldsHelper.primaryKeyFieldsToFuncCallParameters(primaryKeyFields);
+
+        MethodSpec.Builder methodGetOneBuilder =
+                MethodSpec.methodBuilder(GeneratedNames.getRepositoryObjectMethodName(typeName))
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(object);
+
+        FieldsHelper.primaryKeyFieldsToMethodParameters(
+                methodGetOneBuilder, primaryKeyFields);
+
+        methodGetOneBuilder.addStatement("return $N.getOne($N)",
+                daoFieldName, getOneMethodCallParameters);
+
+        classBuilder.addMethod(methodGetOneBuilder.build());
+
+        MethodSpec.Builder methodGetOneLiveBuilder =
+                MethodSpec.methodBuilder(GeneratedNames.getRepositoryObjectLiveMethodName(typeName))
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(liveDataOfObject);
+
+        FieldsHelper.primaryKeyFieldsToMethodParameters(
+                methodGetOneLiveBuilder, primaryKeyFields);
+
+        methodGetOneLiveBuilder.addStatement("return $N.getOneLive($N)",
+                daoFieldName, getOneMethodCallParameters);
+
+        classBuilder.addMethod(methodGetOneLiveBuilder.build());
 
         MethodSpec.Builder methodGetAllLiveBuilder =
                 MethodSpec.methodBuilder(GeneratedNames.getRepositoryAllObjectsMethodName(typeName))

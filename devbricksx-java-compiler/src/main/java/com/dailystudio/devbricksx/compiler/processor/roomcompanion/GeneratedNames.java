@@ -120,6 +120,23 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getRepositoryObjectMethodName(String className) {
+        StringBuilder builder = new StringBuilder("get");
+
+        builder.append(className);
+
+        return builder.toString();
+    }
+
+    public static String getRepositoryObjectLiveMethodName(String className) {
+        StringBuilder builder = new StringBuilder("get");
+
+        builder.append(className);
+        builder.append("Live");
+
+        return builder.toString();
+    }
+
     public static String getRepositoryAllObjectsMethodName(String className) {
         StringBuilder builder = new StringBuilder("getAll");
 

@@ -1,13 +1,16 @@
 package com.dailystudio.devbricksx.samples.imagematrix
 
 import android.graphics.Bitmap
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
 
 class DrawingPadFragment(bundle: ImageBundle): ImageBundleFragment(bundle) {
 
@@ -33,6 +36,16 @@ class DrawingPadFragment(bundle: ImageBundle): ImageBundleFragment(bundle) {
 
     fun setImage(bitmap: Bitmap) {
         drawingPad?.setImage(bitmap)
+    }
+
+    private val onTracksChangedListener = object: OnTracksChangedListener {
+
+        override fun onTracksChanged(pad: DrawingPad, tracks: List<List<PointF>>) {
+            val viewModel = ViewModelProvider(this@DrawingPadFragment)
+                    .get(ImageBundleViewModel::class.java)
+
+        }
+
     }
 
 }

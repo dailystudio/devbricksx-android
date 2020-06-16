@@ -4,12 +4,18 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
 import android.os.Build
+import android.os.Handler
 import android.util.AttributeSet
 import android.view.*
 import com.dailystudio.devbricksx.development.Logger
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+interface OnTracksChangedListener {
+
+    fun onTracksChanged(pad: DrawingPad, tracks: List<List<PointF>>)
+
+}
 
 class DrawingPad: SurfaceView, SurfaceHolder.Callback {
 
@@ -37,6 +43,7 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
     private var bitmap: Bitmap? = null
 
     private val tracks: MutableList<MutableList<PointF>> = mutableListOf()
+    private var listener: OnTracksChangedListener? = null
 
     init {
         holder.addCallback(this)
@@ -138,9 +145,13 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
                         val track = tracks.last()
 
                         track.add(point)
+
+                        if (event.action == MotionEvent.ACTION_UP
+                                || event.action == MotionEvent.ACTION_CANCEL) {
+                            notifyTracksChanged()
+                        }
                     }
                 }
-
             }
 
             requestRendering()
@@ -215,4 +226,16 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         }
     }
 
+    fun setOnTracksChangedListener(l: OnTracksChangedListener) {
+        listener = l
+    }
+
+    private fun notifyTracksChanged() {
+        removeCallbacks(notifyRunnable)
+        post(notifyRunnable)
+    }
+
+    private val notifyRunnable = Runnable {
+        listener?.onTracksChanged(this@DrawingPad, getTracks())
+    }
 }
