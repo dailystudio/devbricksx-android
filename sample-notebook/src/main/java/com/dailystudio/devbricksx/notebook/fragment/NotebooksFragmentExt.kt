@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
@@ -14,6 +15,8 @@ import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NotebooksFragmentExt : NotebooksListFragment() {
 
@@ -78,6 +81,11 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         super.onItemClick(recyclerView, itemView, position, item, id)
 
         Logger.debug("click on position [$position]: item = $item")
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val notebook = notebookViewModel?.getNotebook(item.id)
+            Logger.debug("retrieved notebook: $notebook")
+        }
     }
 
 }

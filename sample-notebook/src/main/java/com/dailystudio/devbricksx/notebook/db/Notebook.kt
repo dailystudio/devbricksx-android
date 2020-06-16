@@ -16,4 +16,10 @@ import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
 @ListFragment(layout = R.layout.fragment_notebooks, gridLayout = true)
 class Notebook(id: Int = 0) : Record(id) {
     @JvmField var name: String? = null
+
+    override fun toString(): String {
+        return buildString {
+            append("Notebook[$id]: $name")
+        }
+    }
 }
