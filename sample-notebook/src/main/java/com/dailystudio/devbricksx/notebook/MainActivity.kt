@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
-        notebookViewModel.allNotebooks.observe(this@MainActivity, notebookObserver);
+        notebookViewModel.allNotebooksLive.observe(this@MainActivity, notebookObserver);
 
         GlobalScope.launch {
 //            NotesDatabase.getDatabase(this@MainActivity).clearAllTables()

@@ -122,8 +122,17 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
 
         classBuilder.addMethod(methodGetOneLiveBuilder.build());
 
-        MethodSpec.Builder methodGetAllLiveBuilder =
+        MethodSpec.Builder methodGetAllBuilder =
                 MethodSpec.methodBuilder(GeneratedNames.getRepositoryAllObjectsMethodName(typeName))
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(listOfObjects);
+
+        methodGetAllBuilder.addStatement("return $N.getAll()", daoFieldName);
+
+        classBuilder.addMethod(methodGetAllBuilder.build());
+
+        MethodSpec.Builder methodGetAllLiveBuilder =
+                MethodSpec.methodBuilder(GeneratedNames.getRepositoryAllObjectsLiveMethodName(typeName))
                         .addModifiers(Modifier.PUBLIC)
                         .returns(liveDataOfListOfObjects);
 

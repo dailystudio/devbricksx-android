@@ -124,11 +124,28 @@ class GeneratedNames {
             }.lowerCamelCaseName()
         }
 
-        fun getAllObjectsPropertyName(className: String) : String {
+        fun getAllObjectsMethodName(className: String) : String {
+            return buildString {
+                this.append("get")
+                this.append(className)
+                this.append("s")
+            }
+        }
+
+        fun getAllObjectsRepoMethodName(className: String) : String {
+            return buildString {
+                this.append("getAll")
+                this.append(className)
+                this.append("s")
+            }
+        }
+
+        fun getAllObjectsLivePropertyName(className: String) : String {
             return buildString {
                 this.append("all")
                 this.append(className)
                 this.append("s")
+                this.append("Live")
             }
         }
 

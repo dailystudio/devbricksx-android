@@ -7,11 +7,9 @@ import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.compiler.kotlin.utils.*
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.*
-import javax.tools.Diagnostic
 
 @AutoService(Processor::class)
 class ViewModelProcessor : BaseProcessor() {
@@ -138,9 +136,9 @@ class ViewModelProcessor : BaseProcessor() {
         val repoName = GeneratedNames.getRepositoryName(typeName)
         val repoVariableName = repoName.lowerCamelCaseName()
         val repoPackageName = GeneratedNames.getRepositoryPackageName(packageName)
-        val allName = GeneratedNames.getAllObjectsPropertyName(typeName)
+        val allName = GeneratedNames.getAllObjectsLivePropertyName(typeName)
         val allPagedName = GeneratedNames.getAllObjectsPagedPropertyName(typeName)
-        val repoAllName = GeneratedNames.getAllObjectsPropertyName(
+        val repoAllName = GeneratedNames.getAllObjectsLivePropertyName(
                 if (inMemoryRepository) "Object" else typeName)
         val repoAllPagedName = GeneratedNames.getAllObjectsPagedPropertyName(
                 if (inMemoryRepository) "Object" else typeName)
@@ -199,10 +197,11 @@ class ViewModelProcessor : BaseProcessor() {
         }
 
         val methodGetOneBuilder = FunSpec.builder(GeneratedNames.getMethodName("get", typeName))
-                .addModifiers(KModifier.SUSPEND)
                 .returns(`object`.copy(nullable = true))
 
         if (!inMemoryRepository) {
+            methodGetOneBuilder.addModifiers(KModifier.SUSPEND)
+
             FieldsUtils.primaryKeyFieldsToMethodParameters(methodGetOneBuilder, primaryKeyFields)
 
             methodGetOneBuilder.addStatement("return %N.%N(%L)",
@@ -219,6 +218,19 @@ class ViewModelProcessor : BaseProcessor() {
         }
 
         classBuilder.addFunction(methodGetOneBuilder.build())
+
+        val methodGetAllBuilder = FunSpec.builder(GeneratedNames.getAllObjectsMethodName(typeName))
+                .returns(listOfObjects)
+
+        if (!inMemoryRepository) {
+            methodGetAllBuilder.addModifiers(KModifier.SUSPEND)
+        }
+
+        methodGetAllBuilder.addStatement("return %N.%N()",
+                repoVariableName,
+                GeneratedNames.getAllObjectsRepoMethodName(if (inMemoryRepository) "Object" else typeName))
+
+        classBuilder.addFunction(methodGetAllBuilder.build())
 
         val methodInsertOne = FunSpec.builder(GeneratedNames.getMethodName("insert", typeName))
                 .addParameter(objectVariableName, `object`)

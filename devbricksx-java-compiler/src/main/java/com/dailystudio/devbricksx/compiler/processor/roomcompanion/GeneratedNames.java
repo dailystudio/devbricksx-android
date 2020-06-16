@@ -146,6 +146,16 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getRepositoryAllObjectsLiveMethodName(String className) {
+        StringBuilder builder = new StringBuilder("getAll");
+
+        builder.append(className);
+        builder.append('s');
+        builder.append("Live");
+
+        return builder.toString();
+    }
+
     public static String getRepositoryAllObjectsPagedMethodName(String className) {
         StringBuilder builder = new StringBuilder("getAll");
 

@@ -132,7 +132,7 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
                         if (paged) {
                             GeneratedNames.getAllObjectsPagedPropertyName(typeName)
                         } else {
-                            GeneratedNames.getAllObjectsPropertyName(typeName)
+                            GeneratedNames.getAllObjectsLivePropertyName(typeName)
                         })
                 .returns(if (paged) liveDataOfPagedListOfObjects else liveDataOfListOfObjects)
 

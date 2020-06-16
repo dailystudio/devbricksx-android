@@ -44,6 +44,9 @@ class DrawingPadFragment(bundle: ImageBundle): ImageBundleFragment(bundle) {
             val viewModel = ViewModelProvider(this@DrawingPadFragment)
                     .get(ImageBundleViewModel::class.java)
 
+            val bundles = viewModel.getImageBundles()
+            for (bundle in bundles) {
+            }
         }
 
     }
