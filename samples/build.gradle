@@ -49,7 +49,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    api "com.nostra13.universalimageloader:universal-image-loader:${project.ext.imageLoaderVersion}"
+    implementation "com.nostra13.universalimageloader:universal-image-loader:${project.ext.imageLoaderVersion}"
+    implementation "com.rasalexman.kdispatcher:kdispatcher:${project.ext.kdispatcherVersion}"
 
     implementation project(":devbricksx")
     implementation project(":devbricksx-camera")

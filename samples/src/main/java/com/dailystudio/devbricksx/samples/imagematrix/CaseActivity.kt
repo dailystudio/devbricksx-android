@@ -37,12 +37,12 @@ class CaseActivity : BaseCaseActivity() {
             bitmap?.let {
                 viewModel.insertImageBundle(ImageBundle("original",
                         bitmap, Matrix()))
-                viewModel.insertImageBundle(createImageBundle(it))
+                viewModel.insertImageBundle(createEditableImageBundle(it))
             }
         }
     }
 
-    private fun createImageBundle(bitmap: Bitmap): ImageBundle {
+    private fun createEditableImageBundle(bitmap: Bitmap): ImageBundle {
         val matrix = MatrixUtils.getTransformationMatrix(
                 bitmap.width, bitmap.height,
                 640, 480,
@@ -52,7 +52,7 @@ class CaseActivity : BaseCaseActivity() {
                 bitmap, matrix)
         Logger.debug("transformed: ${transformed.width} x ${transformed.height}")
 
-        return ImageBundle("cropped", transformed, matrix)
+        return ImageBundle("cropped", transformed, matrix, true)
     }
 
 }

@@ -4,7 +4,6 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
 import android.os.Build
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.*
 import com.dailystudio.devbricksx.development.Logger
@@ -45,6 +44,8 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
     private val tracks: MutableList<MutableList<PointF>> = mutableListOf()
     private var listener: OnTracksChangedListener? = null
 
+    private var enableTracksEditing:Boolean = false
+
     init {
         holder.addCallback(this)
 
@@ -52,7 +53,6 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
     }
 
     override fun surfaceCreated(holder: SurfaceHolder?) {
-        Logger.debug("GameView surface is created")
         stopDrawThread()
 
         surfaceReady = true
@@ -64,14 +64,10 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder?) {
-        Logger.debug("GameView surface is destroyed")
-        // Surface is not used anymore - stop the drawing thread
         stopDrawThread()
-        // and release the surface
         holder?.surface?.release()
 
         surfaceReady = false
-        Logger.debug("Destroyed")
     }
 
     override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
@@ -111,6 +107,26 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         requestRendering()
     }
 
+    fun setTracks(newTracks: List<List<PointF>>?) {
+        tracks.clear()
+
+        newTracks?.let {
+            var trackCopy = mutableListOf<PointF>()
+            for(track in newTracks) {
+                trackCopy.addAll(track)
+
+                tracks.add(trackCopy)
+            }
+        }
+
+        requestLayout()
+        requestRendering()
+    }
+
+    fun setTracksEditing(enabled: Boolean) {
+        enableTracksEditing = enabled
+    }
+
     private fun requestRendering() {
         if (drawingService == null) {
             Logger.debug("surface is not ready, skip and try it later")
@@ -124,9 +140,12 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (!enableTracksEditing) {
+            return super.onTouchEvent(event)
+        }
+
         event?.let {
             val point = PointF(event.x, event.y)
-            Logger.debug("new point: $point")
 
             parent.requestDisallowInterceptTouchEvent(true);
 

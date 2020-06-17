@@ -4,12 +4,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
-import androidx.recyclerview.widget.AdapterListUpdateCallback
-import androidx.recyclerview.widget.AsyncDifferConfig
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.AsyncListDiffer.ListListener
-import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.adapter.FragmentStateAdapter
+
 
 abstract class AbsFragmentStateAdapter<T>(private val diffCallback: DiffUtil.ItemCallback<T>,
                                           fragmentManager: FragmentManager,
@@ -58,7 +56,7 @@ abstract class AbsFragmentStateAdapter<T>(private val diffCallback: DiffUtil.Ite
         return mDiffer.currentList
     }
 
-    fun onCurrentListChanged(previousList: List<T>, currentList: List<T>) {}
+    protected open fun onCurrentListChanged(previousList: List<T>, currentList: List<T>) {}
 
     abstract fun onCreateFragment(item: T): Fragment
 
