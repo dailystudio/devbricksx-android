@@ -43,8 +43,6 @@ class CaseActivity : BaseCaseActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@CaseActivity).get(ImageBundleViewModel::class.java)
 
-            ImageManager.clear()
-
             originalBitmap = ImageUtils.loadAssetBitmap(this@CaseActivity,
                     IMAGE_ASSET)
 
