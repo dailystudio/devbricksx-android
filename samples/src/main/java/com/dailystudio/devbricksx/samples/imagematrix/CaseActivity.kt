@@ -3,14 +3,19 @@ package com.dailystudio.devbricksx.samples.imagematrix
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
+import com.dailystudio.devbricksx.samples.viewpager.ImageManager
 import com.dailystudio.devbricksx.utils.ImageUtils
 import com.dailystudio.devbricksx.utils.MatrixUtils
+import kotlinx.android.synthetic.main.activity_case_image_matrix.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CaseActivity : BaseCaseActivity() {
 
@@ -18,31 +23,42 @@ class CaseActivity : BaseCaseActivity() {
         private const val IMAGE_ASSET = "bicycle_1280.jpg"
     }
 
+    private var originalBitmap: Bitmap? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_case_image_matrix)
 
-        generateBundles()
+        setupViews()
+    }
+
+    private fun setupViews() {
+        viewFrameStub.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+            generateBundles()
+        }
     }
 
     private fun generateBundles() {
-        lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@CaseActivity).get(ImageBundleViewModel::class.java)
 
-            val bitmap = ImageUtils.loadAssetBitmap(this@CaseActivity,
-                    IMAGE_ASSET)
-            Logger.debug("bitmap from file[$IMAGE_ASSET] = $bitmap")
+            ImageManager.clear()
 
-            bitmap?.let {
+            originalBitmap = ImageUtils.loadAssetBitmap(this@CaseActivity,
+                    IMAGE_ASSET)
+
+            originalBitmap?.let {
                 viewModel.insertImageBundle(ImageBundle("original",
-                        bitmap, Matrix()))
-                viewModel.insertImageBundle(createEditableImageBundle(it))
+                        it, Matrix()))
+
+                viewModel.insertImageBundle(createEditImageBundle(it))
+                viewModel.insertImageBundle(createPresentationImageBundle(it, viewFrameStub))
             }
         }
     }
 
-    private fun createEditableImageBundle(bitmap: Bitmap): ImageBundle {
+    private fun createEditImageBundle(bitmap: Bitmap): ImageBundle {
         val matrix = MatrixUtils.getTransformationMatrix(
                 bitmap.width, bitmap.height,
                 640, 480,
@@ -50,9 +66,23 @@ class CaseActivity : BaseCaseActivity() {
 
         val transformed = ImageUtils.createTransformedBitmap(
                 bitmap, matrix)
-        Logger.debug("transformed: ${transformed.width} x ${transformed.height}")
+        Logger.debug("edit transformed: ${transformed.width} x ${transformed.height}")
 
-        return ImageBundle("cropped", transformed, matrix, true)
+        return ImageBundle("edit", transformed, matrix, true)
+    }
+
+    private fun createPresentationImageBundle(bitmap: Bitmap,
+                                              presenter: View): ImageBundle {
+        val matrix = MatrixUtils.getTransformationMatrix(
+                bitmap.width, bitmap.height,
+                presenter.width, presenter.height,
+                90)
+
+        val transformed = ImageUtils.createTransformedBitmap(
+                bitmap, matrix)
+        Logger.debug("presentation transformed: ${transformed.width} x ${transformed.height}")
+
+        return ImageBundle("presentation", transformed, matrix)
     }
 
 }

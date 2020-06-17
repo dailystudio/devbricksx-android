@@ -80,8 +80,16 @@ open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle
 
         drawingPad?.setImage(item.bitmap)
         drawingPad?.setTracksEditing(item.tracksEditing)
-        drawingPad?.setTracks(item.tracks)
         drawingPad?.setOnTracksChangedListener(onTracksChangedListener)
+
+        ImageBundle.tracks?.let {
+            updateTracks(it)
+        }
+    }
+
+    private fun updateTracks(tracks: List<List<PointF>>) {
+        drawingPad?.setTracks(getTransformedTracks(
+                tracks, item.transformation))
     }
 
     override fun onAttach(context: Context) {
@@ -104,9 +112,7 @@ open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle
         if (data.caller != this) {
             val tracks = data.tracks
 
-            drawingPad?.setTracks(getTransformedTracks(
-                    tracks, item.transformation))
-            drawingPad?.setTracks(data.tracks)
+            updateTracks(tracks)
         }
     }
 
@@ -115,13 +121,7 @@ open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle
         override fun onTracksChanged(pad: DrawingPad, tracks: List<List<PointF>>) {
             val revertedTracks = getTransformedTracks(tracks, item.revertTransformation)
 
-            val viewModel = ViewModelProvider(this@ImageBundleFragment).get(
-                    ImageBundleViewModel::class.java)
-
-            val bundles = viewModel.getImageBundles()
-            for (bundle in bundles) {
-                bundle.tracks = getTransformedTracks(revertedTracks, bundle.transformation)
-            }
+            ImageBundle.tracks = revertedTracks
 
             val data = EventTracksUpdate(this@ImageBundleFragment,revertedTracks)
 
