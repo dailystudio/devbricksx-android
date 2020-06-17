@@ -111,11 +111,13 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         tracks.clear()
 
         newTracks?.let {
-            var trackCopy = mutableListOf<PointF>()
             for(track in newTracks) {
-                trackCopy.addAll(track)
+                val trackCopy = mutableListOf<PointF>()
 
                 tracks.add(trackCopy)
+                for (p in track) {
+                    trackCopy.add(p)
+                }
             }
         }
 
@@ -214,13 +216,14 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
             canvas.drawBitmap(it, 0f, 0f, paint)
         }
 
-        for (t in tracks) {
+        for ((tn, t) in tracks.withIndex()) {
             for (i in 0 until (t.size - 1)) {
                 canvas.drawLine(
                         t[i].x, t[i].y,
                         t[i + 1].x, t[i + 1].y,
                         paint)
             }
+
         }
     }
 
@@ -235,11 +238,18 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         super.onMeasure(wSpec, hSpec)
     }
 
-    fun getTracks(): List<List<PointF>> {
+    private fun getTracks(): List<List<PointF>> {
         synchronized(tracks) {
             val list = mutableListOf<List<PointF>>()
 
-            list.addAll(tracks)
+            for (track in tracks) {
+                val t = mutableListOf<PointF>()
+
+                list.add(t)
+                for (p in track) {
+                    t.add(p)
+                }
+            }
 
             return list
         }

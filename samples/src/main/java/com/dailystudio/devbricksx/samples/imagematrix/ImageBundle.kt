@@ -16,6 +16,7 @@ data class ImageBundle(val name: String,
                        val bitmap: Bitmap,
                        val transformation: Matrix,
                        val tracksEditing: Boolean = false) : InMemoryObject<String> {
+    var tracks: List<List<PointF>>? = null
 
     val revertTransformation: Matrix = Matrix().also {
         transformation.invert(it)

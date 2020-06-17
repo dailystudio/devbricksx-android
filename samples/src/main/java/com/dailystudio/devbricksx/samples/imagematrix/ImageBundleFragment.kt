@@ -7,9 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.dailystudio.devbricksx.development.Logger
+import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.fragment.AbsPageFragment
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
 import com.rasalexman.kdispatcher.*
 
 fun Matrix.mapPointF(p: PointF) {
@@ -22,7 +23,21 @@ fun Matrix.mapPointF(p: PointF) {
 
 data class EventTracksUpdate(val caller: Any, val tracks: List<List<PointF>>) {
 
+    override fun toString(): String {
+        return buildString {
+            append("[$caller]: ")
+            append("tracks = $tracks")
+        }
+    }
+
+}
+
+open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle>(bundle) {
+
     companion object {
+
+        const val EVENT_TRACKS_UPDATE = "tracks_update"
+
 
         fun getTransformedTracks(tracks: List<List<PointF>>,
                                  revertTransformation: Matrix): List<List<PointF>> {
@@ -47,23 +62,6 @@ data class EventTracksUpdate(val caller: Any, val tracks: List<List<PointF>>) {
 
     }
 
-    override fun toString(): String {
-        return buildString {
-            append("[$caller]: ")
-            append("tracks = $tracks")
-        }
-    }
-
-}
-
-open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle>(bundle) {
-
-    companion object {
-
-        const val EVENT_TRACKS_UPDATE = "tracks_update"
-
-    }
-
     private var drawingPad: DrawingPad? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -82,6 +80,7 @@ open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle
 
         drawingPad?.setImage(item.bitmap)
         drawingPad?.setTracksEditing(item.tracksEditing)
+        drawingPad?.setTracks(item.tracks)
         drawingPad?.setOnTracksChangedListener(onTracksChangedListener)
     }
 
@@ -105,18 +104,28 @@ open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle
         if (data.caller != this) {
             val tracks = data.tracks
 
-            drawingPad?.setTracks(EventTracksUpdate.getTransformedTracks(
+            drawingPad?.setTracks(getTransformedTracks(
                     tracks, item.transformation))
+            drawingPad?.setTracks(data.tracks)
         }
     }
 
     private val onTracksChangedListener = object: OnTracksChangedListener {
 
         override fun onTracksChanged(pad: DrawingPad, tracks: List<List<PointF>>) {
-            KDispatcher.call(EVENT_TRACKS_UPDATE,
-                    EventTracksUpdate(this@ImageBundleFragment,
-                            EventTracksUpdate.getTransformedTracks(tracks,
-                            item.revertTransformation)))
+            val revertedTracks = getTransformedTracks(tracks, item.revertTransformation)
+
+            val viewModel = ViewModelProvider(this@ImageBundleFragment).get(
+                    ImageBundleViewModel::class.java)
+
+            val bundles = viewModel.getImageBundles()
+            for (bundle in bundles) {
+                bundle.tracks = getTransformedTracks(revertedTracks, bundle.transformation)
+            }
+
+            val data = EventTracksUpdate(this@ImageBundleFragment,revertedTracks)
+
+            KDispatcher.call(EVENT_TRACKS_UPDATE, data)
         }
 
     }
