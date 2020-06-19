@@ -13,6 +13,6 @@ object Constants {
         .resetViewBeforeLoading(true)
         .build()
 
-    val EXTRA_TITLE = "com.dailystudio.devbricksx.samples.EXTRA_TITLE"
+    const val EXTRA_TITLE = "com.dailystudio.devbricksx.samples.EXTRA_TITLE"
 
 }

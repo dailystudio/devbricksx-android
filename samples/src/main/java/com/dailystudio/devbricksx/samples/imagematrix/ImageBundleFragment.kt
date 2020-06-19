@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.fragment.AbsPageFragment
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
 import com.rasalexman.kdispatcher.*
 
 fun Matrix.mapPointF(p: PointF) {
@@ -95,16 +93,16 @@ open class ImageBundleFragment(bundle: ImageBundle): AbsPageFragment<ImageBundle
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        KDispatcher.subscribe(EVENT_TRACKS_UPDATE, 1, ::eventOneHandler)
+        KDispatcher.subscribe(EVENT_TRACKS_UPDATE, 1, ::eventTracksUpdateHandler)
     }
 
     override fun onDetach() {
         super.onDetach()
 
-        KDispatcher.unsubscribe(EVENT_TRACKS_UPDATE, ::eventOneHandler)
+        KDispatcher.unsubscribe(EVENT_TRACKS_UPDATE, ::eventTracksUpdateHandler)
     }
 
-    private fun eventOneHandler(notification: Notification<EventTracksUpdate>) {
+    private fun eventTracksUpdateHandler(notification: Notification<EventTracksUpdate>) {
         println("${notification.eventName}: new tracks = ${notification.data}")
 
         val data = notification.data ?: return
