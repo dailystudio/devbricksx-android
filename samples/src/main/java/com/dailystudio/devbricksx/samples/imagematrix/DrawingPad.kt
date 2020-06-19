@@ -52,7 +52,7 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         setWillNotDraw(false)
     }
 
-    override fun surfaceCreated(holder: SurfaceHolder?) {
+    override fun surfaceCreated(holder: SurfaceHolder) {
         stopDrawThread()
 
         surfaceReady = true
@@ -63,14 +63,15 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
         }
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder?) {
+
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
         stopDrawThread()
         holder?.surface?.release()
 
         surfaceReady = false
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
     }
 
     private fun startDrawThread() {

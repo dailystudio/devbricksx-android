@@ -45,8 +45,8 @@ ext {
     }
 
     // Compile Settings
-    COMPILE_SDK = 29
-    BUILD_TOOLS = '29.0.3'
+    COMPILE_SDK = 30
+    BUILD_TOOLS = '30.0.0'
     VERSION_NAME = version()
     VERSION_CODE = versionCode().toInteger()
 
