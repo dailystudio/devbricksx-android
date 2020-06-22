@@ -8,8 +8,8 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.viewpager.fragment.ImagesPagerFragment"
-        android:id="@+id/fragment_images"
+        android:name="com.dailystudio.devbricksx.samples.audio.AudioAnalysisFragment"
+        android:id="@+id/fragment_audio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

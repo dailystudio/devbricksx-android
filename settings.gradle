@@ -1,3 +1,4 @@
+include ':devbricksx-audio'
 include ':devbricksx'
 include ':devbricksx-kotlin-annotations'
 include ':devbricksx-kotlin-compiler'

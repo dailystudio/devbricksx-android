@@ -1,36 +1,27 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion COMPILE_SDK
     buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
-        applicationId "com.dailystudio.devbricksx.samples"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode VERSION_CODE
         versionName VERSION_NAME
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
     }
 
@@ -49,15 +40,16 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation "com.nostra13.universalimageloader:universal-image-loader:${project.ext.imageLoaderVersion}"
-    implementation "com.rasalexman.kdispatcher:kdispatcher:${project.ext.kdispatcherVersion}"
-
     implementation project(":devbricksx")
-    implementation project(":devbricksx-camera")
-    implementation project(":devbricksx-audio")
+}
 
-    kapt project(':devbricksx-kotlin-compiler')
-    kapt project(':devbricksx-java-compiler')
-    kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
-    kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
+publish {
+    userOrg = 'dailystudio'
+    groupId = 'com.dailystudio'
+    artifactId = 'devbricksx-audio'
+    publishVersion = VERSION_NAME
+    desc = 'DevBricks eXetrems Audio Library'
+    bintrayUser = BINTRAY_USER
+    bintrayKey = BINTRAY_KEY
+    website = 'https://github.com/dailystudio/devbricksx-android'
 }
