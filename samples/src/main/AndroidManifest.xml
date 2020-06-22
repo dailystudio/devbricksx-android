@@ -30,6 +30,7 @@
         <activity android:name=".viewpager.CaseActivity"/>
         <activity android:name=".fragmentpager.CaseActivity"/>
         <activity android:name=".datachanges.CaseActivity"/>
+        <activity android:name=".audio.CaseActivity"/>
 
     </application>
 

@@ -47,5 +47,12 @@
     "title": "Data Changes",
     "icon": "ic_case_data_changes",
     "desc": ""
+  },
+  {
+    "name": "audio",
+    "package": "audio",
+    "title": "Audio",
+    "icon": "ic_case_audio",
+    "desc": ""
   }
 ]

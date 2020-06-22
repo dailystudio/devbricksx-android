@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.fragment
 
+import android.view.MotionEvent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.ui.AbsRecyclerAdapter
@@ -21,6 +22,14 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
         adapterView?.layoutManager = onCreateLayoutManager()
     }
 
+    fun setRecyclerViewTouchEnabled(enabled: Boolean) {
+        if (!enabled) {
+            adapterView?.addOnItemTouchListener(itemTouchListener)
+        } else {
+            adapterView?.removeOnItemTouchListener(itemTouchListener)
+        }
+    }
+
     protected open fun onItemClick(recyclerView: RecyclerView,
                                    itemView: View,
                                    position: Int,
@@ -36,6 +45,14 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
             adapterView?.let {
                 this@AbsRecyclerViewFragment.onItemClick(it, itemView, position, item, id)
             }
+        }
+
+    }
+
+    private val itemTouchListener = object : RecyclerView.SimpleOnItemTouchListener() {
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            return true
         }
 
     }
