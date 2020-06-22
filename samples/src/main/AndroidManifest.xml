@@ -29,6 +29,7 @@
         <activity android:name=".imagematrix.CaseActivity"/>
         <activity android:name=".viewpager.CaseActivity"/>
         <activity android:name=".fragmentpager.CaseActivity"/>
+        <activity android:name=".datachanges.CaseActivity"/>
 
     </application>
 

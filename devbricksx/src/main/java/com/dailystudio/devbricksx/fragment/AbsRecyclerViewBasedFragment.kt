@@ -28,9 +28,6 @@ abstract class AbsRecyclerViewBasedFragment<Item, ItemList, Adapter> : Fragment(
         val liveData = getLiveData()
 
         liveData.observe(viewLifecycleOwner, Observer { data ->
-            Logger.debug("data: $data")
-            Logger.debug("adapter: $adapter")
-
             adapter?.let {
                 submitData(it, data)
             }

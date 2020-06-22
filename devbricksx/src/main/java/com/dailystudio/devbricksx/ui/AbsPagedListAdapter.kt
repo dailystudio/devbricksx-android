@@ -1,10 +1,8 @@
 package com.dailystudio.devbricksx.ui
 
 import android.view.View
-import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(

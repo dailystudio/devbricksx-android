@@ -53,6 +53,10 @@ class ListFragmentProcessor : BaseProcessor() {
         val paged = adapterAnnotation?.paged ?: true
 
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
+        if (viewModelAnnotation == null) {
+            warn("ViewModel annotation is missing on element: $element")
+            return null
+        }
 
         val viewModelName = if (viewModelAnnotation.group.isNotBlank()) {
             GeneratedNames.getViewModelName(viewModelAnnotation.group)
@@ -104,6 +108,7 @@ class ListFragmentProcessor : BaseProcessor() {
                 .addParameter("adapter", adapter)
                 .addParameter("data", if (paged) pagedList else list)
                 .addStatement("adapter.submitList(data)")
+                .addStatement("adapter.notifyDataSetChanged()")
 
         classBuilder.addFunction(methodOnSubmitDataBuilder.build())
 

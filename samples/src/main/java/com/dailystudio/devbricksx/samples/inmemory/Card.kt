@@ -19,6 +19,16 @@ import java.util.*
 data class Card(val id: Int,
                 val title: String,
                 val desc: String? = null) : InMemoryObject<Int> {
+
+    companion object {
+        private val RAND : Random = Random(System.currentTimeMillis())
+    }
+
+    val color: Int = Color.argb(255,
+            RAND.nextInt(255),
+            RAND.nextInt(255),
+            RAND.nextInt(255))
+
     override fun getKey(): Int {
         return id
     }
@@ -28,17 +38,8 @@ data class Card(val id: Int,
 
 class CardViewHolder(itemView: View): AbsInformativeCardViewHolder<Card>(itemView) {
 
-    companion object {
-        private val RAND : Random = Random(System.currentTimeMillis())
-    }
-
     override fun getMedia(item: Card): Drawable? {
-        val color = Color.argb(255,
-                RAND.nextInt(255),
-                RAND.nextInt(255),
-                RAND.nextInt(255))
-
-        return ColorUtils.getColorDrawable(itemView.context, color)
+        return ColorUtils.getColorDrawable(itemView.context, item.color)
     }
 
     override fun getTitle(item: Card): CharSequence? {

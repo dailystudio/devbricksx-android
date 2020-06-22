@@ -40,5 +40,12 @@
     "title": "Fragment Pager",
     "icon": "ic_case_fragment_pager",
     "desc": ""
+  },
+  {
+    "name": "datachanges",
+    "package": "datachanges",
+    "title": "Data Changes",
+    "icon": "ic_case_data_changes",
+    "desc": ""
   }
 ]

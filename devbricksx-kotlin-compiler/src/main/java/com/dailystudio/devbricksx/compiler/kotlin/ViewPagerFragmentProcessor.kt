@@ -119,6 +119,7 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
                 .addParameter("adapter", adapter)
                 .addParameter("data", if (paged) pagedList else list)
                 .addStatement("adapter.submitList(data)")
+                .addStatement("adapter.notifyDataSetChanged()")
 
         classBuilder.addFunction(methodOnSubmitDataBuilder.build())
 
