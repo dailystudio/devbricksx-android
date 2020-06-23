@@ -15,19 +15,32 @@ import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.max
 
+data class AudioConfig(val audioSource: Int,
+                       val sampleRate: Int,
+                       val sampleDurationInMs: Int,
+                       val channelConfig: Int,
+                       val audioFormat: Int) {
+
+    fun getRecordingBufferLength(): Int {
+        return (sampleRate * sampleDurationInMs / 1000)
+    }
+
+}
+
 open class AudioFragment : AbsPermissionsFragment() {
+
 
     companion object {
         val PERMISSIONS_REQUIRED = arrayOf(
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.MODIFY_AUDIO_SETTINGS)
 
-        private const val SAMPLE_RATE = 16000
-        private const val SAMPLE_DURATION_MS = 1000
-        private const val RECORDING_LENGTH = (SAMPLE_RATE * SAMPLE_DURATION_MS / 1000)
+        private const val DEFAULT_SAMPLE_RATE = 16000
+        private const val DEFAULT_SAMPLE_DURATION_MS = 1000
+        private const val MINIMUM_TIME_BETWEEN_SAMPLES_MS: Long = 30
     }
 
-    private var recordingBuffer = ShortArray(RECORDING_LENGTH)
+    private lateinit var recordingBuffer: ShortArray
     private var recordingOffset = 0
     private val recordingBufferLock = ReentrantLock()
 
@@ -57,12 +70,29 @@ open class AudioFragment : AbsPermissionsFragment() {
         stopRecording()
     }
 
+    protected open fun getAudioConfig(): AudioConfig {
+        return AudioConfig(MediaRecorder.AudioSource.DEFAULT,
+                DEFAULT_SAMPLE_RATE,
+                DEFAULT_SAMPLE_DURATION_MS,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT)
+    }
+
     private fun startRecording() {
+        val audioConfig = getAudioConfig()
+
+        recordingBufferLock.lock()
+        recordingBuffer = ShortArray(audioConfig.getRecordingBufferLength())
+        recordingOffset = 0
+        recordingBufferLock.unlock()
+
         recordingThread.start()
+        processThread.start()
     }
 
     private fun stopRecording() {
         recordingThread.stop()
+        processThread.stop()
     }
 
     private var recordingThread = object : ManagedThread() {
@@ -70,23 +100,25 @@ open class AudioFragment : AbsPermissionsFragment() {
         override fun runInBackground() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
 
+            val audioConfig = getAudioConfig()
+
             // Estimate the buffer size we'll need for this device.
-            var bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE,
-                AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT)
+            var bufferSize = AudioRecord.getMinBufferSize(audioConfig.sampleRate,
+                    audioConfig.channelConfig,
+                    audioConfig.audioFormat)
 
             if (bufferSize == AudioRecord.ERROR || bufferSize == AudioRecord.ERROR_BAD_VALUE) {
-                bufferSize = SAMPLE_RATE * 2
+                bufferSize = audioConfig.sampleRate * 2
             }
 
             val audioBuffer = ShortArray(bufferSize / 2)
 
             val record = AudioRecord(
-                MediaRecorder.AudioSource.DEFAULT,
-                SAMPLE_RATE,
-                AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                bufferSize
+                    audioConfig.audioSource,
+                    audioConfig.sampleRate,
+                    audioConfig.channelConfig,
+                    audioConfig.audioFormat,
+                    bufferSize
             )
 
             if (record.state != AudioRecord.STATE_INITIALIZED) {
@@ -98,7 +130,7 @@ open class AudioFragment : AbsPermissionsFragment() {
 
             // Loop, gathering audio data and copying it to a round-robin buffer.
             while (isRunning()) {
-                val numberRead = record.read(audioBuffer, 0, audioBuffer.size) ?: 0
+                val numberRead = record.read(audioBuffer, 0, audioBuffer.size)
 
                 val maxLength: Int = recordingBuffer.size
                 val newRecordingOffset: Int = recordingOffset + numberRead
@@ -126,6 +158,39 @@ open class AudioFragment : AbsPermissionsFragment() {
             record.stop()
             record.release()
         }
-
     }
+
+    private var processThread = object : ManagedThread() {
+
+        override fun runInBackground() {
+            val audioConfig = getAudioConfig()
+            val inputBuffer = ShortArray(audioConfig.getRecordingBufferLength())
+
+            while (isRunning()) {
+                recordingBufferLock.lock()
+
+                try {
+                    val maxLength = recordingBuffer.size
+                    val firstCopyLength = maxLength - recordingOffset
+                    val secondCopyLength = recordingOffset
+                    System.arraycopy(recordingBuffer, recordingOffset,
+                            inputBuffer, 0, firstCopyLength)
+                    System.arraycopy(recordingBuffer, 0,
+                            inputBuffer, firstCopyLength, secondCopyLength)
+                } finally {
+                    recordingBufferLock.unlock()
+                }
+
+                Logger.debug("new input buffer ready: ${inputBuffer.size} Bytes")
+
+                try {
+                    // We don't need to run too frequently, so snooze for a bit.
+                    Thread.sleep(MINIMUM_TIME_BETWEEN_SAMPLES_MS)
+                } catch (e: InterruptedException) {
+                    // Ignore
+                }
+            }
+        }
+    }
+
 }
