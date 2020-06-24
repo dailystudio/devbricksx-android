@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <declare-styleable name="RawAudioDataVisualizer">
+        <attr name="barColor" format="reference|color" />
+        <attr name="barWidth" format="dimension" />
+        <attr name="barSpace" format="dimension" />
+        <attr name="maxAmplifier" format="integer" />
+        <attr name="minAmplifier" format="integer" />
+    </declare-styleable>
+
+</resources>

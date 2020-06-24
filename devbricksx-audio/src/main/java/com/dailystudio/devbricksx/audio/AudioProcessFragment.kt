@@ -203,8 +203,6 @@ abstract class AudioProcessFragment : AbsAudioFragment() {
                     recordingBufferLock.unlock()
                 }
 
-                Logger.debug("new input buffer ready: ${inputBuffer.size} Bytes")
-
                 visualizer?.let {
                     lifecycleScope.launch(Dispatchers.Main) {
                         it.setAudioFrameData(inputBuffer)

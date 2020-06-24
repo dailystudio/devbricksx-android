@@ -1,65 +1,111 @@
 package com.dailystudio.devbricksx.audio.visualizer
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
-import android.os.Build
 import android.util.AttributeSet
+import androidx.annotation.ColorInt
 import com.dailystudio.devbricksx.audio.R
 import com.dailystudio.devbricksx.ui.AbsSurfaceView
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
 
-class RawAudioDataVisualizer: AbsSurfaceView {
+class RawAudioDataVisualizer @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+        defStyleRes: Int = 0) : AbsSurfaceView(context, attrs, defStyleAttr, defStyleRes) {
 
     companion object {
         const val DEFAULT_BAR_WIDTH: Int = 25
-        const val DEFAULT_BAR_SPACING_X: Int = 5
+        const val DEFAULT_BAR_SPACE: Int = 5
 
-        const val MAX_EFFECTIVE_AMP = 800
-        const val MIN_EFFECTIVE_AMP = 20
+        const val DEFAULT_MAX_EFFECTIVE_AMP = 800
+        const val DEFAULT_MIN_EFFECTIVE_AMP = 20
     }
 
     private var frameData: ShortArray? = null
+
+    private var barColor: Int = Color.TRANSPARENT
     private var barWidth = DEFAULT_BAR_WIDTH
-    private var barSpacingX = DEFAULT_BAR_SPACING_X
+    private var barSpace = DEFAULT_BAR_SPACE
+
+    private var maxEffectiveAmplifier = DEFAULT_MAX_EFFECTIVE_AMP
+    private var minEffectiveAmplifier = DEFAULT_MIN_EFFECTIVE_AMP
 
     private var paint: Paint
 
-    @JvmOverloads
-    constructor(
-            context: Context,
-            attrs: AttributeSet? = null,
-            defStyleAttr: Int = 0
-    ) : super(context, attrs, defStyleAttr)
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(
-            context: Context,
-            attrs: AttributeSet?,
-            defStyleAttr: Int,
-            defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes)
-
     init {
+        initAttrs(context, attrs, defStyleAttr)
+
         setFramesPerSecond(10)
 
-        paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ResourcesCompatUtils.getColor(context,
-                    R.color.colorPrimary)
-            strokeWidth = barWidth.toFloat()
-        }
+        paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    }
+
+    private fun initAttrs(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
+        val a = context.obtainStyledAttributes(attrs,
+                R.styleable.RawAudioDataVisualizer, defStyleAttr, 0)
+
+        val color = a.getColor(R.styleable.RawAudioDataVisualizer_barColor,
+                ResourcesCompatUtils.getColor(context, R.color.colorPrimary))
+        setBarColor(color)
+
+        val width = a.getDimensionPixelSize(R.styleable.RawAudioDataVisualizer_barWidth,
+                DEFAULT_BAR_WIDTH)
+        setBarWidth(width)
+
+        val space = a.getDimensionPixelSize(R.styleable.RawAudioDataVisualizer_barSpace,
+                DEFAULT_BAR_SPACE)
+        setBarSpace(space)
+
+        val maxAmp = a.getInteger(R.styleable.RawAudioDataVisualizer_maxAmplifier,
+                DEFAULT_MAX_EFFECTIVE_AMP)
+        setMaxEffectiveAmplifier(maxAmp)
+
+        val minAmp = a.getInteger(R.styleable.RawAudioDataVisualizer_minAmplifier,
+                DEFAULT_MIN_EFFECTIVE_AMP)
+        setMinEffectiveAmplifier(minAmp)
+
+        a.recycle()
     }
 
     fun setAudioFrameData(data: ShortArray) {
         frameData = data
     }
 
+    fun setBarColor(@ColorInt color: Int) {
+        barColor = color
+    }
+
+    fun setBarWidth(width: Int) {
+        barWidth = width
+    }
+
+    fun setBarSpace(space: Int) {
+        barSpace = space
+    }
+
+    fun setMaxEffectiveAmplifier(amp: Int) {
+        maxEffectiveAmplifier = if (amp < 1) 1 else amp
+    }
+
+    fun setMinEffectiveAmplifier(amp: Int) {
+        minEffectiveAmplifier = if (amp < 1) 1 else amp
+    }
+
     override fun drawingCanvas(canvas: Canvas) {
+        paint.apply {
+            color = barColor
+            strokeWidth = barWidth.toFloat()
+        }
+
         val baseline = height / 2
 
-        var filteredCount = ceil(width.toFloat() / (barWidth + barSpacingX)).toInt()
+        var filteredCount = ceil(width.toFloat() / (barWidth + barSpace)).toInt()
         val rawData = frameData
 
         val filtered = if (rawData != null) {
@@ -74,7 +120,7 @@ class RawAudioDataVisualizer: AbsSurfaceView {
                 for (i in rawData.indices) {
                     if (i != 0 && i % filterBufferSize == 0) {
                         val newAverage = average / count
-                        val filterAverage = if (abs(newAverage) < MIN_EFFECTIVE_AMP) {
+                        val filterAverage = if (abs(newAverage) < minEffectiveAmplifier) {
                             1
                         } else {
                             newAverage
@@ -95,8 +141,8 @@ class RawAudioDataVisualizer: AbsSurfaceView {
 
         for (i in filtered.indices) {
             val bit = filtered[i]
-            val bW = barWidth + barSpacingX
-            val bH = height.toFloat() * bit / MAX_EFFECTIVE_AMP
+            val bW = barWidth + barSpace
+            val bH = height.toFloat() * bit / maxEffectiveAmplifier
             val x = i * bW.toFloat()
 
             canvas.drawLine(x, baseline - bH / 2,

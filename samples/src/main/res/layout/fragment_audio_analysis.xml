@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/audio_container"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.dailystudio.devbricksx.audio.visualizer.RawAudioDataVisualizer
+        android:id="@+id/visualizer"
+        app:barColor="@color/tomato_red"
+        app:barWidth="10dp"
+        app:barSpace="2dp"
+        app:maxAmplifier="600"
+        app:minAmplifier="10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <include layout="@layout/layout_permission_prompt"/>
+
+</RelativeLayout>
