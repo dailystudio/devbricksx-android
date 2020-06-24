@@ -41,6 +41,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(":devbricksx")
+    implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.2'
 }
 
 publish {

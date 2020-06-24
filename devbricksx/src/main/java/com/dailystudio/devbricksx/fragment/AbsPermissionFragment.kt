@@ -99,6 +99,10 @@ abstract class AbsPermissionsFragment : Fragment() {
         requestPermissions(getRequiredPermissions(), REQUEST_PERMISSIONS)
     }
 
+    protected fun isPermissionsGranted(): Boolean {
+        return hasPermissions(requireContext(), getRequiredPermissions())
+    }
+
     abstract fun getPermissionsPromptViewId(): Int
     abstract fun getRequiredPermissions(): Array<String>
     abstract fun onPermissionsGranted(newlyGranted: Boolean)

@@ -1,17 +1,21 @@
 package com.dailystudio.devbricksx.audio
 
-import android.Manifest
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.Handler
 import android.os.Process
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.async.ManagedThread
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
+import kotlinx.android.synthetic.main.fragment_audio.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.max
 
@@ -27,15 +31,10 @@ data class AudioConfig(val audioSource: Int,
 
 }
 
-open class AudioFragment : AbsPermissionsFragment() {
-
+open class AudioFragment : AbsAudioFragment() {
 
     companion object {
-        val PERMISSIONS_REQUIRED = arrayOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.MODIFY_AUDIO_SETTINGS)
-
-        private const val DEFAULT_SAMPLE_RATE = 16000
+        private const val DEFAULT_SAMPLE_RATE = 44000
         private const val DEFAULT_SAMPLE_DURATION_MS = 1000
         private const val MINIMUM_TIME_BETWEEN_SAMPLES_MS: Long = 30
     }
@@ -44,30 +43,29 @@ open class AudioFragment : AbsPermissionsFragment() {
     private var recordingOffset = 0
     private val recordingBufferLock = ReentrantLock()
 
+    private var processingStarted = false
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_audio, container, false)
 
-    override fun getPermissionsPromptViewId(): Int {
-        return R.id.permission_prompt
-    }
-
-    override fun getRequiredPermissions(): Array<String> {
-        return PERMISSIONS_REQUIRED
-    }
-
-    override fun onPermissionsDenied() {
-    }
-
     override fun onPermissionsGranted(newlyGranted: Boolean) {
-        startRecording()
+        startProcessing()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (isPermissionsGranted()) {
+            startProcessing()
+        }
     }
 
     override fun onPause() {
         super.onPause()
 
-        stopRecording()
+        stopProcessing()
     }
 
     protected open fun getAudioConfig(): AudioConfig {
@@ -78,7 +76,13 @@ open class AudioFragment : AbsPermissionsFragment() {
                 AudioFormat.ENCODING_PCM_16BIT)
     }
 
-    private fun startRecording() {
+    private fun startProcessing() {
+        if (processingStarted) {
+            Logger.warn("processing is already started. skip")
+
+            return
+        }
+
         val audioConfig = getAudioConfig()
 
         recordingBufferLock.lock()
@@ -88,9 +92,19 @@ open class AudioFragment : AbsPermissionsFragment() {
 
         recordingThread.start()
         processThread.start()
+
+        processingStarted = true
     }
 
-    private fun stopRecording() {
+    private fun stopProcessing() {
+        if (!processingStarted) {
+            Logger.warn("processing is already stopped. skip")
+
+            return
+        }
+
+        processingStarted = false
+
         recordingThread.stop()
         processThread.stop()
     }
@@ -182,6 +196,9 @@ open class AudioFragment : AbsPermissionsFragment() {
                 }
 
                 Logger.debug("new input buffer ready: ${inputBuffer.size} Bytes")
+                lifecycleScope.launch(Dispatchers.Main) {
+                    visualizer.setAudioFrameData(inputBuffer)
+                }
 
                 try {
                     // We don't need to run too frequently, so snooze for a bit.
@@ -192,5 +209,6 @@ open class AudioFragment : AbsPermissionsFragment() {
             }
         }
     }
+
 
 }
