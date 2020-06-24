@@ -51,7 +51,7 @@
   {
     "name": "audio",
     "package": "audio",
-    "title": "Audio",
+    "title": "Audio Processing",
     "icon": "ic_case_audio",
     "desc": ""
   }

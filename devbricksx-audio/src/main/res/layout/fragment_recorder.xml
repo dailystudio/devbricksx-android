@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_container"
+    android:id="@+id/audio_container"
     android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <com.gauravk.audiovisualizer.visualizer.BlastVisualizer
-        xmlns:custom="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/blast"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        custom:avDensity="0.8"
-        custom:avType="fill"
-        custom:avColor="@color/av_dark_blue"
-        custom:avSpeed="normal"/>
 
     <include layout="@layout/layout_recorder"/>
     <include layout="@layout/layout_permission_prompt"/>

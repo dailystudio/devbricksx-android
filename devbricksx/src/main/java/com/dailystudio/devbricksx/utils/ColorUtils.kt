@@ -12,11 +12,11 @@ import kotlin.math.roundToInt
 
 object ColorUtils {
 
-    fun getColorDrawable(context: Context, @ColorInt color: Int) : Drawable {
+    fun getColorDrawable(context: Context, @ColorInt color: Int): Drawable {
         return ColorDrawable(color)
     }
 
-    fun tintDrawable(drawable: Drawable, @ColorInt color: Int) : Drawable {
+    fun tintDrawable(drawable: Drawable, @ColorInt color: Int): Drawable {
         return DrawableCompat.wrap(drawable).also {
             DrawableCompat.setTint(it, color)
         }

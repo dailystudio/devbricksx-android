@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.audio.AudioAnalysisFragment"
+        android:name="com.dailystudio.devbricksx.samples.audio.AudioAnalysisProcessFragment"
         android:id="@+id/fragment_audio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

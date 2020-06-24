@@ -8,13 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.dailystudio.devbricksx.development.Logger
-import kotlinx.android.synthetic.main.fragment_recorder.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class RecorderFragment : AbsAudioFragment() {
+open class AudioRecordFragment : AbsAudioFragment() {
 
     companion object {
 

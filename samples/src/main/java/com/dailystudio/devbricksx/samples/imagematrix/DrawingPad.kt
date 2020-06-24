@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.*
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.ui.AbsSurfaceView
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -16,7 +17,7 @@ interface OnTracksChangedListener {
 
 }
 
-class DrawingPad: SurfaceView, SurfaceHolder.Callback {
+class DrawingPad: AbsSurfaceView {
 
     @JvmOverloads
     constructor(
@@ -33,12 +34,6 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
             defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    private var drawingService: ExecutorService? = null
-    private var surfaceReady = false
-    private var drawingActive = false
-
-    private var hasPendingRenderRequest = false
-
     private var bitmap: Bitmap? = null
 
     private val tracks: MutableList<MutableList<PointF>> = mutableListOf()
@@ -46,100 +41,33 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
 
     private var enableTracksEditing:Boolean = false
 
-    init {
-        holder.addCallback(this)
-
-        setWillNotDraw(false)
-    }
-
-    override fun surfaceCreated(holder: SurfaceHolder) {
-        stopDrawThread()
-
-        surfaceReady = true
-        startDrawThread()
-
-        if (hasPendingRenderRequest) {
-            renderFrame()
-        }
-    }
-
-
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        stopDrawThread()
-        holder?.surface?.release()
-
-        surfaceReady = false
-    }
-
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-    }
-
-    private fun startDrawThread() {
-        if (surfaceReady) {
-            drawingService = Executors.newSingleThreadExecutor()
-            drawingActive = true
-        }
-    }
-
-    private fun stopDrawThread() {
-        if (drawingService == null) {
-            Logger.debug("drawing service is null, needn't to stop")
-            return
-        }
-
-        drawingActive = false
-
-        drawingService?.let {
-            try {
-                Logger.debug("shutting down drawing service ...")
-                it.shutdown()
-            } catch (e: Exception) {
-                Logger.warn("Could not shut down drawing service")
-            }
-        }
-
-        drawingService = null
-    }
-
     fun setImage(bitmap: Bitmap) {
         this.bitmap = bitmap
 
         requestLayout()
-        requestRendering()
     }
 
     fun setTracks(newTracks: List<List<PointF>>?) {
-        tracks.clear()
+        synchronized(tracks) {
+            tracks.clear()
 
-        newTracks?.let {
-            for(track in newTracks) {
-                val trackCopy = mutableListOf<PointF>()
+            newTracks?.let {
+                for(track in newTracks) {
+                    val trackCopy = mutableListOf<PointF>()
 
-                tracks.add(trackCopy)
-                for (p in track) {
-                    trackCopy.add(p)
+                    tracks.add(trackCopy)
+                    for (p in track) {
+                        trackCopy.add(p)
+                    }
                 }
             }
         }
 
         requestLayout()
-        requestRendering()
     }
 
     fun setTracksEditing(enabled: Boolean) {
         enableTracksEditing = enabled
-    }
-
-    private fun requestRendering() {
-        if (drawingService == null) {
-            Logger.debug("surface is not ready, skip and try it later")
-
-            hasPendingRenderRequest = true
-        } else {
-            drawingService?.execute {
-                renderFrame()
-            }
-        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -175,37 +103,12 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
                     }
                 }
             }
-
-            requestRendering()
         }
 
         return true
     }
 
-    private fun renderFrame() {
-        var canvas: Canvas? = null
-        try {
-            canvas = holder.lockCanvas(null)
-            Logger.debug("render frame on canvas: $canvas")
-
-            if (canvas == null) {
-                Logger.debug("surface is not ready, skip and try it later")
-                hasPendingRenderRequest = true
-            }
-
-            synchronized (holder) {
-                canvas?.let {
-                    drawingCanvas(it)
-                }
-            }
-        } finally {
-            canvas?.let {
-                holder.unlockCanvasAndPost(canvas)
-            }
-        }
-    }
-
-    private fun drawingCanvas(canvas: Canvas) {
+    override fun drawingCanvas(canvas: Canvas) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.RED
             strokeWidth = 2f
@@ -217,14 +120,15 @@ class DrawingPad: SurfaceView, SurfaceHolder.Callback {
             canvas.drawBitmap(it, 0f, 0f, paint)
         }
 
-        for ((tn, t) in tracks.withIndex()) {
-            for (i in 0 until (t.size - 1)) {
-                canvas.drawLine(
-                        t[i].x, t[i].y,
-                        t[i + 1].x, t[i + 1].y,
-                        paint)
+        synchronized(tracks) {
+            for ((tn, t) in tracks.withIndex()) {
+                for (i in 0 until (t.size - 1)) {
+                    canvas.drawLine(
+                            t[i].x, t[i].y,
+                            t[i + 1].x, t[i + 1].y,
+                            paint)
+                }
             }
-
         }
     }
 

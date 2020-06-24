@@ -4,17 +4,16 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Handler
 import android.os.Process
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.async.ManagedThread
+import com.dailystudio.devbricksx.audio.visualizer.RawAudioDataVisualizer
 import com.dailystudio.devbricksx.development.Logger
-import kotlinx.android.synthetic.main.fragment_audio.*
+import kotlinx.android.synthetic.main.fragment_audio_process.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.max
@@ -31,10 +30,10 @@ data class AudioConfig(val audioSource: Int,
 
 }
 
-open class AudioFragment : AbsAudioFragment() {
+abstract class AudioProcessFragment : AbsAudioFragment() {
 
     companion object {
-        private const val DEFAULT_SAMPLE_RATE = 44000
+        private const val DEFAULT_SAMPLE_RATE = 16000
         private const val DEFAULT_SAMPLE_DURATION_MS = 1000
         private const val MINIMUM_TIME_BETWEEN_SAMPLES_MS: Long = 30
     }
@@ -45,10 +44,19 @@ open class AudioFragment : AbsAudioFragment() {
 
     private var processingStarted = false
 
+    private var visualizer: RawAudioDataVisualizer? = null
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_audio, container, false)
+        inflater.inflate(R.layout.fragment_audio_process, container, false)
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        visualizer = view.findViewById(R.id.visualizer)
+    }
 
     override fun onPermissionsGranted(newlyGranted: Boolean) {
         startProcessing()
@@ -196,9 +204,14 @@ open class AudioFragment : AbsAudioFragment() {
                 }
 
                 Logger.debug("new input buffer ready: ${inputBuffer.size} Bytes")
-                lifecycleScope.launch(Dispatchers.Main) {
-                    visualizer.setAudioFrameData(inputBuffer)
+
+                visualizer?.let {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        it.setAudioFrameData(inputBuffer)
+                    }
                 }
+
+                onProcessAudioData(audioConfig, inputBuffer)
 
                 try {
                     // We don't need to run too frequently, so snooze for a bit.
@@ -210,5 +223,7 @@ open class AudioFragment : AbsAudioFragment() {
         }
     }
 
+    abstract fun onProcessAudioData(audioConfig: AudioConfig,
+                                    audioData: ShortArray)
 
 }
