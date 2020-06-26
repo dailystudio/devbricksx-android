@@ -34,6 +34,7 @@
         <activity android:name=".fragmentpager.CaseActivity"/>
         <activity android:name=".datachanges.CaseActivity"/>
         <activity android:name=".audio.CaseActivity"/>
+        <activity android:name=".apps.CaseActivity"/>
 
     </application>
 

@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".quickstart.CaseActivity">
+    tools:context=".apps.CaseActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.quickstart.fragment.UsersListFragment"
-        android:id="@+id/fragment_users"
+        android:name="com.dailystudio.devbricksx.samples.apps.fragment.TestPackagesListFragment"
+        android:id="@+id/fragment_apps"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"

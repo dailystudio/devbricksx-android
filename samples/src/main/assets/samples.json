@@ -54,5 +54,12 @@
     "title": "Audio Processing",
     "icon": "ic_case_audio",
     "desc": ""
+  },
+  {
+    "name": "apps",
+    "package": "apps",
+    "title": "Applications",
+    "icon": "ic_case_apps",
+    "desc": ""
   }
 ]
