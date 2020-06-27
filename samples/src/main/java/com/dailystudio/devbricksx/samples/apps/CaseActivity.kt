@@ -1,14 +1,17 @@
 package com.dailystudio.devbricksx.samples.apps
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.apps.model.TestPackageViewModel
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.utils.AppChangesLiveData
 import com.dailystudio.devbricksx.utils.AppUtils
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class CaseActivity : BaseCaseActivity() {
 
@@ -31,6 +34,8 @@ class CaseActivity : BaseCaseActivity() {
         const val STEP_DELAY = 100L
     }
 
+    private lateinit var appChangesLiveData: AppChangesLiveData
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,6 +45,16 @@ class CaseActivity : BaseCaseActivity() {
             generateTestPackages()
             testInstallations()
             resolveIcons()
+        }
+
+        appChangesLiveData = AppChangesLiveData(this).apply {
+            observe(this@CaseActivity, Observer {
+                Logger.debug("new app changes: $it")
+                lifecycleScope.launch{
+                    testInstallations()
+                    resolveIcons()
+                }
+            })
         }
     }
 
