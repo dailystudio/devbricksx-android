@@ -12,6 +12,7 @@ import com.dailystudio.devbricksx.utils.AppChangesLiveData
 import com.dailystudio.devbricksx.utils.AppUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class CaseActivity : BaseCaseActivity() {
 
@@ -31,7 +32,7 @@ class CaseActivity : BaseCaseActivity() {
                 "Evernote" to "com.evernote"
         )
 
-        const val STEP_DELAY = 100L
+        const val STEP_DELAY = 0L
     }
 
     private lateinit var appChangesLiveData: AppChangesLiveData
@@ -41,20 +42,45 @@ class CaseActivity : BaseCaseActivity() {
 
         setContentView(R.layout.activity_case_apps)
 
-        lifecycleScope.launchWhenResumed {
-            generateTestPackages()
-            testInstallations()
-            resolveIcons()
-        }
-
         appChangesLiveData = AppChangesLiveData(this).apply {
             observe(this@CaseActivity, Observer {
                 Logger.debug("new app changes: $it")
                 lifecycleScope.launch{
-                    testInstallations()
-                    resolveIcons()
+                    updatePackage(it.packageName)
                 }
             })
+        }
+
+        runBlocking {
+            generateTestPackages()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            testInstallations()
+            resolveIcons()
+        }
+    }
+
+    private suspend fun updatePackage(packageName: String) {
+        Logger.debug("update package: $packageName")
+        val viewModel = ViewModelProvider(this).get(TestPackageViewModel::class.java)
+
+        val pkg = viewModel.getTestPackage(packageName)
+        pkg?.let {
+            pkg.icon = null
+            pkg.installed = AppUtils.isApplicationInstalled(this, pkg.packageName)
+            Logger.debug("update app [$pkg] installed: ${pkg.installed}")
+
+            if (pkg.installed) {
+                pkg.icon = AppUtils.getApplicationIcon(this, pkg.packageName)
+                Logger.debug("update resolved icon for [$pkg]: ${pkg.icon}")
+            }
+
+            viewModel.updateTestPackage(pkg).join()
         }
     }
 
@@ -77,6 +103,7 @@ class CaseActivity : BaseCaseActivity() {
 
         val packages = viewModel.getTestPackages()
         for (pkg in packages) {
+            pkg.icon = null
             if (pkg.installed) {
                 pkg.icon = AppUtils.getApplicationIcon(this, pkg.packageName)
                 Logger.debug("resolved icon for [$pkg]: ${pkg.icon}")

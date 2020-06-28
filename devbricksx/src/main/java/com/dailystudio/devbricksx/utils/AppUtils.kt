@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import androidx.lifecycle.LiveData
+import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.development.Logger
 import java.lang.Exception
 
@@ -24,11 +26,16 @@ class AppChange(val action: String,
 }
 
 class AppChangesLiveData(var context: Context): LiveData<AppChange>() {
+    companion object {
+
+        const val DATA_PACKAGE_PREFIX = "package:"
+    }
 
     private val appContext: Context = context.applicationContext
 
     override fun onActive() {
         super.onActive()
+        Logger.debug("register package changes receiver: $appChangesReceiver")
 
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_PACKAGE_ADDED)
@@ -48,6 +55,8 @@ class AppChangesLiveData(var context: Context): LiveData<AppChange>() {
 
     override fun onInactive() {
         super.onInactive()
+        Logger.debug("unregister package changes receiver: $appChangesReceiver")
+
 
         try {
             appContext.unregisterReceiver(appChangesReceiver)
@@ -61,9 +70,11 @@ class AppChangesLiveData(var context: Context): LiveData<AppChange>() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Logger.debug("intent: $intent")
             val action = intent?.action ?: return
-            val packageName = intent?.data?.toString() ?: return
+            val data = intent?.data?.toString() ?: return
 
-            postValue(AppChange(action, packageName))
+            if (data.startsWith(DATA_PACKAGE_PREFIX)) {
+                postValue(AppChange(action, data.removePrefix(DATA_PACKAGE_PREFIX)))
+            }
         }
 
     }
@@ -89,6 +100,33 @@ object AppUtils {
         } catch (e: PackageManager.NameNotFoundException) {
             null
         }
+    }
+
+    fun launchApplication(context: Context,
+                          packageName: String) {
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+
+        if (intent != null) {
+            ActivityLauncher.launchActivity(context, intent)
+        } else {
+            Logger.warn("entry point of application [$packageName] does not found.")
+        }
+    }
+
+    fun downloadApplication(context: Context,
+                            packageName: String) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            val link = buildString {
+                append("https://play.google.com/store/apps/details?id=")
+                append(packageName)
+            }
+
+            data = Uri.parse(link)
+
+            setPackage("com.android.vending")
+        }
+
+        ActivityLauncher.launchActivity(context, intent)
     }
 
 }
