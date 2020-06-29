@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Environment
+import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.UseCase
@@ -85,6 +86,10 @@ class ImageAnalysisFragment : CameraFragment() {
         cases.add(imageAnalyzer)
 
         return cases
+    }
+
+    override fun getDefaultCameraLens(): Int {
+        return CameraSelector.LENS_FACING_FRONT
     }
 
 }

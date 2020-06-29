@@ -34,6 +34,8 @@ import kotlin.math.min
 open class CameraFragment: AbsPermissionsFragment() {
 
     companion object {
+        const val AUTO_SELECT_LENS_FACING: Int = -1
+
         val PERMISSIONS_REQUIRED = arrayOf(
                 Manifest.permission.CAMERA)
 
@@ -136,10 +138,17 @@ open class CameraFragment: AbsPermissionsFragment() {
             cameraProvider = cameraProviderFuture.get()
 
             // Select lensFacing depending on the available cameras
-            lensFacing = when {
-                hasBackCamera() -> CameraSelector.LENS_FACING_BACK
-                hasFrontCamera() -> CameraSelector.LENS_FACING_FRONT
-                else -> throw IllegalStateException("Back and front camera are unavailable")
+
+            val defaultLensFacing = getDefaultCameraLens()
+
+            if (defaultLensFacing == AUTO_SELECT_LENS_FACING) {
+                lensFacing = when {
+                    hasBackCamera() -> CameraSelector.LENS_FACING_BACK
+                    hasFrontCamera() -> CameraSelector.LENS_FACING_FRONT
+                    else -> throw IllegalStateException("Back and front camera are unavailable")
+                }
+            } else {
+                lensFacing = defaultLensFacing
             }
 
             updateCameraSelector(true)
@@ -198,6 +207,10 @@ open class CameraFragment: AbsPermissionsFragment() {
         } else {
             setCameraLens(CameraSelector.LENS_FACING_FRONT)
         }
+    }
+
+    protected open fun getDefaultCameraLens(): Int {
+        return AUTO_SELECT_LENS_FACING;
     }
 
     override fun onPermissionsGranted(newlyGranted: Boolean) {
