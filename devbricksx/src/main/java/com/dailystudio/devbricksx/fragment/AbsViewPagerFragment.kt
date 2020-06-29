@@ -16,4 +16,8 @@ abstract class AbsViewPagerFragment<Item, ItemList, Adapter: RecyclerView.Adapte
         viewPager?.adapter = adapter
     }
 
+    fun setCurrentItem(position: Int, animated: Boolean) {
+        viewPager?.setCurrentItem(position, animated)
+    }
+
 }
