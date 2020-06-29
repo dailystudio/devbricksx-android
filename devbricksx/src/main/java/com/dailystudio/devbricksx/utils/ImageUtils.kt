@@ -13,6 +13,7 @@ import android.util.Size
 import android.view.View
 import android.view.View.MeasureSpec
 import android.widget.CalendarView
+import androidx.annotation.ColorInt
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
@@ -982,4 +983,37 @@ object ImageUtils {
 
         return data
     }
+
+    fun tintBitmap(bitmap: Bitmap,
+                   @ColorInt color: Int): Bitmap {
+        val paint = Paint().apply {
+            colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+        }
+
+        val tintedBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height,
+                Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(tintedBitmap)
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        return tintedBitmap
+    }
+
+    private fun Bitmap.flip(x: Float, y: Float, cx: Float, cy: Float): Bitmap {
+        val matrix = Matrix().apply { postScale(x, y, cx, cy) }
+        return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+    }
+
+    fun flipBitmap(bitmap: Bitmap,
+                   horizontally: Boolean = true): Bitmap {
+        val cx = bitmap.width / 2f
+        val cy = bitmap.height / 2f
+
+        return if (horizontally) {
+            bitmap.flip(-1f, 1f, cx, cy)
+        } else {
+            bitmap.flip(1f, -1f, cx, cy)
+        }
+    }
+
 }

@@ -25,6 +25,7 @@ class ImageAnalysisFragment : CameraFragment() {
     private lateinit var cameraExecutor: ExecutorService
 
     private class LuminosityAnalyzer(private val rotation: Int,
+                                     private val lensFacing: Int,
                                      private val listener: LumaListener) : ImageAnalysis.Analyzer {
 
         private var rgbFrameBitmap: Bitmap? = null
@@ -47,8 +48,14 @@ class ImageAnalysisFragment : CameraFragment() {
                 val rotated = ImageUtils.rotateBitmap(bitmap,
                         image.imageInfo.rotationDegrees)
 
+                val flipped = if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+                    ImageUtils.flipBitmap(rotated)
+                } else {
+                    rotated
+                }
+
                 file?.let {
-                    ImageUtils.saveBitmap(rotated, it)
+                    ImageUtils.saveBitmap(flipped, it)
                 }
             }
 
@@ -78,7 +85,8 @@ class ImageAnalysisFragment : CameraFragment() {
                 .build()
                 .also {
                     it.setAnalyzer(cameraExecutor, LuminosityAnalyzer(
-                            displayRotationToDegree(rotation)) { luma ->
+                            displayRotationToDegree(rotation),
+                            lensFacing) { luma ->
                         Logger.debug("Average luminosity: $luma")
                     })
                 }
