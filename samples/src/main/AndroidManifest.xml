@@ -35,6 +35,7 @@
         <activity android:name=".datachanges.CaseActivity"/>
         <activity android:name=".audio.CaseActivity"/>
         <activity android:name=".apps.CaseActivity"/>
+        <activity android:name=".imagemask.CaseActivity"/>
 
     </application>
 

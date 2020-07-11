@@ -61,5 +61,12 @@
     "title": "Applications",
     "icon": "ic_case_apps",
     "desc": ""
+  },
+  {
+    "name": "imagemask",
+    "package": "imagemask",
+    "title": "Image Mask",
+    "icon": "ic_case_image_mask",
+    "desc": ""
   }
 ]
