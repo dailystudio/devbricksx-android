@@ -1,23 +1,20 @@
 package com.dailystudio.devbricksx.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
+import android.graphics.Bitmap.createBitmap
 import android.media.Image
 import android.os.Build
-import android.renderscript.*
 import android.text.TextUtils
 import android.util.Base64
-import android.util.Size
 import android.view.View
 import android.view.View.MeasureSpec
-import android.widget.CalendarView
 import androidx.annotation.ColorInt
-import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
 import java.nio.ByteBuffer
+import java.nio.IntBuffer
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -1014,6 +1011,59 @@ object ImageUtils {
         } else {
             bitmap.flip(1f, -1f, cx, cy)
         }
+    }
+
+    fun maskBitmap(original: Bitmap,
+                   mask: Bitmap?): Bitmap {
+        val bitmap = createBitmap(original.width, original.height,
+                Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(bitmap)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        canvas.drawBitmap(original, 0f, 0f, paint)
+        if (mask != null) {
+            if (mask.width == original.width
+                    && mask.height == original.height) {
+                paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
+                canvas.drawBitmap(mask, 0f, 0f, paint)
+            } else {
+                Logger.warn("skip, dimension of mask bitmap [${mask.width} x ${mask.height}] is different with original [${original.width} x ${original.height}]")
+            }
+        }
+
+        return bitmap
+    }
+
+    private fun intArrayToBuffer(array: IntArray): IntBuffer {
+//        val start = System.currentTimeMillis()
+        val buffer = IntBuffer.wrap(array)
+        for (pixel in array.indices) {
+            buffer.put(array[pixel])
+        }
+
+//        val end = System.currentTimeMillis()
+//        Logger.debug("array with ${array.size} elements to buffer in ${end - start} ms")
+
+        return buffer
+    }
+
+    fun intArrayToBitmap(array: IntArray,
+                         width: Int,
+                         height: Int): Bitmap {
+//        val start = System.currentTimeMillis()
+
+        val buffer = intArrayToBuffer(array)
+        buffer.rewind()
+
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        bitmap.copyPixelsFromBuffer(buffer)
+
+//        val end = System.currentTimeMillis()
+//
+//        Logger.debug("convert ${buffer.capacity()} bytes buffer to bitmap in ${end - start} ms")
+
+        return bitmap
     }
 
 }

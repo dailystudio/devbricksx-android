@@ -10,7 +10,7 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
     : AbsRecyclerViewBasedFragment<Item, ItemList, Adapter>()
         where Adapter: RecyclerView.Adapter<*>, Adapter: AbsRecyclerAdapter<Item> {
 
-    private var adapterView: RecyclerView? = null
+    protected var adapterView: RecyclerView? = null
 
     override fun setupViews(fragmentView: View) {
         adapterView = fragmentView.findViewById(android.R.id.list)
