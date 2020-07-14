@@ -14,6 +14,7 @@ import androidx.annotation.ColorInt
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.IntBuffer
 import java.util.*
 import kotlin.math.abs
@@ -179,7 +180,8 @@ object ImageUtils {
     fun createTransformedBitmap(bitmap: Bitmap,
                                 matrix: Matrix,
                                 dstWidth: Int = 0,
-                                dstHeight: Int = 0): Bitmap {
+                                dstHeight: Int = 0,
+                                @ColorInt paddingColor: Int = Color.TRANSPARENT): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
 
@@ -192,17 +194,8 @@ object ImageUtils {
             Bitmap.createBitmap(dstWidth, dstHeight,
                     bitmap.config)
         } else {
-            val widthCropped: Float = if (rect.left < 0) {
-                (abs(rect.left) * 2)
-            } else {
-                0f
-            }
-
-            val heightCropped: Float = if (rect.top < 0) {
-                (abs(rect.top) * 2)
-            } else {
-                0f
-            }
+            val widthCropped = -rect.left * 2
+            val heightCropped = -rect.top * 2
 
             Bitmap.createBitmap(
                     (rect.width() - widthCropped).roundToInt(),
@@ -212,6 +205,7 @@ object ImageUtils {
 
         val canvas = Canvas(transformed)
 
+        canvas.drawColor(paddingColor)
         canvas.drawBitmap(bitmap, matrix, Paint())
 
         return transformed

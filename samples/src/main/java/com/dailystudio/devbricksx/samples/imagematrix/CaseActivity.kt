@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.samples.imagematrix
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Matrix
 import android.os.Bundle
 import android.view.View
@@ -10,7 +11,6 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
-import com.dailystudio.devbricksx.samples.viewpager.ImageManager
 import com.dailystudio.devbricksx.utils.ImageUtils
 import com.dailystudio.devbricksx.utils.MatrixUtils
 import kotlinx.android.synthetic.main.activity_case_image_matrix.*
@@ -47,11 +47,13 @@ class CaseActivity : BaseCaseActivity() {
                     IMAGE_ASSET)
 
             originalBitmap?.let {
-                viewModel.insertImageBundle(ImageBundle("original",
+                viewModel.insertImageBundle(createEditImageBundle(it))
+
+                viewModel.insertImageBundle(ImageBundle(1,"original",
                         it, Matrix()))
 
-                viewModel.insertImageBundle(createEditImageBundle(it))
                 viewModel.insertImageBundle(createPresentationImageBundle(it, viewFrameStub))
+                viewModel.insertImageBundle(createFitImageBundle(it, viewFrameStub))
             }
         }
     }
@@ -66,7 +68,7 @@ class CaseActivity : BaseCaseActivity() {
                 bitmap, matrix)
         Logger.debug("edit transformed: ${transformed.width} x ${transformed.height}")
 
-        return ImageBundle("edit", transformed, matrix, true)
+        return ImageBundle(0,"edit", transformed, matrix, true)
     }
 
     private fun createPresentationImageBundle(bitmap: Bitmap,
@@ -80,7 +82,21 @@ class CaseActivity : BaseCaseActivity() {
                 bitmap, matrix)
         Logger.debug("presentation transformed: ${transformed.width} x ${transformed.height}")
 
-        return ImageBundle("presentation", transformed, matrix)
+        return ImageBundle(2,"presentation", transformed, matrix)
+    }
+
+    private fun createFitImageBundle(bitmap: Bitmap,
+                                     presenter: View): ImageBundle {
+        val matrix = MatrixUtils.getTransformationMatrix(
+                bitmap.width, bitmap.height,
+                presenter.width, presenter.height,
+                90, fitIn = true)
+
+        val transformed = ImageUtils.createTransformedBitmap(
+                bitmap, matrix, paddingColor = Color.BLACK)
+        Logger.debug("fit transformed: ${transformed.width} x ${transformed.height}")
+
+        return ImageBundle(3, "fit", transformed, matrix)
     }
 
 }

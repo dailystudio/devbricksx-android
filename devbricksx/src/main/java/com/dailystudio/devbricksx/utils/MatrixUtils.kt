@@ -11,7 +11,8 @@ object MatrixUtils {
     fun getTransformationMatrix(srcWidth: Int, srcHeight: Int,
                                 dstWidth: Int, dstHeight: Int,
                                 rotation: Int,
-                                maintainAspectRatio: Boolean = true): Matrix {
+                                maintainAspectRatio: Boolean = true,
+                                fitIn: Boolean = false): Matrix {
         Logger.debug("srcWidth = $srcWidth, srcHeight = $srcHeight")
         Logger.debug("dstWidth = $dstWidth, dstHeight = $dstHeight")
         Logger.debug("rotation = $rotation")
@@ -44,7 +45,11 @@ object MatrixUtils {
             val scaleFactorY = outHeight / inHeight.toFloat()
             Logger.debug("scaleFactorX = $scaleFactorX, scaleFactorY = $scaleFactorY")
 
-            val scaleFactor = max(scaleFactorX, scaleFactorY)
+            val scaleFactor = if (fitIn) {
+                min(scaleFactorX, scaleFactorY)
+            } else {
+                max(scaleFactorX, scaleFactorY)
+            }
 
             if (maintainAspectRatio) {
                 matrix.postScale(scaleFactor, scaleFactor)

@@ -10,12 +10,13 @@ import com.dailystudio.devbricksx.inmemory.InMemoryObject
 @FragmentAdapter(pageFragment = ImageBundleFragment::class)
 @DiffUtil
 @ViewModel
-@InMemoryRepository(key = String::class)
-@InMemoryManager(key = String::class)
-data class ImageBundle(val name: String,
+@InMemoryRepository(key = Int::class)
+@InMemoryManager(key = Int::class)
+data class ImageBundle(val id: Int,
+                       val name: String,
                        val bitmap: Bitmap,
                        val transformation: Matrix,
-                       val tracksEditing: Boolean = false) : InMemoryObject<String> {
+                       val tracksEditing: Boolean = false) : InMemoryObject<Int> {
 
     companion object {
         var tracks: List<List<PointF>>? = null
@@ -25,8 +26,8 @@ data class ImageBundle(val name: String,
         transformation.invert(it)
     }
 
-    override fun getKey(): String {
-        return name
+    override fun getKey(): Int {
+        return id
     }
 
 }
