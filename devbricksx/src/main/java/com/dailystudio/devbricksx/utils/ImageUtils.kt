@@ -604,17 +604,37 @@ object ImageUtils {
         return calculateBrightnessEstimate(bitmap, 1)
     }
 
-    fun trimBitmap(bitmap: Bitmap,
-                   destWidth: Int,
-                   destHeight: Int): Bitmap {
-        val clipWidth = if (destWidth > destHeight) {
-            bitmap.width
-        } else {
-            bitmap.width * destWidth / destHeight
+    fun clipBitmapWithRoundCorner(source: Bitmap, radius: Float): Bitmap {
+        val output = Bitmap.createBitmap(source.width,
+                source.height, Bitmap.Config.ARGB_8888)
+
+        val rect = Rect(0, 0,
+                source.width, source.height)
+
+        val paint = Paint().apply {
+            isAntiAlias = true
+            isFilterBitmap = true
+            isDither = true
         }
 
-        val clipHeight = if (destWidth > destHeight) {
-            bitmap.height * destHeight / destWidth
+        val canvas = Canvas(output)
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        canvas.drawRoundRect(RectF(rect), radius, radius, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(source, rect, rect, paint)
+
+        return output
+    }
+
+    fun trimBitmap(bitmap: Bitmap, ratio: Float): Bitmap {
+        val clipWidth: Int = if (ratio > 1.0f) {
+            bitmap.width
+        } else {
+            (bitmap.width * ratio).roundToInt()
+        }
+
+        val clipHeight: Int = if (ratio > 1.0f) {
+            (bitmap.height / ratio).roundToInt()
         } else {
             bitmap.height
         }
@@ -622,8 +642,10 @@ object ImageUtils {
         val xOffset = (bitmap.width - clipWidth) / 2
         val yOffset = (bitmap.height - clipHeight) / 2
 
-        return createClippedBitmap(bitmap,
-                xOffset, yOffset, clipWidth, clipHeight)
+        return ImageUtils.createClippedBitmap(
+                bitmap,
+                xOffset, yOffset, clipWidth, clipHeight
+        )
     }
 
     fun paddingBitmap(origin: Bitmap,
