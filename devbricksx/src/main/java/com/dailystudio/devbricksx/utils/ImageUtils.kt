@@ -8,16 +8,15 @@ import android.media.Image
 import android.os.Build
 import android.text.TextUtils
 import android.util.Base64
+import android.util.Size
 import android.view.View
 import android.view.View.MeasureSpec
 import androidx.annotation.ColorInt
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.nio.IntBuffer
 import java.util.*
-import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -605,6 +604,28 @@ object ImageUtils {
         return calculateBrightnessEstimate(bitmap, 1)
     }
 
+    fun trimBitmap(bitmap: Bitmap,
+                   destWidth: Int,
+                   destHeight: Int): Bitmap {
+        val clipWidth = if (destWidth > destHeight) {
+            bitmap.width
+        } else {
+            bitmap.width * destWidth / destHeight
+        }
+
+        val clipHeight = if (destWidth > destHeight) {
+            bitmap.height * destHeight / destWidth
+        } else {
+            bitmap.height
+        }
+
+        val xOffset = (bitmap.width - clipWidth) / 2
+        val yOffset = (bitmap.height - clipHeight) / 2
+
+        return createClippedBitmap(bitmap,
+                xOffset, yOffset, clipWidth, clipHeight)
+    }
+
     fun paddingBitmap(origin: Bitmap,
                       padding: Int,
                       paddingBackground: Int,
@@ -1029,33 +1050,24 @@ object ImageUtils {
         return bitmap
     }
 
-    private fun intArrayToBuffer(array: IntArray): IntBuffer {
-//        val start = System.currentTimeMillis()
-        val buffer = IntBuffer.wrap(array)
-        for (pixel in array.indices) {
-            buffer.put(array[pixel])
-        }
+    private fun intArrayToBuffer(intArrayInABGRFormat: IntArray): IntBuffer {
+        val buffer = IntBuffer.wrap(intArrayInABGRFormat)
 
-//        val end = System.currentTimeMillis()
-//        Logger.debug("array with ${array.size} elements to buffer in ${end - start} ms")
+        for (pixel in intArrayInABGRFormat.indices) {
+            buffer.put(intArrayInABGRFormat[pixel])
+        }
 
         return buffer
     }
 
-    fun intArrayToBitmap(array: IntArray,
+    fun intArrayToBitmap(intArrayInABGRFormat: IntArray,
                          width: Int,
                          height: Int): Bitmap {
-//        val start = System.currentTimeMillis()
-
-        val buffer = intArrayToBuffer(array)
+        val buffer = intArrayToBuffer(intArrayInABGRFormat)
         buffer.rewind()
 
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         bitmap.copyPixelsFromBuffer(buffer)
-
-//        val end = System.currentTimeMillis()
-//
-//        Logger.debug("convert ${buffer.capacity()} bytes buffer to bitmap in ${end - start} ms")
 
         return bitmap
     }

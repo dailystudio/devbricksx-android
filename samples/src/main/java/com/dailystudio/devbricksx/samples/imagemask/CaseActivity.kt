@@ -14,8 +14,6 @@ import com.dailystudio.devbricksx.utils.ImageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.IntBuffer
 import kotlin.random.Random
 
 class MaskData(val data: IntArray,
@@ -43,15 +41,13 @@ class CaseActivity : BaseCaseActivity() {
         }
     }
 
-    private suspend fun generateMaskedImages() {
+    private fun generateMaskedImages() {
         val viewModel = ViewModelProvider(this@CaseActivity).get(
                 MaskedImageViewModel::class.java)
 
         val original = ImageUtils.loadAssetBitmap(this@CaseActivity,
                 IMAGE_ASSET)
         original?.let {
-//            val buffer = generateBits(it.width, it.height)
-//            filterBits(buffer, it.width, it.height)
             val buffer = generateBits(257, 257)
             filterBits(buffer, 257, 257)
             viewModel.insertMaskedImage(MaskedImage(0, "Original",
@@ -107,10 +103,10 @@ class CaseActivity : BaseCaseActivity() {
         val start = System.currentTimeMillis()
         val pixels = width * height
         val data = IntArray(pixels)
-        var fa = FloatArray(width * height * NUM_CLASSES)
+        val floatData = FloatArray(width * height * NUM_CLASSES)
 
         bits.rewind()
-        bits.asFloatBuffer().get(fa)
+        bits.asFloatBuffer().get(floatData)
 
         for (y in 0 until height) {
             for (x in 0 until width) {
@@ -118,9 +114,7 @@ class CaseActivity : BaseCaseActivity() {
                 data[y * width + x] = 0
 
                 for (c in 0 until NUM_CLASSES) {
-//                    val value = bits
-//                            .getFloat((y * width * NUM_CLASSES + x * NUM_CLASSES + c) * 4)
-                    val value = fa[y * width * NUM_CLASSES + x * NUM_CLASSES + c]
+                    val value = floatData[y * width * NUM_CLASSES + x * NUM_CLASSES + c]
                     if (c == 0 || value > maxVal) {
                         maxVal = value
                         data[y * width + x] = c
@@ -136,8 +130,8 @@ class CaseActivity : BaseCaseActivity() {
         return data
     }
 
-    private suspend fun loadBitsFromMaskBitmap(context: Context,
-                                               file: String): MaskData? {
+    private fun loadBitsFromMaskBitmap(context: Context,
+                                       file: String): MaskData? {
         val bitmap = ImageUtils.loadAssetBitmap(context, file) ?: return null
 
         val width = bitmap.width
@@ -151,11 +145,16 @@ class CaseActivity : BaseCaseActivity() {
             for (x in 0 until width) {
                 val value = intValues[pixel]
 
-                if (value == 0) {
-                    intValues[pixel] = Color.TRANSPARENT
-                } else {
-                    intValues[pixel] = Color.BLACK
-                }
+                /**
+                 * Each integer element in the array represent a pixel and
+                 * format should be
+                 *      A B R G
+                 */
+                val a = (Color.alpha(value) and 0xFF) shl 24
+                val b = (Color.blue(value) and 0xFF) shl 16
+                val g = (Color.green(value) and 0xFF) shl 8
+                val r = (Color.red(value) and 0xFF)
+                intValues[pixel] = a or b or g or r
 
                 pixel++
             }
