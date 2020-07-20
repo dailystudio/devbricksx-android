@@ -203,9 +203,13 @@ object ImageUtils {
         }
 
         val canvas = Canvas(transformed)
+        val paint = Paint().apply {
+            isAntiAlias = true
+            isFilterBitmap = true
+        }
 
         canvas.drawColor(paddingColor)
-        canvas.drawBitmap(bitmap, matrix, Paint())
+        canvas.drawBitmap(bitmap, matrix, paint)
 
         return transformed
     }
