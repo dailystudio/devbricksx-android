@@ -46,6 +46,7 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
 
         val fragmentAnnotation = element.getAnnotation(ViewPagerFragment::class.java)
         val layout = fragmentAnnotation.layout
+        val layoutByName = fragmentAnnotation.layoutByName
         val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
         val useFragment = fragmentAnnotation.useFragment
 
@@ -147,12 +148,22 @@ class ViewPagerFragmentProcessor : BaseProcessor() {
                 .addParameter("savedInstanceState", bundle.copy(nullable = true))
                 .returns(view.copy(nullable = true))
 
-        if (layout != -1) {
-            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%L, container, false)",
-                    layout)
-        } else {
-            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_view_pager, container, false)",
-                    devbricksxR)
+        when {
+            layoutByName.isNotBlank() -> {
+                methodOnCreateViewBuilder.addStatement(
+                        "val layoutId = inflater.context.resources.getIdentifier(\"%L\", " +
+                                "\"layout\", " +
+                                "inflater.context.packageName)", layoutByName)
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(layoutId, container, false)")
+            }
+            (layout != -1) -> {
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(%L, container, false)",
+                        layout)
+            }
+            else -> {
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_view_pager, container, false)",
+                        devbricksxR)
+            }
         }
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())

@@ -48,6 +48,7 @@ class AdapterProcessor : BaseProcessor() {
         val annotation = element.getAnnotation(Adapter::class.java)
         val paged = annotation.paged
         val layout = annotation.layout
+        val layoutByName = annotation.layoutByName
         val viewType = annotation.viewType
 
         val viewHolder = AnnotationsUtils.getClassValueFromAnnotation(element, "viewHolder")
@@ -106,7 +107,15 @@ class AdapterProcessor : BaseProcessor() {
                         TypeNamesUtils.getViewGroupLayoutParameterTypeName())
             }
             else -> {
-                methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%L, null)", layout)
+                if (layoutByName.isNotBlank()) {
+                    methodOnCreateViewBuilder.addStatement(
+                            "val layoutId = parent.context.resources.getIdentifier(\"%L\", " +
+                                    "\"layout\", " +
+                                    "parent.context.packageName)", layoutByName)
+                    methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(layoutId, null)")
+                } else {
+                    methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%L, null)", layout)
+                }
             }
         }
 

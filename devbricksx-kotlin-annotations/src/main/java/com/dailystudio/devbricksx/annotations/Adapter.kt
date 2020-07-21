@@ -16,6 +16,7 @@ annotation class Adapter(
         val viewHolder: KClass<*>,
         val viewType: ViewType = ViewType.SingleLine,
         val layout: Int = -1,
+        val layoutByName: String = "",
         val paged: Boolean = true
 )
 

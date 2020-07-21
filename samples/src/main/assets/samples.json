@@ -68,5 +68,12 @@
     "title": "Image Mask",
     "icon": "ic_case_image_mask",
     "desc": ""
+  },
+  {
+    "name": "customadapter",
+    "package": "customadapter",
+    "title": "Custom Adapter",
+    "icon": "ic_case_custom_adapter",
+    "desc": ""
   }
 ]

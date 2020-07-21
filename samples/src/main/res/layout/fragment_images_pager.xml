@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/fragment_view_root"
+	android:background="@color/use_case_background_color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@android:id/list"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"/>
+
+</RelativeLayout>

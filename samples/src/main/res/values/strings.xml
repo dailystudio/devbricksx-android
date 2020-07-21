@@ -2,5 +2,6 @@
     <string name="app_name">Samples</string>
 
     <string name="label_capture">Capture</string>
+    <string name="label_send">Send</string>
 
 </resources>

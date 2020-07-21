@@ -46,6 +46,7 @@ class ListFragmentProcessor : BaseProcessor() {
 
         val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
         val layout = fragmentAnnotation.layout
+        val layoutByName = fragmentAnnotation.layoutByName
         val isGradLayout = fragmentAnnotation.gridLayout
         val columns = fragmentAnnotation.columns
 
@@ -152,12 +153,22 @@ class ListFragmentProcessor : BaseProcessor() {
                 .addParameter("savedInstanceState", bundle.copy(nullable = true))
                 .returns(view.copy(nullable = true))
 
-        if (layout != -1) {
-            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%L, container, false)",
-                    layout)
-        } else {
-            methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_recycler_view, container, false)",
-                    devbricksxR)
+        when {
+            layoutByName.isNotBlank() -> {
+                methodOnCreateViewBuilder.addStatement(
+                        "val layoutId = inflater.context.resources.getIdentifier(\"%L\", " +
+                                "\"layout\", " +
+                                "inflater.context.packageName)", layoutByName)
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(layoutId, container, false)")
+            }
+            (layout != -1) -> {
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(%L, container, false)",
+                        layout)
+            }
+            else -> {
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_recycler_view, container, false)",
+                        devbricksxR)
+            }
         }
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())

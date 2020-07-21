@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
+import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import com.google.gson.JsonDeserializationContext
@@ -21,7 +22,7 @@ import java.lang.reflect.Type
 @DiffUtil
 @Adapter(viewHolder = UseCaseViewHolder::class, paged = false)
 @ViewModel
-@ListFragment
+@ListFragment(layout = R.layout.fragment_use_case)
 data class UseCase(val name: String,
                    val `package`: String,
                    val title: String,

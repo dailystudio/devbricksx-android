@@ -9,7 +9,8 @@ import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.ui.AbsPageViewHolder
 import com.nostra13.universalimageloader.core.ImageLoader
 
-@ViewPagerFragment(offscreenPageLimit = 2)
+@ViewPagerFragment(offscreenPageLimit = 2,
+        layoutByName = "fragment_images_pager")
 @Adapter(viewHolder = ImageViewHolder::class,
         viewType = ViewType.Page,
         paged = false
