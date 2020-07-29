@@ -7,5 +7,6 @@ annotation class ListFragment(
         val layoutByName: String = "",
         val gridLayout: Boolean = false,
         val columns: Int = 2,
+        val fillParent: Boolean = true,
         val dataInterface: String = ""
 )

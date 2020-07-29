@@ -49,6 +49,7 @@ class ListFragmentProcessor : BaseProcessor() {
         val layoutByName = fragmentAnnotation.layoutByName
         val isGradLayout = fragmentAnnotation.gridLayout
         val columns = fragmentAnnotation.columns
+        val fillParent = fragmentAnnotation.fillParent
 
         val adapterAnnotation = element.getAnnotation(Adapter::class.java)
         val paged = adapterAnnotation?.paged ?: true
@@ -166,8 +167,13 @@ class ListFragmentProcessor : BaseProcessor() {
                         layout)
             }
             else -> {
-                methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.fragment_recycler_view, container, false)",
-                        devbricksxR)
+                val layoutIdentifier = if (fillParent) {
+                    "fragment_recycler_view"
+                } else {
+                    "fragment_recycler_view_compact"
+                }
+                methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.%N, container, false)",
+                        devbricksxR, layoutIdentifier)
             }
         }
 
