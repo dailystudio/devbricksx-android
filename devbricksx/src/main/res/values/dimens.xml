@@ -49,15 +49,12 @@
 	<dimen name="default_prompt_text_font_size">@dimen/default_font_size</dimen>
 	<dimen name="default_prompt_padding">12dp</dimen>
 
-	<!--
-        <dimen name="card_corner_radius">3dp</dimen>
-        <dimen name="card_content_text_size">16dp</dimen>
-        <dimen name="card_title_text_size">14dp</dimen>
-        <dimen name="card_item_padding_h">16dp</dimen>
-        <dimen name="card_item_padding_v">8dp</dimen>
-        <dimen name="card_content_height">165dp</dimen>
-        <dimen name="card_content_height_mini">150dp</dimen>
-    -->
-
+	<dimen name="settings_font_size">18dp</dimen>
+	<dimen name="settings_desc_font_size">16dp</dimen>
+	<dimen name="settings_icon_margin">16dp</dimen>
+	<dimen name="settings_edit_button_margin">3dp</dimen>
+	<dimen name="settings_icon_size">32dp</dimen>
+	<dimen name="settings_leading_space">64dp</dimen>
+	<dimen name="settings_switch_desc_padding_end">48dp</dimen>
 
 </resources>

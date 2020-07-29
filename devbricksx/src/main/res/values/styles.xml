@@ -166,4 +166,31 @@
 		<item name="android:paddingBottom">@dimen/page_content_outer_padding</item>
 	</style>
 
+
+	<style name="SettingsText" parent="DefaultLabel">
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textStyle">normal</item>
+		<item name="android:textColor">@color/colorAccent</item>
+		<item name="android:textSize">@dimen/settings_font_size</item>
+	</style>
+
+	<style name="SettingsDesc">
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textStyle">italic</item>
+		<item name="android:textColor">@color/gray</item>
+		<item name="android:textSize">@dimen/settings_desc_font_size</item>
+		<item name="android:paddingLeft">@dimen/default_label_padding</item>
+		<item name="android:paddingRight">@dimen/default_label_padding</item>
+		<item name="android:paddingBottom">@dimen/lv_item_2nd_padding_v</item>
+	</style>
+
+	<style name="SettingsSwitchDesc" parent="SettingsDesc">
+		<item name="android:paddingRight">@dimen/settings_switch_desc_padding_end</item>
+	</style>
+
+	<style name="SettingsEditText" parent="SettingsText">
+		<item name="android:singleLine">true</item>
+		<item name="android:gravity">left|center_vertical</item>
+	</style>
+
 </resources>

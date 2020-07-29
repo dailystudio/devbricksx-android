@@ -75,5 +75,12 @@
     "title": "Custom Adapter",
     "icon": "ic_case_custom_adapter",
     "desc": ""
+  },
+  {
+    "name": "settings",
+    "package": "settings",
+    "title": "Settings",
+    "icon": "ic_case_settings",
+    "desc": ""
   }
 ]

@@ -37,6 +37,7 @@
         <activity android:name=".apps.CaseActivity"/>
         <activity android:name=".imagemask.CaseActivity"/>
         <activity android:name=".customadapter.CaseActivity"/>
+        <activity android:name=".settings.CaseActivity"/>
 
     </application>
 
