@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
+import com.dailystudio.devbricksx.utils.AnimationUtils
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 data class SettingChange(val name: String)
@@ -14,6 +15,7 @@ abstract class AbsSetting(val context: Context,
                           val name: String,
                           iconResId: Int,
                           labelResId: Int,
+                          enabled: Boolean = true,
                           val holder: AbsSettingHolder): InMemoryObject<String> {
 
     companion object {
@@ -25,7 +27,7 @@ abstract class AbsSetting(val context: Context,
     var icon: Drawable? = null
     var label: CharSequence? = null
 
-    private var enabled = true
+    var enabled = enabled
         set(enabled) {
             field = enabled
             syncEnabled()
@@ -55,7 +57,11 @@ abstract class AbsSetting(val context: Context,
         holder.let {
             val view = holder.getView()
 
-            view.visibility = if (enabled) View.VISIBLE else View.GONE
+            if (enabled) {
+                AnimationUtils.animateViewToShow(view)
+            } else {
+                AnimationUtils.animateViewToHide(view)
+            }
         }
     }
 

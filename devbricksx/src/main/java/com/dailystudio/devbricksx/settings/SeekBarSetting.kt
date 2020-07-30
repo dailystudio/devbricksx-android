@@ -15,8 +15,9 @@ abstract class SeekBarSetting(context: Context,
                               name: String,
                               iconResId: Int,
                               labelResId: Int,
+                              enabled: Boolean = true,
                               holder: SeekBarSettingHolder = SeekBarSettingHolder())
-    : AbsSetting(context, name, iconResId, labelResId, holder) {
+    : AbsSetting(context, name, iconResId, labelResId, enabled, holder) {
 
     abstract fun getProgress(context: Context): Float
     abstract fun setProgress(context: Context, progress: Float)

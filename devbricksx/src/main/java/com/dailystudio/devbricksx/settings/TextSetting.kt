@@ -13,8 +13,9 @@ open class TextSetting(context: Context,
                        iconResId: Int,
                        labelResId: Int,
                        descResId: Int = -1,
+                       enabled: Boolean = true,
                        holder: TextSettingLayoutHolder = TextSettingLayoutHolder())
-    : AbsSetting(context, name, iconResId, labelResId, holder) {
+    : AbsSetting(context, name, iconResId, labelResId, enabled, holder) {
     var desc: CharSequence? = null
 
     init {

@@ -6,7 +6,7 @@
 
     <string name="default_demo_text">Welcome to using settings facilities! You can change settings below and its result will be reflected here.</string>
 
-    <string name="setting_rounded_corner">With rounded corner</string>
+    <string name="setting_rounded_corner">Display rounded corner</string>
     <string name="setting_radius">Radius of rounded corner</string>
 
 </resources>

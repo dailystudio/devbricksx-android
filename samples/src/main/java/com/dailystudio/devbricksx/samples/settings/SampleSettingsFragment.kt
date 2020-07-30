@@ -6,6 +6,8 @@ import com.dailystudio.devbricksx.settings.*
 
 class SampleSettingsFragment : AbsSettingsFragment() {
 
+    private var radiusSetting: AbsSetting? = null
+
     override fun createSettings(context: Context): Array<AbsSetting> {
         val textSetting = TextSetting(context,
                 "text_setting",
@@ -24,7 +26,9 @@ class SampleSettingsFragment : AbsSettingsFragment() {
             }
 
             override fun setOn(on: Boolean) {
-                 SamplePrefs.setWithRoundedCorner(context, on)
+                SamplePrefs.setWithRoundedCorner(context, on)
+
+                radiusSetting?.enabled = on
             }
 
         }
@@ -32,7 +36,8 @@ class SampleSettingsFragment : AbsSettingsFragment() {
         val radiusSetting = object: SeekBarSetting(context,
                 SamplePrefs.PREF_CORNER_RADIUS,
                 R.drawable.ic_setting_radius,
-                R.string.setting_radius) {
+                R.string.setting_radius,
+                SamplePrefs.withRoundedCorner(context)) {
 
             override fun getProgress(context: Context): Float {
                 return SamplePrefs.getCornerRadius(context)
@@ -53,11 +58,10 @@ class SampleSettingsFragment : AbsSettingsFragment() {
             override fun getStep(context: Context): Float {
                 return SamplePrefs.CORNER_RADIUS_CHANGE_STEP
             }
-
-
         }
+        this.radiusSetting = radiusSetting
 
-        return arrayOf(textSetting, roundedCornerSetting, radiusSetting)
+        return arrayOf(roundedCornerSetting, radiusSetting, textSetting)
     }
 
 }

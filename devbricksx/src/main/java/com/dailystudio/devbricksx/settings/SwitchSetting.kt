@@ -11,8 +11,9 @@ abstract class SwitchSetting(context: Context,
                              iconResId: Int,
                              labelResId: Int,
                              descResId: Int = -1,
+                             enabled: Boolean = true,
                              holder: SwitchSettingsLayoutHolder = SwitchSettingsLayoutHolder())
-    : TextSetting(context, name, iconResId, labelResId, descResId, holder) {
+    : TextSetting(context, name, iconResId, labelResId, descResId, enabled, holder) {
 
     abstract fun isOn(): Boolean
     abstract fun setOn(on: Boolean)

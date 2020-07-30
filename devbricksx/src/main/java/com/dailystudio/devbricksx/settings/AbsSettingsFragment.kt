@@ -35,8 +35,6 @@ abstract class AbsSettingsFragment: Fragment() {
         val settings: Array<AbsSetting> = createSettings(context)
         for (s in settings) {
             addSetting(s)
-
-            s.syncEnabled()
         }
     }
 
@@ -52,6 +50,8 @@ abstract class AbsSettingsFragment: Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT)
 
         container.addView(view, lp)
+
+        setting.syncEnabled()
     }
 
     protected abstract fun createSettings(context: Context): Array<AbsSetting>

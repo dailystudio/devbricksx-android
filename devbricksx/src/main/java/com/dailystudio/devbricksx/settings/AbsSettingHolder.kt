@@ -19,6 +19,11 @@ abstract class AbsSettingHolder {
         Logger.debug("view created: $mView")
 
         bindSetting(mView, setting)
+        mView.visibility = if (setting.enabled) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
 
         return mView
     }
