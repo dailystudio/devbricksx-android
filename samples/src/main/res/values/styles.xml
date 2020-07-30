@@ -15,4 +15,11 @@
         <item name="android:padding">@dimen/default_padding</item>
     </style>
 
+    <style name="DemoText">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:textSize">@dimen/default_font_size</item>
+        <item name="android:padding">@dimen/demo_text_padding</item>
+    </style>
+
 </resources>

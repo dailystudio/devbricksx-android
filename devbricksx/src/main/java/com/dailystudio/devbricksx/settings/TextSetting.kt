@@ -58,7 +58,8 @@ open class TextSettingLayoutHolder : AbsSettingHolder() {
         val rootView: View? = settingView.findViewById(R.id.setting_root)
         rootView?.setOnClickListener {
             Logger.debug("clicked on text settings")
-            setting.notifyDataChanges()
+            setting.postInvalidate()
+            setting.notifySettingChange()
         }
     }
 

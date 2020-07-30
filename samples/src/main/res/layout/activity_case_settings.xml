@@ -5,16 +5,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".apps.CaseActivity">
+    tools:context=".settings.CaseActivity">
 
-    <fragment
-        android:name="com.dailystudio.devbricksx.samples.settings.SampleSettingsFragment"
-        android:id="@+id/fragment_settings"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <RelativeLayout
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/demo_layout"
+            android:background="@color/light_gray"
+            android:padding="@dimen/demo_area_padding"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/demo_area_height">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/demo_text_card"
+                style="@style/DefaultCardView"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/demo_text"
+                    android:text="@string/default_demo_text"
+                    style="@style/DemoText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_below="@id/demo_layout"
+            android:padding="@dimen/default_padding"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <fragment
+                android:id="@+id/fragment_settings"
+                android:name="com.dailystudio.devbricksx.samples.settings.SampleSettingsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
