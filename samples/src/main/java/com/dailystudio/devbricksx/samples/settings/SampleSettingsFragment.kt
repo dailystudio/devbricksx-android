@@ -16,12 +16,6 @@ class SampleSettingsFragment : AbsSettingsFragment() {
     private var radiusSetting: AbsSetting? = null
 
     override fun createSettings(context: Context): Array<AbsSetting> {
-        val textSetting = TextSetting(context,
-                "text_setting",
-                R.mipmap.ic_case_apps,
-                R.string.app_name,
-                -1)
-
         val roundedCornerSetting = object: SwitchSetting(context,
                 SamplePrefs.PREF_ROUNDED_CORNER,
                 R.drawable.ic_setting_rounded_corner,
@@ -130,8 +124,7 @@ class SampleSettingsFragment : AbsSettingsFragment() {
         return arrayOf(textInputSetting,
                 roundedCornerSetting,
                 radiusSetting,
-                textStyleSetting,
-                textSetting)
+                textStyleSetting)
     }
 
 }
