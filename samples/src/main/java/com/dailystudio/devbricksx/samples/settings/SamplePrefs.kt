@@ -12,6 +12,13 @@ object SamplePrefs : AbsPrefs() {
 
     const val PREF_ROUNDED_CORNER = "rounded-corner"
     const val PREF_CORNER_RADIUS = "corner-radius"
+    const val PREF_TEXT_STYLE = "text-style"
+    const val PREF_TEXT_INPUT = "text-input"
+
+    const val TEXT_STYLE_NORMAL = "normal"
+    const val TEXT_STYLE_ITALIC = "italic"
+    const val TEXT_STYLE_BOLD = "bold"
+    const val TEXT_STYLE_ITALIC_BOLD = "italic_bold"
 
     override val prefName: String
         get() = "sample-settings"
@@ -30,6 +37,22 @@ object SamplePrefs : AbsPrefs() {
 
     fun setCornerRadius(context: Context, radius: Float) {
         return setFloatPrefValue(context, PREF_CORNER_RADIUS, radius)
+    }
+
+    fun getTextStyle(context: Context): String {
+        return getStringPrefValue(context, PREF_TEXT_STYLE) ?: TEXT_STYLE_NORMAL
+    }
+
+    fun setTextStyle(context: Context, style: String) {
+        setStringPrefValue(context, PREF_TEXT_STYLE, style)
+    }
+
+    fun getTextInput(context: Context): String? {
+        return getStringPrefValue(context, PREF_TEXT_INPUT)
+    }
+
+    fun setTextInput(context: Context, inputText: String?) {
+        setStringPrefValue(context, PREF_TEXT_INPUT, inputText)
     }
 
 }

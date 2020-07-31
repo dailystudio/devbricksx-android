@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/upper_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/setting_icon"
+            android:tint="@color/colorAccent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/settings_icon_margin"
+            android:layout_width="@dimen/settings_icon_size"
+            android:layout_height="@dimen/settings_icon_size" />
+
+        <TextView
+            android:id="@+id/setting_label"
+            style="@style/SettingsText"
+            android:layout_toRightOf="@id/setting_icon"
+            android:layout_toEndOf="@id/setting_icon"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_below="@id/upper_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/setting_edit_image_button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:tint="@color/action_icon_tint_light"
+            android:layout_margin="@dimen/settings_edit_button_margin"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/setting_icon_stub"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/settings_icon_margin"
+            android:layout_width="@dimen/settings_icon_size"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/setting_edit"
+            style="@style/SettingsEditText"
+            android:layout_toStartOf="@id/setting_edit_image_button"
+            android:layout_toLeftOf="@id/setting_edit_image_button"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_toEndOf="@id/setting_icon_stub"
+            android:layout_toRightOf="@id/setting_icon_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_padding" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

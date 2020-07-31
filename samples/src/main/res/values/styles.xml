@@ -22,4 +22,20 @@
         <item name="android:padding">@dimen/demo_text_padding</item>
     </style>
 
+    <style name="DemoTextNormal" parent="DemoText">
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="DemoTextItalic" parent="DemoText">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="DemoTextBold" parent="DemoText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DemoTextItalicBold" parent="DemoText">
+        <item name="android:textStyle">italic|bold</item>
+    </style>
+
 </resources>

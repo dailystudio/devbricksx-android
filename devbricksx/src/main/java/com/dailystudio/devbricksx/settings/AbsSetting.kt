@@ -5,8 +5,8 @@ import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
-import com.dailystudio.devbricksx.utils.AnimationUtils
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 data class SettingChange(val name: String)
@@ -58,9 +58,9 @@ abstract class AbsSetting(val context: Context,
             val view = holder.getView()
 
             if (enabled) {
-                AnimationUtils.animateViewToShow(view)
+                view.visibility = View.VISIBLE
             } else {
-                AnimationUtils.animateViewToHide(view)
+                view.visibility = View.GONE
             }
         }
     }
@@ -70,6 +70,7 @@ abstract class AbsSetting(val context: Context,
     }
 
     fun notifySettingChange() {
+        Logger.debug("notify setting: ${name}")
         Settings.postValue(SettingChange(name))
     }
 

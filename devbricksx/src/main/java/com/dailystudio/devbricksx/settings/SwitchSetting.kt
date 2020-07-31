@@ -49,7 +49,6 @@ class SwitchSettingsLayoutHolder : TextSettingLayoutHolder() {
             switch?.setOnCheckedChangeListener { _, isChecked ->
                 setting.setOn(isChecked)
 
-                setting.postInvalidate()
                 setting.notifySettingChange()
             }
         }
