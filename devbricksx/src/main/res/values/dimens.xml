@@ -57,4 +57,12 @@
 	<dimen name="settings_leading_space">64dp</dimen>
 	<dimen name="settings_switch_desc_padding_end">48dp</dimen>
 
+	<dimen name="about_app_icon_size">72dp</dimen>
+	<dimen name="about_app_icon_margin_h">10dp</dimen>
+	<dimen name="about_app_icon_margin_v">5dp</dimen>
+	<dimen name="about_app_ver_font_size">14dp</dimen>
+	<dimen name="about_app_name_font_size">22sp</dimen>
+	<dimen name="about_app_ver_padding">3dp</dimen>
+	<dimen name="about_thumb_height">200dp</dimen>
+
 </resources>

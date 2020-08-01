@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Samples</string>
+    <string name="app_desc">This application is sample application of open-source library Devbricks X. It contains plenty of use case about how to use this library effectively. \n\nIf you have any problem, please feel free to contact this mail address:\n\n\t\tdailystudio2010@gmail.com</string>
 
     <string name="label_capture">Capture</string>
     <string name="label_send">Send</string>
@@ -8,6 +9,8 @@
     <string name="label_text_style_bold">Bold</string>
     <string name="label_text_style_italic_bold">Italic &amp; Bold</string>
 
+    <string name="action_about">About</string>
+
     <string name="default_demo_text">Welcome to using settings facilities! You can change settings below and its result will be reflected here.</string>
     <string name="demo_text_hint">Write something here …</string>
 
@@ -15,4 +18,5 @@
     <string name="setting_radius">Radius of rounded corner</string>
     <string name="setting_text_style">Font style of text</string>
     <string name="setting_text_input">Input your own text</string>
+
 </resources>

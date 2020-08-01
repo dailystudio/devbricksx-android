@@ -1,10 +1,14 @@
 package com.dailystudio.devbricksx.samples
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.fragment.AboutFragment
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 import com.dailystudio.devbricksx.samples.usecase.UseCaseJsonDeserializer
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModel
@@ -27,6 +31,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         generateCases()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_about -> {
+                val fragment = AboutFragment()
+
+                fragment.show(supportFragmentManager, "about")
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
 
     private fun generateCases() {
         lifecycleScope.launch(Dispatchers.IO) {
