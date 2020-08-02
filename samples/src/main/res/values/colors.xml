@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3640BB</color>
-    <color name="colorPrimaryDark">#3640BB</color>
-    <color name="colorAccent">#3640BB</color>
+    <color name="colorPrimary">#194160</color>
+    <color name="colorPrimaryDark">#194160</color>
+    <color name="colorAccent">#194160</color>
+<!--
+    <color name="colorAccent">#498fbd</color>
+-->
 
     <color name="use_case_background_color">#eee</color>
     <color name="card_title_text_color">@color/colorPrimary</color>
