@@ -102,27 +102,27 @@ abstract class AbsPrefs {
         return sharedPref.getLong(pref, defVal)
     }
 
-    fun getIntegerPreValue(context: Context,
-                           pref: String): Int {
-        return getIntegerPreValue(context, pref, 0)
+    fun getIntegerPrefValue(context: Context,
+                            pref: String): Int {
+        return getIntegerPrefValue(context, pref, 0)
     }
 
-    fun getIntegerPreValue(context: Context,
-                           pref: String,
-                           defVal: Int): Int {
+    fun getIntegerPrefValue(context: Context,
+                            pref: String,
+                            defVal: Int): Int {
         val sharedPref = getSharedPreferences(context) ?: return defVal
 
         return sharedPref.getInt(pref, defVal)
     }
 
-    fun getFloatPreValue(context: Context,
-                         pref: String): Float {
-        return getFloatPreValue(context, pref, 0.0f)
+    fun getFloatPrefValue(context: Context,
+                          pref: String): Float {
+        return getFloatPrefValue(context, pref, 0.0f)
     }
 
-    fun getFloatPreValue(context: Context,
-                         pref: String,
-                         defVal: Float): Float {
+    fun getFloatPrefValue(context: Context,
+                          pref: String,
+                          defVal: Float): Float {
         val sharedPref = getSharedPreferences(context)
 
         return sharedPref.getFloat(pref, defVal)

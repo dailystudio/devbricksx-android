@@ -1,7 +1,9 @@
 package com.dailystudio.devbricksx.samples.settings
 
 import android.content.Context
+import com.dailystudio.devbricksx.annotations.SharedPreference
 import com.dailystudio.devbricksx.preference.AbsPrefs
+import com.dailystudio.devbricksx.samples.settings.SamplePrefs.MIN_CORNER_RADIUS
 
 object SamplePrefs : AbsPrefs() {
 
@@ -32,7 +34,7 @@ object SamplePrefs : AbsPrefs() {
     }
 
     fun getCornerRadius(context: Context): Float {
-        return getFloatPreValue(context, PREF_CORNER_RADIUS, DEFAULT_CORNER_RADIUS)
+        return getFloatPrefValue(context, PREF_CORNER_RADIUS, DEFAULT_CORNER_RADIUS)
     }
 
     fun setCornerRadius(context: Context, radius: Float) {
@@ -56,3 +58,10 @@ object SamplePrefs : AbsPrefs() {
     }
 
 }
+
+@SharedPreference
+data class SampleSettings(val roundCorner: Boolean = false,
+                          val cornerRadius: Float = MIN_CORNER_RADIUS,
+                          val textStyle: String = SamplePrefs.TEXT_STYLE_NORMAL,
+                          val textInput: String? = null
+)

@@ -134,6 +134,7 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsListAdapter")
         }
 
+
         fun getPageListAdapterOfTypeName(`object`: TypeName,
                                          viewHolder: TypeName): TypeName {
             val listAdapter = getPageListAdapterTypeName()
@@ -159,6 +160,14 @@ class TypeNamesUtils {
             val fragmentAdapter = getAbsFragmentStateAdapterTypeName()
 
             return fragmentAdapter.parameterizedBy(`object`)
+        }
+
+        fun getAbsPrefsTypeName(): TypeName {
+            return ClassName("com.dailystudio.devbricksx.preference", "AbsPrefs")
+        }
+
+        fun getGlobalContextWrapperTypeName(): TypeName {
+            return ClassName("com.dailystudio.devbricksx", "GlobalContextWrapper")
         }
 
         fun getJavaListTypeName() : ClassName {
@@ -287,6 +296,14 @@ class TypeNamesUtils {
 
         fun getStringTypeName(): ClassName {
             return ClassName("kotlin", "String")
+        }
+
+        fun getBooleanTypeName(): ClassName {
+            return ClassName("kotlin", "Boolean")
+        }
+
+        fun getFloatTypeName(): ClassName {
+            return ClassName("kotlin", "Float")
         }
 
         fun getLoggerTypeName(): ClassName {

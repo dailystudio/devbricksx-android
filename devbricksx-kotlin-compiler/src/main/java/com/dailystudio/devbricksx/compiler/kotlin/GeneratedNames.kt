@@ -14,6 +14,7 @@ class GeneratedNames {
         private const val DATABASE_SUFFIX = "Database"
         private const val DAO_SUFFIX = "Dao"
         private const val DIFF_UTIL_SUFFIX = "DiffUtil"
+        private const val SHARED_PREFS_SUFFIX = "Prefs"
 
         private const val DATABASE_PACKAGE_SUFFIX = ".db"
         private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
@@ -107,6 +108,13 @@ class GeneratedNames {
             return buildString {
                 this.append(className)
                 this.append(DIFF_UTIL_SUFFIX)
+            }
+        }
+
+        fun getSharedPrefsName(className: String) : String {
+            return buildString {
+                this.append(className)
+                this.append(SHARED_PREFS_SUFFIX)
             }
         }
 

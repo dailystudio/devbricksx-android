@@ -26,3 +26,26 @@ fun String.kotlinGetterName(): String {
 
     return this.removePrefix("get").lowerCamelCaseName()
 }
+
+fun String.kebabCaseName(): String {
+    if (isBlank()) {
+        return this
+    }
+
+    val builder = StringBuilder()
+
+    for (i in this.indices) {
+        val c = this[i]
+
+        if (Character.isAlphabetic(c.toInt())
+                && Character.isUpperCase(c)
+                && i != 0) {
+
+            builder.append("-")
+        }
+
+        builder.append(c.toLowerCase())
+    }
+
+    return builder.toString()
+}
