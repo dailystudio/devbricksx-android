@@ -9,11 +9,8 @@
 
     <com.dailystudio.devbricksx.audio.visualizer.RawAudioDataVisualizer
         android:id="@+id/visualizer"
-        app:barColor="@color/tomato_red"
-        app:barWidth="10dp"
-        app:barSpace="2dp"
-        app:maxAmplifier="600"
-        app:minAmplifier="10"
+        app:barWidth="@dimen/av_bar_width"
+        app:barSpace="@dimen/av_bar_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="audio_visualizer_max_amplifier">800</integer>
+    <integer name="audio_visualizer_min_amplifier">20</integer>
+</resources>

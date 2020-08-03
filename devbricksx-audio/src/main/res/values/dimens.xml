@@ -4,4 +4,7 @@
 	
 	<dimen name="audio_record_button_size">72dp</dimen>
 
+	<dimen name="audio_visualizer_bar_width">25dp</dimen>
+	<dimen name="audio_visualizer_bar_space">5dp</dimen>
+
 </resources>

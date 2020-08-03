@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/audio_container"
     android:background="@color/white"
     android:layout_width="match_parent"
@@ -8,6 +9,11 @@
 
     <com.dailystudio.devbricksx.audio.visualizer.RawAudioDataVisualizer
         android:id="@+id/visualizer"
+        app:barColor="@color/audio_visualizer_bar_color"
+        app:barWidth="@dimen/audio_visualizer_bar_width"
+        app:barSpace="@dimen/audio_visualizer_bar_space"
+        app:maxAmplifier="@integer/audio_visualizer_max_amplifier"
+        app:minAmplifier="@integer/audio_visualizer_min_amplifier"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
