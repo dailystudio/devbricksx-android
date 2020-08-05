@@ -3,13 +3,9 @@ package com.dailystudio.devbricksx.samples.settings
 import android.content.Context
 import android.graphics.drawable.Drawable
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.settings.SamplePrefs.TEXT_STYLE_BOLD
-import com.dailystudio.devbricksx.samples.settings.SamplePrefs.TEXT_STYLE_ITALIC
-import com.dailystudio.devbricksx.samples.settings.SamplePrefs.TEXT_STYLE_ITALIC_BOLD
-import com.dailystudio.devbricksx.samples.settings.SamplePrefs.TEXT_STYLE_NORMAL
 import com.dailystudio.devbricksx.settings.*
-import com.dailystudio.devbricksx.utils.ImageUtils
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import kotlin.math.roundToInt
 
 class SampleSettingsFragment : AbsSettingsFragment() {
 
@@ -17,17 +13,17 @@ class SampleSettingsFragment : AbsSettingsFragment() {
 
     override fun createSettings(context: Context): Array<AbsSetting> {
         val roundedCornerSetting = object: SwitchSetting(context,
-                SamplePrefs.PREF_ROUNDED_CORNER,
+                SampleSettingsPrefs.PREF_ROUNDED_CORNER,
                 R.drawable.ic_setting_rounded_corner,
                 R.string.setting_rounded_corner,
                 -1) {
 
             override fun isOn(): Boolean {
-                return SamplePrefs.withRoundedCorner(context)
+                return SampleSettingsPrefs.roundedCorner
             }
 
             override fun setOn(on: Boolean) {
-                SamplePrefs.setWithRoundedCorner(context, on)
+                SampleSettingsPrefs.roundedCorner = on
 
                 radiusSetting?.enabled = on
             }
@@ -35,59 +31,59 @@ class SampleSettingsFragment : AbsSettingsFragment() {
         }
 
         val radiusSetting = object: SeekBarSetting(context,
-                SamplePrefs.PREF_CORNER_RADIUS,
+                SampleSettingsPrefs.PREF_CORNER_RADIUS,
                 R.drawable.ic_setting_radius,
                 R.string.setting_radius,
-                SamplePrefs.withRoundedCorner(context)) {
+                SampleSettingsPrefs.roundedCorner) {
 
             override fun getProgress(context: Context): Float {
-                return SamplePrefs.getCornerRadius(context)
+                return SampleSettingsPrefs.cornerRadius
             }
 
             override fun setProgress(context: Context, progress: Float) {
-                SamplePrefs.setCornerRadius(context, progress)
+                SampleSettingsPrefs.cornerRadius = progress
             }
 
             override fun getMinValue(context: Context): Float {
-                return SamplePrefs.MIN_CORNER_RADIUS
+                return SampleSettings.MIN_CORNER_RADIUS
             }
 
             override fun getMaxValue(context: Context): Float {
-                return SamplePrefs.MAX_CORNER_RADIUS
+                return SampleSettings.MAX_CORNER_RADIUS
             }
 
             override fun getStep(context: Context): Float {
-                return SamplePrefs.CORNER_RADIUS_CHANGE_STEP
+                return SampleSettings.CORNER_RADIUS_CHANGE_STEP
             }
         }
         this.radiusSetting = radiusSetting
 
         val styleItems = arrayOf(
-                SimpleRadioSettingItem(context, TEXT_STYLE_NORMAL, R.string.label_text_style_normal),
-                SimpleRadioSettingItem(context, TEXT_STYLE_ITALIC, R.string.label_text_style_italic),
-                SimpleRadioSettingItem(context, TEXT_STYLE_BOLD, R.string.label_text_style_bold),
-                SimpleRadioSettingItem(context, TEXT_STYLE_ITALIC_BOLD, R.string.label_text_style_italic_bold)
+                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_NORMAL, R.string.label_text_style_normal),
+                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_ITALIC, R.string.label_text_style_italic),
+                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_BOLD, R.string.label_text_style_bold),
+                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_ITALIC_BOLD, R.string.label_text_style_italic_bold)
         )
 
         val textStyleSetting = object: RadioSetting<SimpleRadioSettingItem>(
                 context,
-                SamplePrefs.PREF_TEXT_STYLE,
+                SampleSettingsPrefs.PREF_TEXT_STYLE,
                 R.drawable.ic_setting_text_style,
                 R.string.setting_radius,
                 styleItems) {
             override val selectedId: String?
-                get() = SamplePrefs.getTextStyle(context)
+                get() = SampleSettingsPrefs.textStyle
 
             override fun setSelected(selectedId: String?) {
                 selectedId?.let {
-                    SamplePrefs.setTextStyle(context, it)
+                    SampleSettingsPrefs.textStyle = it
                 }
             }
         }
 
         val textInputSetting = object: EditSetting(
                 context,
-                SamplePrefs.PREF_TEXT_INPUT,
+                SampleSettingsPrefs.PREF_TEXT_INPUT,
                 R.drawable.ic_setting_text_input,
                 R.string.setting_text_input
         ) {
@@ -108,20 +104,47 @@ class SampleSettingsFragment : AbsSettingsFragment() {
             }
 
             override fun getEditText(context: Context): CharSequence? {
-                return SamplePrefs.getTextInput(context)
+                return SampleSettingsPrefs.textInput
             }
 
             override fun setEditText(context: Context, text: CharSequence?) {
-                SamplePrefs.setTextInput(context, text.toString())
+                SampleSettingsPrefs.textInput = text.toString()
             }
 
             override fun onEditButtonClicked(context: Context) {
-                SamplePrefs.setTextInput(context, null)
+                SampleSettingsPrefs.textInput = null
             }
 
         }
 
+        val maxLinesSetting = object: SeekBarSetting(context,
+                SampleSettingsPrefs.PREF_MAX_LINES,
+                R.drawable.ic_setting_max_lines,
+                R.string.setting_max_lines) {
+
+            override fun getProgress(context: Context): Float {
+                return SampleSettingsPrefs.maxLines.toFloat()
+            }
+
+            override fun setProgress(context: Context, progress: Float) {
+                SampleSettingsPrefs.maxLines = progress.roundToInt()
+            }
+
+            override fun getMinValue(context: Context): Float {
+                return SampleSettings.MIN_MAX_LINES.toFloat()
+            }
+
+            override fun getMaxValue(context: Context): Float {
+                return SampleSettings.MAX_MAX_LINES.toFloat()
+            }
+
+            override fun getStep(context: Context): Float {
+                return SampleSettings.MAX_LINES_STEP.toFloat()
+            }
+        }
+
         return arrayOf(textInputSetting,
+                maxLinesSetting,
                 roundedCornerSetting,
                 radiusSetting,
                 textStyleSetting)

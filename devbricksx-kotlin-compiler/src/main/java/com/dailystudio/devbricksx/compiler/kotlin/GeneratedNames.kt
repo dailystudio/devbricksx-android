@@ -1,6 +1,8 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
+import com.dailystudio.devbricksx.compiler.kotlin.utils.kebabCaseName
 import com.dailystudio.devbricksx.compiler.kotlin.utils.lowerCamelCaseName
+import com.dailystudio.devbricksx.compiler.kotlin.utils.underlineCaseName
 
 class GeneratedNames {
     companion object {
@@ -21,6 +23,8 @@ class GeneratedNames {
         private const val VIEW_MODEL_PACKAGE_SUFFIX = ".model"
         private const val UI_PACKAGE_SUFFIX = ".ui"
         private const val FRAGMENT_PACKAGE_SUFFIX = ".fragment"
+
+        private const val PREF_KEY_PREFIX = "PREF_"
 
         private fun getPackageName(packageName: String, suffix: String) : String {
             var basePackage = if (packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
@@ -193,6 +197,13 @@ class GeneratedNames {
             return buildString {
                 this.append(className.lowerCamelCaseName())
                 this.append('s')
+            }
+        }
+
+        fun getPreferenceKeyName(filedName: String): String {
+            return buildString {
+                append(PREF_KEY_PREFIX)
+                append(filedName.underlineCaseName().toUpperCase())
             }
         }
 

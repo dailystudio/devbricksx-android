@@ -20,6 +20,7 @@
         <item name="android:textColor">@color/light_black</item>
         <item name="android:textSize">@dimen/default_font_size</item>
         <item name="android:padding">@dimen/demo_text_padding</item>
+        <item name="android:ellipsize">marquee</item>
     </style>
 
     <style name="DemoTextNormal" parent="DemoText">

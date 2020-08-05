@@ -4,7 +4,7 @@
 	
 	<dimen name="demo_area_height">250dp</dimen>
 	<dimen name="demo_area_padding">50dp</dimen>
-	<dimen name="demo_text_padding">25dp</dimen>
+	<dimen name="demo_text_padding">15dp</dimen>
 
 	<dimen name="av_bar_width">10dp</dimen>
 	<dimen name="av_bar_space">2dp</dimen>

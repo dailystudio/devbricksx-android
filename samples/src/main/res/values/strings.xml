@@ -16,6 +16,7 @@
 
     <string name="setting_rounded_corner">Display rounded corner</string>
     <string name="setting_radius">Radius of rounded corner</string>
+    <string name="setting_max_lines">Maximum text lines</string>
     <string name="setting_text_style">Font style of text</string>
     <string name="setting_text_input">Input your own text</string>
 

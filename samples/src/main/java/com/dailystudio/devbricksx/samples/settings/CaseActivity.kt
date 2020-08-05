@@ -33,13 +33,15 @@ class CaseActivity : BaseCaseActivity() {
 
         Settings.observe(this, Observer {
             when (it.name) {
-                SamplePrefs.PREF_ROUNDED_CORNER, SamplePrefs.PREF_CORNER_RADIUS-> {
+                SampleSettingsPrefs.PREF_ROUNDED_CORNER,
+                SampleSettingsPrefs.PREF_CORNER_RADIUS -> {
                     syncRoundedCorner()
                 }
-                SamplePrefs.PREF_TEXT_STYLE-> {
+                SampleSettingsPrefs.PREF_TEXT_STYLE,
+                SampleSettingsPrefs.PREF_MAX_LINES -> {
                     syncTextStyle()
                 }
-                SamplePrefs.PREF_TEXT_INPUT-> {
+                SampleSettingsPrefs.PREF_TEXT_INPUT -> {
                     syncText()
                 }
             }
@@ -49,7 +51,7 @@ class CaseActivity : BaseCaseActivity() {
     private fun syncText() {
         val defaultText = getString(R.string.default_demo_text)
 
-        val text = SamplePrefs.getTextInput(this)
+        val text = SampleSettingsPrefs.textInput
         demoTextView?.text = text?.let {
            if (it.isBlank()) {
                 defaultText
@@ -60,29 +62,29 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private fun syncRoundedCorner() {
-        val withRoundedCorner = SamplePrefs.withRoundedCorner(this)
 
-        demoTextCard?.radius = if (withRoundedCorner) {
-            SamplePrefs.getCornerRadius(this@CaseActivity)
+        demoTextCard?.radius = if (SampleSettingsPrefs.roundedCorner) {
+            SampleSettingsPrefs.cornerRadius
         } else {
             0f
         }
     }
 
     private fun syncTextStyle() {
-        val textStyle = SamplePrefs.getTextStyle(this)
+        val textStyle = SampleSettingsPrefs.textStyle
         Logger.debug("text style: $textStyle")
 
         val styleResId = when (textStyle) {
-            SamplePrefs.TEXT_STYLE_NORMAL -> R.style.DemoTextNormal
-            SamplePrefs.TEXT_STYLE_ITALIC-> R.style.DemoTextItalic
-            SamplePrefs.TEXT_STYLE_BOLD -> R.style.DemoTextBold
-            SamplePrefs.TEXT_STYLE_ITALIC_BOLD -> R.style.DemoTextItalicBold
+            SampleSettings.TEXT_STYLE_NORMAL -> R.style.DemoTextNormal
+            SampleSettings.TEXT_STYLE_ITALIC-> R.style.DemoTextItalic
+            SampleSettings.TEXT_STYLE_BOLD -> R.style.DemoTextBold
+            SampleSettings.TEXT_STYLE_ITALIC_BOLD -> R.style.DemoTextItalicBold
             else -> R.style.DemoTextNormal
         }
 
         Logger.debug("styleResId: $styleResId")
 
+        demoTextView?.maxLines = SampleSettingsPrefs.maxLines
         demoTextView?.let {
             TextViewCompat.setTextAppearance(it, styleResId)
         }

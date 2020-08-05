@@ -49,3 +49,26 @@ fun String.kebabCaseName(): String {
 
     return builder.toString()
 }
+
+fun String.underlineCaseName(): String {
+    if (isBlank()) {
+        return this
+    }
+
+    val builder = StringBuilder()
+
+    for (i in this.indices) {
+        val c = this[i]
+
+        if (Character.isAlphabetic(c.toInt())
+                && Character.isUpperCase(c)
+                && i != 0) {
+
+            builder.append("_")
+        }
+
+        builder.append(c.toLowerCase())
+    }
+
+    return builder.toString()
+}
