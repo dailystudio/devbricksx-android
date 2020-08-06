@@ -6,6 +6,7 @@ import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.settings.*
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class SampleSettingsFragment : AbsSettingsFragment() {
 
@@ -143,11 +144,39 @@ class SampleSettingsFragment : AbsSettingsFragment() {
             }
         }
 
+        val animDurationSetting = object: SeekBarSetting(context,
+                SampleSettingsPrefs.PREF_ANIM_DURATION,
+                R.drawable.ic_setting_anim_duration,
+                R.string.setting_animation_duration) {
+
+            override fun getProgress(context: Context): Float {
+                return SampleSettingsPrefs.animDuration.toFloat()
+            }
+
+            override fun setProgress(context: Context, progress: Float) {
+                SampleSettingsPrefs.animDuration = progress.roundToLong()
+            }
+
+            override fun getMinValue(context: Context): Float {
+                return SampleSettings.MIN_ANIM_DURATION.toFloat()
+            }
+
+            override fun getMaxValue(context: Context): Float {
+                return SampleSettings.MAX_ANIM_DURATION.toFloat()
+            }
+
+            override fun getStep(context: Context): Float {
+                return SampleSettings.ANIM_DURATION_STEP.toFloat()
+            }
+        }
+
         return arrayOf(textInputSetting,
                 maxLinesSetting,
                 roundedCornerSetting,
                 radiusSetting,
-                textStyleSetting)
+                textStyleSetting,
+                animDurationSetting
+        )
     }
 
 }

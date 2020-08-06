@@ -11,7 +11,7 @@
 
     <string name="action_about">About</string>
 
-    <string name="default_demo_text">Welcome to using settings facilities! You can change settings below and its result will be reflected here.</string>
+    <string name="default_demo_text">Welcome to settings demonstration! You can change settings below and the result will be reflected here immediately.</string>
     <string name="demo_text_hint">Write something here …</string>
 
     <string name="setting_rounded_corner">Display rounded corner</string>
@@ -19,5 +19,8 @@
     <string name="setting_max_lines">Maximum text lines</string>
     <string name="setting_text_style">Font style of text</string>
     <string name="setting_text_input">Input your own text</string>
+    <string name="setting_animation_duration">Duration of animation (ms)</string>
+
+    <string name="animation_attribution">\@Alexander Rozhkov / LottieFiles</string>
 
 </resources>

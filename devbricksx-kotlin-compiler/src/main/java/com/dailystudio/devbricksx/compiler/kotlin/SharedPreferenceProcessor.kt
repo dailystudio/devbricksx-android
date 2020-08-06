@@ -145,6 +145,32 @@ class SharedPreferenceProcessor : BaseProcessor() {
                         initializerBuilder.addStatement("%L.toInt()", defaultVal)
                     }
 
+                    longTypeName -> {
+                        val defaultVal: Long = try {
+                            defValStr.toLong()
+                        } catch (e: NumberFormatException) {
+                            error("failed to parse default long value from [%s]: %s",
+                                    defValStr, e)
+
+                            0
+                        }
+                        getterBuilder.addStatement("val defaultVal = %L.toLong()",
+                                defaultVal)
+                        getterBuilder.addStatement("val context = %L.context ?: return defaultVal",
+                                globalContextWrapperTypeName)
+                        getterBuilder.addStatement("return getLongPrefValue(context, %S, defaultVal)",
+                                keyName)
+
+                        setterBuilder.addParameter("value", floatTypeName)
+                        setterBuilder.addStatement("field = value")
+                        setterBuilder.addStatement("val context = %L.context ?: return",
+                                globalContextWrapperTypeName)
+                        setterBuilder.addStatement("setLongPrefValue(context, %S, value)",
+                                keyName)
+
+                        initializerBuilder.addStatement("%L.toLong()", defaultVal)
+                    }
+
                     floatTypeName -> {
                         val defaultVal: Float = try {
                             defValStr.toFloat()

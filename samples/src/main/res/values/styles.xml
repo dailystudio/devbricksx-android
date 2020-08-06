@@ -19,7 +19,10 @@
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:textColor">@color/light_black</item>
         <item name="android:textSize">@dimen/default_font_size</item>
-        <item name="android:padding">@dimen/demo_text_padding</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">@dimen/demo_text_padding</item>
+        <item name="android:paddingTop">@dimen/demo_text_padding</item>
+        <item name="android:paddingBottom">@dimen/demo_text_padding</item>
         <item name="android:ellipsize">marquee</item>
     </style>
 
@@ -37,6 +40,13 @@
 
     <style name="DemoTextItalicBold" parent="DemoText">
         <item name="android:textStyle">italic|bold</item>
+    </style>
+
+    <style name="AttributeText">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/attribute_font_size</item>
+        <item name="android:padding">@dimen/attribute_text_padding</item>
     </style>
 
 </resources>

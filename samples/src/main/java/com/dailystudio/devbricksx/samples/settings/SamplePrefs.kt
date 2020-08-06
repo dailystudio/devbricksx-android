@@ -8,6 +8,7 @@ data class SampleSettings(@PreferenceValue(defaultValueStr = "false") val rounde
                           @PreferenceValue(defaultValueStr = DEFAULT_CORNER_RADIUS.toString()) val cornerRadius: Float = MIN_CORNER_RADIUS,
                           @PreferenceValue(defaultValueStr = TEXT_STYLE_NORMAL) val textStyle: String = TEXT_STYLE_NORMAL,
                           @PreferenceValue(defaultValueStr = DEFAULT_MAX_LINES.toString()) val maxLines: Int = DEFAULT_MAX_LINES,
+                          @PreferenceValue(defaultValueStr = DEFAULT_ANIM_DURATION.toString()) val animDuration: Long = DEFAULT_ANIM_DURATION,
                           @PreferenceValue val textInput: String? = null) {
     companion object {
 
@@ -18,13 +19,18 @@ data class SampleSettings(@PreferenceValue(defaultValueStr = "false") val rounde
 
         private const val DEFAULT_MAX_LINES = 3
         const val MIN_MAX_LINES = 1
-        const val MAX_MAX_LINES = 5
+        const val MAX_MAX_LINES = 6
         const val MAX_LINES_STEP = 1
 
         const val TEXT_STYLE_NORMAL = "normal"
         const val TEXT_STYLE_ITALIC = "italic"
         const val TEXT_STYLE_BOLD = "bold"
         const val TEXT_STYLE_ITALIC_BOLD = "italic_bold"
+
+        private const val DEFAULT_ANIM_DURATION = 1000L
+        const val MIN_ANIM_DURATION = 100L
+        const val MAX_ANIM_DURATION = 2000L
+        const val ANIM_DURATION_STEP = 100L
 
     }
 }

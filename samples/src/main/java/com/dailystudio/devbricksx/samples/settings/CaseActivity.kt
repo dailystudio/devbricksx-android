@@ -1,10 +1,13 @@
 package com.dailystudio.devbricksx.samples.settings
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.Observer
+import com.airbnb.lottie.LottieAnimationView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
@@ -12,8 +15,15 @@ import com.dailystudio.devbricksx.settings.Settings
 
 class CaseActivity : BaseCaseActivity() {
 
+    companion object {
+
+        private const val DURATION_CHECK_INTERVAL = 500L
+
+    }
+
     private var demoTextView: TextView? = null
     private var demoTextCard: CardView? = null
+    private var demoAnimation: LottieAnimationView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +36,12 @@ class CaseActivity : BaseCaseActivity() {
     private fun setupViews() {
         demoTextView = findViewById(R.id.demo_text)
         demoTextCard = findViewById(R.id.demo_text_card)
+        demoAnimation = findViewById(R.id.demo_animation)
 
         syncText()
         syncRoundedCorner()
         syncTextStyle()
+        syncAnimation()
 
         Settings.observe(this, Observer {
             when (it.name) {
@@ -44,8 +56,50 @@ class CaseActivity : BaseCaseActivity() {
                 SampleSettingsPrefs.PREF_TEXT_INPUT -> {
                     syncText()
                 }
+                SampleSettingsPrefs.PREF_ANIM_DURATION -> {
+                    syncAnimation()
+                }
             }
         })
+    }
+
+    private fun syncAnimation() {
+        checkAndSyncAnimationSpeed()
+    }
+
+    private fun completeCheckAndSyncAnimationSpeed() {
+        handler.removeCallbacks(checkDurationAndSyncSpeedRunnable)
+    }
+
+    private fun delayCheckAndSyncAnimationSpeed() {
+        handler.postDelayed(checkDurationAndSyncSpeedRunnable, DURATION_CHECK_INTERVAL)
+    }
+
+    private fun checkAndSyncAnimationSpeed() {
+        val animationView = demoAnimation ?: return
+
+        val duration = animationView.duration
+        if (duration == 0L) {
+            delayCheckAndSyncAnimationSpeed()
+
+            return
+        }
+
+        applyAnimSpeed(animationView, duration)
+
+        completeCheckAndSyncAnimationSpeed()
+    }
+
+    private fun applyAnimSpeed(animationView: LottieAnimationView,
+                               origDuration: Long) {
+        var targetDuration = SampleSettingsPrefs.animDuration
+        if (targetDuration <= 0) {
+            targetDuration = SampleSettings.MIN_ANIM_DURATION
+        }
+
+        val speed = origDuration / targetDuration.toFloat()
+
+        animationView.speed = speed
     }
 
     private fun syncText() {
@@ -59,10 +113,12 @@ class CaseActivity : BaseCaseActivity() {
                 it
            }
         } ?: defaultText
+
+        Logger.debug("duration = ${demoAnimation?.duration}")
+
     }
 
     private fun syncRoundedCorner() {
-
         demoTextCard?.radius = if (SampleSettingsPrefs.roundedCorner) {
             SampleSettingsPrefs.cornerRadius
         } else {
@@ -89,5 +145,11 @@ class CaseActivity : BaseCaseActivity() {
             TextViewCompat.setTextAppearance(it, styleResId)
         }
     }
+
+    private val checkDurationAndSyncSpeedRunnable: Runnable = Runnable {
+        checkAndSyncAnimationSpeed()
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
 
 }
