@@ -21,6 +21,6 @@
     <string name="setting_text_input">Input your own text</string>
     <string name="setting_animation_duration">Duration of animation (ms)</string>
 
-    <string name="animation_attribution">\@Alexander Rozhkov / LottieFiles</string>
+    <string name="animation_attribution">animation \@Alexander Rozhkov / LottieFiles</string>
 
 </resources>

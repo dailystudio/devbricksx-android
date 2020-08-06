@@ -10,10 +10,14 @@ abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
     : ListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
 
     private var itemClickListener: OnItemClickListener<Item>? = null
+    private val tagLock: Object = Object()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (itemClickListener != null) {
-            holder.itemView.tag = position
+            synchronized(tagLock) {
+                holder.itemView.tag = position
+            }
+
             holder.itemView.setOnClickListener(itemViewOnClickListener)
         } else {
             holder.itemView.setOnClickListener(null)
@@ -25,7 +29,10 @@ abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
             return@OnClickListener
         }
 
-        val position = v.tag ?: return@OnClickListener
+        val position = synchronized(tagLock) {
+           v.tag ?: return@OnClickListener
+        }
+
         if (position is Int) {
             val item = getItem(position)
 
