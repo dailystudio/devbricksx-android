@@ -1,14 +1,16 @@
-package com.dailystudio.devbricksx.samples.settings
+package com.dailystudio.devbricksx.samples.settings.dialog
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.settings.SampleSettings
+import com.dailystudio.devbricksx.samples.settings.SampleSettingsPrefs
 import com.dailystudio.devbricksx.settings.*
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-class SampleSettingsFragment : AbsSettingsFragment() {
+class SampleSettingsDialogFragment : AbsSettingsDialogFragment() {
 
     private var radiusSetting: AbsSetting? = null
 

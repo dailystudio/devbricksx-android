@@ -12,25 +12,30 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/light_gray"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/fragment_settings_demo"
-            android:name="com.dailystudio.devbricksx.samples.settings.SettingsDemoFragment"
+        <Button
+            android:id="@+id/button_show_settings"
+            android:text="@string/label_settings"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/default_content_padding"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/demo_area_height"/>
+            android:layout_height="wrap_content"/>
 
         <FrameLayout
-            android:layout_below="@id/fragment_settings_demo"
+            android:layout_above="@id/button_show_settings"
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <fragment
-                android:id="@+id/fragment_settings"
-                android:name="com.dailystudio.devbricksx.samples.settings.normal.SampleSettingsFragment"
+                android:id="@+id/fragment_settings_demo"
+                android:name="com.dailystudio.devbricksx.samples.settings.SettingsDemoFragment"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="@dimen/demo_area_height"/>
 
         </FrameLayout>
 

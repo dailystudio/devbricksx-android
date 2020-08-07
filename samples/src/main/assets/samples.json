@@ -77,10 +77,17 @@
     "desc": ""
   },
   {
-    "name": "settings",
-    "package": "settings",
+    "name": "settings-normal",
+    "package": "settings.normal",
     "title": "Settings",
     "icon": "ic_case_settings",
+    "desc": ""
+  },
+  {
+    "name": "settings-dialog",
+    "package": "settings.dialog",
+    "title": "Settings Dialog",
+    "icon": "ic_case_settings_dialog",
     "desc": ""
   }
 ]

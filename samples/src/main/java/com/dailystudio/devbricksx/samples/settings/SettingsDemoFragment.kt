@@ -3,17 +3,20 @@ package com.dailystudio.devbricksx.samples.settings
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.widget.TextViewCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.settings.Settings
 
-class CaseActivity : BaseCaseActivity() {
+class SettingsDemoFragment : Fragment() {
 
     companion object {
 
@@ -25,25 +28,25 @@ class CaseActivity : BaseCaseActivity() {
     private var demoTextCard: CardView? = null
     private var demoAnimation: LottieAnimationView? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_settings_demo, null)
 
-        setContentView(R.layout.activity_case_settings)
+        setupViews(view)
 
-        setupViews()
+        return view
     }
 
-    private fun setupViews() {
-        demoTextView = findViewById(R.id.demo_text)
-        demoTextCard = findViewById(R.id.demo_text_card)
-        demoAnimation = findViewById(R.id.demo_animation)
+    private fun setupViews(fragmentView: View) {
+        demoTextView = fragmentView.findViewById(R.id.demo_text)
+        demoTextCard = fragmentView.findViewById(R.id.demo_text_card)
+        demoAnimation = fragmentView.findViewById(R.id.demo_animation)
 
         syncText()
         syncRoundedCorner()
         syncTextStyle()
         syncAnimation()
 
-        Settings.observe(this, Observer {
+        Settings.observe(viewLifecycleOwner, Observer {
             when (it.name) {
                 SampleSettingsPrefs.PREF_ROUNDED_CORNER,
                 SampleSettingsPrefs.PREF_CORNER_RADIUS -> {
@@ -107,11 +110,11 @@ class CaseActivity : BaseCaseActivity() {
 
         val text = SampleSettingsPrefs.textInput
         demoTextView?.text = text?.let {
-           if (it.isBlank()) {
+            if (it.isBlank()) {
                 defaultText
-           } else {
+            } else {
                 it
-           }
+            }
         } ?: defaultText
 
         Logger.debug("duration = ${demoAnimation?.duration}")
@@ -151,5 +154,4 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private val handler = Handler(Looper.getMainLooper())
-
 }

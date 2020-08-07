@@ -3,6 +3,8 @@
     android:id="@+id/setting_root"
     android:clickable="true"
     android:background="?attr/selectableItemBackground"
+    android:paddingStart="@dimen/default_padding"
+    android:paddingEnd="@dimen/default_padding"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
