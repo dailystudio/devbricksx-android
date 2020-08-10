@@ -12,6 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_dialog_top_height" />
 
+    <View
+        android:id="@+id/settings_divider"
+        android:background="@drawable/list_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2px"/>
+
     <com.dailystudio.devbricksx.settings.SettingsView
         android:id="@+id/settings_view"
         android:layout_width="match_parent"

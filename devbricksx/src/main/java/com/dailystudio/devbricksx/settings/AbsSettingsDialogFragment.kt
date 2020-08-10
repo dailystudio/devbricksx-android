@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dailystudio.devbricksx.R
+import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
 
@@ -36,8 +37,14 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
         settingsView = dialogView.findViewById(
                 R.id.settings_view)
 
-        reloadSettings(requireContext())
+        val divider: View? = dialogView.findViewById(R.id.settings_divider)
+        divider?.visibility = if (shouldDisplayDivider()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
 
+        reloadSettings(requireContext())
 
         val builder = AlertDialog.Builder(context)
                 .setView(dialogView)
@@ -49,6 +56,10 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
 
     protected open fun getSettingsTopImageDrawable(): Drawable? {
         return null
+    }
+
+    protected open fun shouldDisplayDivider(): Boolean {
+        return false
     }
 
     protected open fun reloadSettings(context: Context) {

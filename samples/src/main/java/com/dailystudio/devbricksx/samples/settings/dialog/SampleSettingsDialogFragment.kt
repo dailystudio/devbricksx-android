@@ -1,11 +1,13 @@
 package com.dailystudio.devbricksx.samples.settings.dialog
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.settings.SampleSettings
 import com.dailystudio.devbricksx.samples.settings.SampleSettingsPrefs
 import com.dailystudio.devbricksx.settings.*
+import com.dailystudio.devbricksx.utils.ColorUtils
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -179,6 +181,11 @@ class SampleSettingsDialogFragment : AbsSettingsDialogFragment() {
                 textStyleSetting,
                 animDurationSetting
         )
+    }
+
+    override fun getSettingsTopImageDrawable(): Drawable? {
+        return ResourcesCompatUtils.getDrawable(requireContext(),
+                R.drawable.app_settings)
     }
 
 }
