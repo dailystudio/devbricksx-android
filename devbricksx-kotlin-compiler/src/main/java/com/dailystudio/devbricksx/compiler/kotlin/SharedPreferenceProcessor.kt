@@ -63,9 +63,10 @@ class SharedPreferenceProcessor : BaseProcessor() {
 
         val superClass: TypeMirror = element.superclass
         val superElement: Element = processingEnv.typeUtils.asElement(superClass)
+        debug("[element: %s] super class: %s", element, superElement)
 
         val superSharePrefs = superElement.getAnnotation(SharedPreference::class.java)
-        debug("super class annotation: %s", superSharePrefs)
+        debug("[element: %s] super class annotation: %s", element, superSharePrefs)
         val superType = if (superSharePrefs != null) {
             val superTypePackage: String =
                     processingEnv.elementUtils.getPackageOf(superElement).toString()
