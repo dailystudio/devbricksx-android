@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.preference
 import android.content.*
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.dailystudio.devbricksx.development.Logger
 
 data class PrefsChange(val appPrefs: AbsPrefs,
                        val prefKey: String)
@@ -27,7 +28,7 @@ abstract class AbsPrefs {
         editor.putString(pref, sValue)
         editor.commit()
 
-        notifyPrefChanged(context, pref)
+        notifyPrefChanged(pref)
     }
 
     fun setBooleanPrefValue(context: Context,
@@ -37,7 +38,7 @@ abstract class AbsPrefs {
         editor.putBoolean(pref, bValue)
         editor.commit()
 
-        notifyPrefChanged(context, pref)
+        notifyPrefChanged(pref)
     }
 
     fun setLongPrefValue(context: Context,
@@ -47,7 +48,7 @@ abstract class AbsPrefs {
         editor.putLong(pref, lValue)
         editor.commit()
 
-        notifyPrefChanged(context, pref)
+        notifyPrefChanged(pref)
     }
 
     fun setIntegerPrefValue(context: Context,
@@ -57,7 +58,7 @@ abstract class AbsPrefs {
         editor.putInt(pref, iValue)
         editor.commit()
 
-        notifyPrefChanged(context, pref)
+        notifyPrefChanged(pref)
     }
 
     fun setFloatPrefValue(context: Context,
@@ -67,7 +68,7 @@ abstract class AbsPrefs {
         editor.putFloat(pref, fValue)
         editor.commit()
 
-        notifyPrefChanged(context, pref)
+        notifyPrefChanged(pref)
     }
 
     fun getStringPrefValue(context: Context,
@@ -128,11 +129,12 @@ abstract class AbsPrefs {
         return sharedPref.getFloat(pref, defVal)
     }
 
-    protected fun notifyPrefChanged(context: Context, key: String) {
+    protected fun notifyPrefChanged(key: String) {
         if (TextUtils.isEmpty(key)) {
             return
         }
 
+        Logger.debug("preference changed: [$key]")
         prefsChange.postValue(PrefsChange(this, key))
     }
 

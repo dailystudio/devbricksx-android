@@ -70,7 +70,6 @@ class SettingsView: FrameLayout {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var heightMeasureSpec = heightMeasureSpec
         val mode = MeasureSpec.getMode(heightMeasureSpec)
-        Logger.debug("setting view mode: $mode")
         if (mode != MeasureSpec.EXACTLY) {
             val maxHeight = resources.getDimensionPixelSize(R.dimen.settings_maximum_height)
 

@@ -134,10 +134,10 @@ class SettingsDemoFragment : Fragment() {
         Logger.debug("text style: $textStyle")
 
         val styleResId = when (textStyle) {
-            SampleSettings.TEXT_STYLE_NORMAL -> R.style.DemoTextNormal
-            SampleSettings.TEXT_STYLE_ITALIC-> R.style.DemoTextItalic
-            SampleSettings.TEXT_STYLE_BOLD -> R.style.DemoTextBold
-            SampleSettings.TEXT_STYLE_ITALIC_BOLD -> R.style.DemoTextItalicBold
+            TextStyleSettings.TEXT_STYLE_NORMAL -> R.style.DemoTextNormal
+            TextStyleSettings.TEXT_STYLE_ITALIC-> R.style.DemoTextItalic
+            TextStyleSettings.TEXT_STYLE_BOLD -> R.style.DemoTextBold
+            TextStyleSettings.TEXT_STYLE_ITALIC_BOLD -> R.style.DemoTextItalicBold
             else -> R.style.DemoTextNormal
         }
 

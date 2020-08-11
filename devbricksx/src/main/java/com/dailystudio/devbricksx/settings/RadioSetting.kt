@@ -146,18 +146,6 @@ class RadioSettingHolder: AbsSettingHolder() {
             TextViewCompat.setTextAppearance(rb, R.style.SettingsText)
             rb.tag = item
 
-            rb.setOnCheckedChangeListener { compoundButton, isChecked ->
-                Logger.debug("radio $compoundButton: checked = $isChecked")
-                if (isChecked && compoundButton != null) {
-                    val o = compoundButton.tag
-                    if (o is RadioSettingItem) {
-                        radioSetting.setSelected(o.getId())
-//                        radioSetting.postInvalidate()
-                        radioSetting.notifySettingChange()
-                    }
-                }
-            }
-
             radioGroup?.addView(rb)
 
             if (!TextUtils.isEmpty(selectedId)
@@ -171,6 +159,19 @@ class RadioSettingHolder: AbsSettingHolder() {
         Logger.debug("checkedId = $checkedId")
         if (checkedId != -1) {
             radioGroup?.check(checkedId)
+        }
+
+        for (rb in rbs) {
+            rb?.setOnCheckedChangeListener { compoundButton, isChecked ->
+                Logger.debug("radio $compoundButton: checked = $isChecked")
+                if (isChecked && compoundButton != null) {
+                    val o = compoundButton.tag
+                    if (o is RadioSettingItem) {
+                        radioSetting.setSelected(o.getId())
+                        radioSetting.notifySettingChange()
+                    }
+                }
+            }
         }
 
     }

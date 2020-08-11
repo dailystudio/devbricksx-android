@@ -58,10 +58,10 @@ object SampleSettingsHelper {
         }
 
         val styleItems = arrayOf(
-                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_NORMAL, R.string.label_text_style_normal),
-                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_ITALIC, R.string.label_text_style_italic),
-                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_BOLD, R.string.label_text_style_bold),
-                SimpleRadioSettingItem(context, SampleSettings.TEXT_STYLE_ITALIC_BOLD, R.string.label_text_style_italic_bold)
+                SimpleRadioSettingItem(context, TextStyleSettings.TEXT_STYLE_NORMAL, R.string.label_text_style_normal),
+                SimpleRadioSettingItem(context, TextStyleSettings.TEXT_STYLE_ITALIC, R.string.label_text_style_italic),
+                SimpleRadioSettingItem(context, TextStyleSettings.TEXT_STYLE_BOLD, R.string.label_text_style_bold),
+                SimpleRadioSettingItem(context, TextStyleSettings.TEXT_STYLE_ITALIC_BOLD, R.string.label_text_style_italic_bold)
         )
 
         val textStyleSetting = object: RadioSetting<SimpleRadioSettingItem>(
@@ -130,15 +130,15 @@ object SampleSettingsHelper {
             }
 
             override fun getMinValue(context: Context): Float {
-                return SampleSettings.MIN_MAX_LINES.toFloat()
+                return TextStyleSettings.MIN_MAX_LINES.toFloat()
             }
 
             override fun getMaxValue(context: Context): Float {
-                return SampleSettings.MAX_MAX_LINES.toFloat()
+                return TextStyleSettings.MAX_MAX_LINES.toFloat()
             }
 
             override fun getStep(context: Context): Float {
-                return SampleSettings.MAX_LINES_STEP.toFloat()
+                return TextStyleSettings.MAX_LINES_STEP.toFloat()
             }
         }
 
