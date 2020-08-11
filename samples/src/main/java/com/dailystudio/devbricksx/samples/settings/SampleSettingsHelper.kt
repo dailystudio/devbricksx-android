@@ -66,7 +66,7 @@ object SampleSettingsHelper {
 
         val textStyleSetting = object: RadioSetting<SimpleRadioSettingItem>(
                 context,
-                TextSettingsPrefs.PREF_TEXT_STYLE,
+                TextStyleSettingsPrefs.PREF_TEXT_STYLE,
                 R.drawable.ic_setting_text_style,
                 R.string.setting_radius,
                 styleItems) {
@@ -117,7 +117,7 @@ object SampleSettingsHelper {
         }
 
         val maxLinesSetting = object: SeekBarSetting(context,
-                TextSettingsPrefs.PREF_MAX_LINES,
+                TextStyleSettingsPrefs.PREF_MAX_LINES,
                 R.drawable.ic_setting_max_lines,
                 R.string.setting_max_lines) {
 

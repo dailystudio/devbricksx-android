@@ -52,8 +52,8 @@ class SettingsDemoFragment : Fragment() {
                 SampleSettingsPrefs.PREF_CORNER_RADIUS -> {
                     syncRoundedCorner()
                 }
-                TextSettingsPrefs.PREF_TEXT_STYLE,
-                TextSettingsPrefs.PREF_MAX_LINES -> {
+                TextStyleSettingsPrefs.PREF_TEXT_STYLE,
+                TextStyleSettingsPrefs.PREF_MAX_LINES -> {
                     syncTextStyle()
                 }
                 TextSettingsPrefs.PREF_TEXT_INPUT -> {

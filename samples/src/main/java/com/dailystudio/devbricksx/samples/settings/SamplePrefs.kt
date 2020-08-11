@@ -3,10 +3,16 @@ package com.dailystudio.devbricksx.samples.settings
 import com.dailystudio.devbricksx.annotations.PreferenceValue
 import com.dailystudio.devbricksx.annotations.SharedPreference
 
+
 @SharedPreference
-open class TextSettings(@PreferenceValue(defaultValueStr = TEXT_STYLE_NORMAL) val textStyle: String = TEXT_STYLE_NORMAL,
-                        @PreferenceValue(defaultValueStr = DEFAULT_MAX_LINES.toString()) val maxLines: Int = DEFAULT_MAX_LINES,
-                        @PreferenceValue val textInput: String? = null) {
+open class TextSettings(@PreferenceValue val textInput: String? = null)
+
+@SharedPreference
+open class TextStyleSettings(textInput: String? = null,
+                             @PreferenceValue(defaultValueStr = TEXT_STYLE_NORMAL)
+                             val textStyle: String = TEXT_STYLE_NORMAL,
+                             @PreferenceValue(defaultValueStr = DEFAULT_MAX_LINES.toString())
+                             val maxLines: Int = DEFAULT_MAX_LINES) : TextSettings(textInput) {
 
     companion object {
 
@@ -19,19 +25,21 @@ open class TextSettings(@PreferenceValue(defaultValueStr = TEXT_STYLE_NORMAL) va
         const val TEXT_STYLE_ITALIC = "italic"
         const val TEXT_STYLE_BOLD = "bold"
         const val TEXT_STYLE_ITALIC_BOLD = "italic_bold"
-
     }
 
 }
 
 @SharedPreference
-class SampleSettings(textStyle: String = TextSettings.TEXT_STYLE_NORMAL,
-                     maxLines: Int = TextSettings.DEFAULT_MAX_LINES,
-                     textInput: String? = null,
-                     @PreferenceValue(defaultValueStr = "false") val roundedCorner: Boolean = false,
-                     @PreferenceValue(defaultValueStr = DEFAULT_CORNER_RADIUS.toString()) val cornerRadius: Float = MIN_CORNER_RADIUS,
-                     @PreferenceValue(defaultValueStr = DEFAULT_ANIM_DURATION.toString()) val animDuration: Long = DEFAULT_ANIM_DURATION)
-    : TextSettings(textStyle, maxLines, textInput) {
+class SampleSettings(textInput: String? = null,
+                     textStyle: String = TextStyleSettings.TEXT_STYLE_NORMAL,
+                     maxLines: Int = TextStyleSettings.DEFAULT_MAX_LINES,
+                     @PreferenceValue(defaultValueStr = "false")
+                     val roundedCorner: Boolean = false,
+                     @PreferenceValue(defaultValueStr = DEFAULT_CORNER_RADIUS.toString())
+                     val cornerRadius: Float = MIN_CORNER_RADIUS,
+                     @PreferenceValue(defaultValueStr = DEFAULT_ANIM_DURATION.toString())
+                     val animDuration: Long = DEFAULT_ANIM_DURATION)
+    : TextStyleSettings(textInput, textStyle, maxLines) {
 
     companion object {
 
