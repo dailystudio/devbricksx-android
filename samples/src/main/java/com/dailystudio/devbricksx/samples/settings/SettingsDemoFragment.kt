@@ -52,11 +52,11 @@ class SettingsDemoFragment : Fragment() {
                 SampleSettingsPrefs.PREF_CORNER_RADIUS -> {
                     syncRoundedCorner()
                 }
-                SampleSettingsPrefs.PREF_TEXT_STYLE,
-                SampleSettingsPrefs.PREF_MAX_LINES -> {
+                TextSettingsPrefs.PREF_TEXT_STYLE,
+                TextSettingsPrefs.PREF_MAX_LINES -> {
                     syncTextStyle()
                 }
-                SampleSettingsPrefs.PREF_TEXT_INPUT -> {
+                TextSettingsPrefs.PREF_TEXT_INPUT -> {
                     syncText()
                 }
                 SampleSettingsPrefs.PREF_ANIM_DURATION -> {
@@ -95,7 +95,7 @@ class SettingsDemoFragment : Fragment() {
 
     private fun applyAnimSpeed(animationView: LottieAnimationView,
                                origDuration: Long) {
-        var targetDuration = SampleSettingsPrefs.animDuration
+        var targetDuration = SampleSettingsPrefs.instance.animDuration
         if (targetDuration <= 0) {
             targetDuration = SampleSettings.MIN_ANIM_DURATION
         }
@@ -108,7 +108,7 @@ class SettingsDemoFragment : Fragment() {
     private fun syncText() {
         val defaultText = getString(R.string.default_demo_text)
 
-        val text = SampleSettingsPrefs.textInput
+        val text = SampleSettingsPrefs.instance.textInput
         demoTextView?.text = text?.let {
             if (it.isBlank()) {
                 defaultText
@@ -122,15 +122,15 @@ class SettingsDemoFragment : Fragment() {
     }
 
     private fun syncRoundedCorner() {
-        demoTextCard?.radius = if (SampleSettingsPrefs.roundedCorner) {
-            SampleSettingsPrefs.cornerRadius
+        demoTextCard?.radius = if (SampleSettingsPrefs.instance.roundedCorner) {
+            SampleSettingsPrefs.instance.cornerRadius
         } else {
             0f
         }
     }
 
     private fun syncTextStyle() {
-        val textStyle = SampleSettingsPrefs.textStyle
+        val textStyle = SampleSettingsPrefs.instance.textStyle
         Logger.debug("text style: $textStyle")
 
         val styleResId = when (textStyle) {
@@ -143,7 +143,7 @@ class SettingsDemoFragment : Fragment() {
 
         Logger.debug("styleResId: $styleResId")
 
-        demoTextView?.maxLines = SampleSettingsPrefs.maxLines
+        demoTextView?.maxLines = SampleSettingsPrefs.instance.maxLines
         demoTextView?.let {
             TextViewCompat.setTextAppearance(it, styleResId)
         }

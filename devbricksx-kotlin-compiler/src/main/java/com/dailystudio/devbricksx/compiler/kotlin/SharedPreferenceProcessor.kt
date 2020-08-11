@@ -7,10 +7,12 @@ import com.dailystudio.devbricksx.compiler.kotlin.utils.kebabCaseName
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
 import org.jetbrains.annotations.Nullable
-import java.lang.NumberFormatException
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.*
+import javax.lang.model.element.Element
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.TypeElement
+import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
 
@@ -48,6 +50,7 @@ class SharedPreferenceProcessor : BaseProcessor() {
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
         val generatedClassName = GeneratedNames.getSharedPrefsName(typeName)
+        val generatedTypeName = ClassName(packageName, generatedClassName)
         val objectTypeName = ClassName(packageName, typeName)
         val prefName = typeName.kebabCaseName()
         val absPrefsTypeName = TypeNamesUtils.getAbsPrefsTypeName()
@@ -58,13 +61,36 @@ class SharedPreferenceProcessor : BaseProcessor() {
         val integerTypeName = TypeNamesUtils.getIntegerTypeName()
         val stringTypeName = TypeNamesUtils.getStringTypeName()
 
-        val classBuilder = TypeSpec.objectBuilder(generatedClassName)
-                .superclass(absPrefsTypeName)
+        val superClass: TypeMirror = element.superclass
+        val superElement: Element = processingEnv.typeUtils.asElement(superClass)
+
+        val superSharePrefs = superElement.getAnnotation(SharedPreference::class.java)
+        debug("super class annotation: %s", superSharePrefs)
+        val superType = if (superSharePrefs != null) {
+            val superTypePackage: String =
+                    processingEnv.elementUtils.getPackageOf(superElement).toString()
+            val superTypeName: String = superElement.simpleName.toString()
+
+            ClassName(superTypePackage,
+                    GeneratedNames.getSharedPrefsName(superTypeName))
+        } else {
+            absPrefsTypeName
+        }
+
+        val classBuilder = TypeSpec.classBuilder(generatedClassName)
+                .superclass(superType)
+                .addModifiers(KModifier.OPEN)
+
+        val compObjBuilder = TypeSpec.companionObjectBuilder()
 
         val prefNameFieldBuilder = PropertySpec.builder("prefName", String::class)
-//                .addModifiers(KModifier.PROTECTED)
                 .addModifiers(KModifier.OVERRIDE)
                 .initializer("%S", prefName)
+
+        val instanceFieldBuilder = PropertySpec.builder("instance", generatedTypeName)
+                .initializer("%T()", generatedTypeName)
+
+        compObjBuilder.addProperty(instanceFieldBuilder.build())
 
         val subElements: List<Element?> = element.enclosedElements
 
@@ -86,7 +112,8 @@ class SharedPreferenceProcessor : BaseProcessor() {
                         .addModifiers(KModifier.CONST)
                         .initializer("%S", keyName)
 
-                classBuilder.addProperty(prefNameConstant.build())
+//                classBuilder.addProperty(prefNameConstant.build())
+                compObjBuilder.addProperty(prefNameConstant.build())
 
                 val nullable = (subElement.getAnnotation(Nullable::class.java) != null)
 
@@ -225,6 +252,7 @@ class SharedPreferenceProcessor : BaseProcessor() {
             }
         }
 
+        classBuilder.addType(compObjBuilder.build())
         classBuilder.addProperty(prefNameFieldBuilder.build())
 
         return GeneratedResult(
