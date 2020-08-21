@@ -148,4 +148,34 @@ object FileUtils {
                 detectFileEncoding(context, rawId))
     }
 
+    fun getBaseName(filename: String): String {
+        return File(filename).name
+    }
+
+    fun getFileName(filename: String): String {
+        val baseName = getBaseName(filename)
+        if (baseName.isNotEmpty()) {
+            val i = baseName.lastIndexOf('.')
+            if (i > -1 && i < baseName.length - 1) {
+                return baseName.substring(0, i)
+            }
+        }
+        return baseName
+    }
+
+    fun getFileExtension(filename: String): String {
+        return getFileExtension(filename, "")
+    }
+
+    fun getFileExtension(filename: String, defExt: String): String {
+        if (filename.isNotEmpty()) {
+            val i = filename.lastIndexOf('.')
+            if (i > -1 && i < filename.length - 1) {
+                return filename.substring(i + 1)
+            }
+        }
+
+        return defExt
+    }
+
 }
