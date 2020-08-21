@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.utils
 
 import android.content.Context
 import android.content.res.Resources.NotFoundException
+import android.text.TextUtils
 import com.dailystudio.devbricksx.development.Logger
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.*
@@ -176,6 +177,63 @@ object FileUtils {
         }
 
         return defExt
+    }
+
+    fun stringToFile(file: String,
+                     fileContent: String?) {
+        stringToFile(file, fileContent, false)
+    }
+
+    fun stringToFile(file: String, fileContent: String?, append: Boolean) {
+        if (TextUtils.isEmpty(fileContent)) {
+            return
+        }
+
+        val reader = StringReader(fileContent)
+        val outputStream = FileWriter(file, append)
+
+        try {
+            val buffer = CharArray(2048)
+            var n = 0
+            while (reader.read(buffer).also { n = it } != -1) {
+                outputStream.write(buffer, 0, n)
+            }
+
+            outputStream.flush()
+            outputStream.close()
+
+            reader.close()
+        } catch (e: IOException) {
+            Logger.error("write string [$fileContent] to file [$file] failed: $e")
+        } finally {
+            outputStream.close()
+            reader.close()
+        }
+    }
+
+    fun saveToFile(bytes: ByteArray?, filename: String): Boolean {
+        return if (TextUtils.isEmpty(filename)) {
+            false
+        } else saveToFile(bytes, File(filename))
+    }
+
+    fun saveToFile(bytes: ByteArray?, file: File): Boolean {
+        if (bytes == null) {
+            return false
+        }
+
+        return try {
+            val out = FileOutputStream(file)
+            out.write(bytes)
+            out.flush()
+            out.close()
+
+            true
+        } catch (e: IOException) {
+            Logger.debug("save bytes to file [$file] failure: $e")
+
+            false
+        }
     }
 
 }
