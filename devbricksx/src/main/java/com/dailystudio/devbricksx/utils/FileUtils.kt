@@ -6,8 +6,74 @@ import android.text.TextUtils
 import com.dailystudio.devbricksx.development.Logger
 import org.mozilla.universalchardet.UniversalDetector
 import java.io.*
+import java.math.BigInteger
+import java.nio.charset.Charset
+import java.security.MessageDigest
+import java.util.*
 
 object FileUtils {
+
+    private const val NO_MEDIA_TAG_FILE = ".nomedia"
+
+    fun checkOrCreateNoMediaDirectory(directory: String): Boolean {
+        return checkOrCreateNoMediaDirectory(File(directory))
+    }
+
+    fun checkOrCreateNoMediaDirectory(directory: File): Boolean {
+        return checkOrCreateDirectory(directory, true)
+    }
+
+    fun checkOrCreateDirectory(directory: String): Boolean {
+        return checkOrCreateDirectory(File(directory))
+    }
+
+    fun checkOrCreateDirectory(directory: File): Boolean {
+        return checkOrCreateDirectory(directory, false)
+    }
+
+    fun checkOrCreateDirectory(directory: File, nomedia: Boolean): Boolean {
+        if (directory.exists()) {
+            if (directory.isDirectory) {
+                return true
+            } else {
+                Logger.warn("%s is NOT a directory", directory)
+            }
+        }
+
+        val success = directory.mkdirs()
+        if (!success) {
+            return false
+        }
+
+        return if (!nomedia) {
+            success
+        } else checkOrCreateNoMediaTagInDirectory(directory)
+    }
+
+    fun checkOrCreateNoMediaTagInDirectory(directory: String): Boolean {
+        return checkOrCreateNoMediaTagInDirectory(File(directory))
+    }
+
+    fun checkOrCreateNoMediaTagInDirectory(dir: File): Boolean {
+        val tagFile = File(dir, NO_MEDIA_TAG_FILE)
+        if (tagFile.exists()) {
+            return true
+        }
+
+        return try {
+            tagFile.createNewFile()
+        } catch (e: IOException) {
+            Logger.warn("could not create tag[%s] in dir[%s]: %s",
+                    NO_MEDIA_TAG_FILE,
+                    dir.absoluteFile,
+                    e.toString())
+            false
+        }
+    }
+
+    fun isFileExisted(filename: String): Boolean {
+        return File(filename).exists()
+    }
 
     fun detectFileEncoding(file: String): String? {
         return detectFileEncoding(File(file))
@@ -234,6 +300,115 @@ object FileUtils {
 
             false
         }
+    }
+
+    fun md5Dir(dir: String): String {
+        return md5Dir(dir, false)
+    }
+
+    fun md5Dir(dir: File): String {
+        return md5Dir(dir, false)
+    }
+
+    fun md5Dir(dir: String, hiddenFies: Boolean): String {
+        return md5Dir(dir, hiddenFies, false)
+    }
+
+    fun md5Dir(dir: File, hiddenFiles: Boolean): String {
+        return md5Dir(dir, hiddenFiles, false)
+    }
+
+    fun md5Dir(dir: String, hiddenFiles: Boolean, verbose: Boolean): String {
+        return md5Dir(File(dir), hiddenFiles, verbose)
+    }
+
+    fun md5Dir(dir: File, hiddenFiles: Boolean, verbose: Boolean): String {
+        var md5 = ""
+        if (!dir.exists() || !dir.isDirectory) {
+            return md5
+        }
+
+        val files = dir.listFiles() ?: return md5
+        Arrays.sort(files)
+        var childMd5: String
+        for (file in files) {
+            if (!hiddenFiles && file.isHidden) {
+                continue
+            }
+            childMd5 = if (file.isDirectory) {
+                md5Dir(file, hiddenFiles)
+            } else {
+                md5File(file)
+            }
+            if (verbose) {
+                Logger.debug("[%s] of (%s, %s)",
+                        childMd5,
+                        if (file.isDirectory) "D" else "F",
+                        file.name)
+            }
+            md5 += childMd5
+        }
+
+        return md5HashOfString(md5)
+    }
+
+    fun md5File(file: String): String {
+        return md5File(File(file))
+    }
+
+    fun md5File(file: File): String {
+        var md5 = ""
+        if (!file.exists() || !file.isFile) {
+            return md5
+        }
+
+        try {
+            val input: InputStream = FileInputStream(file)
+            val buffer = ByteArray(1024)
+            val md5Hash = MessageDigest.getInstance("MD5")
+            var numRead = 0
+            while (numRead != -1) {
+                numRead = input.read(buffer)
+                if (numRead > 0) {
+                    md5Hash.update(buffer, 0, numRead)
+                }
+            }
+            input.close()
+            val md5Bytes = md5Hash.digest()
+            val bigInt = BigInteger(1, md5Bytes)
+            val output = bigInt.toString(16)
+            // Fill to 32 chars
+            md5 = String.format("%32s", output).replace(' ', '0')
+        } catch (e: Exception) {
+            Logger.error("md5 calculation failed on file[%s]: %s",
+                    file, e.toString())
+        }
+
+        return md5
+    }
+
+    private fun md5HashOfString(str: String): String {
+        if (TextUtils.isEmpty(str)) {
+            return str
+        }
+
+        val md5Hash: MessageDigest
+        var md5 = ""
+        try {
+            md5Hash = MessageDigest.getInstance("MD5")
+            md5Hash.reset()
+            md5Hash.update(str.toByteArray(Charset.forName("UTF8")))
+            val md5Bytes = md5Hash.digest()
+            val bigInt = BigInteger(1, md5Bytes)
+            val output = bigInt.toString(16)
+            // Fill to 32 chars
+            md5 = String.format("%32s", output).replace(' ', '0')
+        } catch (e: Exception) {
+            Logger.error("md5 hash failed on string[%s]: %s",
+                    str, e.toString())
+        }
+
+        return md5
     }
 
 }
