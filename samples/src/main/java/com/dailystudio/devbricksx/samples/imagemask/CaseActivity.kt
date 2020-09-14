@@ -45,13 +45,15 @@ class CaseActivity : BaseCaseActivity() {
         val viewModel = ViewModelProvider(this@CaseActivity).get(
                 MaskedImageViewModel::class.java)
 
+        val images = mutableListOf<MaskedImage>()
+
         val original = ImageUtils.loadAssetBitmap(this@CaseActivity,
                 IMAGE_ASSET)
         original?.let {
             val buffer = generateBits(257, 257)
             filterBits(buffer, 257, 257)
-            viewModel.insertMaskedImage(MaskedImage(0, "Original",
-                    it))
+
+            images.add(MaskedImage(0, "Original", it))
         }
 
         val maskBits = loadBitsFromMaskBitmap(this@CaseActivity,
@@ -60,8 +62,7 @@ class CaseActivity : BaseCaseActivity() {
         maskBits?.let {
             maskBitmap = ImageUtils.intArrayToBitmap(it.data, it. width, it.height)
             maskBitmap?.let { recover ->
-                viewModel.insertMaskedImage(MaskedImage(1, "Mask",
-                        recover))
+                images.add(MaskedImage(1, "Mask", recover))
             }
         }
 
@@ -72,9 +73,10 @@ class CaseActivity : BaseCaseActivity() {
             val end = System.currentTimeMillis()
             Logger.debug("mask image [${original.width} x ${original.height}] in ${end - start} ms.")
 
-            viewModel.insertMaskedImage(MaskedImage(2, "Extracted",
-                    extracted))
+            images.add(MaskedImage(2, "Extracted", extracted))
         }
+
+        viewModel.insertMaskedImages(images)
     }
 
     private fun generateBits(width: Int, height: Int): ByteBuffer {

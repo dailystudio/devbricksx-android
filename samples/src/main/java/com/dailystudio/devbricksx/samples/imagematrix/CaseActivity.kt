@@ -47,13 +47,19 @@ class CaseActivity : BaseCaseActivity() {
                     IMAGE_ASSET)
 
             originalBitmap?.let {
-                viewModel.insertImageBundle(createEditImageBundle(it))
+                val editPage = createEditImageBundle(it)
+                val originalPage = ImageBundle(1,"original",
+                        it, Matrix())
+                val presentationPage =
+                        createPresentationImageBundle(it, viewFrameStub)
+                val fitPage = createFitImageBundle(it, viewFrameStub)
 
-                viewModel.insertImageBundle(ImageBundle(1,"original",
-                        it, Matrix()))
-
-                viewModel.insertImageBundle(createPresentationImageBundle(it, viewFrameStub))
-                viewModel.insertImageBundle(createFitImageBundle(it, viewFrameStub))
+                viewModel.insertImageBundles(listOf(
+                        editPage,
+                        originalPage,
+                        presentationPage,
+                        fitPage
+                ))
             }
         }
     }
