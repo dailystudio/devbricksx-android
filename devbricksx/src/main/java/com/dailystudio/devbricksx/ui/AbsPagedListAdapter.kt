@@ -13,7 +13,7 @@ abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (itemClickListener != null) {
-            holder.itemView.tag = position
+            holder.itemView.tag = holder.adapterPosition
             holder.itemView.setOnClickListener(itemViewOnClickListener)
         } else {
             holder.itemView.setOnClickListener(null)
