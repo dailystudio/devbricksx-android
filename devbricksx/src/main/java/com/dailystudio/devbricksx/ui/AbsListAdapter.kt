@@ -15,30 +15,25 @@ abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (itemClickListener != null) {
-            holder.itemView.tag = holder.adapterPosition
-            Logger.debug("[ItemClick]: add tag of item view[${holder.itemView}]: pos [${position}], item = ${getItem(position)}")
+            holder.itemView.setOnClickListener(View.OnClickListener { v ->
+                if (v == null) {
+                    return@OnClickListener
+                }
 
-            holder.itemView.setOnClickListener(itemViewOnClickListener)
+                val realPos = holder.adapterPosition
+
+                val item = getItem(realPos)
+                Logger.debug("[ItemClick]: get tag of item view[${v}]: pos [${realPos}], item [$item]")
+
+                item?.let {
+                    itemClickListener?.onItemClick(v, realPos, it, getItemId(realPos))
+                }
+            })
         } else {
             holder.itemView.setOnClickListener(null)
         }
     }
 
-    private val itemViewOnClickListener = View.OnClickListener { v ->
-        if (v == null) {
-            return@OnClickListener
-        }
-
-        val position = v.tag ?: return@OnClickListener
-        if (position is Int) {
-            val item = getItem(position)
-            Logger.debug("[ItemClick]: get tag of item view[${v}]: pos [${position}], item [$item]")
-
-            item?.let {
-                itemClickListener?.onItemClick(v, position, it, getItemId(position))
-            }
-        }
-    }
 
     override fun setOnItemClickListener(l: OnItemClickListener<Item>) {
         itemClickListener = l
