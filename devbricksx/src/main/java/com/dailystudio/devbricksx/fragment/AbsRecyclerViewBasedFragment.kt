@@ -34,6 +34,10 @@ abstract class AbsRecyclerViewBasedFragment<Item, ItemList, Adapter> : Fragment(
         })
     }
 
+    open protected fun getRecyclerViewId(): Int {
+        return android.R.id.list
+    }
+
     protected abstract fun getLiveData(): LiveData<ItemList>
     protected abstract fun submitData(adapter: Adapter,
                                       data: ItemList)

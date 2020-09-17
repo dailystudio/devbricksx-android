@@ -12,4 +12,6 @@
 	<dimen name="attribute_font_size">10dp</dimen>
 	<dimen name="attribute_text_padding">8dp</dimen>
 
+	<dimen name="card_loading_max_height">250dp</dimen>
+
 </resources>

@@ -13,7 +13,7 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
     protected var adapterView: RecyclerView? = null
 
     override fun setupViews(fragmentView: View) {
-        adapterView = fragmentView.findViewById(android.R.id.list)
+        adapterView = fragmentView.findViewById(getRecyclerViewId())
 
         adapter = onCreateAdapter()
         adapter?.setOnItemClickListener(itemClickListener)

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NonRecyclableListView">
+        <attr name="self_scrollable" format="boolean" />
+    </declare-styleable>
+</resources>

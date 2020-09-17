@@ -10,7 +10,7 @@ abstract class AbsViewPagerFragment<Item, ItemList, Adapter: RecyclerView.Adapte
     protected var viewPager: ViewPager2? = null
 
     override fun setupViews(fragmentView: View) {
-        viewPager = fragmentView.findViewById(android.R.id.list)
+        viewPager = fragmentView.findViewById(getRecyclerViewId())
         adapter = onCreateAdapter()
 
         viewPager?.adapter = adapter

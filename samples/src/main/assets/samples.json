@@ -89,5 +89,12 @@
     "title": "Settings Dialog",
     "icon": "ic_case_settings_dialog",
     "desc": ""
+  },
+  {
+    "name": "non-recyclable-list-view",
+    "package": "nonrecyclablelistview",
+    "title": "Non-Recyclable List View",
+    "icon": "ic_case_non_recyclable_list_view",
+    "desc": ""
   }
 ]
