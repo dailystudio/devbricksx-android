@@ -19,6 +19,7 @@
 
 			<ImageView
 				android:id="@+id/card_media"
+				android:src="@color/black"
 				android:foreground="?attr/selectableItemBackground"
 				style="@style/ImmersiveCardViewMedia"/>
 

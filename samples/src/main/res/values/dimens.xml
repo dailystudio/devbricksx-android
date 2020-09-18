@@ -14,6 +14,8 @@
 
 	<dimen name="card_loading_max_height">250dp</dimen>
 
-	<dimen name="card_image_height_large">250dp</dimen>
+	<dimen name="pixabay_image_title_font_size">28dp</dimen>
+	<dimen name="pixabay_image_title_padding">24dp</dimen>
+	<dimen name="pixabay_image_prompt_font_size">32dp</dimen>
 
 </resources>

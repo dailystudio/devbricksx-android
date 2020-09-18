@@ -24,4 +24,6 @@
 
     <string name="animation_attribution">animation \@Alexander Rozhkov / LottieFiles</string>
 
+    <string name="prompt_pixabay">\@pixabay</string>
+
 </resources>

@@ -49,4 +49,18 @@
         <item name="android:padding">@dimen/attribute_text_padding</item>
     </style>
 
+    <style name="PixabayImageTitleText" parent="ImmersiveCardViewTitle">
+        <item name="android:textStyle">italic|bold</item>
+        <item name="android:textSize">@dimen/pixabay_image_title_font_size</item>
+    </style>
+
+    <style name="PixabayPromptText">
+        <item name="android:textStyle">italic|bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:textSize">@dimen/pixabay_image_prompt_font_size</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">marquee</item>
+    </style>
+
 </resources>

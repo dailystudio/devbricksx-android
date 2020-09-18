@@ -32,7 +32,7 @@ class CaseActivity : BaseCaseActivity() {
         var id = 0
         val images = arrayListOf(
                 PixabayImage(id++,
-                        "Mountain Valleys",
+                        "Mountains",
                         "https://cdn.pixabay.com/photo/2020/09/09/18/39/mountains-5558476_1280.jpg",
                         "https://pixabay.com/photos/mountains-mountain-range-valleys-5558476/"
                 ),
@@ -42,7 +42,7 @@ class CaseActivity : BaseCaseActivity() {
                         "https://pixabay.com/photos/car-vehicle-auto-automobile-5548242/"
                 ),
                 PixabayImage(id++,
-                        "City in the rain",
+                        "City streets",
                         "https://cdn.pixabay.com/photo/2020/08/30/09/28/buildings-5528981_1280.jpg",
                         "https://pixabay.com/photos/buildings-houses-street-city-rain-5528981/"
                 ),

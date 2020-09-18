@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:paddingStart="@dimen/lv_item_space_h"
 	android:paddingEnd="@dimen/lv_item_space_h"
 	android:paddingTop="@dimen/lv_item_space_v"
@@ -13,18 +14,33 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
 
-		<LinearLayout
-			android:orientation="vertical"
+		<FrameLayout
+			android:background="@color/black"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:id="@+id/loading"
+				android:text="@string/prompt_pixabay"
+				style="@style/PixabayPromptText"
+				android:layout_gravity="center"
+				android:layout_width="wrap_content"
+				android:layout_height="@dimen/card_media_height_immersive"/>
 
 			<ImageView
 				android:id="@+id/card_media"
+				android:src="@color/black"
 				android:foreground="?attr/selectableItemBackground"
-				style="@style/DefaultCardViewMedia"
-				android:layout_height="@dimen/card_image_height_large"/>
+				style="@style/ImmersiveCardViewMedia"/>
 
-		</LinearLayout>
+			<TextView
+				android:id="@+id/card_title"
+				style="@style/ImmersiveCardViewTitle"
+				android:layout_gravity="bottom"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+
+		</FrameLayout>
 
 	</androidx.cardview.widget.CardView>
 
