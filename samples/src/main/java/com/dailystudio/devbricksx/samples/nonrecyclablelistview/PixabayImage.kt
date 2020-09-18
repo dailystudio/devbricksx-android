@@ -13,7 +13,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
-        layout = R.layout.layout_pixabay_image,
+        layout = R.layout.card_view_immersive,
         viewHolder = PiaxbayImageViewHolder::class, paged = false)
 @InMemoryManager(key = Int::class)
 @InMemoryRepository(key = Int::class)
@@ -50,7 +50,7 @@ class PiaxbayImageViewHolder(itemView: View): AbsCardViewHolder<PixabayImage>(it
     }
 
     override fun getTitle(item: PixabayImage): CharSequence? {
-        return null
+        return item.name
     }
 
 }

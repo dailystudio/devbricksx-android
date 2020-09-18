@@ -89,6 +89,10 @@
 		<item name="android:layout_height">@dimen/card_media_height</item>
 	</style>
 
+	<style name="ImmersiveCardViewMedia" parent="DefaultCardViewMedia">
+		<item name="android:layout_height">@dimen/card_media_height_immersive</item>
+	</style>
+
 	<style name="DefaultCardViewTitle">
 		<item name="android:gravity">left|center_vertical</item>
 		<item name="android:textStyle">bold</item>
@@ -101,6 +105,16 @@
 		<item name="android:paddingBottom">@dimen/card_content_outer_padding</item>
 		<item name="android:maxLines">1</item>
 		<item name="android:ellipsize">marquee</item>
+	</style>
+
+	<style name="ImmersiveCardViewTitle">
+		<item name="android:background">@drawable/gradient_black_bg</item>
+		<item name="android:gravity">left|center_vertical</item>
+		<item name="android:textColor">@color/light_white</item>
+		<item name="android:textSize">@dimen/default_font_size</item>
+		<item name="android:maxLines">1</item>
+		<item name="android:ellipsize">marquee</item>
+		<item name="android:padding">@dimen/card_content_outer_padding</item>
 	</style>
 
 	<style name="DefaultCardViewSupportingText">

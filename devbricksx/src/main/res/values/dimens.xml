@@ -35,6 +35,8 @@
 
 	<dimen name="card_media_height">150dp</dimen>
 	<dimen name="card_media_height_informative">100dp</dimen>
+	<dimen name="card_media_height_immersive">250dp</dimen>
+
 	<dimen name="card_title_font_size">20dp</dimen>
 	<dimen name="card_supporting_text_font_size">18dp</dimen>
 	<dimen name="card_supporting_text_line_height">2dp</dimen>
