@@ -17,6 +17,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.assist.FailReason
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 
+@NonRecyclableListFragment
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
         layout = R.layout.layout_pixabay_image,

@@ -58,6 +58,10 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
         }
 
+        fun getAbsNonRecyclableListViewFragmentTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.fragment", "AbsNonRecyclableListViewFragment")
+        }
+
         fun getAbsViewPagerFragmentTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsViewPagerFragment")
         }
@@ -74,6 +78,14 @@ class TypeNamesUtils {
                                               dataTypeName: TypeName,
                                               adapterTypeName: TypeName): TypeName {
             val fragment = getAbsViewPagerFragmentTypeName()
+
+            return fragment.parameterizedBy(objectTypeName, dataTypeName, adapterTypeName)
+        }
+
+        fun getAbsNonRecyclableListViewFragmentOfTypeName(objectTypeName: TypeName,
+                                                          dataTypeName: TypeName,
+                                                          adapterTypeName: TypeName): TypeName {
+            val fragment = getAbsNonRecyclableListViewFragmentTypeName()
 
             return fragment.parameterizedBy(objectTypeName, dataTypeName, adapterTypeName)
         }

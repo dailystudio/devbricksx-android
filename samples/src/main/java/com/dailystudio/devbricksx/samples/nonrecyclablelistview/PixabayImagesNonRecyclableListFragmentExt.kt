@@ -5,10 +5,11 @@ import android.net.Uri
 import android.view.View
 import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.nonrecyclablelistview.fragment.PixabayImagesNonRecyclableListFragment
 import com.dailystudio.devbricksx.ui.NonRecyclableListView
 
 
-class PixabayImageNonRecyclableListFragmentExt : PixabayImageNonRecyclableListFragment() {
+class PixabayImagesNonRecyclableListFragmentExt : PixabayImagesNonRecyclableListFragment() {
 
     override fun onItemClick(nonRecyclableListView: NonRecyclableListView, itemView: View, position: Int, item: PixabayImage, id: Long) {
         super.onItemClick(nonRecyclableListView, itemView, position, item, id)

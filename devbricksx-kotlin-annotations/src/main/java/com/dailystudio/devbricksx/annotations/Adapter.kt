@@ -6,6 +6,7 @@ enum class ViewType {
     SingleLine,
     Card,
     CardInformative,
+    CardImmersive,
     Page,
     Customized,
 }

@@ -10,6 +10,7 @@ class GeneratedNames {
         private const val ADAPTER_SUFFIX = "Adapter"
         private const val FRAGMENT_ADAPTER_SUFFIX = "FragmentAdapter"
         private const val LIST_FRAGMENT_SUFFIX = "ListFragment"
+        private const val NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX = "NonRecyclableListFragment"
         private const val PAGER_FRAGMENT_SUFFIX = "PagerFragment"
         private const val REPOSITORY_SUFFIX = "Repository"
         private const val MANAGER_SUFFIX = "Manager"
@@ -71,6 +72,14 @@ class GeneratedNames {
                 this.append(className.capitalize())
                 this.append('s')
                 this.append(LIST_FRAGMENT_SUFFIX)
+            }
+        }
+
+        fun getNonRecyclableListFragmentName(className: String) : String {
+            return buildString {
+                this.append(className.capitalize())
+                this.append('s')
+                this.append(NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX)
             }
         }
 

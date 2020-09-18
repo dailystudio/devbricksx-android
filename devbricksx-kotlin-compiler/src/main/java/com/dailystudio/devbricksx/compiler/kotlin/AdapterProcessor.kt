@@ -98,6 +98,10 @@ class AdapterProcessor : BaseProcessor() {
                 methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.card_view_informative, null)",
                         TypeNamesUtils.getDevbrickxRTypeName())
             }
+            ViewType.CardImmersive -> {
+                methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.card_view_immersive, null)",
+                        TypeNamesUtils.getDevbrickxRTypeName())
+            }
             ViewType.Page -> {
                 methodOnCreateViewBuilder.addStatement("val view = layoutInflater.inflate(%T.layout.page, null)",
                         TypeNamesUtils.getDevbrickxRTypeName())
