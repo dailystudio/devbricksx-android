@@ -5,17 +5,18 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.dailystudio.devbricksx.R
+import com.dailystudio.devbricksx.development.Logger
 
 open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
-        val iconView: ImageView = itemView.findViewById(R.id.card_media)
+        val iconView: ImageView? = itemView.findViewById(R.id.card_media)
         bindMedia(item, iconView)
 
-        val divider: View = itemView.findViewById(R.id.card_divider)
+        val divider: View? = itemView.findViewById(R.id.card_divider)
         divider?.visibility = if (shouldDisplayDivider()) View.VISIBLE else View.GONE
 
-        val titleView: TextView = itemView.findViewById(R.id.card_title)
+        val titleView: TextView? = itemView.findViewById(R.id.card_title)
         bindTitle(item, titleView)
     }
 
@@ -26,7 +27,10 @@ open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item
     }
 
     protected open fun bindTitle(item: Item, titleView: TextView?) {
-        titleView?.text = getTitle(item)
+        val title = getTitle(item)
+        Logger.debug("title = [$title], empty = ${title?.isEmpty()}")
+        titleView?.text = title
+        titleView?.visibility = if (title == null || title.isEmpty()) View.GONE else View.VISIBLE
     }
 
     protected open fun shouldDisplayDivider(): Boolean {

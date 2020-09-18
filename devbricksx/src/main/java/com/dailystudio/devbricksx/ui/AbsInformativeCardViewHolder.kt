@@ -9,7 +9,7 @@ open abstract class AbsInformativeCardViewHolder<Item>(itemView: View) : AbsCard
     override fun bind(item: Item) {
         super.bind(item)
 
-        val supportingTextView: TextView = itemView.findViewById(R.id.card_supporting_text)
+        val supportingTextView: TextView? = itemView.findViewById(R.id.card_supporting_text)
         bindSupportingText(item, supportingTextView)
     }
 

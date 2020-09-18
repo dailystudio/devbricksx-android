@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:paddingStart="@dimen/lv_item_space_h"
+	android:paddingEnd="@dimen/lv_item_space_h"
+	android:paddingTop="@dimen/lv_item_space_v"
+	android:paddingBottom="@dimen/lv_item_space_v"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<androidx.cardview.widget.CardView
+		android:id="@+id/list_item_root"
+		style="@style/DefaultCardView"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<ImageView
+				android:id="@+id/card_media"
+				android:foreground="?attr/selectableItemBackground"
+				style="@style/DefaultCardViewMedia"
+				android:layout_height="@dimen/card_image_height_large"/>
+
+		</LinearLayout>
+
+	</androidx.cardview.widget.CardView>
+
+
+</FrameLayout>

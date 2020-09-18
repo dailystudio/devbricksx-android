@@ -8,7 +8,7 @@
     tools:context=".inmemory.CaseActivity">
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.nonrecyclablelistview.WebsiteSandboxNonRecyclableListFragment"
+        android:name="com.dailystudio.devbricksx.samples.nonrecyclablelistview.PixabayImageNonRecyclableListFragment"
         android:id="@+id/fragment_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
