@@ -1,7 +1,6 @@
 package com.dailystudio.devbricksx.ui
 
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +19,11 @@ abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
                     return@OnClickListener
                 }
 
-                val realPos = holder.adapterPosition
+                val realPos = if (holder.adapterPosition == -1) {
+                    position
+                } else {
+                    holder.adapterPosition
+                }
 
                 val item = getItem(realPos)
                 Logger.debug("[ItemClick]: get tag of item view[${v}]: pos [${realPos}], item [$item]")
@@ -33,7 +36,6 @@ abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
             holder.itemView.setOnClickListener(null)
         }
     }
-
 
     override fun setOnItemClickListener(l: OnItemClickListener<Item>) {
         itemClickListener = l

@@ -11,7 +11,7 @@ import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.nonrecyclablelistview.model.PixabayImageViewModel
 import com.dailystudio.devbricksx.samples.nonrecyclablelistview.ui.PixabayImagesAdapter
 
-class PixabayImageNonRecyclableListFragment : AbsNonRecyclableListViewFragment<PixabayImage,
+open class PixabayImageNonRecyclableListFragment : AbsNonRecyclableListViewFragment<PixabayImage,
         List<PixabayImage>, PixabayImagesAdapter>() {
 
     override fun getLiveData(): LiveData<List<PixabayImage>> {

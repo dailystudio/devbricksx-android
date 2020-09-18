@@ -1,15 +1,12 @@
 package com.dailystudio.devbricksx.ui
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.R
-import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 open class NonRecyclableListView @JvmOverloads constructor(
         context: Context,
@@ -60,7 +57,7 @@ open class NonRecyclableListView @JvmOverloads constructor(
         itemsContainer = findViewById(R.id.items_container)
     }
 
-    fun setAdapter(listAdapter: RecyclerView.Adapter<*>) {
+    fun setAdapter(listAdapter: RecyclerView.Adapter<*>?) {
         adapter?.unregisterAdapterDataObserver(mAdapterObserver)
 
         adapter = listAdapter

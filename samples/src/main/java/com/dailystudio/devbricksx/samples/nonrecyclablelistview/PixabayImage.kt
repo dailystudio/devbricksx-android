@@ -26,6 +26,15 @@ class PixabayImage(val id: Int,
     override fun getKey(): Int {
         return id
     }
+
+    override fun toString(): String {
+        return buildString {
+            append("[$id")
+            append(", name: $name]: ")
+            append("image = $imageUri, ")
+            append("link = $link")
+        }
+    }
 }
 
 class PiaxbayImageViewHolder(itemView: View): AbsCardViewHolder<PixabayImage>(itemView) {
