@@ -22,8 +22,11 @@ public @interface RoomCompanion {
 
     Class<?> extension() default Void.class;
 
-    // database settings
+    // database name
     String database() default "";
+
+    // database version
+    int databaseVersion() default 1;
 
     // dao settings
     int pageSize() default 10;

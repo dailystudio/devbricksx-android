@@ -11,7 +11,8 @@ import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],
         database = "user",
-        indices = [ Index(value = ["name"])]
+        indices = [ Index(value = ["name"])],
+        databaseVersion = 3
 )
 @ViewModel(group = "user")
 @Adapter(layout = R.layout.layout_group, viewHolder = GroupViewHolder::class)

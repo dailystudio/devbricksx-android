@@ -17,7 +17,8 @@ import java.util.*
                 childColumns = ["group_id"],
                 onDelete = ForeignKey.CASCADE
         )],
-        pageSize = 50
+        pageSize = 50,
+        databaseVersion = 2
 )
 @ViewModel(group = "user")
 @Adapter(layout = R.layout.layout_user, viewHolder = UserViewHolder::class)

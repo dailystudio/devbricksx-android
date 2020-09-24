@@ -65,8 +65,20 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
         MethodSpec methodGetDao;
         String typeName;
         List<ClassName> converters;
+        int databaseVersion = 1;
+        int elementDbVersion;
         for (int i = 0; i < N; i++) {
             typeElement = typeElements.get(i);
+
+            RoomCompanion companionAnnotation = typeElement.getAnnotation(RoomCompanion.class);
+            if (companionAnnotation != null) {
+                elementDbVersion = companionAnnotation.databaseVersion();
+                if (elementDbVersion > databaseVersion) {
+                    databaseVersion = elementDbVersion;
+                    info("dbVersion [%d] of element[%s] is larger, using it as database version.",
+                            elementDbVersion, typeElement);
+                }
+            }
 
             typeName = getTypeNameOfTypeElement(typeElement);
             debug("packageName of typeElement[%s]: %s",
@@ -124,7 +136,7 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
 
         classBuilder.addAnnotation(AnnotationSpec.builder(Database.class)
                 .addMember("entities", "$N", entityClasses.toString())
-                .addMember("version", "$N", "1")
+                .addMember("version", "$L", databaseVersion)
                 .build()
         );
 
