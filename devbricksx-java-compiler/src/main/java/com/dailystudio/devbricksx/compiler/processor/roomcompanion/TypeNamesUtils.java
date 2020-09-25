@@ -171,4 +171,8 @@ public class TypeNamesUtils {
         return TypeNamesUtils.getLiveDataOfTypeName(getPagedListOfCompanionsTypeName(packageName, typeElementName));
     }
 
+    public static TypeName getDummyMigrationTypeName() {
+        return ClassName.get("com.dailystudio.devbricksx.database", "DummyMigration");
+    }
+
 }

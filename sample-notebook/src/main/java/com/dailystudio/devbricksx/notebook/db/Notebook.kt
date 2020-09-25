@@ -10,7 +10,9 @@ import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
         autoGenerate = true,
         converters = [DateConverter::class],
         extension = NotebookDaoExtension::class,
-        database = "notes")
+        database = "notes",
+        databaseVersion = 2
+)
 @ViewModel
 @Adapter(viewType = ViewType.SingleLine, viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_notebooks, gridLayout = true)

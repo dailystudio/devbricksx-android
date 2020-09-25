@@ -15,6 +15,7 @@ import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
@@ -150,7 +151,7 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                 .build()
         );
 
-        MethodSpec getInstanceWithMigrationsMethod = MethodSpec.methodBuilder("getDatabase")
+        MethodSpec.Builder getInstanceWithMigrationsMethodBuilder = MethodSpec.methodBuilder("getDatabase")
                 .addModifiers(Modifier.STATIC)
                 .addModifiers(Modifier.SYNCHRONIZED)
                 .addModifiers(Modifier.PUBLIC)
@@ -163,12 +164,25 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                         generatedClassName, database)
                 .beginControlFlow("if (migrations != null)")
                 .addStatement("builder.addMigrations(migrations)")
-                .endControlFlow()
-                .addStatement("$N = builder.build()", instanceFieldName)
+                .endControlFlow();
+
+        if (databaseVersion > 1) {
+            TypeName dummyMigrationClassName =
+                    TypeNamesUtils.getDummyMigrationTypeName();
+
+            getInstanceWithMigrationsMethodBuilder
+                    .beginControlFlow("else")
+                    .addStatement("builder.addMigrations(new $T(1, $L))",
+                            dummyMigrationClassName, databaseVersion)
+                    .endControlFlow();
+        }
+
+        getInstanceWithMigrationsMethodBuilder.addStatement("$N = builder.build()", instanceFieldName)
                 .endControlFlow()
                 .addStatement("return $N", instanceFieldName)
-                .returns(generatedClassName)
-                .build();
+                .returns(generatedClassName);
+
+        MethodSpec getInstanceWithMigrationsMethod = getInstanceWithMigrationsMethodBuilder.build();
 
         classBuilder.addMethod(getInstanceWithMigrationsMethod);
 
