@@ -66,6 +66,8 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
         MethodSpec methodGetDao;
         String typeName;
         List<ClassName> converters;
+        List<ClassName> migrations = new ArrayList();
+        List<ClassName> migrationsForElement;
         int databaseVersion = 1;
         int elementDbVersion;
         for (int i = 0; i < N; i++) {
@@ -114,7 +116,6 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                 StringBuilder converterClasses = new StringBuilder();
                 converterClasses.append("{ ");
 
-
                 for (int j = 0; j < CN; j++) {
                     converterClasses.append(converters.get(j).simpleName());
                     converterClasses.append(".class");
@@ -131,6 +132,12 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                         .build());
             }
 
+            migrationsForElement =
+                    AnnotationsUtils.getClassesValueFromAnnotation(
+                            typeElement, "migrations");
+            if (migrationsForElement != null) {
+                migrations.addAll(migrationsForElement);
+            }
         }
 
         entityClasses.append(" }");
@@ -169,11 +176,28 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
         if (databaseVersion > 1) {
             TypeName dummyMigrationClassName =
                     TypeNamesUtils.getDummyMigrationTypeName();
+            TypeName listOfMigrations =
+                    TypeNamesUtils.getListOfTypeName(TypeNamesUtils.getMigrationTypeName());
+
+            getInstanceWithMigrationsMethodBuilder.beginControlFlow("else");
+
+            getInstanceWithMigrationsMethodBuilder.addStatement(
+                    "$T customizedMigrations = new $T()",
+                    listOfMigrations, TypeNamesUtils.getArrayListTypeName());
+            if (migrations.isEmpty()) {
+                getInstanceWithMigrationsMethodBuilder.addStatement(
+                        "customizedMigrations.add(new $T(1, $L))",
+                        dummyMigrationClassName, databaseVersion);
+            } else {
+                for (ClassName migration: migrations) {
+                    getInstanceWithMigrationsMethodBuilder.addStatement(
+                            "customizedMigrations.add(new $T())", migration);
+                }
+            }
 
             getInstanceWithMigrationsMethodBuilder
-                    .beginControlFlow("else")
-                    .addStatement("builder.addMigrations(new $T(1, $L))",
-                            dummyMigrationClassName, databaseVersion)
+                    .addStatement("builder.addMigrations(customizedMigrations.toArray(new $T[0]))",
+                            TypeNamesUtils.getMigrationTypeName())
                     .endControlFlow();
         }
 

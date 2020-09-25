@@ -28,6 +28,9 @@ public @interface RoomCompanion {
     // database version
     int databaseVersion() default 1;
 
+    // database migrations
+    Class<?>[] migrations() default {};
+
     // dao settings
     int pageSize() default 10;
 
