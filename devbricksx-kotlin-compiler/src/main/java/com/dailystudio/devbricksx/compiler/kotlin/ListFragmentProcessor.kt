@@ -3,9 +3,11 @@ package com.dailystudio.devbricksx.compiler.kotlin
 import com.dailystudio.devbricksx.annotations.Adapter
 import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.ViewModel
+import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
@@ -50,6 +52,9 @@ class ListFragmentProcessor : BaseProcessor() {
         val isGradLayout = fragmentAnnotation.gridLayout
         val columns = fragmentAnnotation.columns
         val fillParent = fragmentAnnotation.fillParent
+        val superFragmentClass =
+                AnnotationsUtils.getClassValueFromAnnotation(
+                        element, "superClass") ?: TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
 
         val adapterAnnotation = element.getAnnotation(Adapter::class.java)
         val paged = adapterAnnotation?.paged ?: true
@@ -78,7 +83,7 @@ class ListFragmentProcessor : BaseProcessor() {
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
         val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
-        val superFragment = TypeNamesUtils.getAbsRecyclerViewFragmentOfTypeName(
+        val superFragment = superFragmentClass.parameterizedBy(
                 objectTypeName,
                 if (paged) pagedList else list,
                 adapter)

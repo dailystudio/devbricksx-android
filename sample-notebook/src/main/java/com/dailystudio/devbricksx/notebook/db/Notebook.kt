@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.Record
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.fragment.AbsNotebooksFragment
 import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
 
 @RoomCompanion(primaryKeys = ["id"],
@@ -19,7 +20,9 @@ import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
 )
 @ViewModel
 @Adapter(viewType = ViewType.SingleLine, viewHolder = NotebookViewHolder::class)
-@ListFragment(layout = R.layout.fragment_notebooks, gridLayout = true)
+@ListFragment(layout = R.layout.fragment_notebooks,
+        gridLayout = true,
+        superClass = AbsNotebooksFragment::class)
 class Notebook(id: Int = 0) : Record(id) {
     @JvmField var name: String? = null
 
