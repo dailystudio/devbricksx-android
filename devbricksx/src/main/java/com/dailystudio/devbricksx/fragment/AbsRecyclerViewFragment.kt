@@ -16,10 +16,18 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
         adapterView = fragmentView.findViewById(getRecyclerViewId())
 
         adapter = onCreateAdapter()
+
+        adapter?.registerAdapterDataObserver(adapterObserver)
         adapter?.setOnItemClickListener(itemClickListener)
 
         adapterView?.adapter = adapter
         adapterView?.layoutManager = onCreateLayoutManager()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        adapter?.unregisterAdapterDataObserver(adapterObserver)
     }
 
     fun setRecyclerViewTouchEnabled(enabled: Boolean) {
@@ -55,6 +63,39 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
             return true
         }
 
+    }
+
+    private val adapterObserver = object: RecyclerView.AdapterDataObserver() {
+        override fun onChanged() {
+            super.onChanged()
+            checkEmpty()
+        }
+
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            super.onItemRangeInserted(positionStart, itemCount)
+            checkEmpty()
+        }
+
+        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+            super.onItemRangeRemoved(positionStart, itemCount)
+            checkEmpty()
+        }
+
+        fun checkEmpty() {
+            val emptyView: View? = view?.findViewById(android.R.id.empty)
+
+            val empty = if (null == adapter) {
+                true
+            }  else {
+                adapter?.itemCount == 0
+            }
+
+            emptyView?.visibility = if (empty) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
     }
 
 }

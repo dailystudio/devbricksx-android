@@ -1,3 +1,5 @@
 <resources>
     <string name="label_permissions_denied">Required permissions are NOT granted!</string>
+
+    <string name="prompt_empty">No items found.</string>
 </resources>
