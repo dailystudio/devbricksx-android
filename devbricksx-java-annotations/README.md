@@ -70,6 +70,8 @@ It is the core annotation of this library and will help you generate companion c
 @RoomCompanion(primaryKeys = ["id"], 
         autoGenerate = true,
         database = "user",
+        databaseVersion = 3,
+        migrations = [Migration1To2::class, Migration2To3::class]        
         extension = UserDaoExtension::class,
         converters = [UUIDConverter::class, DateConverter::class],
         foreignKeys = [ForeignKey(entity = Group::class,
@@ -118,9 +120,18 @@ Here we defined two classes **User** and **Group** and their relationship. Both 
 - **database**
     
     Define the name of the database in which the class will be stored. The classes with the same value of database parameter will be stored in the same database and share the same **Database** class.
+    
+- **databaseVersion**
+	
+	Define the current version of the database. Usually, if you change any field of annotated class or property of this annotation, you should increase the value of this property. Otherwise, it would cause runtime exception of database mirgration.
+
+- **migrations**
+
+	Specify a set of migration classes that will be used during database migration.
+Visit [here](https://developer.android.com/training/data-storage/room/migrating-db-versions) for more details. 
 
 - **extension**
-    
+        
     Specify a class which defines extended interfaces in the **Dao** class. It defines the interfaces in the same way as the one which is used to define interfaces in **Dao** class in the [official docuement](https://developer.android.com/training/data-storage/room) of Android Room Library.
 
 - **converters**
@@ -150,6 +161,8 @@ By default, the generated **Dao** class includes the following interfaces:
 
 Interfaces | Descriptions
 :--        | :--
+getOne(primaryKeys ...) | Retrieve a object for the primary keys   
+getOneLive(primaryKeys ...) | Retrieve a LiveData of the object for the primary keys   
 getAll()   | Retrieve all the objects in a List   
 getAllLive() | Retrieve a LiveData of all the objects
 getAllLivePaged() | Retrieve a LiveData of PagedList of objects
