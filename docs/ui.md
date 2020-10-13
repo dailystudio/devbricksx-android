@@ -20,9 +20,6 @@ How to setup your builde.gradle, see the installation section of [devbricksx](..
 	With annotations's support, you can generate a Fragment with **RecyclerView** / **ViewPager2** / **NonRecyclableListView** automatically for a set of objects. Visit [devbricksx-kotlin-annotations](../devbricksx-kotlin-annotations/README.md) for more details.
 	
 - **Settings**
-	**AbsSettingsFragment** and **AbsSettingsDialogFragment** helps to create a full-screen page or a dialog to change the preferences of your application. 
 
-	
-- **Settings**
 	**AbsSettingsFragment** and **AbsSettingsDialogFragment** helps to create a full-screen page or a dialog to change the preferences of your application. Visit [Settings](./settings.md) for more details.
  
