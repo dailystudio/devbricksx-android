@@ -11,22 +11,20 @@ How to setup your builde.gradle, see the installation section of [devbricksx](..
 - If you want to use low-level codes generation, like **Database**, inlcudes **devbricksx-java-annotation** and **devbricksx-java-compiler**.
 
 ## Components
-- ViewModel	
+- **ViewModel**	
 
 	With annotations's support, you can generate a ViewModal and a Fragment with RecyclerView automatically for a object class. Visit [devbricksx-kotlin-annotations](../devbricksx-kotlin-annotations/README.md) for more details.
 	
-- Fragment
+- **Fragment**
 
 	With annotations's support, you can generate a Fragment with **RecyclerView** / **ViewPager2** / **NonRecyclableListView** automatically for a set of objects. Visit [devbricksx-kotlin-annotations](../devbricksx-kotlin-annotations/README.md) for more details.
 	
-- Settings
+- **Settings**
 
 	**AbsSettingsFragment** and **AbsSettingsDialogFragment** helps to create a full-screen page or a dialog to change the preferences of your application. Visit [Settings](./settings.md) for more details.
- 
-![](./assets/settings_samples.png)
+ ![](./assets/settings_samples.png)
 
-- About
+- **About**
 
 	**AbsAboutFragment** helps to create an About dialog with a few lines of customization, including application name, version description, etc. Visit [About](./about.md) for more details.
- 
-![](./assets/about_samples.png)
+ ![](./assets/about_samples.png)
