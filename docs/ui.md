@@ -1,6 +1,6 @@
 # UI
 
-Devbricks X provides you numerous helper classes and annotations to simplify your development. 
+**Devbricks X** provides you numerous helper classes and annotations to simplify your development. 
 
 
 ## Installation
