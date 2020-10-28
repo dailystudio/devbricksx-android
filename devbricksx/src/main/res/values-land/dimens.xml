@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <dimen name="about_app_icon_margin_h">5dp</dimen>
+    <dimen name="about_app_icon_size">48dp</dimen>
+
+</resources>

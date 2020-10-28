@@ -68,6 +68,7 @@
 	<dimen name="about_app_ver_font_size">14dp</dimen>
 	<dimen name="about_app_name_font_size">22sp</dimen>
 	<dimen name="about_app_ver_padding">3dp</dimen>
-	<dimen name="about_thumb_height">200dp</dimen>
+	<dimen name="about_thumb_size">200dp</dimen>
+	<dimen name="about_fading_edge_length">50dp</dimen>
 
 </resources>
