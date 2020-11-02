@@ -49,7 +49,7 @@ open class DevBricksMultiDexApplication : MultiDexApplication() {
         Logger.isSecureDebugEnabled = isDebugBuild()
     }
 
-    protected fun isDebugBuild() : Boolean {
+    protected open fun isDebugBuild() : Boolean {
         return BuildConfig.DEBUG
     }
 

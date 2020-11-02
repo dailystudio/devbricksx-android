@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_view_root"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -9,19 +8,23 @@
         android:id="@+id/settings_top"
         android:src="@color/light_gray"
         android:scaleType="centerCrop"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_dialog_top_height" />
 
     <View
         android:id="@+id/settings_divider"
         android:background="@drawable/list_divider"
+        android:layout_below="@id/settings_top"
         android:layout_width="match_parent"
         android:layout_height="2px"/>
 
     <com.dailystudio.devbricksx.settings.SettingsView
         android:id="@+id/settings_view"
+        android:layout_below="@id/settings_divider"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
 
-</LinearLayout>
+</RelativeLayout>
