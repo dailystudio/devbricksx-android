@@ -10,7 +10,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.dailystudio.devbricksx.R
-import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
 
@@ -22,15 +21,15 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
         val dialogView: View = LayoutInflater.from(context).inflate(
                 R.layout.fragment_settings_dialog, null)
 
-        val topImageView: ImageView? = dialogView.findViewById(R.id.settings_top)
-        if (topImageView != null) {
-            val drawable: Drawable? = getSettingsTopImageDrawable()
+        val thumbView: ImageView? = dialogView.findViewById(R.id.settings_dialog_thumb)
+        if (thumbView != null) {
+            val drawable: Drawable? = getDialogThumbImageDrawable()
             if (drawable != null) {
-                topImageView.setImageDrawable(drawable)
-                topImageView.visibility = View.VISIBLE
+                thumbView.setImageDrawable(drawable)
+                thumbView.visibility = View.VISIBLE
             } else {
-                topImageView.setImageDrawable(null)
-                topImageView.visibility = View.GONE
+                thumbView.setImageDrawable(null)
+                thumbView.visibility = View.GONE
             }
         }
 
@@ -54,7 +53,7 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
         return builder.create()
     }
 
-    protected open fun getSettingsTopImageDrawable(): Drawable? {
+    protected open fun getDialogThumbImageDrawable(): Drawable? {
         return null
     }
 

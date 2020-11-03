@@ -13,7 +13,7 @@ class SampleSettingsDialogFragment : AbsSettingsDialogFragment() {
         return SampleSettingsHelper.createSettings(context)
     }
 
-    override fun getSettingsTopImageDrawable(): Drawable? {
+    override fun getDialogThumbImageDrawable(): Drawable? {
         return ResourcesCompatUtils.getDrawable(requireContext(),
                 R.drawable.app_settings)
     }

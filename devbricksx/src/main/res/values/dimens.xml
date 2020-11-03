@@ -60,7 +60,7 @@
 	<dimen name="settings_icon_size">32dp</dimen>
 	<dimen name="settings_leading_space">64dp</dimen>
 	<dimen name="settings_switch_desc_padding_end">48dp</dimen>
-	<dimen name="settings_dialog_top_height">160dp</dimen>
+	<dimen name="settings_dialog_thumb_size">160dp</dimen>
 
 	<dimen name="about_app_icon_size">72dp</dimen>
 	<dimen name="about_app_icon_margin_h">10dp</dimen>

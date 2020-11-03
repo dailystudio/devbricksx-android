@@ -5,23 +5,19 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/settings_top"
+        android:id="@+id/settings_dialog_thumb"
         android:src="@color/light_gray"
         android:scaleType="centerCrop"
         android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_dialog_top_height" />
-
-    <View
-        android:id="@+id/settings_divider"
-        android:background="@drawable/list_divider"
-        android:layout_below="@id/settings_top"
-        android:layout_width="match_parent"
-        android:layout_height="2px"/>
+        android:layout_alignParentBottom="true"
+        android:layout_width="@dimen/settings_dialog_thumb_size"
+        android:layout_height="wrap_content" />
 
     <com.dailystudio.devbricksx.settings.SettingsView
         android:id="@+id/settings_view"
-        android:layout_below="@id/settings_divider"
+        android:layout_toEndOf="@id/settings_dialog_thumb"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

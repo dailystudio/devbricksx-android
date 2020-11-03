@@ -6,11 +6,11 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/settings_top"
+        android:id="@+id/settings_dialog_thumb"
         android:src="@color/light_gray"
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_dialog_top_height" />
+        android:layout_height="@dimen/settings_dialog_thumb_size" />
 
     <View
         android:id="@+id/settings_divider"
