@@ -1,5 +1,5 @@
 apply plugin: 'java-library'
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.github.panpf.bintray-publish'
 
 sourceCompatibility = "7"
 targetCompatibility = "7"
