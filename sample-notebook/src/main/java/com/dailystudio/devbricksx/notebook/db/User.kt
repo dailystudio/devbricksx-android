@@ -5,6 +5,7 @@ import com.dailystudio.devbricksx.annotations.Adapter
 import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
+import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.ui.UserViewHolder
 import java.util.*

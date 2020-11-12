@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.notebook.db
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
+import com.dailystudio.devbricksx.database.DateConverter
 import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],

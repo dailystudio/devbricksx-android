@@ -117,8 +117,9 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                 converterClasses.append("{ ");
 
                 for (int j = 0; j < CN; j++) {
-                    converterClasses.append(converters.get(j).simpleName());
-                    converterClasses.append(".class");
+//                    converterClasses.append(converters.get(j).simpleName());
+//                    converterClasses.append(".class");
+                    converterClasses.append("$T.class");
 
                     if (j < CN - 1) {
                         converterClasses.append(", ");
@@ -128,7 +129,8 @@ public class RoomCompanionDatabaseClassProcessor extends AbsTypeElementsGroupPro
                 converterClasses.append(" }");
 
                 classBuilder.addAnnotation(AnnotationSpec.builder(TypeConverters.class).
-                        addMember("value", "$N", converterClasses.toString())
+                        addMember("value", converterClasses.toString(),
+                                converters.toArray(new ClassName[0]))
                         .build());
             }
 
