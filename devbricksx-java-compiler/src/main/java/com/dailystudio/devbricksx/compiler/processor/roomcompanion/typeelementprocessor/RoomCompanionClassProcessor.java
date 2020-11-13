@@ -131,6 +131,11 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                 varElement = (VariableElement) subElement;
 
                 String varName = varElement.getSimpleName().toString();
+                if (GeneratedNames.KOTLIN_COMPANION_OBJECT_FIELD.equals(varName)) {
+                    warn("skip [Companion] field ...");
+                    continue;
+                }
+
                 TypeMirror fieldType = varElement.asType();
 
                 FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(TypeName.get(fieldType),

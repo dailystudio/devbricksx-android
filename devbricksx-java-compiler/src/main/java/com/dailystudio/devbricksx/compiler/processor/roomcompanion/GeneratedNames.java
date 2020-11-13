@@ -16,6 +16,7 @@ public class GeneratedNames {
     private final static String DATABASE_PACKAGE_SUFFIX = ".db";
     private final static String REPOSITORY_PACKAGE_SUFFIX = ".repository";
 
+    public final static String KOTLIN_COMPANION_OBJECT_FIELD = "Companion";
 
     public static String getShadowMethodName(String method) {
         StringBuilder builder = new StringBuilder(method);

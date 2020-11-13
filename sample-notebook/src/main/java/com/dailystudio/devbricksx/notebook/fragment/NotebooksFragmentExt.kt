@@ -62,8 +62,7 @@ class NotebooksFragmentExt : NotebooksListFragment() {
                             return@setPositiveButton
                         }
 
-                        val notebook = Notebook()
-                        notebook.name = name
+                        val notebook = Notebook.createNoteBook(name)
 
                         notebookViewModel.insertNotebook(notebook)
                     }

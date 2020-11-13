@@ -24,6 +24,17 @@ import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
         gridLayout = true,
         superClass = AbsNotebooksFragment::class)
 class Notebook(id: Int = 0) : Record(id) {
+
+    companion object {
+
+        fun createNoteBook(name: String): Notebook {
+            return Notebook(0).apply {
+                this.name = name
+            }
+        }
+
+    }
+
     @JvmField var name: String? = null
 
     override fun toString(): String {
