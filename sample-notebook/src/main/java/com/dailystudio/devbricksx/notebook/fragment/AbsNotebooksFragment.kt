@@ -17,27 +17,4 @@ abstract class AbsNotebooksFragment<Item: Notebook, ItemList, Adapter>
     : AbsRecyclerViewFragment<Item, ItemList, Adapter>()
         where Adapter: RecyclerView.Adapter<*>, Adapter: AbsRecyclerAdapter<Item> {
 
-    override fun onItemClick(recyclerView: RecyclerView,
-                             itemView: View,
-                             position: Int,
-                             item: Item,
-                             id: Long) {
-        super.onItemClick(recyclerView, itemView, position, item, id)
-
-        Logger.debug("click on position [$position]: item = $item")
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            val viewModel =
-                    ViewModelProvider(this@AbsNotebooksFragment).get(NotebookViewModel::class.java)
-
-            val notebook = viewModel?.getNotebook(item.id)
-            Logger.debug("retrieved notebook: $notebook")
-
-            val direction = NotebooksFragmentExtDirections
-                    .actionNotebooksFragmentExtToNotesListFragment(item.id)
-
-            findNavController().navigate(direction)
-        }
-    }
-
 }

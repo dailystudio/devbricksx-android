@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 class NoteEditFragment : Fragment() {
 
     private var noteId: Int = -1
+    private var notebookId: Int = -1
 
     private var titleView: EditText? = null
     private var descView: EditText? = null
@@ -32,11 +33,12 @@ class NoteEditFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_note, container, false)
 
-        setupViews(view)
 
         val args: NoteEditFragmentArgs by navArgs()
         noteId = args.noteId
-        Logger.debug("parsed id: $noteId")
+        notebookId = args.notebookId
+        Logger.debug("parsed note id: $noteId")
+        Logger.debug("parsed notebook id: $notebookId")
 
         if (noteId != -1) {
             lifecycleScope.launch(Dispatchers.IO) {
@@ -52,7 +54,10 @@ class NoteEditFragment : Fragment() {
             }
         }
 
+        setupViews(view)
+
         setHasOptionsMenu(true)
+
         return view
     }
 
@@ -84,13 +89,9 @@ class NoteEditFragment : Fragment() {
 
             R.id.menu_finish -> {
                 Logger.debug("entryId: $noteId")
-                if (noteId != -1) {
-                    Logger.debug("create: $noteId")
-
-                    createNewTask()
+                if (noteId == -1) {
+                    createNewNote()
                 } else {
-                    Logger.debug("update: $noteId")
-
                     updateExistNote()
                 }
 
@@ -105,8 +106,9 @@ class NoteEditFragment : Fragment() {
         inflater.inflate(R.menu.fragment_edit_note_menu, menu)
     }
 
-    private fun createNewTask() {
+    private fun createNewNote() {
         val note = Note().also {
+            it.notebook_id = notebookId
             fillNoteWithUserInput(it)
         }
 

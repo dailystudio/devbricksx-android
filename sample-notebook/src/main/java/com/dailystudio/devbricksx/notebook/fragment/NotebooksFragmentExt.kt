@@ -7,6 +7,7 @@ import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
@@ -82,8 +83,16 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         Logger.debug("click on position [$position]: item = $item")
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val notebook = notebookViewModel?.getNotebook(item.id)
+            val viewModel =
+                    ViewModelProvider(this@NotebooksFragmentExt).get(NotebookViewModel::class.java)
+
+            val notebook = viewModel?.getNotebook(item.id)
             Logger.debug("retrieved notebook: $notebook")
+
+            val direction = NotebooksFragmentExtDirections
+                    .actionNotebooksFragmentExtToNotesFragmentExt(item.id, item.name ?: "")
+
+            findNavController().navigate(direction)
         }
     }
 
