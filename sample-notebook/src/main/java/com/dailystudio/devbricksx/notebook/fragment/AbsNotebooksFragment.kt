@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.notebook.fragment
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
@@ -31,6 +32,11 @@ abstract class AbsNotebooksFragment<Item: Notebook, ItemList, Adapter>
 
             val notebook = viewModel?.getNotebook(item.id)
             Logger.debug("retrieved notebook: $notebook")
+
+            val direction = NotebooksFragmentExtDirections
+                    .actionNotebooksFragmentExtToNotesListFragment(item.id)
+
+            findNavController().navigate(direction)
         }
     }
 

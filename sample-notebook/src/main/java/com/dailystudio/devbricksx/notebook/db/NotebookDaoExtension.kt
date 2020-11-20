@@ -9,8 +9,17 @@ import com.dailystudio.devbricksx.annotations.Page
 @DaoExtension(entity = Notebook::class)
 abstract class NotebookDaoExtension {
 
-    @Query("SELECT * FROM notebook ORDER BY name ASC")
+    @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
     @Page(pageSize = 50)
-    abstract fun getAllOrderedByNameLivePaged(): LiveData<PagedList<Notebook>>
+    abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): LiveData<PagedList<Notebook>>
+
+}
+
+@DaoExtension(entity = Note::class)
+abstract class NoteDaoExtension {
+
+    @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
+    @Page(pageSize = 50)
+    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): LiveData<PagedList<Note>>
 
 }

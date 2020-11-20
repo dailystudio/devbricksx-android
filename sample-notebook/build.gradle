@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 android {
     compileSdkVersion COMPILE_SDK
@@ -34,6 +38,11 @@ android {
         }
     }
 
+    // For Kotlin projects
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
 }
 
 dependencies {
@@ -48,6 +57,9 @@ dependencies {
 
     kapt project(':devbricksx-kotlin-compiler')
     kapt project(':devbricksx-java-compiler')
+
+    implementation "androidx.navigation:navigation-fragment-ktx:${project.ext.navigationVersion}"
+    implementation "androidx.navigation:navigation-ui-ktx:${project.ext.navigationVersion}"
+
     kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
-    kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 }

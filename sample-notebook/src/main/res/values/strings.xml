@@ -5,4 +5,7 @@
     <string name="dialog_title_new_notebook">New notebook</string>
     <string name="hint_new_notebook">Name</string>
 
+    <string name="label_delete">Delete</string>
+    <string name="label_finish">Finish</string>
+
 </resources>

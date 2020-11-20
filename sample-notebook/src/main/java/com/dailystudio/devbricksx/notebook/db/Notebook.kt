@@ -1,26 +1,24 @@
 package com.dailystudio.devbricksx.notebook.db
 
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.ForeignKey
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.Record
-import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.fragment.AbsNotebooksFragment
+import com.dailystudio.devbricksx.notebook.ui.NoteViewHolder
 import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
+import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],
         autoGenerate = true,
         converters = [DateConverter::class],
         extension = NotebookDaoExtension::class,
         database = "notes",
-        databaseVersion = 3,
-        migrations = [Migration1To2::class, Migration2To3::class]
 )
 @ViewModel
 @Adapter(viewType = ViewType.SingleLine, viewHolder = NotebookViewHolder::class)
-@ListFragment(layout = R.layout.fragment_notebooks,
+@ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         gridLayout = true,
         superClass = AbsNotebooksFragment::class)
 class Notebook(id: Int = 0) : Record(id) {
@@ -29,7 +27,11 @@ class Notebook(id: Int = 0) : Record(id) {
 
         fun createNoteBook(name: String): Notebook {
             return Notebook(0).apply {
+                val now = System.currentTimeMillis()
+
                 this.name = name
+                this.created = Date(now)
+                this.lastModified = this.created
             }
         }
 
@@ -39,23 +41,52 @@ class Notebook(id: Int = 0) : Record(id) {
 
     override fun toString(): String {
         return buildString {
-            append("Notebook[$id]: $name")
+            append("Notebook [$id]: $name")
         }
     }
 }
 
-open class Migration1To2: Migration(1, 2) {
+@RoomCompanion(primaryKeys = ["id"],
+        autoGenerate = true,
+        extension = NoteDaoExtension::class,
+        database = "notes",
+        foreignKeys = [ ForeignKey(entity = Notebook::class,
+                parentColumns = ["id"],
+                childColumns = ["notebook_id"],
+                onDelete = ForeignKey.CASCADE
+        )]
+)
+@ViewModel
+@Adapter(viewType = ViewType.SingleLine, viewHolder = NoteViewHolder::class)
+@ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
+        gridLayout = true)
+class Note(id: Int = 0) : Record(id) {
 
-    override fun migrate(database: SupportSQLiteDatabase) {
-        Logger.info("upgrade database from $startVersion to $endVersion")
+    companion object {
+
+        fun createNote(notebookId: Int,
+                       title: String?,
+                       desc: String?): Note {
+            return Note(0).apply {
+                val now = System.currentTimeMillis()
+
+                this.notebook_id = notebookId
+                this.title = title
+                this.desc = desc
+                this.created = Date(now)
+                this.lastModified = this.created
+            }
+        }
+
     }
 
-}
+    @JvmField var notebook_id: Int = -1
+    @JvmField var title: String? = null
+    @JvmField var desc: String? = null
 
-open class Migration2To3: Migration(2, 3) {
-
-    override fun migrate(database: SupportSQLiteDatabase) {
-        Logger.info("upgrade database from $startVersion to $endVersion")
+    override fun toString(): String {
+        return buildString {
+            append("Note [$id, notebook: $notebook_id]: $title, [desc: $desc]")
+        }
     }
-
 }
