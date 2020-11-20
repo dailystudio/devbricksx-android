@@ -57,7 +57,7 @@ class Notebook(id: Int = 0) : Record(id) {
         )]
 )
 @ViewModel
-@Adapter(viewType = ViewType.SingleLine, viewHolder = NoteViewHolder::class)
+@Adapter(viewType = ViewType.CardInformative, viewHolder = NoteViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         gridLayout = true)
 class Note(id: Int = 0) : Record(id) {

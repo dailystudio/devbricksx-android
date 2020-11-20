@@ -10,7 +10,9 @@
         android:label="NotebooksFragmentExt" >
         <action
             android:id="@+id/action_notebooksFragmentExt_to_notesFragmentExt"
-            app:destination="@id/notesFragmentExt" />
+            app:destination="@id/notesFragmentExt"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/notesFragmentExt"

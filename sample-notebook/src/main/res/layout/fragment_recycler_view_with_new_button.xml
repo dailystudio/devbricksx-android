@@ -8,6 +8,7 @@
     <TextView
         android:id="@android:id/empty"
         style="@style/DefaultEmptyText"
+        android:visibility="gone"
         android:text="@string/prompt_empty"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
