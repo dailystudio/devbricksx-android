@@ -17,11 +17,12 @@ import java.util.*
         database = "notes",
 )
 @ViewModel
-@Adapter(viewType = ViewType.SingleLine, viewHolder = NotebookViewHolder::class)
+@Adapter(viewType = ViewType.SingleLine,
+        paged = false,
+        viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
-        gridLayout = true,
         superClass = AbsNotebooksFragment::class)
-class Notebook(id: Int = 0) : Record(id) {
+open class Notebook(id: Int = 0) : Record(id) {
 
     companion object {
 
@@ -44,6 +45,18 @@ class Notebook(id: Int = 0) : Record(id) {
             append("Notebook [$id]: $name")
         }
     }
+}
+
+class NotebookWrapper(id: Int = 0): Notebook(id) {
+    var notesCount: Int = 0
+
+    override fun toString(): String {
+        return buildString {
+            append(super.toString())
+            append(", notes: $notesCount")
+        }
+    }
+
 }
 
 @RoomCompanion(primaryKeys = ["id"],

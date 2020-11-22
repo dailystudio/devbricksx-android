@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
+import com.dailystudio.devbricksx.notebook.db.NotebookWrapper
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
@@ -15,7 +16,11 @@ class NotebookViewHolder(itemView: View) : AbsSingleLineViewHolder<Notebook>(ite
     }
 
     override fun getText(item: Notebook): CharSequence? {
-        return item.name?.capitalize()
+        if (item is NotebookWrapper) {
+            return item.name?.capitalize() + " (${item.notesCount})"
+        } else {
+            return item.name?.capitalize()
+        }
     }
 
 }

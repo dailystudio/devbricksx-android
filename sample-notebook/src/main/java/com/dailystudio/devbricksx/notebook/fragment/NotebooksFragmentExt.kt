@@ -4,20 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
+import com.dailystudio.devbricksx.notebook.db.NotebookWrapper
+import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.min
 
 class NotebooksFragmentExt : NotebooksListFragment() {
 
@@ -26,10 +26,35 @@ class NotebooksFragmentExt : NotebooksListFragment() {
     private var fab: FloatingActionButton? = null
     private var nbNameView: EditText? = null
 
-    override fun getLiveData(): LiveData<PagedList<Notebook>> {
+    override fun getLiveData(): LiveData<List<Notebook>> {
         notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
 
-        return notebookViewModel.getAllNotebooksOrderedByLastModifiedLivePaged()
+        val liveData = notebookViewModel.getAllNotebooksOrderedByLastModifiedLivePaged()
+
+        return Transformations.switchMap(liveData) { notebooks ->
+            val wrapper = mutableListOf<NotebookWrapper>()
+            val ret = MutableLiveData<List<Notebook>>(wrapper)
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                for (nb in notebooks) {
+
+                    val noteViewModel =
+                            ViewModelProvider(this@NotebooksFragmentExt).get(NoteViewModel::class.java)
+
+                    val nc = noteViewModel.countNotes(nb.id)
+                    Logger.debug("nc: $nc of $nb")
+
+                    wrapper.add(NotebookWrapper(nb.id).apply {
+                        name = nb.name
+                        notesCount = nc
+                    })
+                }
+
+                ret.postValue(wrapper)
+            }
+
+            ret
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,6 +70,14 @@ class NotebooksFragmentExt : NotebooksListFragment() {
             createNotebook()
         }
     }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        activity?.title = getString(R.string.app_name)
+    }
+
 
     private fun createNotebook() {
         val view : View = LayoutInflater.from(context).inflate(
