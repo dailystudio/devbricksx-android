@@ -9,6 +9,19 @@ import java.util.Set;
 
 public class MethodStatementsGenerator {
 
+    public static void outputDefault(String packageName, String typeName,
+                                     MethodSpec.Builder methodSpecBuilder,
+                                     String shadowMethodName,
+                                     String methodParameters) {
+        if (!TextUtils.isEmpty(methodParameters)) {
+            methodSpecBuilder.addStatement("return this.$N($N)",
+                    shadowMethodName, methodParameters);
+        } else {
+            methodSpecBuilder.addStatement("return this.$N()",
+                    shadowMethodName);
+        }
+    }
+
     public static void outputLiveCompanionToLiveObject(String packageName, String typeName,
                                                        MethodSpec.Builder methodSpecBuild,
                                                        String shadowMethodName) {

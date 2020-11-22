@@ -158,6 +158,8 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             methodSpecBuilder.returns(liveDataOfCompanion);
         } else if (returnTypeName.equals(liveDataOfPagedObjectsList)) {
             methodSpecBuilder.returns(dataSourceFactoryOfCompanions);
+        } else {
+            methodSpecBuilder.returns(returnTypeName);
         }
 
         StringBuilder parametersBuilder = new StringBuilder();
@@ -216,6 +218,12 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             MethodStatementsGenerator.outputDataSourceCompanionsToLiveObjects(
                     objectPackage, objectTypeName,
                     pageSize,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
+        } else {
+            MethodStatementsGenerator.outputDefault(
+                    objectPackage, objectTypeName,
                     methodShadowSpecBuilder,
                     shadowMethodName, parametersBuilder.toString()
             );
