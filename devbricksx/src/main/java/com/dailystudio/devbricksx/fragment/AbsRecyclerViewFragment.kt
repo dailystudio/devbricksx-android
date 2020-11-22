@@ -2,15 +2,29 @@ package com.dailystudio.devbricksx.fragment
 
 import android.view.MotionEvent
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.ui.AbsRecyclerAdapter
 import com.dailystudio.devbricksx.ui.OnItemClickListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
     : AbsRecyclerViewBasedFragment<Item, ItemList, Adapter>()
         where Adapter: RecyclerView.Adapter<*>, Adapter: AbsRecyclerAdapter<Item> {
 
+    companion object {
+
+        const val EMPTY_VIEW_CHECK_DELAY = 200L
+
+    }
+
     protected var adapterView: RecyclerView? = null
+
+    private var setEmptyJob: Job? = null
 
     override fun setupViews(fragmentView: View) {
         adapterView = fragmentView.findViewById(getRecyclerViewId())
@@ -85,15 +99,21 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
             val emptyView: View? = view?.findViewById(android.R.id.empty)
 
             val empty = if (null == adapter) {
+                Logger.debug("adapter is not ready")
                 true
             }  else {
+                Logger.debug("count is ${adapter?.itemCount}")
                 adapter?.itemCount == 0
             }
 
-            emptyView?.visibility = if (empty) {
-                View.VISIBLE
-            } else {
-                View.GONE
+            setEmptyJob?.cancel()
+            setEmptyJob = lifecycleScope.launch(Dispatchers.Main) {
+                delay(EMPTY_VIEW_CHECK_DELAY)
+                emptyView?.visibility = if (empty) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
             }
         }
     }
