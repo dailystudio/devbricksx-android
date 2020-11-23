@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.notebook.ui
 
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.TextView
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.db.NotebookWrapper
@@ -10,17 +11,28 @@ import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 class NotebookViewHolder(itemView: View) : AbsSingleLineViewHolder<Notebook>(itemView) {
 
+    override fun bind(item: Notebook) {
+        super.bind(item)
+
+        val notesCountView: TextView? = itemView.findViewById(R.id.notes_count)
+        notesCountView?.text = if (item is NotebookWrapper) {
+            if (item.notesCount == 0) {
+                null
+            } else {
+                item.notesCount.toString()
+            }
+        } else {
+            null
+        }
+    }
+
     override fun getIcon(item: Notebook): Drawable? {
         return ResourcesCompatUtils.getDrawable(itemView.context,
                 R.drawable.ic_notebook)
     }
 
     override fun getText(item: Notebook): CharSequence? {
-        if (item is NotebookWrapper) {
-            return item.name?.capitalize() + " (${item.notesCount})"
-        } else {
-            return item.name?.capitalize()
-        }
+        return item.name?.capitalize()
     }
 
 }

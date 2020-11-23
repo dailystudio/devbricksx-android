@@ -18,4 +18,20 @@
         <item name="android:padding">@dimen/default_padding</item>
     </style>
 
+    <style name="NotesCount">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">@dimen/lv_item_2nd_font_size</item>
+        <item name="android:paddingLeft">@dimen/lv_item_padding</item>
+        <item name="android:paddingRight">@dimen/default_content_padding</item>
+        <item name="android:paddingTop">@dimen/lv_item_2nd_padding_v</item>
+        <item name="android:paddingBottom">@dimen/lv_item_2nd_padding_v</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="NoteContent" parent="InformativeCardViewSupportingText">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">@dimen/lv_item_2nd_font_size</item>
+    </style>
+
 </resources>

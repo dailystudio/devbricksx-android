@@ -13,6 +13,8 @@ import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.db.NotebookWrapper
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
+import com.dailystudio.devbricksx.utils.ShowDirection
+import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
@@ -69,6 +71,8 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
             createNotebook()
         }
+
+        fab?.showWithAnimation(requireContext(), ShowDirection.BOTTOM)
     }
 
 

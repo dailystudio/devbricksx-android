@@ -17,8 +17,9 @@ import java.util.*
         database = "notes",
 )
 @ViewModel
-@Adapter(viewType = ViewType.SingleLine,
+@Adapter(viewType = ViewType.Customized,
         paged = false,
+        layout = R.layout.layout_notebook,
         viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         superClass = AbsNotebooksFragment::class)
@@ -70,7 +71,9 @@ class NotebookWrapper(id: Int = 0): Notebook(id) {
         )]
 )
 @ViewModel
-@Adapter(viewType = ViewType.CardInformative, viewHolder = NoteViewHolder::class)
+@Adapter(viewType = ViewType.Customized,
+        layout = R.layout.layout_note,
+        viewHolder = NoteViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         gridLayout = true)
 class Note(id: Int = 0) : Record(id) {

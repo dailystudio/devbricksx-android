@@ -1,10 +1,12 @@
 package com.dailystudio.devbricksx.notebook.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.view.animation.AnimationUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,10 +18,12 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
+import com.dailystudio.devbricksx.utils.ShowDirection
+import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class NotesFragmentExt : NotesListFragment() {
 
@@ -57,11 +61,14 @@ class NotesFragmentExt : NotesListFragment() {
         super.setupViews(fragmentView)
 
         fab = fragmentView.findViewById(R.id.fab)
+        fab?.setImageResource(R.drawable.ic_fab_edit)
         fab?.setOnClickListener {
             Logger.debug("fab is clicked.")
 
             createNote()
         }
+
+        fab?.showWithAnimation(requireContext(), ShowDirection.RIGHT)
     }
 
     private fun createNote() {
@@ -94,4 +101,5 @@ class NotesFragmentExt : NotesListFragment() {
         }
     }
 
+    private val handler = Handler(Looper.getMainLooper())
 }

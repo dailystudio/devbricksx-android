@@ -7,5 +7,6 @@
 
     <string name="label_delete">Delete</string>
     <string name="label_finish">Finish</string>
+    <string name="label_empty">&lt;empty&gt;</string>
 
 </resources>
