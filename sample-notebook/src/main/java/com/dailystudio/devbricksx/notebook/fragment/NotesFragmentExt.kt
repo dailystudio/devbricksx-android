@@ -101,5 +101,4 @@ class NotesFragmentExt : NotesListFragment() {
         }
     }
 
-    private val handler = Handler(Looper.getMainLooper())
 }

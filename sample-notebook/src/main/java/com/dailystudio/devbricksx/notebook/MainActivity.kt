@@ -1,11 +1,17 @@
 package com.dailystudio.devbricksx.notebook
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.db.*
+import com.dailystudio.devbricksx.notebook.fragment.AboutFragment
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import kotlinx.coroutines.*
 
@@ -39,6 +45,27 @@ class MainActivity : AppCompatActivity() {
 //                delay(200)
 //            }
 
+        }
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_about -> {
+                findNavController(R.id.nav_host_fragment).navigate(
+                        R.id.action_notebooksFragmentExt_to_aboutFragment
+                )
+
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

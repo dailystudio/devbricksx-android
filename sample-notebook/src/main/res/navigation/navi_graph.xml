@@ -13,6 +13,9 @@
             app:destination="@id/notesFragmentExt"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_notebooksFragmentExt_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
     </fragment>
     <fragment
         android:id="@+id/notesFragmentExt"
@@ -40,4 +43,8 @@
             android:name="notebookId"
             app:argType="integer" />
     </fragment>
+    <dialog
+        android:id="@+id/aboutFragment"
+        android:name="com.dailystudio.devbricksx.notebook.fragment.AboutFragment"
+        android:label="AboutFragment" />
 </navigation>
