@@ -24,6 +24,10 @@ abstract class AbsRecyclerViewBasedFragment<Item, ItemList, Adapter> : Fragment(
     protected open fun setupViews(fragmentView: View) {
     }
 
+    protected open fun reload() {
+        applyBindings()
+    }
+
     protected fun applyBindings() {
         val liveData = getLiveData()
 

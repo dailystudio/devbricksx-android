@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 import com.dailystudio.devbricksx.ui.AbsRecyclerAdapter
 import com.dailystudio.devbricksx.ui.OnItemClickListener
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,7 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
 
         adapter?.registerAdapterDataObserver(adapterObserver)
         adapter?.setOnItemClickListener(itemClickListener)
+        adapter?.setOnSelectionChangedListener(selectionClickListener)
 
         adapterView?.adapter = adapter
         adapterView?.layoutManager = onCreateLayoutManager()
@@ -59,6 +61,15 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
                                    id: Long) {
     }
 
+    protected open fun onSelectionStarted() {
+    }
+
+    protected open fun onSelectionStopped() {
+    }
+
+    protected open fun onSelectionChanged(selectedItems: List<Item>) {
+    }
+
     protected abstract fun onCreateLayoutManager(): RecyclerView.LayoutManager
 
     private val itemClickListener: OnItemClickListener<Item> = object : OnItemClickListener<Item> {
@@ -66,6 +77,28 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
         override fun onItemClick(itemView: View, position: Int, item: Item, id: Long) {
             adapterView?.let {
                 this@AbsRecyclerViewFragment.onItemClick(it, itemView, position, item, id)
+            }
+        }
+
+    }
+
+    private val selectionClickListener: OnSelectionChangedListener<Item> = object : OnSelectionChangedListener<Item> {
+
+        override fun onSelectionStarted() {
+            adapterView?.let {
+                this@AbsRecyclerViewFragment.onSelectionStarted()
+            }
+        }
+
+        override fun onSelectionStopped() {
+            adapterView?.let {
+                this@AbsRecyclerViewFragment.onSelectionStopped()
+            }
+        }
+
+        override fun onSelectionChanged(selectedItems: List<Item>) {
+            adapterView?.let {
+                this@AbsRecyclerViewFragment.onSelectionChanged(selectedItems)
             }
         }
 
