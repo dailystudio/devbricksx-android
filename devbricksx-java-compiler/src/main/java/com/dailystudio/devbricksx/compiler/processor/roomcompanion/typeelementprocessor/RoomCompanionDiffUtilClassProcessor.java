@@ -1,5 +1,7 @@
 package com.dailystudio.devbricksx.compiler.processor.roomcompanion.typeelementprocessor;
 
+import androidx.room.Ignore;
+
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
@@ -83,6 +85,15 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
 
                 String varName = varElement.getSimpleName().toString();
                 TypeMirror fieldType = varElement.asType();
+                if (GeneratedNames.KOTLIN_COMPANION_OBJECT_FIELD.equals(varName)) {
+                    warn("skip [Companion] field ...");
+                    continue;
+                }
+
+                if (varElement.getAnnotation(Ignore.class) != null) {
+                    warn("skip [Ignore] field ...");
+                    continue;
+                }
 
                 fields.put(varName, fieldType);
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
@@ -133,6 +134,11 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                 String varName = varElement.getSimpleName().toString();
                 if (GeneratedNames.KOTLIN_COMPANION_OBJECT_FIELD.equals(varName)) {
                     warn("skip [Companion] field ...");
+                    continue;
+                }
+
+                if (varElement.getAnnotation(Ignore.class) != null) {
+                    warn("skip [Ignore] field ...");
                     continue;
                 }
 
