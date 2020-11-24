@@ -10,6 +10,9 @@
     <string name="label_finish">Finish</string>
     <string name="label_empty">&lt;empty&gt;</string>
 
-    <string name="action_about">About</string>
+    <string name="menu_about">About</string>
+
+    <string name="hint_title">Note Title</string>
+    <string name="hint_content">Start writing here …</string>
 
 </resources>

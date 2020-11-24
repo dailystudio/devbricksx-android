@@ -42,6 +42,8 @@ class NotesFragmentExt : NotesListFragment() {
         Logger.debug("parsed notebook id: $notebookId")
         Logger.debug("parsed notebook name: $notebookName")
 
+        setHasOptionsMenu(true)
+
         return view
     }
 

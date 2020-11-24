@@ -13,4 +13,7 @@ class AboutFragment: AbsAboutFragment() {
     override val appIconResource: Int
         get() = R.mipmap.ic_launcher
 
+    override val appThumbResource: Int
+        get() = R.drawable.app_thumb
+
 }

@@ -1,10 +1,10 @@
 package com.dailystudio.devbricksx.notebook.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import androidx.lifecycle.*
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
@@ -27,6 +27,32 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
     private var fab: FloatingActionButton? = null
     private var nbNameView: EditText? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        setHasOptionsMenu(true)
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setHasOptionsMenu(true)
+
+        nbNameView = view.findViewById(R.id.notebook_name)
+        nbNameView?.requestFocus()
+
+        fab = view.findViewById(R.id.fab)
+        fab?.setOnClickListener {
+            Logger.debug("fab is clicked.")
+
+            createNotebook()
+        }
+
+        fab?.showWithAnimation(requireContext(), ShowDirection.BOTTOM)
+    }
 
     override fun getLiveData(): LiveData<List<Notebook>> {
         notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
@@ -59,29 +85,29 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        nbNameView = view.findViewById(R.id.notebook_name)
-        nbNameView?.requestFocus()
-
-        fab = view.findViewById(R.id.fab)
-        fab?.setOnClickListener {
-            Logger.debug("fab is clicked.")
-
-            createNotebook()
-        }
-
-        fab?.showWithAnimation(requireContext(), ShowDirection.BOTTOM)
-    }
-
-
     override fun onResume() {
         super.onResume()
 
         activity?.title = getString(R.string.app_name)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_about -> {
+                findNavController().navigate(
+                        R.id.action_notebooksFragmentExt_to_aboutFragment
+                )
+
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     private fun createNotebook() {
         val view : View = LayoutInflater.from(context).inflate(

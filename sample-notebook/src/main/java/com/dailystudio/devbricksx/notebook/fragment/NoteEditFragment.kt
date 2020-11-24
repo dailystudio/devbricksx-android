@@ -63,17 +63,28 @@ class NoteEditFragment : Fragment() {
 
     private fun attachNote(note: Note) {
         titleView?.setText(note.title)
-        titleView?.setSelection(note.title?.length ?: 0)
-        titleView?.requestFocus()
 
         descView?.setText(note.desc)
+        descView?.setSelection(note.desc?.length ?: 0)
     }
 
     private fun setupViews(view: View) {
         titleView = view.findViewById(R.id.title)
-        titleView?.requestFocus()
 
         descView = view.findViewById(R.id.description)
+        descView?.requestFocus()
+
+        showInputMethod()
+    }
+
+
+    private fun showInputMethod() {
+        val context = requireContext()
+
+        val imm =
+                context.getSystemService(Context.INPUT_METHOD_SERVICE)
+                        as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -103,7 +114,7 @@ class NoteEditFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.fragment_edit_note_menu, menu)
+        inflater.inflate(R.menu.menu_fragment_edit_note, menu)
     }
 
     private fun createNewNote() {

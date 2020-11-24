@@ -9,13 +9,17 @@
     </style>
 
     <style name="TitleInput" parent="DefaultEditText">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/title_font_size</item>
         <item name="android:maxLines">1</item>
         <item name="android:padding">@dimen/default_padding</item>
+        <item name="android:hint">@string/hint_title</item>
     </style>
 
     <style name="DescInput" parent="DefaultEditText">
         <item name="android:gravity">start|top</item>
         <item name="android:padding">@dimen/default_padding</item>
+        <item name="android:hint">@string/hint_content</item>
     </style>
 
     <style name="NotesCount">
