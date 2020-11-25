@@ -18,6 +18,8 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
+import com.dailystudio.devbricksx.notebook.ui.NotebooksAdapter
+import com.dailystudio.devbricksx.notebook.ui.NotesAdapter
 import com.dailystudio.devbricksx.utils.ShowDirection
 import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -51,6 +53,12 @@ class NotesFragmentExt : NotesListFragment() {
         super.onResume()
 
         activity?.title = notebookName
+    }
+
+    override fun onCreateAdapter(): NotesAdapter {
+        return super.onCreateAdapter().apply {
+            setSelectionEnabled(true)
+        }
     }
 
     override fun getLiveData(): LiveData<PagedList<Note>> {

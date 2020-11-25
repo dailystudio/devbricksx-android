@@ -3,23 +3,24 @@ package com.dailystudio.devbricksx.notebook.fragment
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
-import com.dailystudio.devbricksx.notebook.db.NotebookWrapper
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
+import com.dailystudio.devbricksx.notebook.ui.NotebooksAdapter
 import com.dailystudio.devbricksx.utils.ShowDirection
 import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.min
 
 class NotebooksFragmentExt : NotebooksListFragment() {
 
@@ -34,6 +35,15 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         setHasOptionsMenu(true)
 
         return view
+    }
+
+    override val normalOptionMenuResId: Int
+        get() = R.menu.menu_main
+
+    override fun onCreateAdapter(): NotebooksAdapter {
+        return super.onCreateAdapter().apply {
+            setSelectionEnabled(true)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,22 +70,18 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         val liveData = notebookViewModel.getAllNotebooksOrderedByLastModifiedLivePaged()
 
         return Transformations.switchMap(liveData) { notebooks ->
-            val wrapper = mutableListOf<NotebookWrapper>()
+            val wrapper = mutableListOf<Notebook>()
             val ret = MutableLiveData<List<Notebook>>(wrapper)
 
             lifecycleScope.launch(Dispatchers.IO) {
-                for (nb in notebooks) {
-
+                for (notebook in notebooks) {
                     val noteViewModel =
                             ViewModelProvider(this@NotebooksFragmentExt).get(NoteViewModel::class.java)
 
-                    val nc = noteViewModel.countNotes(nb.id)
-                    Logger.debug("nc: $nc of $nb")
+                    notebook.notesCount = noteViewModel.countNotes(notebook.id)
+                    Logger.debug("nc: ${notebook.notesCount} of $notebook")
 
-                    wrapper.add(NotebookWrapper(nb.id).apply {
-                        name = nb.name
-                        notesCount = nc
-                    })
+                    wrapper.add(notebook)
                 }
 
                 ret.postValue(wrapper)
@@ -89,10 +95,6 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         super.onResume()
 
         activity?.title = getString(R.string.app_name)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -158,5 +160,4 @@ class NotebooksFragmentExt : NotebooksListFragment() {
             findNavController().navigate(direction)
         }
     }
-
 }

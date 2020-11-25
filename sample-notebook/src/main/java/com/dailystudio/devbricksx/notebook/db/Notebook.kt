@@ -1,13 +1,15 @@
 package com.dailystudio.devbricksx.notebook.db
 
 import androidx.room.ForeignKey
+import androidx.room.Ignore
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.Record
 import com.dailystudio.devbricksx.notebook.R
-import com.dailystudio.devbricksx.notebook.fragment.AbsNotebooksFragment
+import com.dailystudio.devbricksx.notebook.fragment.AbsMultiSelectionListFragment
 import com.dailystudio.devbricksx.notebook.ui.NoteViewHolder
 import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
+import com.dailystudio.devbricksx.ui.SelectableListItem
 import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],
@@ -22,8 +24,8 @@ import java.util.*
         layout = R.layout.layout_notebook,
         viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
-        superClass = AbsNotebooksFragment::class)
-open class Notebook(id: Int = 0) : Record(id) {
+        superClass = AbsMultiSelectionListFragment::class)
+open class Notebook(id: Int = 0) : Record(id), SelectableListItem {
 
     companion object {
 
@@ -41,23 +43,22 @@ open class Notebook(id: Int = 0) : Record(id) {
 
     @JvmField var name: String? = null
 
+    @Ignore var selected: Boolean = false
+    @Ignore var notesCount: Int = 0
+
+    override fun isItemSelected(): Boolean {
+        return selected
+    }
+
+    override fun setItemSelected(selected: Boolean) {
+        this.selected = selected
+    }
+
     override fun toString(): String {
         return buildString {
             append("Notebook [$id]: $name")
         }
     }
-}
-
-class NotebookWrapper(id: Int = 0): Notebook(id) {
-    var notesCount: Int = 0
-
-    override fun toString(): String {
-        return buildString {
-            append(super.toString())
-            append(", notes: $notesCount")
-        }
-    }
-
 }
 
 @RoomCompanion(primaryKeys = ["id"],
@@ -75,7 +76,8 @@ class NotebookWrapper(id: Int = 0): Notebook(id) {
         layout = R.layout.layout_note,
         viewHolder = NoteViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
-        gridLayout = true)
+        gridLayout = true,
+        superClass = AbsMultiSelectionListFragment::class)
 class Note(id: Int = 0) : Record(id) {
 
     companion object {

@@ -15,4 +15,6 @@
     <string name="hint_title">Note Title</string>
     <string name="hint_content">Start writing here …</string>
 
+    <string name="prompt_selection">Selected %1$d</string>
+
 </resources>
