@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.ui
 
-interface ListSelectableItem {
+interface SelectableListItem {
 
     fun isItemSelected(): Boolean
     fun setItemSelected(selected: Boolean)
