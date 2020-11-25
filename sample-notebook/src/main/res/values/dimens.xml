@@ -3,5 +3,6 @@
 <resources>
 	
 	<dimen name="title_font_size">20dp</dimen>
+	<dimen name="selector_width">8dp</dimen>
 
 </resources>

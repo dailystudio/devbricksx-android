@@ -49,7 +49,7 @@ class NotesFragmentExt : NotesListFragment() {
     override fun onResume() {
         super.onResume()
 
-        activity?.title = notebookName
+        changeTitle(notebookName)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -129,6 +129,12 @@ class NotesFragmentExt : NotesListFragment() {
         super.onFabClicked()
 
         createNote()
+    }
+
+    override fun onSelectionStopped() {
+        super.onSelectionStopped()
+
+        changeTitle(notebookName)
     }
 
 }

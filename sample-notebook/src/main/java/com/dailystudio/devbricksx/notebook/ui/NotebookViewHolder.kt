@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.notebook.ui
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.TextView
@@ -14,6 +13,15 @@ class NotebookViewHolder(itemView: View) : AbsSingleLineViewHolder<Notebook>(ite
     override fun bind(item: Notebook) {
         super.bind(item)
 
+        val handlerVisibility = if (item.isItemSelected()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
+        val selectedHandlerStart: View? = itemView.findViewById(R.id.selected_handler_start)
+        selectedHandlerStart?.visibility = handlerVisibility
+
         val notesCountView: TextView? = itemView.findViewById(R.id.notes_count)
         notesCountView?.text = if (item.notesCount == 0) {
             null
@@ -22,16 +30,13 @@ class NotebookViewHolder(itemView: View) : AbsSingleLineViewHolder<Notebook>(ite
         }
     }
 
-    override fun bindText(item: Notebook, titleView: TextView?) {
-        super.bindText(item, titleView)
-        titleView?.setBackgroundColor(if (item.isItemSelected()) {
-            Color.GRAY
-        } else {
-            Color.TRANSPARENT
-        })
-    }
-
     override fun getIcon(item: Notebook): Drawable? {
+        val resId = if (item.isItemSelected()) {
+            R.drawable.ic_selected
+        } else {
+            R.drawable.ic_notebook
+        }
+
         return ResourcesCompatUtils.getDrawable(itemView.context,
                 R.drawable.ic_notebook)
     }

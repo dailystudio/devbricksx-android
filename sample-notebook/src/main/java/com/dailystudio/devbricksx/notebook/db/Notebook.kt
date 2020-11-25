@@ -78,7 +78,7 @@ open class Notebook(id: Int = 0) : Record(id), SelectableListItem {
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         gridLayout = true,
         superClass = AbsMultiSelectionListFragment::class)
-class Note(id: Int = 0) : Record(id) {
+class Note(id: Int = 0) : Record(id), SelectableListItem {
 
     companion object {
 
@@ -101,6 +101,16 @@ class Note(id: Int = 0) : Record(id) {
     @JvmField var notebook_id: Int = -1
     @JvmField var title: String? = null
     @JvmField var desc: String? = null
+
+    @Ignore var selected: Boolean = false
+
+    override fun isItemSelected(): Boolean {
+        return selected
+    }
+
+    override fun setItemSelected(selected: Boolean) {
+        this.selected = selected
+    }
 
     override fun toString(): String {
         return buildString {
