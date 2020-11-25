@@ -1,13 +1,10 @@
 package com.dailystudio.devbricksx.notebook.fragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,10 +16,7 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
-import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
-import com.dailystudio.devbricksx.notebook.ui.NotebooksAdapter
-import com.dailystudio.devbricksx.notebook.ui.NotesAdapter
-import com.dailystudio.devbricksx.utils.ShowDirection
+import com.dailystudio.devbricksx.utils.FabAnimationDirection
 import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -32,9 +26,11 @@ import kotlinx.coroutines.launch
 
 class NotesFragmentExt : NotesListFragment() {
 
+    override val fabAnimationDirection: FabAnimationDirection
+        get() = FabAnimationDirection.RIGHT
+
     private lateinit var notebookViewModel: NoteViewModel
 
-    private var fab: FloatingActionButton? = null
     private var notebookId: Int = -1
     private var notebookName: String? = null
 
@@ -96,16 +92,7 @@ class NotesFragmentExt : NotesListFragment() {
     override fun setupViews(fragmentView: View) {
         super.setupViews(fragmentView)
 
-        fab = fragmentView.findViewById(R.id.fab)
         fab?.setImageResource(R.drawable.ic_fab_edit)
-        fab?.setOnClickListener {
-            Logger.debug("fab is clicked.")
-
-            adapter?.stopSelection()
-            createNote()
-        }
-
-        fab?.showWithAnimation(requireContext(), ShowDirection.RIGHT)
     }
 
     private fun createNote() {
@@ -136,6 +123,12 @@ class NotesFragmentExt : NotesListFragment() {
 
             findNavController().navigate(direction)
         }
+    }
+
+    override fun onFabClicked() {
+        super.onFabClicked()
+
+        createNote()
     }
 
 }

@@ -3,9 +3,6 @@ package com.dailystudio.devbricksx.notebook.fragment
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -14,8 +11,8 @@ import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
-import com.dailystudio.devbricksx.notebook.ui.NotebooksAdapter
-import com.dailystudio.devbricksx.utils.ShowDirection
+import com.dailystudio.devbricksx.utils.FabAnimationDirection
+import com.dailystudio.devbricksx.utils.hideWithAnimation
 import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -26,7 +23,6 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
     private lateinit var notebookViewModel: NotebookViewModel
 
-    private var fab: FloatingActionButton? = null
     private var nbNameView: EditText? = null
 
     override val normalOptionMenuResId: Int
@@ -37,17 +33,6 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
         nbNameView = view.findViewById(R.id.notebook_name)
         nbNameView?.requestFocus()
-
-        fab = view.findViewById(R.id.fab)
-        fab?.setOnClickListener {
-            Logger.debug("fab is clicked.")
-
-//            adapter?.stopSelection()
-
-            createNotebook()
-        }
-
-        fab?.showWithAnimation(requireContext(), ShowDirection.BOTTOM)
     }
 
     override fun getLiveData(): LiveData<List<Notebook>> {
@@ -122,6 +107,12 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         }
     }
 
+    override fun onFabClicked() {
+        super.onFabClicked()
+
+        createNotebook()
+    }
+
     private fun createNotebook() {
         val view : View = LayoutInflater.from(context).inflate(
                 R.layout.dialog_new_group, null)
@@ -171,4 +162,5 @@ class NotebooksFragmentExt : NotebooksListFragment() {
             findNavController().navigate(direction)
         }
     }
+
 }

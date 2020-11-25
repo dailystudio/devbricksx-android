@@ -15,12 +15,18 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.ui.AbsRecyclerAdapter
+import com.dailystudio.devbricksx.utils.FabAnimationDirection
+import com.dailystudio.devbricksx.utils.hideWithAnimation
+import com.dailystudio.devbricksx.utils.showWithAnimation
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
     : AbsRecyclerViewFragment<Item, ItemList, Adapter>()
         where Adapter: RecyclerView.Adapter<*>, Adapter: AbsRecyclerAdapter<Item> {
 
     private var onBackPressedCallback: OnBackPressedCallback? = null
+
+    protected var fab: FloatingActionButton? = null
 
     private fun getAppCompatActivity(): AppCompatActivity? {
         val activity = activity ?: return null
@@ -41,11 +47,21 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
         actionBar.title = title
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun setupViews(fragmentView: View) {
+        super.setupViews(fragmentView)
 
         setHasOptionsMenu(true)
+
         adapter?.setSelectionEnabled(true)
+
+        fab = fragmentView.findViewById(R.id.fab)
+        fab?.setOnClickListener {
+            Logger.debug("fab is clicked.")
+
+            onFabClicked()
+        }
+
+        fab?.showWithAnimation(requireContext(), fabAnimationDirection)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -97,6 +113,9 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
         val actionBar = activity.supportActionBar ?: return
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeAsUpIndicator(R.drawable.ic_action_close)
+
+
+        fab?.hideWithAnimation(requireContext(), fabAnimationDirection)
     }
 
     override fun onSelectionStopped() {
@@ -112,6 +131,8 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
         actionBar.title = getString(R.string.app_name)
         actionBar.setHomeButtonEnabled(false)
         actionBar.setDisplayHomeAsUpEnabled(false)
+
+        fab?.showWithAnimation(requireContext(), fabAnimationDirection)
     }
 
     override fun onSelectionChanged(selectedItems: List<Item>) {
@@ -142,5 +163,9 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
     }
 
     protected open val normalOptionMenuResId: Int = -1
+    protected open val fabAnimationDirection: FabAnimationDirection
+            = FabAnimationDirection.BOTTOM
 
+    protected open fun onFabClicked() {
+    }
 }

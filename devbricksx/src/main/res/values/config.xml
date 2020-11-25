@@ -1,5 +1,6 @@
 <resources>
 
+    <integer name="config_fastAnimTime">300</integer>
     <integer name="config_defaultAnimTime">500</integer>
     <integer name="config_slowAnimTime">800</integer>
 
