@@ -87,6 +87,10 @@ class ListDelegate<Item>(
         selectionChangedListener?.onSelectionStopped()
     }
 
+    fun getSelection(): List<Item> {
+        return selectedItems.toList()
+    }
+
     private fun clearSelection() {
         selectedItems.forEach {
             if (it is SelectableListItem) {

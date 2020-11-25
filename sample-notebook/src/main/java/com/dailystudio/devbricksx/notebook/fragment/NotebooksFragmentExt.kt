@@ -29,27 +29,11 @@ class NotebooksFragmentExt : NotebooksListFragment() {
     private var fab: FloatingActionButton? = null
     private var nbNameView: EditText? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-
-        setHasOptionsMenu(true)
-
-        return view
-    }
-
     override val normalOptionMenuResId: Int
         get() = R.menu.menu_main
 
-    override fun onCreateAdapter(): NotebooksAdapter {
-        return super.onCreateAdapter().apply {
-            setSelectionEnabled(true)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setHasOptionsMenu(true)
 
         nbNameView = view.findViewById(R.id.notebook_name)
         nbNameView?.requestFocus()
@@ -57,6 +41,8 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         fab = view.findViewById(R.id.fab)
         fab?.setOnClickListener {
             Logger.debug("fab is clicked.")
+
+//            adapter?.stopSelection()
 
             createNotebook()
         }
@@ -103,6 +89,31 @@ class NotebooksFragmentExt : NotebooksListFragment() {
                 findNavController().navigate(
                         R.id.action_notebooksFragmentExt_to_aboutFragment
                 )
+
+                true
+            }
+
+            R.id.menu_delete -> {
+                if (adapter?.isInSelectionMode() == true) {
+                    val items = adapter?.getSelection()
+                    items?.let {
+                        MaterialAlertDialogBuilder(context)
+                                .setTitle(R.string.label_delete)
+                                .setMessage(R.string.prompt_deletion)
+                                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                                    val viewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
+                                    for (item in items) {
+                                        viewModel.deleteNotebook(item)
+                                    }
+                                }
+                                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                                }
+                                .show()
+
+                    }
+                } else {
+                    Logger.warn("not in selection mode, skip")
+                }
 
                 true
             }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -18,10 +19,12 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.dailystudio.devbricksx.notebook.ui.NotebooksAdapter
 import com.dailystudio.devbricksx.notebook.ui.NotesAdapter
 import com.dailystudio.devbricksx.utils.ShowDirection
 import com.dailystudio.devbricksx.utils.showWithAnimation
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,8 +47,6 @@ class NotesFragmentExt : NotesListFragment() {
         Logger.debug("parsed notebook id: $notebookId")
         Logger.debug("parsed notebook name: $notebookName")
 
-        setHasOptionsMenu(true)
-
         return view
     }
 
@@ -55,9 +56,34 @@ class NotesFragmentExt : NotesListFragment() {
         activity?.title = notebookName
     }
 
-    override fun onCreateAdapter(): NotesAdapter {
-        return super.onCreateAdapter().apply {
-            setSelectionEnabled(true)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_delete -> {
+                if (adapter?.isInSelectionMode() == true) {
+                    val items = adapter?.getSelection()
+                    items?.let {
+                        MaterialAlertDialogBuilder(context)
+                                .setTitle(R.string.label_delete)
+                                .setMessage(R.string.prompt_deletion)
+                                .setPositiveButton(android.R.string.ok) { dialog, which ->
+                                    val viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
+                                    for (item in items) {
+                                        viewModel.deleteNote(item)
+                                    }
+                                }
+                                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                                }
+                                .show()
+
+                    }
+                } else {
+                    Logger.warn("not in selection mode, skip")
+                }
+
+                true
+            }
+
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 
@@ -75,6 +101,7 @@ class NotesFragmentExt : NotesListFragment() {
         fab?.setOnClickListener {
             Logger.debug("fab is clicked.")
 
+            adapter?.stopSelection()
             createNote()
         }
 

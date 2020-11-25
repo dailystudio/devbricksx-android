@@ -16,5 +16,6 @@
     <string name="hint_content">Start writing here …</string>
 
     <string name="prompt_selection">Selected %1$d</string>
+    <string name="prompt_deletion">Are you sure you want to delete these items?</string>
 
 </resources>

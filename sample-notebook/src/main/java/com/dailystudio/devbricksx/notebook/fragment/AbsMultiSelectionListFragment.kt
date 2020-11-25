@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
@@ -40,6 +41,13 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
         actionBar.title = title
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setHasOptionsMenu(true)
+        adapter?.setSelectionEnabled(true)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -51,6 +59,12 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
                 adapter.stopSelection()
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        adapter?.stopSelection()
     }
 
     override fun onDestroy() {

@@ -18,6 +18,7 @@ interface AbsRecyclerAdapter<Item> {
     fun isSelectionEnabled(): Boolean
     fun startSelection(holder: RecyclerView.ViewHolder, position: Int)
     fun stopSelection()
+    fun getSelection(): List<Item>
     fun isInSelectionMode(): Boolean
 
 }

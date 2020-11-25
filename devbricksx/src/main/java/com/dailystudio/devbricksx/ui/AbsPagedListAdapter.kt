@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.ui
 
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -49,6 +50,20 @@ abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
 
     override fun isInSelectionMode(): Boolean {
         return delegate.isInSelectionMode()
+    }
+
+    override fun getSelection(): List<Item> {
+        return delegate.getSelection()
+    }
+
+    override fun submitList(pagedList: PagedList<Item>?) {
+        super.submitList(pagedList)
+        stopSelection()
+    }
+
+    override fun submitList(pagedList: PagedList<Item>?, commitCallback: Runnable?) {
+        super.submitList(pagedList, commitCallback)
+        stopSelection()
     }
 
 }
