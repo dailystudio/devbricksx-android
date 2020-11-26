@@ -4,15 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_finish"
-        android:icon="@drawable/ic_action_finish"
-        android:title="@string/label_finish"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/menu_delete"
         android:icon="@drawable/ic_action_delete"
         android:title="@string/label_delete"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
 </menu>

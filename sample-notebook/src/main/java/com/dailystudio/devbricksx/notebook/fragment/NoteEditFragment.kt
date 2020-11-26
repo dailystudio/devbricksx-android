@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,6 +35,7 @@ class NoteEditFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_note, container, false)
 
+        setupViews(view)
 
         val args: NoteEditFragmentArgs by navArgs()
         noteId = args.noteId
@@ -52,9 +55,9 @@ class NoteEditFragment : Fragment() {
                     }
                 }
             }
+        } else {
+            descView?.showKeyboard()
         }
-
-        setupViews(view)
 
         setHasOptionsMenu(true)
 
@@ -66,25 +69,26 @@ class NoteEditFragment : Fragment() {
 
         descView?.setText(note.desc)
         descView?.setSelection(note.desc?.length ?: 0)
+        descView?.showKeyboard()
     }
 
     private fun setupViews(view: View) {
         titleView = view.findViewById(R.id.title)
-
         descView = view.findViewById(R.id.description)
-        descView?.requestFocus()
-
-        showInputMethod()
     }
 
+    override fun onResume() {
+        super.onResume()
 
-    private fun showInputMethod() {
-        val context = requireContext()
+        view?.post {
+            val activity = activity as AppCompatActivity
 
-        val imm =
-                context.getSystemService(Context.INPUT_METHOD_SERVICE)
-                        as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+            val actionBar = activity.supportActionBar
+            Logger.debug("action bar: $actionBar")
+            actionBar?.title = null
+            actionBar?.setDisplayHomeAsUpEnabled(true)
+            actionBar?.setHomeAsUpIndicator(R.drawable.ic_action_finish)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -98,7 +102,7 @@ class NoteEditFragment : Fragment() {
                 true
             }
 
-            R.id.menu_finish -> {
+            android.R.id.home -> {
                 Logger.debug("entryId: $noteId")
                 if (noteId == -1) {
                     createNewNote()
@@ -176,14 +180,20 @@ class NoteEditFragment : Fragment() {
     }
 
     private fun backToNotesList() {
-        val context = requireContext()
-
-        val imm: InputMethodManager? =
-                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
+        descView?.clearFocus()
+        titleView?.clearFocus()
         findNavController().popBackStack()
     }
 
 }
 
+private fun EditText.showKeyboard() {
+    post {
+        if (requestFocus()) {
+            val imm =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE)
+                            as InputMethodManager
+            imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+}

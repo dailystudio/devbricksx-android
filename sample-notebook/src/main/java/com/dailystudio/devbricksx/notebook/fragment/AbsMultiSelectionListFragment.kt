@@ -114,7 +114,6 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
         actionBar.setDisplayHomeAsUpEnabled(true)
         actionBar.setHomeAsUpIndicator(R.drawable.ic_action_close)
 
-
         fab?.hideWithAnimation(requireContext(), fabAnimationDirection)
     }
 
