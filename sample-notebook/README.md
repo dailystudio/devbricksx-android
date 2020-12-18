@@ -116,5 +116,9 @@ class Note(id: Int = 0) : Record(id) {
 }
 
 ```
+Same as **Notebook** class, **Note** also derives from **Record** and is annotated by **RoomCompanion** with the same parameters. The only difference is that **Note** class has one more parameter in **RoomCompanion** than **Notebookt**:
 
 
+- **foreignKeys**
+
+	It uses [ForeignKey](https://developer.android.com/reference/android/arch/persistence/room/ForeignKey), an annotation defined in Room annotation library, to describe the relationship with **Notebook**. In our application, each **Note** has a property "notebook_id" that refers to the identifier of the **Notebook** it belongs to.
