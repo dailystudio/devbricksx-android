@@ -3,7 +3,7 @@
 This tutorial shows you how to use **DevBricksX** to create a notebook application on Android.
 
 ## Preparation
-Before we starting to write any codes, you need to make sure you have configure the libraries properly.
+Before we starting to write any codes, you need to make sure you have configured the libraries properly.
 
 Add the following dependencies in build.gradle of your application.
 
@@ -33,13 +33,13 @@ dependencies {
 Synchronizing the project configurations, and then let's move to the codes.
 
 ## Your first line of the code
-In the notebook application, we have two different kind of objects, **Note** and **Notebook**.
+In the notebook application, we have two different kinds of objects, **Note** and **Notebook**.
 
-- **Notebook** is a colletion of notes which are in the same category. Generally, it has an unique identifier and a display name. 
+- **Notebook** is a collection of notes which are in the same category. Generally, it has a unique identifier and a display name. 
 
-- **Note** is a piece of document you want to save. It contins text, pictures, attachments, etc. But for simplify our implementation, we only support pure text note in this sample.
+- **Note** is a piece of document you want to save. It contains text, pictures, attachments, etc. But to simplify our implementation, we only support pure text note in this sample.
 	
-Now, let us define our object with some codes. Since we tend to save notes and notebooks permenantly in the database, we can use **RoomCompanion** to help us generate boilerplate codes.
+Now, let us define our object with some codes. Since we tend to save notes and notebooks permanently in the database, we can use **RoomCompanion** to help us generate boilerplate codes.
 
 ### 1.Notebook
 Here is the definition of **Notebook** object:
@@ -62,31 +62,59 @@ open class Notebook(id: Int = 0) : Record(id) {
 }
 
 ```
-Now, you can create Notebook objects in your application and save them into database. 
+Now, you can create Notebook objects in your application and save them into the database. 
 
-> You might notice that the **Notebook** derives from a base class **Record**. **Record** is a pre-defined class in **DevBricksX** which is usually used as super class of an object with timestamp properties, e.g *created* or *lastModified*.
+> You might notice that the **Notebook** derives from a base class **Record**. **Record** is a pre-defined class in **DevBricksX** which is usually used as a superclass of an object with timestamp properties, e.g *created* or *lastModified*.
 
-A **RoomCompanion** annotation is attached to the class as we need annotation processor can assit us to generate some codes. Here, let us go through with each parameters of the annotation:
+A **RoomCompanion** annotation is attached to the class as we need the **DevBricksX** annotation processor to generate some companion codes. Here, let us go through each parameter of the annotation:
 
 - **primaryKeys**
 
-	This paramter indicates **Room** library to use property "id" of Notebook as the primary key of each notebook record.
+	This parameter indicates **Room** library to use property "id" of Notebook as the primary key of each notebook record.
 
 - **autoGenerate**
 
-	This paramter tells **Room** library to generate "id" proptery automatically with an increased integer.
+	This parameter tells **Room** library to generate "id" property automatically with an increasing integer.
 
 - **converters**
 
-	The parent class of **Notebook** is **Record**. Its member created and lastModified is defined with **Date** type. **Room** library needs converters to convert them into supported data types before storing. **DateConverter** is a pre-defined utility to convert **Date** objects to **Long**.
+	The parent class of **Notebook** is **Record**. Its member field, created and lastModified, is defined with **Date** type. **Room** library needs converters to convert them into supported data types before storing. **DateConverter** is a pre-defined utility to convert **Date** objects to **Long**.
 
 - **extension**
 
-	We intend to display the notebooks in reverse chronological order. Default interfaces of generated **Dao** class does not have such a function. We have to do it by ourself.
+	We intend to display the notebooks in reverse chronological order. Default interfaces of generated **Dao** class do not have such a function. We have to do it by ourselves.
 
 - **database**
 
-	By default, **Notebook** objects will be saved into a dediate database named **notebook.db**. But, in our application, we need to store them in the same database as **Note**. So, we need to specify the database parameter.
+	By default, **Notebook** objects will be saved into a dedicated database named **notebook.db**. But, in our application, we need to store them in the same database as **Note**. So, we need to specify the database parameter.
 
+### 2.Note
+Here is the definition of **Note** object:
+
+```kotlin
+@RoomCompanion(primaryKeys = ["id"],
+        autoGenerate = true,
+        extension = NoteDaoExtension::class,
+        database = "notes",
+        foreignKeys = [ ForeignKey(entity = Notebook::class,
+                parentColumns = ["id"],
+                childColumns = ["notebook_id"],
+                onDelete = ForeignKey.CASCADE
+        )]
+)
+class Note(id: Int = 0) : Record(id) {
+
+    @JvmField var notebook_id: Int = -1
+    @JvmField var title: String? = null
+    @JvmField var desc: String? = null
+
+    override fun toString(): String {
+        return buildString {
+            append("Note [$id, notebook: $notebook_id]: $title, [desc: $desc]")
+        }
+    }
+}
+
+```
 
 
