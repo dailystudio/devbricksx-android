@@ -66,7 +66,7 @@ Now, you can create Notebook objects in your application and save them into data
 
 > You might notice that the **Notebook** derives from a base class **Record**. **Record** is a pre-defined class in **DevBricksX** which is usually used as super class of an object with timestamp properties, e.g *created* or *lastModified*.
 
-A RoomCompanion annotation is attached to the class as we need annotation processor can assit us to generate some codes. Here, let us go through with each parameters of the annotation:
+A **RoomCompanion** annotation is attached to the class as we need annotation processor can assit us to generate some codes. Here, let us go through with each parameters of the annotation:
 
 - **primaryKeys**
 
@@ -86,7 +86,7 @@ A RoomCompanion annotation is attached to the class as we need annotation proces
 
 - **database**
 
-	By default, **Notebook** objects will be saved into a database named **notebook.db**
+	By default, **Notebook** objects will be saved into a dediate database named **notebook.db**. But, in our application, we need to store them in the same database as **Note**. So, we need to specify the database parameter.
 
 
 
