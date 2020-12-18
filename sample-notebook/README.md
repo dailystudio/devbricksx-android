@@ -51,7 +51,7 @@ Here is the definition of **Notebook** object:
     extension = NotebookDaoExtension::class,
     database = "notes",
 )
-open class Notebook(id: Int = 0) : Record(id) {
+class Notebook(id: Int = 0) : Record(id) {
     @JvmField var name: String? = null
 }
 
