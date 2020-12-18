@@ -19,7 +19,7 @@ repositories {
 
 ```groovy
 dependencies {
-	 devbricksx_version = "1.2.9"
+	devbricksx_version = "1.2.9"
     
     implementation "com.dailystudio:devbricksx:$devbricksx_version"
     implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
@@ -46,19 +46,13 @@ Here is the definition of **Notebook** object:
 
 ```kotlin
 @RoomCompanion(primaryKeys = ["id"],
-        autoGenerate = true,
-        converters = [DateConverter::class],
-        extension = NotebookDaoExtension::class,
-        database = "notes",
+    autoGenerate = true,
+    converters = [DateConverter::class],
+    extension = NotebookDaoExtension::class,
+    database = "notes",
 )
 open class Notebook(id: Int = 0) : Record(id) {
     @JvmField var name: String? = null
-
-    override fun toString(): String {
-        return buildString {
-            append("Notebook [$id]: $name")
-        }
-    }
 }
 
 ```
@@ -93,26 +87,19 @@ Here is the definition of **Note** object:
 
 ```kotlin
 @RoomCompanion(primaryKeys = ["id"],
-        autoGenerate = true,
-        extension = NoteDaoExtension::class,
-        database = "notes",
-        foreignKeys = [ ForeignKey(entity = Notebook::class,
-                parentColumns = ["id"],
-                childColumns = ["notebook_id"],
-                onDelete = ForeignKey.CASCADE
-        )]
+    autoGenerate = true,
+    extension = NoteDaoExtension::class,
+    database = "notes",
+    foreignKeys = [ ForeignKey(entity = Notebook::class,
+            parentColumns = ["id"],
+            childColumns = ["notebook_id"],
+            onDelete = ForeignKey.CASCADE
+    )]
 )
 class Note(id: Int = 0) : Record(id) {
-
     @JvmField var notebook_id: Int = -1
     @JvmField var title: String? = null
     @JvmField var desc: String? = null
-
-    override fun toString(): String {
-        return buildString {
-            append("Note [$id, notebook: $notebook_id]: $title, [desc: $desc]")
-        }
-    }
 }
 
 ```
@@ -130,46 +117,42 @@ Same as **Notebook** class, **Note** also derives from **Record** and is annotat
 After we have defined this two classes with **RoomCompanion** annotation, without any extra codes, you can use Room library to save **Notebook** and **Note** in your main activity:
 
 ```kotlin
-    private fun createSampleNotes() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val notebooks = arrayOf(
-                    "Games", "Tech",
-                    "Books", "Office",
-                    "Home"
-            )
-            val maxNotes = 5
+val notebooks = arrayOf(
+        "Games", "Tech",
+        "Books", "Office",
+        "Home"
+)
+val maxNotes = 5
 
-            val database = NotesDatabase.getDatabase(
-                    this@MainActivity)
+val database = NotesDatabase.getDatabase(
+        this@MainActivity)
 
-            val notes = mutableListOf<Note>()
-            for ((i, displayName) in notebooks.withIndex()) {
-                val notebookId = i + 1
-                val nb = Notebook(notebookId).apply {
-                    name = displayName
-                    created = Date()
-                    lastModified = created
-                }
-
-                notes.clear()
-                for (j in 0 until maxNotes) {
-                    val noteId = notebookId * maxNotes + j + 1
-
-                    notes.add(Note(noteId).apply {
-                        notebook_id = notebookId
-                        title = "$displayName $j"
-                        desc = "Write something for $displayName $j"
-
-                        created = Date()
-                        lastModified = created
-                    })
-                }
-
-                database.notebookDao().insertOrUpdate(nb)
-                database.noteDao().insertOrUpdate(notes)
-            }
-        }
+val notes = mutableListOf<Note>()
+for ((i, displayName) in notebooks.withIndex()) {
+    val notebookId = i + 1
+    val nb = Notebook(notebookId).apply {
+        name = displayName
+        created = Date()
+        lastModified = created
     }
+
+    notes.clear()
+    for (j in 0 until maxNotes) {
+        val noteId = notebookId * maxNotes + j + 1
+
+        notes.add(Note(noteId).apply {
+            notebook_id = notebookId
+            title = "$displayName $j"
+            desc = "Write something for $displayName $j"
+
+            created = Date()
+            lastModified = created
+        })
+    }
+
+    database.notebookDao().insertOrUpdate(nb)
+    database.noteDao().insertOrUpdate(notes)
+}
 
 ```
 In the codes above, we create five notebooks and also add five notes with sample text in each notebook.
