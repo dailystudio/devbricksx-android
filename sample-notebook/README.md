@@ -17,6 +17,7 @@ The application includes a set of basic features that a notebook usually has, in
 Here are also a series of tutorials to explain the details:
 
 1. [Tutorial #1 - Create the database](../docs/sample_notebook_tutorial_01.md)
+1. [Tutorial #2 - Display in lists](../docs/sample_notebook_tutorial_02.md)
 
 ## License
     Copyright 2020 Daily Studio.
