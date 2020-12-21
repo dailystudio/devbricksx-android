@@ -53,7 +53,7 @@ Compare to the declaration in the last chapter, there are three new annotations 
 	
 	**viewType** parameter of Notebook is **ViewType.Customized**, since we want to use our layout instead of using pre-defined ones. 
 	
-	For more configuration of **Adapter** annotation, please refer to [Devbricks X Kotlin Annoations](https://github.com/dailystudio/devbricksx-android/blob/master/devbricksx-kotlin-annotations/README.md#2-adapter)
+	For more configuration of **Adapter** annotation, please refer to [Devbricks X Kotlin Annotations](https://github.com/dailystudio/devbricksx-android/blob/master/devbricksx-kotlin-annotations/README.md#2-adapter)
 
 - **ListFragment**
 
@@ -345,5 +345,3 @@ We are ready to watch the magic happens again. Include **NotebooksListFragmentEx
 
 ## Summary
 Now, you are clear about how to use **DevBricksX** to display your objects. Next time, I will show how to add a notebook or note through the user interface rather than codes. 
-
-***To be continued ...***

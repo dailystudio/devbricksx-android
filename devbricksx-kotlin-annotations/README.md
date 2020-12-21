@@ -1,4 +1,4 @@
-# Devbricks X Kotlin Annoations
+# Devbricks X Kotlin Annotations
 This library provides annotations that simplify your development work with **ViewModel**, **Fragment**, etc.
 
 ## Installation

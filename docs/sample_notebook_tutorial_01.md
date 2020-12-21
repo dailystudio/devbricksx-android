@@ -166,5 +166,3 @@ If you don't look into the codes of annotation processors, you will never know w
 
 ## Summary
 As you have seen in this article, the annotation processor in **DevBricksX** can help you generate Room relative stuff. Next time, I will show how to generate code for user interfaces. 
-
-***To be continued ...***
