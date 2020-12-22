@@ -20,6 +20,7 @@ files="
   README.md
   devbricksx-java-annotations/README.md
   devbricksx-kotlin-annotations/README.md
+  docs/sample_notebook_tutorial_01.md
 "
 
 for f in ${files}; do

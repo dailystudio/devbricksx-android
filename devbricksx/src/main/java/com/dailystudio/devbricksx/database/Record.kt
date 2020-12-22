@@ -1,9 +1,13 @@
 package com.dailystudio.devbricksx.database
 
+import androidx.room.Ignore
 import com.dailystudio.devbricksx.annotations.RoomCompanion
+import com.dailystudio.devbricksx.ui.SelectableListItem
 import java.util.*
 
-@RoomCompanion(primaryKeys = ["id"], autoGenerate = true, converters = [DateConverter::class])
+@RoomCompanion(primaryKeys = ["id"],
+        autoGenerate = true,
+        converters = [DateConverter::class])
 open class Record(@JvmField val id: Int = 0) {
     @JvmField var created: Date? = null
     @JvmField var lastModified: Date? = null
@@ -13,4 +17,24 @@ open class Record(@JvmField val id: Int = 0) {
             append("[${javaClass.simpleName}: $id]")
         }
     }
+}
+
+
+@RoomCompanion(primaryKeys = ["id"],
+        autoGenerate = true,
+        converters = [DateConverter::class]
+)
+open class SelectableRecord(id: Int = 0) : Record(id), SelectableListItem {
+
+    @Ignore
+    var selected: Boolean = false
+
+    override fun isItemSelected(): Boolean {
+        return selected
+    }
+
+    override fun setItemSelected(selected: Boolean) {
+        this.selected = selected
+    }
+
 }

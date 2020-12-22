@@ -5,6 +5,7 @@ import androidx.room.Ignore
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.Record
+import com.dailystudio.devbricksx.database.SelectableRecord
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.fragment.AbsMultiSelectionListFragment
 import com.dailystudio.devbricksx.notebook.ui.NoteViewHolder
@@ -25,7 +26,7 @@ import java.util.*
         viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         superClass = AbsMultiSelectionListFragment::class)
-open class Notebook(id: Int = 0) : Record(id), SelectableListItem {
+open class Notebook(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
 
@@ -42,17 +43,7 @@ open class Notebook(id: Int = 0) : Record(id), SelectableListItem {
     }
 
     @JvmField var name: String? = null
-
-    @Ignore var selected: Boolean = false
     @Ignore var notesCount: Int = 0
-
-    override fun isItemSelected(): Boolean {
-        return selected
-    }
-
-    override fun setItemSelected(selected: Boolean) {
-        this.selected = selected
-    }
 
     override fun toString(): String {
         return buildString {
@@ -78,7 +69,7 @@ open class Notebook(id: Int = 0) : Record(id), SelectableListItem {
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         gridLayout = true,
         superClass = AbsMultiSelectionListFragment::class)
-class Note(id: Int = 0) : Record(id), SelectableListItem {
+class Note(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
 
@@ -101,16 +92,6 @@ class Note(id: Int = 0) : Record(id), SelectableListItem {
     @JvmField var notebook_id: Int = -1
     @JvmField var title: String? = null
     @JvmField var desc: String? = null
-
-    @Ignore var selected: Boolean = false
-
-    override fun isItemSelected(): Boolean {
-        return selected
-    }
-
-    override fun setItemSelected(selected: Boolean) {
-        this.selected = selected
-    }
 
     override fun toString(): String {
         return buildString {
