@@ -58,19 +58,7 @@ class NotesFragmentExt : NotesListFragment() {
                 if (adapter?.isInSelectionMode() == true) {
                     val items = adapter?.getSelection()
                     items?.let {
-                        MaterialAlertDialogBuilder(context)
-                                .setTitle(R.string.label_delete)
-                                .setMessage(R.string.prompt_deletion)
-                                .setPositiveButton(android.R.string.ok) { dialog, which ->
-                                    val viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-                                    for (item in items) {
-                                        viewModel.deleteNote(item)
-                                    }
-                                }
-                                .setNegativeButton(android.R.string.cancel) { _, _ ->
-                                }
-                                .show()
-
+                        performDeletion(it)
                     }
                 } else {
                     Logger.warn("not in selection mode, skip")
@@ -81,6 +69,23 @@ class NotesFragmentExt : NotesListFragment() {
 
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun performDeletion(items: List<Note>) {
+        MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.label_delete)
+                .setMessage(R.string.prompt_deletion)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    val viewModel =
+                            ViewModelProvider(this)
+                                    .get(NoteViewModel::class.java)
+                    for (item in items) {
+                        viewModel.deleteNote(item)
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                }
+                .show()
     }
 
     override fun getLiveData(): LiveData<PagedList<Note>> {

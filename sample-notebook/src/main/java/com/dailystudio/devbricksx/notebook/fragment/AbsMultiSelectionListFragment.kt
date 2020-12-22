@@ -67,7 +67,8 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        onBackPressedCallback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, false) {
+        onBackPressedCallback = requireActivity()
+                .onBackPressedDispatcher.addCallback(viewLifecycleOwner, false) {
             val adapter = adapter?: return@addCallback
 
             Logger.debug("on back pressed: selection mode = ${adapter.isInSelectionMode()}")
