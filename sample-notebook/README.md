@@ -19,6 +19,7 @@ Here are also a series of tutorials to explain the details:
 1. [Tutorial #1 - Create the database](../docs/sample_notebook_tutorial_01.md)
 2. [Tutorial #2 - Display in lists](../docs/sample_notebook_tutorial_02.md)
 3. [Tutorial #3 - Multi-Selection support](../docs/sample_notebook_tutorial_03.md)
+4. [Tutorial #4 - Put everything together](../docs/sample_notebook_tutorial_04.md)
 
 ## License
     Copyright 2020 Daily Studio.

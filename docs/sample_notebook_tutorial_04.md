@@ -4,8 +4,8 @@
 We have finished most features of the notebook application. In this chapter, let us accomplish the rest parts and put them together.
 
 ## Create a notebook
-In previous chapters, we added notebooks programmatically. Now, we tend to notebook through user interface. 
-Since adding notebook only requires a name input, it is enough to pop up a dialog.
+In previous chapters, we added notebooks programmatically. Now, we tend to create a notebook through the user interface. 
+Since adding a notebook only requires a name input, it is enough to pop up a dialog.
 ![](./assets/edit_notebook.png)
 
 **MaterialAlertDialogBuilder** is the best option to create the dialog. Here is the code:
@@ -63,15 +63,15 @@ And corresponding layout is:
 
 </LinearLayout>
 ```
-There is a few options would matter user experience:
+There are a few options that would matter to user experience:
 
-- The property **maxLines** of **EditText** for notebook name should be 1. Otherwise, the display will be become strange when user presses *enter*.
-- Chech the **emptyness** of user's input before you add it into database. Otherwise, there will be some blank lines in your notebooks list.
+- The property **maxLines** of **EditText** for notebook name should be 1. Otherwise, the display will become strange when the user presses *enter*.
+- Check the **emptiness** of the user's input before you add it into the database. Otherwise, there will be some blank lines in your notebooks list.
 
 ## Edit a note
-Creating a note is a bit complex than creating notebook. It is better to use a dediated fragment rather than a dialog. 
+Creating a note is a bit complex than creating a notebook. It is better to use a dedicated fragment rather than a dialog. 
 
-Since we are not intend to support rich format content, we can keep our user interface as clean and simple as possible.
+Since we do not intend to support rich format content, we can keep our user interface as clean and simple as possible.
 ![](./assets/editing.png)
 
 The layout of the fragment is here:
@@ -109,10 +109,10 @@ The layout of the fragment is here:
 
 </RelativeLayout>
 ```
-There are also some deatil that you need pay attention.
+There are also some details that you need to pay attention to.
 
 ### EditText backgrounds
-By default, EditText has a decorated background. When it is focused, a underline with primary color will appear at the bottom of EditText. Obviously, it is not aligned with our design. To remove it, you can add the following property on your EditText
+By default, EditText has a decorated background. When it is focused, an underline with primary color will appear at the bottom of EditText. Obviously, it is not aligned with our design. To remove it, you can add the following property to your EditText
 
 ```xml
 <EditText
@@ -122,7 +122,7 @@ By default, EditText has a decorated background. When it is focused, a underline
 </EditText>    
 ```
 ### Show/Hide soft keyboard
-Handling soft keyboard display is a problem you cannot avoid when you are using **EditText** in your application. Sometime, it does not pop up properly as you expected. You have to add extra codes to control it.
+Handling the soft keyboard display is a problem you cannot avoid when you are using **EditText** in your application. Sometimes, it does not pop up properly as you expected. You have to add extra codes to control it.
 
 First, we extend **EditText** with a shorcut funtion:
 
@@ -138,7 +138,7 @@ fun EditText.showKeyboard() {
     }
 }
 ```
-Then, we call it when we want to show the keyboard. For example, after when we have loaded content of an existing note to user interface, we prefer to set the editing cursor to the end of its desription and show the soft keyboard. It is a good experience for user to continue editing from the last saved point.
+Then, we call it when we want to show the keyboard. For example, after when we have loaded the content of an existing note to the user interface, we prefer to set the editing cursor to the end of its description and show the soft keyboard. It is a good experience for users to continue editing from the last saved point.
 
 ```kotlin
 private fun attachNote(note: Note) {
@@ -151,7 +151,7 @@ private fun attachNote(note: Note) {
 ```
 
 ### Differentiate creating and editing
-Creating a new note and editing an existing one share the same user interface. You can to handle different cases by a couple of arguments.
+Creating a new note and editing an existing one share the same user interface. You can handle different cases by a couple of arguments.
 
 ```kotlin
 val args: NoteEditFragmentArgs by navArgs()
@@ -175,18 +175,18 @@ if (noteId != -1) {
 }
 
 ```
-As shown above, we differentiate these two cases by the value of notedId, which is passed through Navigation arguments. If **noteId** is -1, it indicates that we are creating a note from scratch. While if the **noteIde** is other values, we load the note from database and attach to user interface.
+As shown above, we differentiate these two cases by the value of noteId, which is passed through Navigation arguments. If **noteId** is -1, it indicates that we are creating a note from scratch. While if the **noteId** is other values, we load the note from the database and attach it to the user interface.
 
 ## About
-An informative About is also required for an application. **DevBricksX** provides you quick way to generated your About screen.
+An informative About is also required for an application. **DevBricksX** provides you a quick way to generate your About screen.
 
 ![](./assets/notebook_about.png)
 
-**AbsAboutFragment** enables developer to show an About dialog with unified user interface layout. It includes:
+**AbsAboutFragment** enables developers to show an About dialog with a unified user interface layout. It includes:
 
 - A top illustration area
 	
-	It shows an attrative image of your application. You can display your image by override **appThumbResource**. If it is set to -1, the dialog will not include a top illustration area.
+	It shows an attractive image of your application. You can display your image by override **appThumbResource**. If it is set to -1, the dialog will not include a top illustration area.
 	
 - Application name
 	
@@ -202,7 +202,7 @@ An informative About is also required for an application. **DevBricksX** provide
 	
 - Application icon
 	
-	It displays an application icon sit along with the left side of application name. You must provide the value of **appIconResource** when you implement **AbsAboutFragment**.
+	It displays an application icon sit along with the left side of the application name. You must provide the value of **appIconResource** when you implement **AbsAboutFragment**.
 
 Here is the final implementation of the AboutFragment:
 
@@ -224,9 +224,9 @@ class AboutFragment: AbsAboutFragment() {
 ```
 
 ## Connect parts with Android Navigation
-This is the last part of the tutorial, you have already finished every single features of a notebook application. Now, you need to put them into differnt combination to contruct different usecases. You can do it by yourself or use **Navigation** in **Android Jetpack**.
+This is the last part of the tutorial, you have already finished every single feature of a notebook application. Now, you need to put them into different combinations to construct different use-cases. You can do it by yourself or use **Navigation** in **Android Jetpack**.
 
-We recommend you to use **Navigation** because its convenience. You can define different usecase by dragging-and-dropping fragments in a visual editor.
+We recommend you to use **Navigation** because of its convenience. You can define different use cases by dragging-and-dropping fragments in a visual editor.
 
 To active Navigation in your project, you have to add several dependencies in your Gradle build scripts.
 
@@ -312,8 +312,8 @@ You can also update your cases by editting the codes:
 </navigation>
 ```
 
-> The last element in **navigation** is for **AboutFragment**. The element is enclosed in a **\<dialog\>** tag. This is because **AboutFragment** derives from **AppCompatDialogFragment**. If you use **\<fragment\>** as reset ones, you will get a blank screen when you navigation to it.
+> The last element in **navigation** is for **AboutFragment**. The element is enclosed in a **\<dialog\>** tag. This is because **AboutFragment** derives from **AppCompatDialogFragment**. If you use **\<fragment\>** as reset ones, you will get a blank screen when you navigate to it.
 
 ## Summary
-With this series of tutorials, I hope you can create your notebook application with **DevBricksX**. If you have you any question or problem, please feel free to contact me. I wish my tutorails and libraries could help you and save your time in everyday development.
+With this series of tutorials, I hope you can create your notebook application with **DevBricksX**. If you have any questions or problems, please feel free to contact me. I wish my tutorials and libraries could help you and save your time in everyday development.
 
