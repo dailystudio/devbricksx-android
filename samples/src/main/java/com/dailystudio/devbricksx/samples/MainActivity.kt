@@ -3,7 +3,6 @@ package com.dailystudio.devbricksx.samples
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -64,9 +63,7 @@ class MainActivity : AppCompatActivity() {
                 val viewModel = ViewModelProvider(this@MainActivity)
                         .get(UseCaseViewModel::class.java)
 
-                for (case in cases) {
-                    viewModel.insertUseCase(case)
-                }
+                viewModel.insertUseCases(it.toList())
             }
         }
     }

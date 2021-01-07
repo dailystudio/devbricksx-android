@@ -26,7 +26,20 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
     override fun onActive() {
         super.onActive()
 
-//        postValue(manager.toList())
+        /*
+         * If we do not post value here, initial data will be missed
+         * when all of changes have happened before onActive() is called.
+         *
+         * If we post value each when onActive() is called, there be
+         * duplicated update and cause extra UI refresh, especially when
+         * activity of fragment resumes.
+         *
+         * So, we should check the value and perform the proper calls.
+         */
+        if (value == null) {
+            postValue(manager.toList())
+        }
+
         manager.addObserver(this)
     }
 

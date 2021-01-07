@@ -9,9 +9,9 @@ import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.samples.datachanges.model.ItemViewModel
 import com.dailystudio.devbricksx.utils.StringUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import kotlin.random.Random
 
 class CaseActivity : BaseCaseActivity() {
@@ -20,15 +20,15 @@ class CaseActivity : BaseCaseActivity() {
         val RANDOM = Random(System.currentTimeMillis())
     }
 
-    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
-    private var isRunning = false
+    private lateinit var addItemsJob: Job
+    private lateinit var updateItemsJob: Job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_case_data_changes)
 
-        generateImages()
+        generateItems()
     }
 
     override fun onResume() {
@@ -44,12 +44,13 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private fun startRandomModification() {
-        isRunning = true
-        executor.execute {
+        updateItemsJob = lifecycleScope.launchWhenResumed {
+            addItemsJob.join()
+
             val viewModel = ViewModelProvider(this@CaseActivity).get(
                     ItemViewModel::class.java)
 
-            while(isRunning) {
+            while(true) {
                 val items = viewModel.getItems()
                 if (items.isNotEmpty()) {
                     val pickedIndex = RANDOM.nextInt(items.size)
@@ -60,25 +61,24 @@ class CaseActivity : BaseCaseActivity() {
                     Logger.debug("update item: $item")
                 }
 
-                Thread.sleep(30)
+                delay(30)
             }
         }
     }
 
     private fun stopRandomModification() {
-        isRunning = false
-        executor.shutdown()
+        updateItemsJob.cancel()
     }
 
-    private fun generateImages() {
-        lifecycleScope.launch(Dispatchers.IO) {
+    private fun generateItems() {
+        addItemsJob = lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@CaseActivity).get(
                     ItemViewModel::class.java)
             val lines = StringUtils.linesFromAsset(this@CaseActivity, "items.txt")
             for (l in lines) {
                 val item = Item(l)
 
-                viewModel.insertItem(item)
+                viewModel.insertItem(item).join()
             }
         }
     }
