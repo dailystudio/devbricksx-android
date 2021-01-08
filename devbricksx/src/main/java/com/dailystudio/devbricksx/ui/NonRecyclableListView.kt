@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.R
+import com.dailystudio.devbricksx.development.Logger
 
 open class NonRecyclableListView @JvmOverloads constructor(
         context: Context,
@@ -59,9 +60,11 @@ open class NonRecyclableListView @JvmOverloads constructor(
 
     fun setAdapter(listAdapter: RecyclerView.Adapter<*>?) {
         adapter?.unregisterAdapterDataObserver(mAdapterObserver)
+        Logger.debug("unregister observer from old adapter: $adapter")
 
         adapter = listAdapter
         adapter?.registerAdapterDataObserver(mAdapterObserver)
+        Logger.debug("register observer on new adapter: $adapter")
 
         appendItems()
     }
@@ -77,6 +80,7 @@ open class NonRecyclableListView @JvmOverloads constructor(
         container.removeAllViews()
 
         val count = adapter.itemCount
+        Logger.debug("new items: count = $count")
         for (pos in 0 until count) {
             val type = adapter.getItemViewType(pos) ?: 0
             val viewHolder: RecyclerView.ViewHolder =
@@ -94,6 +98,7 @@ open class NonRecyclableListView @JvmOverloads constructor(
 
         override fun onChanged() {
             super.onChanged()
+            Logger.debug("adapter changed: $this")
 
             appendItems()
         }
