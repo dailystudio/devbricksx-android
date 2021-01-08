@@ -66,14 +66,20 @@ open class NonRecyclableListView @JvmOverloads constructor(
         adapter?.registerAdapterDataObserver(mAdapterObserver)
         Logger.debug("register observer on new adapter: $adapter")
 
-        appendItems()
+        requestItemsUpdate()
     }
 
     fun getAdapter(): RecyclerView.Adapter<*>? {
         return adapter
     }
 
-    private fun appendItems() {
+    protected open fun requestItemsUpdate() {
+        post {
+            appendItems()
+        }
+    }
+
+    protected open fun appendItems() {
         val adapter = adapter ?: return
         val container = itemsContainer?: return
 
@@ -100,7 +106,7 @@ open class NonRecyclableListView @JvmOverloads constructor(
             super.onChanged()
             Logger.debug("adapter changed: $this")
 
-            appendItems()
+            requestItemsUpdate()
         }
     }
 
