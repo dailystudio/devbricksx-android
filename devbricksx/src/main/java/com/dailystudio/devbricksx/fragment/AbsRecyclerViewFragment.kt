@@ -132,10 +132,10 @@ abstract class AbsRecyclerViewFragment<Item, ItemList, Adapter>
             val emptyView: View? = view?.findViewById(android.R.id.empty)
 
             val empty = if (null == adapter) {
-                Logger.debug("adapter is not ready")
+//                Logger.debug("adapter is not ready")
                 true
             }  else {
-                Logger.debug("count is ${adapter?.itemCount}")
+//                Logger.debug("count is ${adapter?.itemCount}")
                 adapter?.itemCount == 0
             }
 

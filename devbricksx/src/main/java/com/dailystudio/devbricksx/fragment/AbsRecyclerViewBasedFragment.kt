@@ -15,7 +15,6 @@ abstract class AbsRecyclerViewBasedFragment<Item, ItemList, Adapter> : Fragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Logger.debug("view created: $view")
 
         setupViews(view)
         applyBindings()
@@ -36,6 +35,8 @@ abstract class AbsRecyclerViewBasedFragment<Item, ItemList, Adapter> : Fragment(
                 submitData(it, data)
             }
         })
+
+        Logger.debug("live data observed [$this]")
     }
 
     open protected fun getRecyclerViewId(): Int {

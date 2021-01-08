@@ -36,8 +36,12 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
          *
          * So, we should check the value and perform the proper calls.
          */
+        Logger.debug("current value: $value")
         if (value == null) {
-            postValue(manager.toList())
+            val initValue = manager.toList()
+            Logger.debug("post value at initialization: $initValue")
+
+            postValue(initValue)
         }
 
         manager.addObserver(this)
@@ -67,7 +71,6 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
 
     fun add(`object`: Object) {
         synchronized(mapOfObjects) {
-            Logger.debug("add object: $`object`")
             mapOfObjects[`object`.getKey()] = `object`
         }
 
