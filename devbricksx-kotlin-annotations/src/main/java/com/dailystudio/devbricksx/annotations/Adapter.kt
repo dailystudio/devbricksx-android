@@ -18,7 +18,8 @@ annotation class Adapter(
         val viewType: ViewType = ViewType.SingleLine,
         val layout: Int = -1,
         val layoutByName: String = "",
-        val paged: Boolean = true
+        val paged: Boolean = true,
+        val notifyAfterListChanged: Boolean = false
 )
 
 @Retention(AnnotationRetention.SOURCE)

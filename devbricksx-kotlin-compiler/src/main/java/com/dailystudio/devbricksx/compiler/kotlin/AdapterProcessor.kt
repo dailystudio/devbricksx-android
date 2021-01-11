@@ -50,6 +50,7 @@ class AdapterProcessor : BaseProcessor() {
         val layout = annotation.layout
         val layoutByName = annotation.layoutByName
         val viewType = annotation.viewType
+        val notifyAfterListChanged = annotation.notifyAfterListChanged
 
         val viewHolder = AnnotationsUtils.getClassValueFromAnnotation(element, "viewHolder")
                 ?: return null
@@ -137,6 +138,23 @@ class AdapterProcessor : BaseProcessor() {
                 .addStatement("holder.bind(item)")
 
         classBuilder.addFunction(methodOnBindViewBuilder.build())
+
+        if (notifyAfterListChanged) {
+            val pagedListOfObjects =
+                    TypeNamesUtils.getPageListOfTypeName(objectTypeName).copy(nullable = true)
+            val mutableListOfObjects =
+                    TypeNamesUtils.getMutableListOfTypeName(objectTypeName)
+
+            val methodOnCurrentListChanged = FunSpec.builder("onCurrentListChanged")
+                    .addModifiers(KModifier.PUBLIC)
+                    .addModifiers(KModifier.OVERRIDE)
+                    .addParameter("previousList", if (paged) pagedListOfObjects else mutableListOfObjects)
+                    .addParameter("currentList", if (paged) pagedListOfObjects else mutableListOfObjects)
+                    .addStatement("super.onCurrentListChanged(previousList, currentList)")
+                    .addStatement("notifyDataSetChanged()")
+
+            classBuilder.addFunction(methodOnCurrentListChanged.build())
+        }
 
         return GeneratedResult(
                 GeneratedNames.getAdapterPackageName(packageName),

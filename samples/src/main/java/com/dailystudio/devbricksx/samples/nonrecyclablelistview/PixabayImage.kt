@@ -21,7 +21,9 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
         layout = R.layout.layout_pixabay_image,
-        viewHolder = PiaxbayImageViewHolder::class, paged = false)
+        viewHolder = PiaxbayImageViewHolder::class,
+        paged = false,
+        notifyAfterListChanged = true)
 @InMemoryManager(key = Int::class)
 @InMemoryRepository(key = Int::class)
 @DiffUtil

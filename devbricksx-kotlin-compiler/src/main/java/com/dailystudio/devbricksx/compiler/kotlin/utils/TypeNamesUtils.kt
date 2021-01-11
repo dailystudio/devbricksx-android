@@ -196,6 +196,10 @@ class TypeNamesUtils {
             return ClassName("kotlin.collections", "List")
         }
 
+        fun getMutableListTypeName(): ClassName {
+            return ClassName("kotlin.collections", "MutableList")
+        }
+
         fun getPagedListTypeName(): ClassName {
             return ClassName("androidx.paging", "PagedList")
         }
@@ -210,6 +214,12 @@ class TypeNamesUtils {
 
         fun getListOfTypeName(typeName: TypeName): TypeName {
             val list = getListTypeName()
+
+            return list.parameterizedBy(typeName)
+        }
+
+        fun getMutableListOfTypeName(typeName: TypeName): TypeName {
+            val list = getMutableListTypeName()
 
             return list.parameterizedBy(typeName)
         }
