@@ -16,7 +16,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_margin="@dimen/settings_icon_margin"
+            android:layout_marginTop="@dimen/settings_icon_margin"
+            android:layout_marginStart="@dimen/settings_icon_margin"
+            android:layout_marginEnd="@dimen/settings_icon_margin"
+            android:layout_marginBottom="0dp"
             android:layout_width="@dimen/settings_icon_size"
             android:layout_height="@dimen/settings_icon_size" />
 
@@ -60,14 +63,15 @@
         <EditText
             android:id="@+id/setting_edit"
             style="@style/SettingsEditText"
+            android:layout_marginStart="@dimen/default_padding"
+            android:layout_marginEnd="@dimen/default_padding"
             android:layout_toStartOf="@id/setting_edit_image_button"
             android:layout_toLeftOf="@id/setting_edit_image_button"
             android:layout_alignWithParentIfMissing="true"
             android:layout_toEndOf="@id/setting_icon_stub"
             android:layout_toRightOf="@id/setting_icon_stub"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_padding" />
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
 

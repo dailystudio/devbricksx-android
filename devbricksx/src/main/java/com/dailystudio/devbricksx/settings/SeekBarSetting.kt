@@ -27,7 +27,7 @@ abstract class SeekBarSetting(context: Context,
 
 }
 
-class SeekBarSettingHolder : AbsSettingHolder() {
+open class SeekBarSettingHolder : AbsSettingHolder() {
 
     override fun onCreateView(context: Context, layoutInflater: LayoutInflater, setting: AbsSetting): View {
         return layoutInflater.inflate(

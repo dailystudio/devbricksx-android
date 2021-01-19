@@ -41,7 +41,7 @@ abstract class EditSetting(context: Context,
 private data class TextChangeData(val setting: EditSetting,
                                   val text: CharSequence? = null)
 
-class EditSettingHolder : AbsSettingHolder() {
+open class EditSettingHolder : AbsSettingHolder() {
 
     companion object {
         private const val MSG_TEXT_CHANGED = 0x1
@@ -98,6 +98,8 @@ class EditSettingHolder : AbsSettingHolder() {
         editText = settingView.findViewById(
                 R.id.setting_edit)
         editText?.let {
+            applyEditTextStyles(it)
+
             it.setText(setting.getEditText(context))
             it.hint = setting.getEditHint(context)
             it.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
@@ -121,6 +123,10 @@ class EditSettingHolder : AbsSettingHolder() {
 
             })
         }
+
+    }
+
+    protected open fun applyEditTextStyles(editText: EditText) {
 
     }
 

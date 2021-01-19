@@ -19,7 +19,7 @@ abstract class SwitchSetting(context: Context,
     abstract fun setOn(on: Boolean)
 }
 
-class SwitchSettingsLayoutHolder : TextSettingLayoutHolder() {
+open class SwitchSettingsLayoutHolder : TextSettingLayoutHolder() {
 
     private var switch: Switch? = null
 

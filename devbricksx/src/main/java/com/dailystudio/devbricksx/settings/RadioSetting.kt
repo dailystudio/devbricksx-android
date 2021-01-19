@@ -98,7 +98,7 @@ abstract class RadioSetting<T : RadioSettingItem>(context: Context,
 }
 
 
-class RadioSettingHolder: AbsSettingHolder() {
+open class RadioSettingHolder: AbsSettingHolder() {
 
     private var mRadioGroup: RadioGroup? = null
 
