@@ -41,7 +41,6 @@ dependencies {
 
     // Paging
     api "androidx.paging:paging-runtime-ktx:${project.ext.pagingVersion}"
-    api "androidx.paging:paging-runtime:${project.ext.pagingVersion}"
 
     // Room relatives
     api "androidx.room:room-runtime:${project.ext.roomVersion}"

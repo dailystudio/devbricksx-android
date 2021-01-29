@@ -10,7 +10,7 @@ abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
     : PagedListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
 
-    private var delegate: ListDelegate<Item> = ListDelegate(this)
+    private val delegate: ListDelegate<Item> by lazy { ListDelegate(this) }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         delegate.onBindViewHolder(holder, position)

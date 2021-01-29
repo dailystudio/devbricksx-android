@@ -153,18 +153,24 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
 
     fun removeObserver(observer: InMemoryObjectObserver) {
         synchronized(observerDelegates) {
+            var targetDelegate: WeakReference<InMemoryObjectObserver>? = null
+
             for (delegate in observerDelegates) {
                 val o = delegate.get()
                 if (o == observer) {
-                    observerDelegates.remove(delegate)
+                    targetDelegate = delegate
                 }
+            }
+
+            targetDelegate?.let {
+                observerDelegates.remove(it)
             }
         }
     }
 
     private fun notifyObservers() {
         synchronized(observerDelegates) {
-            var uselessDelegates: MutableList<WeakReference<InMemoryObjectObserver>> =
+            val uselessDelegates: MutableList<WeakReference<InMemoryObjectObserver>> =
                     mutableListOf()
             for (delegate in observerDelegates) {
                 val observer = delegate.get()
