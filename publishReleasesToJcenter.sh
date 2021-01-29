@@ -3,3 +3,4 @@
 ./gradlew bintrayUpload -PdryRun=false
 
 ./updateVersionInDocs.sh
+./updateRoomVersionInDocs.sh
