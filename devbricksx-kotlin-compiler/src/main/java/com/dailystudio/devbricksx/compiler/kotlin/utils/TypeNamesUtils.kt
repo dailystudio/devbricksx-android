@@ -204,6 +204,10 @@ class TypeNamesUtils {
             return ClassName("androidx.paging", "PagedList")
         }
 
+        fun getPagingSourceType(): ClassName {
+            return ClassName("androidx.paging", "PagingSource")
+        }
+
         fun getArrayListTypeName(): ClassName {
             return ClassName("kotlin.collections", "ArrayList")
         }

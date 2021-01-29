@@ -4,9 +4,6 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 android {
     compileSdkVersion COMPILE_SDK
     buildToolsVersion BUILD_TOOLS
@@ -38,11 +35,14 @@ android {
         }
     }
 
-    // For Kotlin projects
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
 }
 
 dependencies {

@@ -93,6 +93,10 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(packageName, typeName);
         TypeName dataSourceFactoryOfCompanions =
                 TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(packageName, typeName);
+        TypeName pagingSourceOfCompanions =
+                TypeNamesUtils.getPagingSourceOfCompanionsTypeName(packageName, typeName);
+        TypeName pagingSourceOfObjects =
+                TypeNamesUtils.getPagingSourceOfObjectsTypeName(packageName, typeName);
 
         String whereClauseForGetOneMethods =
                 FieldsHelper.primaryKeyFieldsToWhereClause(primaryKeyFields);
@@ -164,6 +168,19 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 ).build();
 
         classBuilder.addMethod(methodGetAllDataSourceFactory);
+
+/*
+        MethodSpec methodGetAllPagingSource = MethodSpec.methodBuilder("_getAllPagingSource")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .returns(pagingSourceOfCompanions)
+                .addAnnotation(AnnotationSpec.builder(Query.class)
+                        .addMember("value", "$S",
+                                "SELECT * FROM `" + tableName + "`")
+                        .build()
+                ).build();
+
+        classBuilder.addMethod(methodGetAllPagingSource);
+*/
 
         MethodSpec methodInsertOne = MethodSpec.methodBuilder("_insert")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -323,6 +340,20 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 methodGetAllDataSourceFactory.name);
 
         classBuilder.addMethod(methodGetAllLivePagedWrapperBuilder.build());
+
+        MethodSpec.Builder methodGetAllPagingSourceWrapperBuilder =
+                MethodSpec.methodBuilder("getAllPagingSource")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(pagingSourceOfObjects);
+
+        MethodStatementsGenerator.outputDataSourceCompanionsToPagingSourceObjects(
+                packageName,
+                typeName,
+                pageSize,
+                methodGetAllPagingSourceWrapperBuilder,
+                methodGetAllDataSourceFactory.name);
+
+        classBuilder.addMethod(methodGetAllPagingSourceWrapperBuilder.build());
 
         MethodSpec methodInsertOneWrapper = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)

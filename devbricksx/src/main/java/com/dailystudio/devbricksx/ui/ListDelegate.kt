@@ -60,11 +60,11 @@ class ListDelegate<Item>(
             holder.adapterPosition
         }
 
-        val item = adapter.getItem(realPos)
+        val item = adapter.getListItem(realPos)
         Logger.debug("[ItemClick]: get tag of item view[${v}]: pos [${realPos}], item [$item]")
 
         item?.let {
-            itemClickListener?.onItemClick(v, realPos, it, adapter.getItemId(realPos))
+            itemClickListener?.onItemClick(v, realPos, it, adapter.getListItemId(realPos))
         }
     }
 
@@ -112,7 +112,7 @@ class ListDelegate<Item>(
             holder.adapterPosition
         }
 
-        val item = adapter.getItem(realPos)
+        val item = adapter.getListItem(realPos)
         Logger.debug("[Selection]: pos [${position}], item [$item]")
         if (item == null) {
             return

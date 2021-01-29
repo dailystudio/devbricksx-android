@@ -19,6 +19,7 @@ object KotlinTypesUtils {
                 val liveDataTypeName = TypeNamesUtils.getLiveDataTypeName()
                 val javaListTypeName = TypeNamesUtils.getJavaListTypeName()
                 val listTypeName = TypeNamesUtils.getListTypeName()
+                val pagingSourceTypeName = TypeNamesUtils.getPagingSourceType()
 
                 println("rawType = ${origTypeName.rawType}")
                 println("typeArguments = ${origTypeName.typeArguments}")
@@ -42,6 +43,15 @@ object KotlinTypesUtils {
                                     typeArguments[0])
 
                             return liveDataTypeName.parameterizedBy(newTypeName)
+                        }
+                    }
+
+                    pagingSourceTypeName -> {
+                        if (typeArguments.isNotEmpty()) {
+                            val newTypeName = javaToKotlinTypeName(objectTypeName,
+                                    typeArguments[0])
+
+                            return pagingSourceTypeName.parameterizedBy(newTypeName, typeArguments[1])
                         }
                     }
 

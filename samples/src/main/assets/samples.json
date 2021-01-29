@@ -96,5 +96,12 @@
     "title": "Non-Recyclable List View",
     "icon": "ic_case_non_recyclable_list_view",
     "desc": ""
+  },
+  {
+    "name": "paging",
+    "package": "paging",
+    "title": "Paging",
+    "icon": "ic_case_paging",
+    "desc": ""
   }
 ]

@@ -125,6 +125,8 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 TypeNamesUtils.getLiveDataOfCompanionTypeName(objectPackage, objectTypeName);
         TypeName liveDataOfPagedObjectsList =
                 TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectPackage, objectTypeName);
+        TypeName pagingSourceOfObjects =
+                TypeNamesUtils.getPagingSourceOfObjectsTypeName(objectPackage, objectTypeName);
         TypeName dataSourceFactoryOfCompanions =
                 TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(objectPackage, objectTypeName);
 
@@ -157,6 +159,8 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
         } else if (returnTypeName.equals(liveDataOfObject)) {
             methodSpecBuilder.returns(liveDataOfCompanion);
         } else if (returnTypeName.equals(liveDataOfPagedObjectsList)) {
+            methodSpecBuilder.returns(dataSourceFactoryOfCompanions);
+        } else if (returnTypeName.equals(pagingSourceOfObjects)) {
             methodSpecBuilder.returns(dataSourceFactoryOfCompanions);
         } else {
             methodSpecBuilder.returns(returnTypeName);
@@ -216,6 +220,13 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             );
         } else if (returnTypeName.equals(liveDataOfPagedObjectsList)) {
             MethodStatementsGenerator.outputDataSourceCompanionsToLiveObjects(
+                    objectPackage, objectTypeName,
+                    pageSize,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
+        } else if (returnTypeName.equals(pagingSourceOfObjects)) {
+            MethodStatementsGenerator.outputDataSourceCompanionsToPagingSourceObjects(
                     objectPackage, objectTypeName,
                     pageSize,
                     methodShadowSpecBuilder,

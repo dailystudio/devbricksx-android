@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 
-abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
+abstract class AbsPagedListAdapter<Item: Any, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
     : PagedListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
 
@@ -24,11 +24,11 @@ abstract class AbsPagedListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
         delegate.setOnSelectionChangedListener(l)
     }
 
-    override fun getItem(position: Int): Item? {
+    override fun getListItem(position: Int): Item? {
         return super.getItem(position)
     }
 
-    override fun getItemId(position: Int): Long {
+    override fun getListItemId(position: Int): Long {
         return super.getItemId(position)
     }
 

@@ -41,6 +41,7 @@
         <activity android:name=".settings.normal.CaseActivity"/>
         <activity android:name=".settings.dialog.CaseActivity"/>
         <activity android:name=".nonrecyclablelistview.CaseActivity"/>
+        <activity android:name=".paging.CaseActivity"/>
 
     </application>
 

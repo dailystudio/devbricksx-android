@@ -5,7 +5,7 @@ import javax.tools.Diagnostic
 
 object LogUtils {
 
-    private const val DEBUG = false
+    private const val DEBUG = true
 
     private const val UNKNOWN_METHOD = "UnknownMethod"
     private const val UNKNOWN_CLASS = "UnknownClass"

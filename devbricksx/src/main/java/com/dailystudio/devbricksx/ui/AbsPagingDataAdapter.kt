@@ -1,14 +1,14 @@
 package com.dailystudio.devbricksx.ui
 
-import androidx.paging.PagedList
+import androidx.paging.PagingData
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 
-abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
+abstract class AbsPagingDataAdapter<Item: Any, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
-    : ListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
+    : PagingDataAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
 
     private val delegate: ListDelegate<Item> by lazy { ListDelegate(this) }
 
@@ -56,15 +56,14 @@ abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
         return delegate.getSelection()
     }
 
-    override fun submitList(list: List<Item>?) {
-        super.submitList(list)
-
+    suspend fun submitList(pagedList: PagingData<Item>) {
+        super.submitData(pagedList)
         stopSelection()
     }
 
-    override fun submitList(list: List<Item>?, commitCallback: Runnable?) {
-        super.submitList(list, commitCallback)
-
+    suspend fun submitList(pagedList: PagingData<Item>, commitCallback: Runnable?) {
+        super.submitData(pagedList)
         stopSelection()
     }
+
 }

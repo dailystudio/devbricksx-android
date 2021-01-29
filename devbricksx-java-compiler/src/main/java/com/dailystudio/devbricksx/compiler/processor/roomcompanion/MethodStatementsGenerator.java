@@ -272,7 +272,6 @@ public class MethodStatementsGenerator {
         }
     }
 
-
     public static void outputDataSourceCompanionsToLiveObjects(String packageName, String typeName,
                                                                int pageSize,
                                                                MethodSpec.Builder methodSpecBuild,
@@ -317,6 +316,46 @@ public class MethodStatementsGenerator {
                         liveDataOfPagedObjectsList, pagedListBuilder, pageSize)
                 .addStatement("return liveData")
                 .returns(liveDataOfPagedObjectsList);
+    }
+
+    public static void outputDataSourceCompanionsToPagingSourceObjects(String packageName, String typeName,
+                                                                       int pageSize,
+                                                                       MethodSpec.Builder methodSpecBuild,
+                                                                       String shadowMethodName) {
+        outputDataSourceCompanionsToPagingSourceObjects(packageName, typeName ,pageSize, methodSpecBuild,
+                shadowMethodName, null);
+    }
+
+    public static void outputDataSourceCompanionsToPagingSourceObjects(String packageName, String typeName,
+                                                                       int pageSize,
+                                                                       MethodSpec.Builder methodSpecBuilder,
+                                                                       String shadowMethodName,
+                                                                       String methodParameters) {
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
+        TypeName companionsFactory =
+                TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(packageName, typeName);
+        TypeName objectsFactory =
+                TypeNamesUtils.getDataSourceFactoryOfObjectsTypeName(packageName, typeName);
+        TypeName liveDataOfPagedObjectsList =
+                TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(packageName, typeName);
+        TypeName pagingSourceOfObjects =
+                TypeNamesUtils.getPagingSourceOfObjectsTypeName(packageName, typeName);
+
+        if (!TextUtils.isEmpty(methodParameters)) {
+            methodSpecBuilder.addStatement("$T companionsFactory = this.$N($N)",
+                    companionsFactory, shadowMethodName, methodParameters);
+        } else {
+            methodSpecBuilder.addStatement("$T companionsFactory = this.$N()",
+                    companionsFactory, shadowMethodName);
+        }
+
+        methodSpecBuilder.beginControlFlow("if (companionsFactory == null)")
+                .addStatement("return null")
+                .endControlFlow()
+                .addStatement("$T objectsFactory = companionsFactory.map($T.mapCompanionToObject)",
+                        objectsFactory, companion)
+                .addStatement("return objectsFactory.asPagingSourceFactory().invoke()")
+                .returns(pagingSourceOfObjects);
     }
 
 }

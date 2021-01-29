@@ -8,8 +8,8 @@ interface AbsRecyclerAdapter<Item> {
     fun setOnItemClickListener(l: OnItemClickListener<Item>)
     fun setOnSelectionChangedListener(l: OnSelectionChangedListener<Item>)
 
-    fun getItem(position: Int): Item?
-    fun getItemId(position: Int): Long
+    fun getListItem(position: Int): Item?
+    fun getListItemId(position: Int): Long
 
     fun notifyDataSetChanged()
     fun notifyItemChanged(position: Int)

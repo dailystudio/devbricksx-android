@@ -90,6 +90,12 @@ public class TypeNamesUtils {
         return ParameterizedTypeName.get(factory, ClassName.get(Integer.class), typeClassName);
     }
 
+    public static TypeName getPagingSourceOfTypeName(TypeName typeClassName) {
+        ClassName factory = ClassName.get("androidx.paging", "PagingSource");
+
+        return ParameterizedTypeName.get(factory, ClassName.get(Integer.class), typeClassName);
+    }
+
     public static TypeName getPageListOfTypeName(TypeName typeClassName) {
         ClassName pagedList = ClassName.get("androidx.paging", "PagedList");
 
@@ -151,8 +157,16 @@ public class TypeNamesUtils {
         return TypeNamesUtils.getDataSourceFactoryOfTypeName(getCompanionTypeName(packageName, typeElementName));
     }
 
+    public static TypeName getPagingSourceOfCompanionsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getPagingSourceOfTypeName(getCompanionTypeName(packageName, typeElementName));
+    }
+
     public static TypeName getDataSourceFactoryOfObjectsTypeName(String packageName, String typeElementName) {
         return TypeNamesUtils.getDataSourceFactoryOfTypeName(getObjectTypeName(packageName, typeElementName));
+    }
+
+    public static TypeName getPagingSourceOfObjectsTypeName(String packageName, String typeElementName) {
+        return TypeNamesUtils.getPagingSourceOfTypeName(getObjectTypeName(packageName, typeElementName));
     }
 
     public static TypeName getPagedListOfObjectsTypeName(String packageName, String typeElementName) {
