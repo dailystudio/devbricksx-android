@@ -1,5 +1,5 @@
 # DevBricks X - Android
-[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=1.3.6) ](https://bintray.com/dailystudio/maven/devbricksx/1.3.6/link)
+[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=1.3.7) ](https://bintray.com/dailystudio/maven/devbricksx/1.3.7/link)
 
 **DevBricksX** is a remake and extended version of [DevBricks](https://github.com/dailystudio/devbricks). It provides plenty of useful classes that will be used in daily Android development. With these "bricks", your development will become:
 
@@ -37,7 +37,7 @@ dependencies {
     implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
     kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
     // (Optional) If you use the feature above, DO NOT forget this line 
-    kapt "androidx.room:room-compiler:2.2.5"
+    kapt "androidx.room:room-compiler:2.3.0-alpha04"
 
     // (Optional) Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
     implementation "com.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
@@ -48,7 +48,7 @@ dependencies {
 #### Latest version
 
 ```groovy
-devbricksx_version = "1.3.6"
+devbricksx_version = "1.3.7"
 ```
 
 ### Step 2: Application initialization (Optional)
