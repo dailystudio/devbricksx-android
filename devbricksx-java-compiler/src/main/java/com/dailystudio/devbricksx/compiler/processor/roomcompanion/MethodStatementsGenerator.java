@@ -12,12 +12,23 @@ public class MethodStatementsGenerator {
     public static void outputDefault(String packageName, String typeName,
                                      MethodSpec.Builder methodSpecBuilder,
                                      String shadowMethodName,
-                                     String methodParameters) {
+                                     String methodParameters,
+                                     Boolean hasReturn) {
+        StringBuilder builder = new StringBuilder();
+
+        if (hasReturn) {
+            builder.append("return ");
+        }
+
         if (!TextUtils.isEmpty(methodParameters)) {
-            methodSpecBuilder.addStatement("return this.$N($N)",
+            builder.append("this.$N($N)");
+
+            methodSpecBuilder.addStatement(builder.toString(),
                     shadowMethodName, methodParameters);
         } else {
-            methodSpecBuilder.addStatement("return this.$N()",
+            builder.append("this.$N()");
+
+            methodSpecBuilder.addStatement(builder.toString(),
                     shadowMethodName);
         }
     }

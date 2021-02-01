@@ -132,6 +132,7 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
 
         TypeName returnTypeName =
                 TypeName.get(executableElement.getReturnType());
+        debug("returnTypeName = %s", returnTypeName);
 
         int pageSize = Page.DEFAULT_PAGE_SIZE;
         Page pageAnnotation = executableElement.getAnnotation(Page.class);
@@ -236,7 +237,8 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             MethodStatementsGenerator.outputDefault(
                     objectPackage, objectTypeName,
                     methodShadowSpecBuilder,
-                    shadowMethodName, parametersBuilder.toString()
+                    shadowMethodName, parametersBuilder.toString(),
+                    (!TypeNamesUtils.isTypeNameVoid(returnTypeName))
             );
         }
 

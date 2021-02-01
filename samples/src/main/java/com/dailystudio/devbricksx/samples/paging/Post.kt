@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.dailystudio.devbricksx.annotations.Adapter
 import com.dailystudio.devbricksx.annotations.DaoExtension
 import com.dailystudio.devbricksx.annotations.RoomCompanion
 import com.dailystudio.devbricksx.annotations.ViewModel
@@ -12,10 +11,32 @@ import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
+@RoomCompanion(
+        primaryKeys = [ "subreddit" ],
+        extension = SubredditRemoteKeyDaoExtension::class,
+        database = "reddit"
+)
+data class SubredditRemoteKey(
+        @JvmField val subreddit: String,
+        @JvmField val nextPageKey: String?
+)
+
+@DaoExtension(entity = SubredditRemoteKey::class)
+interface SubredditRemoteKeyDaoExtension {
+
+    @Query("SELECT * FROM subredditremotekey WHERE subreddit = :subreddit")
+    fun remoteKeyByPost(subreddit: String): SubredditRemoteKey
+
+    @Query("DELETE FROM subredditremotekey WHERE subreddit = :subreddit")
+    fun deleteBySubreddit(subreddit: String)
+
+}
+
 @ViewModel
 @RoomCompanion(
         primaryKeys = [ "name" ],
-        extension = RedditPostDaoExtension::class
+        extension = RedditPostDaoExtension::class,
+        database = "reddit"
 )
 data class RedditPost(
         @JvmField val name: String,
@@ -30,13 +51,26 @@ data class RedditPost(
     // to be consistent w/ changing backend order, we need to keep a data like this
 
     @JvmField var indexInResponse: Int = -1
+
+    override fun toString(): String {
+        return buildString {
+            append("name [$name],")
+            append("title [$title],")
+            append("subreddit [$subreddit]")
+        }
+    }
 }
 
 
 @DaoExtension(entity = RedditPost::class)
 interface RedditPostDaoExtension {
+
     @Query("SELECT * FROM redditpost WHERE subreddit = :subreddit ORDER BY index_in_response ASC")
     fun postsBySubreddit(subreddit: String): PagingSource<Int, RedditPost>
+
+    @Query("DELETE FROM redditpost WHERE subreddit = :subreddit")
+    fun deleteBySubreddit(subreddit: String)
+
 }
 
 

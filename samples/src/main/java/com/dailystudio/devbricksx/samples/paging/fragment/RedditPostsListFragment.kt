@@ -6,29 +6,36 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagedList
+import androidx.lifecycle.asLiveData
+import androidx.paging.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
 import com.dailystudio.devbricksx.samples.paging.RedditPost
+import com.dailystudio.devbricksx.samples.paging.RedditRemoteMediator
 import com.dailystudio.devbricksx.samples.paging.model.RedditPostViewModel
 import com.dailystudio.devbricksx.samples.paging.ui.RedditPostsAdapter
 
-open class RedditPostsListFragment : AbsRecyclerViewFragment<RedditPost, PagedList<RedditPost>,
+open class RedditPostsListFragment : AbsRecyclerViewFragment<RedditPost, PagingData<RedditPost>,
     RedditPostsAdapter>() {
   override fun onCreateAdapter(): RedditPostsAdapter = RedditPostsAdapter()
 
-  override fun submitData(adapter: RedditPostsAdapter, data: PagedList<RedditPost>) {
-    adapter.submitList(data)
+  override fun submitData(adapter: RedditPostsAdapter, data: PagingData<RedditPost>) {
+    adapter.submitData(lifecycle, data)
     adapter.notifyDataSetChanged()
   }
 
   override fun onCreateLayoutManager(): LayoutManager = LinearLayoutManager(context)
 
-  override fun getLiveData(): LiveData<PagedList<RedditPost>> {
+  @OptIn(ExperimentalPagingApi::class)
+  override fun getLiveData(): LiveData<PagingData<RedditPost>> {
     val viewModel = ViewModelProvider(this).get(RedditPostViewModel::class.java)
-    return viewModel.allRedditPostsPaged
+    return Pager(
+            PagingConfig(/* pageSize = */ 20),
+            remoteMediator = RedditRemoteMediator("androiddev")) {
+              viewModel.postsBySubreddit("androiddev")
+            }.flow.asLiveData()
   }
 
   override fun onCreateView(
