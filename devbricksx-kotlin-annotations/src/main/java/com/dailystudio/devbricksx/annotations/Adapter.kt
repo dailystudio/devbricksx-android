@@ -24,6 +24,10 @@ annotation class Adapter(
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
+annotation class ExperimentalPagingDataAdapter
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
 annotation class FragmentAdapter(
         val pageFragment: KClass<*>
 )

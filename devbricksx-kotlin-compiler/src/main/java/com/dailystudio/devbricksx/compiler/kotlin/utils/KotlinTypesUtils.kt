@@ -20,6 +20,7 @@ object KotlinTypesUtils {
                 val javaListTypeName = TypeNamesUtils.getJavaListTypeName()
                 val listTypeName = TypeNamesUtils.getListTypeName()
                 val pagingSourceTypeName = TypeNamesUtils.getPagingSourceType()
+                val flowTypeName = TypeNamesUtils.getFlowTypeName()
 
                 println("rawType = ${origTypeName.rawType}")
                 println("typeArguments = ${origTypeName.typeArguments}")
@@ -52,6 +53,15 @@ object KotlinTypesUtils {
                                     typeArguments[0])
 
                             return pagingSourceTypeName.parameterizedBy(newTypeName, typeArguments[1])
+                        }
+                    }
+
+                    flowTypeName -> {
+                        if (typeArguments.isNotEmpty()) {
+                            val newTypeName = javaToKotlinTypeName(objectTypeName,
+                                    typeArguments[0])
+
+                            return flowTypeName.parameterizedBy(newTypeName)
                         }
                     }
 

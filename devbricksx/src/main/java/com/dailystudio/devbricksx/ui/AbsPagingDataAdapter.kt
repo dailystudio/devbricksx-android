@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.ui
 
+import androidx.lifecycle.Lifecycle
 import androidx.paging.PagingData
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -61,8 +62,8 @@ abstract class AbsPagingDataAdapter<Item: Any, ViewHolder : RecyclerView.ViewHol
         stopSelection()
     }
 
-    suspend fun submitList(pagedList: PagingData<Item>, commitCallback: Runnable?) {
-        super.submitData(pagedList)
+    fun submitList(lifecycle: Lifecycle, pagingData: PagingData<Item>) {
+        super.submitData(lifecycle, pagingData)
         stopSelection()
     }
 

@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
 import com.dailystudio.devbricksx.development.Logger
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -36,7 +38,7 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
          *
          * So, we should check the value and perform the proper calls.
          */
-        Logger.debug("current value: $value")
+        Logger.debug("livedata: $this, current value: $value")
         if (value == null) {
             val initValue = manager.toList()
             Logger.debug("post value at initialization: $initValue")
@@ -50,11 +52,17 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
     override fun onInactive() {
         super.onInactive()
 
+        Logger.debug("livedata: $this, current value: $value")
+
         manager.removeObserver(this)
     }
 
     override fun onChanged() {
-        postValue(manager.toList())
+        val data = manager.toList()
+
+        Logger.debug("livedata: $this, changed: $data")
+
+        postValue(data)
     }
 
 }
@@ -177,6 +185,7 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
                 if (observer == null) {
                     uselessDelegates.add(delegate)
                 } else {
+                    Logger.debug("notify observer: $observer")
                     observer.onChanged()
                 }
             }
@@ -193,6 +202,10 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
 
     fun toDataSource(): DataSource.Factory<Long, Object> {
         return InMemoryObjectDataSourceFactory(this)
+    }
+
+    fun toFlow(): Flow<List<Object>> = flow {
+        emit(toList())
     }
 
 }

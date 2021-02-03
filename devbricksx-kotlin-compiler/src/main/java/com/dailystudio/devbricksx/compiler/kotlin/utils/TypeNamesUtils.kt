@@ -138,6 +138,10 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsPagedListAdapter")
         }
 
+        fun getAbsPagingDataAdapterTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.ui", "AbsPagingDataAdapter")
+        }
+
         fun getAbsFragmentStateAdapterTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsFragmentStateAdapter")
         }
@@ -145,7 +149,6 @@ class TypeNamesUtils {
         fun getAbsListAdapterTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsListAdapter")
         }
-
 
         fun getPageListAdapterOfTypeName(`object`: TypeName,
                                          viewHolder: TypeName): TypeName {
@@ -155,8 +158,15 @@ class TypeNamesUtils {
         }
 
         fun getAbsPageListAdapterOfTypeName(`object`: TypeName,
-                                         viewHolder: TypeName): TypeName {
+                                            viewHolder: TypeName): TypeName {
             val listAdapter = getAbsPageListAdapterTypeName()
+
+            return listAdapter.parameterizedBy(`object`, viewHolder)
+        }
+
+        fun getAbsAbsPagingDataAdapterOfTypeName(`object`: TypeName,
+                                                 viewHolder: TypeName): TypeName {
+            val listAdapter = getAbsPagingDataAdapterTypeName()
 
             return listAdapter.parameterizedBy(`object`, viewHolder)
         }
@@ -216,6 +226,11 @@ class TypeNamesUtils {
             return ClassName("androidx.lifecycle", "LiveData")
         }
 
+        fun getFlowTypeName(): ClassName {
+            return ClassName("kotlinx.coroutines.flow", "Flow")
+
+        }
+
         fun getListOfTypeName(typeName: TypeName): TypeName {
             val list = getListTypeName()
 
@@ -232,6 +247,12 @@ class TypeNamesUtils {
             val liveData = getLiveDataTypeName()
 
             return liveData.parameterizedBy(typeName)
+        }
+
+        fun getFlowOfTypeName(typeName: TypeName): TypeName {
+            val flow = getFlowTypeName()
+
+            return flow.parameterizedBy(typeName)
         }
 
         fun getLiveDataOfListOfObjectTypeName(typeName: TypeName): TypeName {
@@ -254,6 +275,10 @@ class TypeNamesUtils {
 
         fun getLiveDataOfListOfObjectsTypeName(typeName: TypeName): TypeName {
             return getLiveDataOfTypeName(getListOfTypeName(typeName))
+        }
+
+        fun getFlowOfListOfObjectTypeName(typeName: TypeName): TypeName {
+            return getFlowOfTypeName(getListOfTypeName(typeName))
         }
 
         fun getItemCallbackTypeName(): ClassName {

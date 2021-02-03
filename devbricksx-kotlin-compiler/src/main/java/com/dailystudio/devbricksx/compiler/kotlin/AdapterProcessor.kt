@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.Adapter
+import com.dailystudio.devbricksx.annotations.ExperimentalPagingDataAdapter
 import com.dailystudio.devbricksx.annotations.ViewType
 import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
@@ -51,6 +52,8 @@ class AdapterProcessor : BaseProcessor() {
         val layoutByName = annotation.layoutByName
         val viewType = annotation.viewType
         val notifyAfterListChanged = annotation.notifyAfterListChanged
+        val usingPagingDataAdapter =
+                (element.getAnnotation(ExperimentalPagingDataAdapter::class.java) != null)
 
         val viewHolder = AnnotationsUtils.getClassValueFromAnnotation(element, "viewHolder")
                 ?: return null
@@ -59,6 +62,7 @@ class AdapterProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val pagedListAdapter = TypeNamesUtils.getAbsPageListAdapterOfTypeName(objectTypeName, viewHolder)
+        val pagingDataAdapter = TypeNamesUtils.getAbsAbsPagingDataAdapterOfTypeName(objectTypeName, viewHolder)
         val listAdapter = TypeNamesUtils.getAbsListAdapterOfTypeName(objectTypeName, viewHolder)
         val itemCallback = TypeNamesUtils.getItemCallbackOfTypeName(objectTypeName)
         val diffUtils  = ClassName(packageName, GeneratedNames.getDiffUtilName(typeName))
@@ -66,7 +70,11 @@ class AdapterProcessor : BaseProcessor() {
         val layoutInflater = TypeNamesUtils.getLayoutInflaterTypeName()
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .superclass(if (paged) pagedListAdapter else listAdapter)
+                .superclass(if (paged) {
+                    if (usingPagingDataAdapter) pagingDataAdapter else pagedListAdapter
+                } else {
+                    listAdapter
+                })
                 .addSuperclassConstructorParameter("DIFF_CALLBACK")
                 .addModifiers(KModifier.OPEN)
 

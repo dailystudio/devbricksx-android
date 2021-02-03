@@ -369,4 +369,40 @@ public class MethodStatementsGenerator {
                 .returns(pagingSourceOfObjects);
     }
 
+    public static void outputFlowCompanionsToFlowObjects(String packageName, String typeName,
+                                                         MethodSpec.Builder methodSpecBuild,
+                                                         String shadowMethodName) {
+        outputFlowCompanionsToFlowObjects(packageName, typeName, methodSpecBuild,
+                shadowMethodName, null);
+    }
+
+    public static void outputFlowCompanionsToFlowObjects(String packageName, String typeName,
+                                                         MethodSpec.Builder methodSpecBuilder,
+                                                         String shadowMethodName,
+                                                         String methodParameters) {
+        ClassName companion = TypeNamesUtils.getCompanionTypeName(packageName, typeName);
+        TypeName flowOfCompanions =
+                TypeNamesUtils.getFlowOfListOfCompanionsTypeName(packageName, typeName);
+        TypeName flowOfObjects =
+                TypeNamesUtils.getFlowOfListOfObjectsTypeName(packageName, typeName);
+        TypeName kotlinCompatibleUtils =
+                TypeNamesUtils.getKotlinCompatibleUtilsTypeName();
+
+        if (!TextUtils.isEmpty(methodParameters)) {
+            methodSpecBuilder.addStatement("$T companionsFlow = this.$N($N)",
+                    flowOfCompanions, shadowMethodName, methodParameters);
+        } else {
+            methodSpecBuilder.addStatement("$T companionsFlow = this.$N()",
+                    flowOfCompanions, shadowMethodName);
+        }
+
+        methodSpecBuilder.beginControlFlow("if (companionsFlow == null)")
+                .addStatement("return null")
+                .endControlFlow()
+                .addStatement("$T objectsFlow = $T.INSTANCE.mapFlow(companionsFlow, $T.mapCompanionsToObjectsSuspend)",
+                        flowOfObjects, kotlinCompatibleUtils, companion)
+                .addStatement("return objectsFlow")
+                .returns(flowOfObjects);
+    }
+
 }

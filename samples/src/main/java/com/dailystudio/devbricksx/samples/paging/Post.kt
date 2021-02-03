@@ -10,6 +10,7 @@ import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import kotlinx.coroutines.flow.Flow
 
 @RoomCompanion(
         primaryKeys = [ "subreddit" ],
@@ -67,6 +68,9 @@ interface RedditPostDaoExtension {
 
     @Query("SELECT * FROM redditpost WHERE subreddit = :subreddit ORDER BY index_in_response ASC")
     fun postsBySubreddit(subreddit: String): PagingSource<Int, RedditPost>
+
+    @Query("SELECT * FROM redditpost WHERE subreddit = :subreddit ORDER BY index_in_response ASC")
+    fun postsBySubredditFlow(subreddit: String): Flow<List<RedditPost>>
 
     @Query("DELETE FROM redditpost WHERE subreddit = :subreddit")
     fun deleteBySubreddit(subreddit: String)

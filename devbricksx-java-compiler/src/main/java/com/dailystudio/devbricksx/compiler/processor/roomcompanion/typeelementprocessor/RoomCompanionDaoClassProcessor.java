@@ -97,6 +97,10 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 TypeNamesUtils.getPagingSourceOfCompanionsTypeName(packageName, typeName);
         TypeName pagingSourceOfObjects =
                 TypeNamesUtils.getPagingSourceOfObjectsTypeName(packageName, typeName);
+        TypeName flowOfListOfCompanions =
+                TypeNamesUtils.getFlowOfListOfCompanionsTypeName(packageName, typeName);
+        TypeName flowOfListOfObjects =
+                TypeNamesUtils.getFlowOfListOfObjectsTypeName(packageName, typeName);
 
         String whereClauseForGetOneMethods =
                 FieldsHelper.primaryKeyFieldsToWhereClause(primaryKeyFields);
@@ -168,6 +172,17 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 ).build();
 
         classBuilder.addMethod(methodGetAllDataSourceFactory);
+
+        MethodSpec methodGetAllFlow = MethodSpec.methodBuilder("_getAllFlow")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .returns(flowOfListOfCompanions)
+                .addAnnotation(AnnotationSpec.builder(Query.class)
+                        .addMember("value", "$S",
+                                "SELECT * FROM `" + tableName + "`")
+                        .build()
+                ).build();
+
+        classBuilder.addMethod(methodGetAllFlow);
 
 /*
         MethodSpec methodGetAllPagingSource = MethodSpec.methodBuilder("_getAllPagingSource")
@@ -326,6 +341,19 @@ public class RoomCompanionDaoClassProcessor extends AbsSingleTypeElementProcesso
                 methodGetAllLive.name);
 
         classBuilder.addMethod(methodGetAllLiveWrapperBuilder.build());
+
+        MethodSpec.Builder methodGetAllFlowWrapperBuilder =
+                MethodSpec.methodBuilder("getAllFlow")
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(flowOfListOfObjects);
+
+        MethodStatementsGenerator.outputFlowCompanionsToFlowObjects(
+                packageName,
+                typeName,
+                methodGetAllFlowWrapperBuilder,
+                methodGetAllFlow.name);
+
+        classBuilder.addMethod(methodGetAllFlowWrapperBuilder.build());
 
         MethodSpec.Builder methodGetAllLivePagedWrapperBuilder =
                 MethodSpec.methodBuilder("getAllLivePaged")

@@ -22,6 +22,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
+import com.squareup.javapoet.WildcardTypeName;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -198,6 +200,15 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                 TypeNamesUtils.getListOfCompanionsTypeName(packageName, typeName);
         TypeName listOfObjects =
                 TypeNamesUtils.getListOfObjectsTypeName(packageName, typeName);
+        TypeName wildcardListOfObjects = WildcardTypeName.supertypeOf(listOfObjects);
+        TypeName continuationOfListOfObjects =
+                TypeNamesUtils.getContinuationOfTypeName(wildcardListOfObjects);
+
+        TypeName func2 =
+                TypeNamesUtils.getFunction2OfTypeName(
+                        listOfCompanions,
+                        continuationOfListOfObjects,
+                        listOfObjects);
 
         MethodSpec.Builder methodToObjectBuilder = MethodSpec.methodBuilder("toObject")
                 .addModifiers(Modifier.PUBLIC)
@@ -277,7 +288,7 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         classBuilder.addMethod(methodToObjectBuilder.build());
         classBuilder.addMethod(methodToCompanionBuilder.build());
 
-        FieldSpec.Builder fieldMapFunc = FieldSpec.builder(
+        FieldSpec.Builder fieldMapFuncBuilder = FieldSpec.builder(
                 TypeNamesUtils.getMapFunctionOfTypeName(companion, object),
                 "mapCompanionToObject")
                 .addModifiers(Modifier.STATIC)
@@ -289,9 +300,9 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                         "}",
                         companion, object, object, companion);
 
-        classBuilder.addField(fieldMapFunc.build());
+        classBuilder.addField(fieldMapFuncBuilder.build());
 
-        FieldSpec.Builder fieldListMapFunc = FieldSpec.builder(
+        FieldSpec.Builder fieldListMapFuncBuilder = FieldSpec.builder(
                 TypeNamesUtils.getMapFunctionOfTypeName(listOfCompanions, listOfObjects),
                 "mapCompanionsToObjects")
                 .addModifiers(Modifier.STATIC)
@@ -309,7 +320,24 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
                         listOfObjects, listOfCompanions,
                         listOfObjects, TypeNamesUtils.getArrayListTypeName());
 
-        classBuilder.addField(fieldListMapFunc.build());
+        FieldSpec fieldListMapFunc = fieldListMapFuncBuilder.build();
+        classBuilder.addField(fieldListMapFunc);
+
+        FieldSpec.Builder fieldListMapSuspendFuncBuilder = FieldSpec.builder(
+                func2,
+                "mapCompanionsToObjectsSuspend")
+                .addModifiers(Modifier.STATIC)
+                .initializer("new $T() {\n" +
+                                "   @Override\n" +
+                                "   public $T invoke($T companions, $T continuation) {\n" +
+                                "       return $N.apply(companions);\n" +
+                                "   }\n" +
+                                "}",
+                        func2, listOfObjects, listOfCompanions,
+                        continuationOfListOfObjects,
+                        fieldListMapFunc.name);
+
+        classBuilder.addField(fieldListMapSuspendFuncBuilder.build());
 
         return singleResult(packageName, classBuilder);
     }

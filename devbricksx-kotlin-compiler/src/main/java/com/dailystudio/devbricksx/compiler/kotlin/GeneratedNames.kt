@@ -179,6 +179,15 @@ class GeneratedNames {
             }
         }
 
+        fun getAllObjectsFlowPropertyName(className: String) : String {
+            return buildString {
+                this.append("all")
+                this.append(className)
+                this.append("s")
+                this.append("Flow")
+            }
+        }
+
         fun getPluralMethodName(methodName: String,
                                 className: String): String {
             return buildString {

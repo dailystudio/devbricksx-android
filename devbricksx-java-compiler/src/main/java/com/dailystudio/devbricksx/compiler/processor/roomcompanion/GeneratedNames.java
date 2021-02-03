@@ -167,4 +167,14 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getRepositoryAllObjectsFlowMethodName(String className) {
+        StringBuilder builder = new StringBuilder("getAll");
+
+        builder.append(className);
+        builder.append('s');
+        builder.append("Flow");
+
+        return builder.toString();
+    }
+
 }

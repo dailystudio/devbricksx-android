@@ -129,6 +129,10 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
                 TypeNamesUtils.getPagingSourceOfObjectsTypeName(objectPackage, objectTypeName);
         TypeName dataSourceFactoryOfCompanions =
                 TypeNamesUtils.getDataSourceFactoryOfCompanionsTypeName(objectPackage, objectTypeName);
+        TypeName flowOfCompanions =
+                TypeNamesUtils.getFlowOfListOfCompanionsTypeName(objectPackage, objectTypeName);
+        TypeName flowOfObjects =
+                TypeNamesUtils.getFlowOfListOfObjectsTypeName(objectPackage, objectTypeName);
 
         TypeName returnTypeName =
                 TypeName.get(executableElement.getReturnType());
@@ -163,6 +167,8 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             methodSpecBuilder.returns(dataSourceFactoryOfCompanions);
         } else if (returnTypeName.equals(pagingSourceOfObjects)) {
             methodSpecBuilder.returns(dataSourceFactoryOfCompanions);
+        } else if (returnTypeName.equals(flowOfObjects)) {
+            methodSpecBuilder.returns(flowOfCompanions);
         } else {
             methodSpecBuilder.returns(returnTypeName);
         }
@@ -230,6 +236,12 @@ public class DaoExtensionClassProcessor extends AbsSingleTypeElementProcessor {
             MethodStatementsGenerator.outputDataSourceCompanionsToPagingSourceObjects(
                     objectPackage, objectTypeName,
                     pageSize,
+                    methodShadowSpecBuilder,
+                    shadowMethodName, parametersBuilder.toString()
+            );
+        } else if (returnTypeName.equals(flowOfObjects)) {
+            MethodStatementsGenerator.outputFlowCompanionsToFlowObjects(
+                    objectPackage, objectTypeName,
                     methodShadowSpecBuilder,
                     shadowMethodName, parametersBuilder.toString()
             );

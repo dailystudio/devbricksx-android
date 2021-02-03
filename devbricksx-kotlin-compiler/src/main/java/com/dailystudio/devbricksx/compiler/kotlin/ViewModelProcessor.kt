@@ -138,9 +138,12 @@ class ViewModelProcessor : BaseProcessor() {
         val repoPackageName = GeneratedNames.getRepositoryPackageName(packageName)
         val allName = GeneratedNames.getAllObjectsLivePropertyName(typeName)
         val allPagedName = GeneratedNames.getAllObjectsPagedPropertyName(typeName)
+        val allFlowName = GeneratedNames.getAllObjectsFlowPropertyName(typeName)
         val repoAllName = GeneratedNames.getAllObjectsLivePropertyName(
                 if (inMemoryRepository) "Object" else typeName)
         val repoAllPagedName = GeneratedNames.getAllObjectsPagedPropertyName(
+                if (inMemoryRepository) "Object" else typeName)
+        val repoAllFlowName = GeneratedNames.getAllObjectsFlowPropertyName(
                 if (inMemoryRepository) "Object" else typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
         val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
@@ -151,6 +154,7 @@ class ViewModelProcessor : BaseProcessor() {
         val listOfObjects = TypeNamesUtils.getListOfTypeName(`object`)
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectTypeName(`object`)
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(`object`)
+        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(`object`)
         val database = ClassName(packageName, databaseName)
         val dispatchers = TypeNamesUtils.getDispatchersTypeName()
         val viewModelScope = TypeNamesUtils.getViewModelScopeMemberName()
@@ -173,26 +177,32 @@ class ViewModelProcessor : BaseProcessor() {
         classBuilder.addProperty(repoVariableName, repo, KModifier.PROTECTED)
         classBuilder.addProperty(allName, liveDataOfListOfObjects)
         classBuilder.addProperty(allPagedName, liveDataOfPagedListOfObjects)
+        classBuilder.addProperty(allFlowName, flowOfListOfObjects)
 
         if (inMemoryRepository) {
             classBuilder.addInitializerBlock(CodeBlock.of(
                     "   %N = %T()\n" +
                             "   %N = %N.%N\n" +
+                            "   %N = %N.%N\n" +
                             "   %N = %N.%N\n",
                     repoVariableName, repo,
                     allName, repoVariableName, repoAllName,
-                    allPagedName, repoVariableName, repoAllPagedName
+                    allPagedName, repoVariableName, repoAllPagedName,
+                    allFlowName, repoVariableName, repoAllFlowName,
+
             ))
         } else {
             classBuilder.addInitializerBlock(CodeBlock.of(
                     "   val %N = %T.getDatabase(application).%N()\n" +
                         "   %N = %T(%N)\n" +
                         "   %N = %N.%N\n" +
+                        "   %N = %N.%N\n" +
                         "   %N = %N.%N\n",
                     daoVariableName, database, daoVariableName,
                     repoVariableName, repo, daoVariableName,
                     allName, repoVariableName, repoAllName,
-                    allPagedName, repoVariableName, repoAllPagedName
+                    allPagedName, repoVariableName, repoAllPagedName,
+                    allFlowName, repoVariableName, repoAllFlowName
             ))
         }
 
