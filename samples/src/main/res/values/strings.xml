@@ -25,5 +25,6 @@
     <string name="animation_attribution">animation \@Alexander Rozhkov / LottieFiles</string>
 
     <string name="prompt_pixabay">\@pixabay</string>
+    <string name="prompt_no_samples">No samples found.</string>
 
 </resources>

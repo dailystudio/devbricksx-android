@@ -6,10 +6,7 @@ import androidx.paging.PageKeyedDataSource
 import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.flow.AbstractFlow
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import java.lang.Exception
 import java.lang.ref.WeakReference
 import kotlin.math.min
@@ -24,19 +21,6 @@ interface InMemoryObjectObserver {
 
     fun onChanged()
 
-}
-
-class InMemoryObjectsFlow<Object: InMemoryObject<*>>(
-        private val manager: InMemoryObjectManager<*, Object>)
-    : AbstractFlow<List<Object>>(), InMemoryObjectObserver {
-
-    override suspend fun collectSafely(collector: FlowCollector<List<Object>>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onChanged() {
-        TODO("Not yet implemented")
-    }
 }
 
 class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
@@ -223,6 +207,7 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
     }
 
     fun toFlow(): Flow<List<Object>> = flow {
+        Logger.debug("flow[${this.hashCode()}] is created.")
         val channel = Channel<List<Object>>(Channel.UNLIMITED)
 
         val observer = object: InMemoryObjectObserver {
@@ -231,6 +216,7 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
             }
         }
 
+        emit(this@InMemoryObjectManager.toList())
         this@InMemoryObjectManager.addObserver(observer)
 
         try {
@@ -238,6 +224,7 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
                 emit(it)
             }
         } finally {
+            Logger.debug("flow[${this.hashCode()}] is destroyed.")
             this@InMemoryObjectManager.removeObserver(observer)
         }
     }

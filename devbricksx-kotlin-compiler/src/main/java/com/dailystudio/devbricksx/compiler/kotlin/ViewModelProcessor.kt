@@ -157,9 +157,11 @@ class ViewModelProcessor : BaseProcessor() {
         val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(`object`)
         val database = ClassName(packageName, databaseName)
         val dispatchers = TypeNamesUtils.getDispatchersTypeName()
-        val viewModelScope = TypeNamesUtils.getViewModelScopeMemberName()
         val launch = TypeNamesUtils.getLaunchMemberName()
         val job = TypeNamesUtils.getJobTypeName()
+        val shareIn = TypeNamesUtils.getShareInTypeName()
+        val sharingStarted = TypeNamesUtils.getSharingStartedTypeName()
+        val viewModelScope = TypeNamesUtils.getViewModelScopeTypeName()
 
         val primaryKeyFields = mutableMapOf<String, TypeName>()
         if (roomCompanion != null) {
@@ -184,12 +186,11 @@ class ViewModelProcessor : BaseProcessor() {
                     "   %N = %T()\n" +
                             "   %N = %N.%N\n" +
                             "   %N = %N.%N\n" +
-                            "   %N = %N.%N\n",
+                            "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
                     repoVariableName, repo,
                     allName, repoVariableName, repoAllName,
                     allPagedName, repoVariableName, repoAllPagedName,
-                    allFlowName, repoVariableName, repoAllFlowName,
-
+                    allFlowName, repoVariableName, repoAllFlowName, shareIn, viewModelScope, sharingStarted
             ))
         } else {
             classBuilder.addInitializerBlock(CodeBlock.of(
@@ -197,12 +198,12 @@ class ViewModelProcessor : BaseProcessor() {
                         "   %N = %T(%N)\n" +
                         "   %N = %N.%N\n" +
                         "   %N = %N.%N\n" +
-                        "   %N = %N.%N\n",
+                        "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
                     daoVariableName, database, daoVariableName,
                     repoVariableName, repo, daoVariableName,
                     allName, repoVariableName, repoAllName,
                     allPagedName, repoVariableName, repoAllPagedName,
-                    allFlowName, repoVariableName, repoAllFlowName
+                    allFlowName, repoVariableName, repoAllFlowName, shareIn, viewModelScope, sharingStarted
             ))
         }
 
@@ -244,7 +245,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodInsertOne = FunSpec.builder(GeneratedNames.getMethodName("insert", typeName))
                 .addParameter(objectVariableName, `object`)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.insert(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,
@@ -255,7 +256,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodInsertAll = FunSpec.builder(GeneratedNames.getPluralMethodName("insert", typeName))
                 .addParameter(objectsVariableName, listOfObjects)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.insert(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,
@@ -266,7 +267,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodUpdateOne = FunSpec.builder(GeneratedNames.getMethodName("update", typeName))
                 .addParameter(objectVariableName, `object`)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.update(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,
@@ -277,7 +278,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodUpdateAll = FunSpec.builder(GeneratedNames.getPluralMethodName("update", typeName))
                 .addParameter(objectsVariableName, listOfObjects)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.update(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,
@@ -288,7 +289,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodInsertOrUpdateOne = FunSpec.builder(GeneratedNames.getMethodName("insertOrUpdate", typeName))
                 .addParameter(objectVariableName, `object`)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.insertOrUpdate(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,
@@ -299,7 +300,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodInsertOrUpdateAll = FunSpec.builder(GeneratedNames.getPluralMethodName("insertOrUpdate", typeName))
                 .addParameter(objectsVariableName, listOfObjects)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.update(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,
@@ -310,7 +311,7 @@ class ViewModelProcessor : BaseProcessor() {
 
         val methodDeleteOne = FunSpec.builder(GeneratedNames.getMethodName("delete", typeName))
                 .addParameter(objectVariableName, `object`)
-                .addStatement("return %M.%M(%T.IO) {\n" +
+                .addStatement("return %T.%M(%T.IO) {\n" +
                         "   %N.delete(%N)\n" +
                         "}",
                         viewModelScope, launch, dispatchers,

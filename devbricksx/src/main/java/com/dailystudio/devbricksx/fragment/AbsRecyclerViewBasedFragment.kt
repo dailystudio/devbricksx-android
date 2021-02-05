@@ -32,7 +32,6 @@ abstract class AbsRecyclerViewBasedFragment<Item, ItemList, Adapter> : Fragment(
 
     protected fun applyBindings() {
         val liveData = getLiveData()
-        Logger.debug("[OBS-TRACK]: liveData = $liveData")
 
         liveData.observe(viewLifecycleOwner, Observer { data ->
             adapter?.let {

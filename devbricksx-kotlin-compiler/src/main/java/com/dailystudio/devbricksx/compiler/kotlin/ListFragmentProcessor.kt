@@ -82,7 +82,6 @@ class ListFragmentProcessor : BaseProcessor() {
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
         val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
-        val flowOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
         val asLiveData = TypeNamesUtils.getAsLiveDataTypeName()
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
         val superFragment = superFragmentClass.parameterizedBy(
@@ -140,16 +139,17 @@ class ListFragmentProcessor : BaseProcessor() {
         val methodGetLiveDataBuilder = FunSpec.builder("getLiveData")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
-                .addStatement("val viewModel = %T(this).get(%T::class.java)",
+                .addStatement("val viewModel = %T(requireActivity()).get(%T::class.java)",
                         viewModelProvider, viewModel)
 //                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
                 .returns(if (paged) liveDataOfPagedListOfObjects else liveDataOfListOfObjects)
         if (paged) {
             methodGetLiveDataBuilder.addStatement("return viewModel.%N",
-                GeneratedNames.getAllObjectsPagedPropertyName(typeName))
+                    GeneratedNames.getAllObjectsPagedPropertyName(typeName))
         } else {
             methodGetLiveDataBuilder.addStatement("return viewModel.%N.%T()",
-                    GeneratedNames.getAllObjectsFlowPropertyName(typeName), asLiveData)
+                    GeneratedNames.getAllObjectsFlowPropertyName(typeName),
+                    asLiveData)
         }
 
         classBuilder.addFunction(methodGetLiveDataBuilder.build())

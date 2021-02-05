@@ -66,6 +66,26 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsViewPagerFragment")
         }
 
+        fun getViewModelScopeTypeName(): ClassName {
+            return ClassName("androidx.lifecycle", "viewModelScope")
+        }
+
+        fun getViewModelScopeMemberName() : MemberName {
+            return MemberName("androidx.lifecycle", "viewModelScope")
+        }
+
+        fun getFlowOnTypeName(): ClassName {
+            return ClassName("kotlinx.coroutines.flow", "flowOn")
+        }
+
+        fun getShareInTypeName(): ClassName {
+            return ClassName("kotlinx.coroutines.flow", "shareIn")
+        }
+
+        fun getSharingStartedTypeName(): ClassName {
+            return ClassName("kotlinx.coroutines.flow", "SharingStarted")
+        }
+
         fun getAbsRecyclerViewFragmentOfTypeName(objectTypeName: TypeName,
                                                  dataTypeName: TypeName,
                                                  adapterTypeName: TypeName): TypeName {
@@ -96,10 +116,6 @@ class TypeNamesUtils {
 
         fun getLayoutInflaterTypeName(): ClassName {
             return ClassName("android.view", "LayoutInflater")
-        }
-
-        fun getViewModelScopeMemberName() : MemberName {
-            return MemberName("androidx.lifecycle", "viewModelScope")
         }
 
         fun getLaunchMemberName() : MemberName {
