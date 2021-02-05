@@ -4,8 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
 import com.dailystudio.devbricksx.development.Logger
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.AbstractFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
+import java.lang.Exception
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -19,6 +24,19 @@ interface InMemoryObjectObserver {
 
     fun onChanged()
 
+}
+
+class InMemoryObjectsFlow<Object: InMemoryObject<*>>(
+        private val manager: InMemoryObjectManager<*, Object>)
+    : AbstractFlow<List<Object>>(), InMemoryObjectObserver {
+
+    override suspend fun collectSafely(collector: FlowCollector<List<Object>>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onChanged() {
+        TODO("Not yet implemented")
+    }
 }
 
 class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
@@ -185,7 +203,7 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
                 if (observer == null) {
                     uselessDelegates.add(delegate)
                 } else {
-                    Logger.debug("notify observer: $observer")
+//                    Logger.debug("notify observer: $observer")
                     observer.onChanged()
                 }
             }
@@ -205,7 +223,23 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
     }
 
     fun toFlow(): Flow<List<Object>> = flow {
-        emit(toList())
+        val channel = Channel<List<Object>>(Channel.UNLIMITED)
+
+        val observer = object: InMemoryObjectObserver {
+            override fun onChanged() {
+                channel.offer(toList())
+            }
+        }
+
+        this@InMemoryObjectManager.addObserver(observer)
+
+        try {
+            channel.consumeEach {
+                emit(it)
+            }
+        } finally {
+            this@InMemoryObjectManager.removeObserver(observer)
+        }
     }
 
 }

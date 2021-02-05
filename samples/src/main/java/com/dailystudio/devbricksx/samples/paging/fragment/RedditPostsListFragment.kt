@@ -22,6 +22,7 @@ open class RedditPostsListFragment : AbsRecyclerViewFragment<RedditPost, PagingD
   override fun onCreateAdapter(): RedditPostsAdapter = RedditPostsAdapter()
 
   override fun submitData(adapter: RedditPostsAdapter, data: PagingData<RedditPost>) {
+
     adapter.submitList(lifecycle, data)
     adapter.notifyDataSetChanged()
   }

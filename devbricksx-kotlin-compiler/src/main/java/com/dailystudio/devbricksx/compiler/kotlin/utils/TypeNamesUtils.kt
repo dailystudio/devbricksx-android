@@ -228,7 +228,10 @@ class TypeNamesUtils {
 
         fun getFlowTypeName(): ClassName {
             return ClassName("kotlinx.coroutines.flow", "Flow")
+        }
 
+        fun getAsLiveDataTypeName(): ClassName {
+            return ClassName("androidx.lifecycle", "asLiveData")
         }
 
         fun getListOfTypeName(typeName: TypeName): TypeName {
