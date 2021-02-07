@@ -18,5 +18,4 @@ annotation class ListFragment(
         val dataSource: DataSource = DataSource.LiveData,
         val usingPaging3: Boolean = false,
         val superClass: KClass<*> = Void::class,
-        val dataInterface: String = ""
 )
