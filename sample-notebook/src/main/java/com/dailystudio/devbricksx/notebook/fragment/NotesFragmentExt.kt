@@ -88,7 +88,7 @@ class NotesFragmentExt : NotesListFragment() {
                 .show()
     }
 
-    override fun getLiveData(): LiveData<PagedList<Note>> {
+    override fun getDataSource(): LiveData<PagedList<Note>> {
         notebookViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
         return notebookViewModel.getAllNotesOrderedByLastModifiedLivePaged(notebookId)

@@ -25,6 +25,7 @@ import java.util.*
         layout = R.layout.layout_notebook,
         viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
+        dataSource = DataSource.Flow,
         superClass = AbsMultiSelectionListFragment::class)
 open class Notebook(id: Int = 0) : SelectableRecord(id) {
 

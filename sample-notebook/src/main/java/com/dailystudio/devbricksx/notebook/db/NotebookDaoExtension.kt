@@ -5,6 +5,7 @@ import androidx.paging.PagedList
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.DaoExtension
 import com.dailystudio.devbricksx.annotations.Page
+import kotlinx.coroutines.flow.Flow
 
 @DaoExtension(entity = Notebook::class)
 abstract class NotebookDaoExtension {
@@ -16,7 +17,7 @@ abstract class NotebookDaoExtension {
 */
 
     @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
-    abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): LiveData<List<Notebook>>
+    abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): Flow<List<Notebook>>
 
 }
 

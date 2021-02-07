@@ -58,6 +58,10 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
         }
 
+        fun getAbsPagingRecyclerViewFragmentTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.fragment", "AbsPagingRecyclerViewFragment")
+        }
+
         fun getAbsNonRecyclableListViewFragmentTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsNonRecyclableListViewFragment")
         }
@@ -84,6 +88,18 @@ class TypeNamesUtils {
 
         fun getSharingStartedTypeName(): ClassName {
             return ClassName("kotlinx.coroutines.flow", "SharingStarted")
+        }
+
+        fun getLifecycleScopeTypeName(): ClassName {
+            return ClassName("androidx.lifecycle", "lifecycleScope")
+        }
+
+        fun getCollectLatestTypeName(): ClassName {
+            return ClassName("kotlinx.coroutines.flow", "collectLatest")
+        }
+
+        fun getObserverTypeName(): ClassName {
+            return ClassName("androidx.lifecycle", "Observer")
         }
 
         fun getAbsRecyclerViewFragmentOfTypeName(objectTypeName: TypeName,

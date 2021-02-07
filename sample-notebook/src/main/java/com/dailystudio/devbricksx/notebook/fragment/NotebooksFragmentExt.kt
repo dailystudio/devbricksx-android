@@ -11,12 +11,9 @@ import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
-import com.dailystudio.devbricksx.utils.FabAnimationDirection
-import com.dailystudio.devbricksx.utils.hideWithAnimation
-import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class NotebooksFragmentExt : NotebooksListFragment() {
@@ -35,31 +32,26 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         nbNameView?.requestFocus()
     }
 
-    override fun getLiveData(): LiveData<List<Notebook>> {
+    override fun getDataSource(): Flow<List<Notebook>> {
         notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
 
-        val liveData = notebookViewModel.getAllNotebooksOrderedByLastModifiedLivePaged()
+        val flowOfNotebooks = notebookViewModel.getAllNotebooksOrderedByLastModifiedLivePaged()
 
-        return Transformations.switchMap(liveData) { notebooks ->
+        return flowOfNotebooks.mapLatest { notebooks ->
             val wrapper = mutableListOf<Notebook>()
-            val ret = MutableLiveData<List<Notebook>>(wrapper)
 
-            lifecycleScope.launch(Dispatchers.IO) {
-                for (notebook in notebooks) {
-                    val noteViewModel =
-                            ViewModelProvider(this@NotebooksFragmentExt).get(NoteViewModel::class.java)
+            for (notebook in notebooks) {
+                val noteViewModel =
+                        ViewModelProvider(this@NotebooksFragmentExt).get(NoteViewModel::class.java)
 
-                    notebook.notesCount = noteViewModel.countNotes(notebook.id)
-                    Logger.debug("nc: ${notebook.notesCount} of $notebook")
+                notebook.notesCount = noteViewModel.countNotes(notebook.id)
+                Logger.debug("nc: ${notebook.notesCount} of $notebook")
 
-                    wrapper.add(notebook)
-                }
-
-                ret.postValue(wrapper)
+                wrapper.add(notebook)
             }
 
-            ret
-        }
+            wrapper
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun onResume() {

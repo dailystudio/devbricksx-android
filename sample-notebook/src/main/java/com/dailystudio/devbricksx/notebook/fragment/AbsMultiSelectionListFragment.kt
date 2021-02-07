@@ -9,7 +9,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
@@ -20,8 +19,8 @@ import com.dailystudio.devbricksx.utils.hideWithAnimation
 import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-abstract class AbsMultiSelectionListFragment<Item, ItemList, Adapter>
-    : AbsRecyclerViewFragment<Item, ItemList, Adapter>()
+abstract class AbsMultiSelectionListFragment<Item, ItemList, ListDataSource, Adapter>
+    : AbsRecyclerViewFragment<Item, ItemList, ListDataSource, Adapter>()
         where Adapter: RecyclerView.Adapter<*>, Adapter: AbsRecyclerAdapter<Item> {
 
     private var onBackPressedCallback: OnBackPressedCallback? = null

@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.Adapter
+import com.dailystudio.devbricksx.annotations.DataSource
 import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
@@ -52,12 +53,20 @@ class ListFragmentProcessor : BaseProcessor() {
         val isGradLayout = fragmentAnnotation.gridLayout
         val columns = fragmentAnnotation.columns
         val fillParent = fragmentAnnotation.fillParent
-        val superFragmentClass =
-                AnnotationsUtils.getClassValueFromAnnotation(
-                        element, "superClass") ?: TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
+        val dataSource = fragmentAnnotation.dataSource
+        val paging3 = fragmentAnnotation.usingPaging3
 
         val adapterAnnotation = element.getAnnotation(Adapter::class.java)
         val paged = adapterAnnotation?.paged ?: true
+
+        val superFragmentClass =
+                AnnotationsUtils.getClassValueFromAnnotation(
+                        element, "superClass") ?:
+                        if (paged && paging3) {
+                            TypeNamesUtils.getAbsPagingRecyclerViewFragmentTypeName()
+                        } else {
+                            TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
+                        }
 
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
         if (viewModelAnnotation == null) {
@@ -80,6 +89,7 @@ class ListFragmentProcessor : BaseProcessor() {
         val objectTypeName = ClassName(packageName, typeName)
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
+        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
         val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
         val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
         val asLiveData = TypeNamesUtils.getAsLiveDataTypeName()
@@ -87,6 +97,7 @@ class ListFragmentProcessor : BaseProcessor() {
         val superFragment = superFragmentClass.parameterizedBy(
                 objectTypeName,
                 if (paged) pagedList else list,
+                if (paged) liveDataOfPagedListOfObjects else flowOfListOfObjects,
                 adapter)
         val layoutManager = TypeNamesUtils.getLayoutManagerTypeName()
         val linearLayoutManager = TypeNamesUtils.getLinearLayoutManagerTypeName()
@@ -97,6 +108,9 @@ class ListFragmentProcessor : BaseProcessor() {
         val layoutInflater = TypeNamesUtils.getLayoutInflaterTypeName()
         val viewGroup = TypeNamesUtils.getViewGroupTypeName()
         val devbricksxR = TypeNamesUtils.getDevbrickxRTypeName()
+        val lifecycleScope = TypeNamesUtils.getLifecycleScopeTypeName()
+        val collectLatest = TypeNamesUtils.getCollectLatestTypeName()
+        val observer = TypeNamesUtils.getObserverTypeName()
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(superFragment)
@@ -120,6 +134,38 @@ class ListFragmentProcessor : BaseProcessor() {
 
         classBuilder.addFunction(methodOnSubmitDataBuilder.build())
 
+        val methodOnBindDataBuilder = FunSpec.builder("bindData")
+                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.OVERRIDE)
+                .addStatement("val dataSource = getDataSource()")
+        when (dataSource) {
+            DataSource.Flow -> {
+                methodOnBindDataBuilder.addCode(
+                    "%T.launchWhenCreated {\n" +
+                    "   dataSource.%T { listOfItems ->\n" +
+                    "       adapter?.let {\n" +
+                    "           submitData(it, listOfItems)\n" +
+                    "       }\n" +
+                    "   }\n" +
+                    "}",
+                    lifecycleScope, collectLatest
+                )
+            }
+
+            DataSource.LiveData -> {
+                methodOnBindDataBuilder.addCode(
+                    "dataSource.observe(viewLifecycleOwner, %T { data ->\n" +
+                    "   adapter?.let {\n" +
+                    "       submitData(it, data)\n" +
+                    "   }\n" +
+                    "})\n",
+                    observer
+                )
+            }
+        }
+
+        classBuilder.addFunction(methodOnBindDataBuilder.build())
+
         val methodOnCreateLayoutManagerBuilder = FunSpec.builder("onCreateLayoutManager")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
@@ -136,20 +182,19 @@ class ListFragmentProcessor : BaseProcessor() {
 
         classBuilder.addFunction(methodOnCreateLayoutManagerBuilder.build())
 
-        val methodGetLiveDataBuilder = FunSpec.builder("getLiveData")
+        val methodGetLiveDataBuilder = FunSpec.builder("getDataSource")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
                 .addStatement("val viewModel = %T(requireActivity()).get(%T::class.java)",
                         viewModelProvider, viewModel)
 //                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
-                .returns(if (paged) liveDataOfPagedListOfObjects else liveDataOfListOfObjects)
+                .returns(if (paged) liveDataOfPagedListOfObjects else flowOfListOfObjects)
         if (paged) {
             methodGetLiveDataBuilder.addStatement("return viewModel.%N",
                     GeneratedNames.getAllObjectsPagedPropertyName(typeName))
         } else {
-            methodGetLiveDataBuilder.addStatement("return viewModel.%N.%T()",
-                    GeneratedNames.getAllObjectsFlowPropertyName(typeName),
-                    asLiveData)
+            methodGetLiveDataBuilder.addStatement("return viewModel.%N",
+                    GeneratedNames.getAllObjectsFlowPropertyName(typeName))
         }
 
         classBuilder.addFunction(methodGetLiveDataBuilder.build())

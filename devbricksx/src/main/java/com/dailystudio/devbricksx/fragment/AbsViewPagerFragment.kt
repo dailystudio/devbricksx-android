@@ -4,8 +4,8 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 
-abstract class AbsViewPagerFragment<Item, ItemList, Adapter: RecyclerView.Adapter<*>>
-    : AbsRecyclerViewBasedFragment<Item, ItemList, Adapter>() {
+abstract class AbsViewPagerFragment<Item, ListData, ListDataSource, Adapter: RecyclerView.Adapter<*>>
+    : AbsRecyclerViewBasedFragment<Item, ListData, ListDataSource, Adapter>() {
 
     protected var viewPager: ViewPager2? = null
 
