@@ -66,8 +66,16 @@ class TypeNamesUtils {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsNonRecyclableListViewFragment")
         }
 
+        fun getAbsPagingNonRecyclableListViewFragmentTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.fragment", "AbsPagingNonRecyclableListViewFragment")
+        }
+
         fun getAbsViewPagerFragmentTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.fragment", "AbsViewPagerFragment")
+        }
+
+        fun getAbsPagingViewPagerFragmentTypeName(): ClassName {
+            return ClassName("com.dailystudio.devbricksx.fragment", "AbsPagingViewPagerFragment")
         }
 
         fun getViewModelScopeTypeName(): ClassName {

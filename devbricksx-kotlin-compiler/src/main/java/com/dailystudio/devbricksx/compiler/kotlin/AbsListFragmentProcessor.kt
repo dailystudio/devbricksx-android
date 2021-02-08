@@ -2,20 +2,30 @@ package com.dailystudio.devbricksx.compiler.kotlin
 
 import com.dailystudio.devbricksx.annotations.Adapter
 import com.dailystudio.devbricksx.annotations.DataSource
-import com.dailystudio.devbricksx.annotations.ListFragment
 import com.dailystudio.devbricksx.annotations.ViewModel
-import com.dailystudio.devbricksx.compiler.kotlin.utils.AnnotationsUtils
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
-open class BaseListFragmentProcessor : BaseProcessor() {
+open class BuildOptions(val layout: Int,
+                        val layoutByName: String = "",
+                        val defaultLayout: String,
+                        val defaultLayoutCompat: String = defaultLayout,
+                        val fillParent: Boolean = false,
+                        val dataSource: DataSource,
+                        val paged: Boolean,
+                        val paging3: Boolean)
+
+abstract class AbsListFragmentProcessor : BaseProcessor() {
+
+    override fun getSupportedAnnotationTypes(): MutableSet<String> {
+        return mutableSetOf(getSupportClass().name)
+    }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        roundEnv.getElementsAnnotatedWith(ListFragment::class.java)
+        roundEnv.getElementsAnnotatedWith(getSupportClass())
                 .forEach { element ->
                     if (element.kind != ElementKind.CLASS) {
                         error("Only classes can be annotated")
@@ -38,19 +48,13 @@ open class BaseListFragmentProcessor : BaseProcessor() {
     protected open fun generateFragment(element: TypeElement) : GeneratedResult? {
         val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val classBuilder = genClassBuilder(element)
+        val options = genBuildOptions(element)
+        val classBuilder = genClassBuilder(element, options)
 
-        val methodBuilders = arrayOf(
-                ::genOnCreateAdapter,
-                ::genSubmitData,
-                ::genBindData,
-                ::genOnCreateLayoutManager,
-                ::genGetDataSource,
-                ::genOnCreateView
-        )
+        val methodBuilders = getMethodBuilderGenFuncs()
 
         methodBuilders.forEach { func ->
-            val builder = func.invoke(element, classBuilder)
+            val builder = func.invoke(element, classBuilder, options)
             builder?.let {
                 classBuilder.addFunction(it.build())
             }
@@ -61,47 +65,27 @@ open class BaseListFragmentProcessor : BaseProcessor() {
                 classBuilder)
     }
 
-    protected open fun genClassBuilder(element: TypeElement): TypeSpec.Builder {
-        val typeName = element.simpleName.toString()
-        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
-
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
-        val paging3 = fragmentAnnotation.usingPaging3
-
-        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
-
-        val superFragmentClass =
-                AnnotationsUtils.getClassValueFromAnnotation(
-                        element, "superClass") ?:
-                if (paged && paging3) {
-                    TypeNamesUtils.getAbsPagingRecyclerViewFragmentTypeName()
-                } else {
-                    TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
-                }
-
-        val generatedClassName = GeneratedNames.getListFragmentName(typeName)
-
-        val objectTypeName = ClassName(packageName, typeName)
-        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
-        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
-        val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
-        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
-        val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
-
-        val superFragment = superFragmentClass.parameterizedBy(
-                objectTypeName,
-                if (paged) pagedList else list,
-                if (paged) liveDataOfPagedListOfObjects else flowOfListOfObjects,
-                adapter)
-
-        return TypeSpec.classBuilder(generatedClassName)
-                .superclass(superFragment)
-                .addModifiers(KModifier.OPEN)
+    protected open fun getMethodBuilderGenFuncs(): MutableList<(element: TypeElement,
+                                                                classBuilder: TypeSpec.Builder,
+                                                                options: BuildOptions) -> FunSpec.Builder?> {
+        return mutableListOf(
+                ::genOnCreateAdapter,
+                ::genSubmitData,
+                ::genBindData,
+//                ::genOnCreateLayoutManager,
+                ::genGetDataSource,
+                ::genOnCreateView
+        )
     }
 
+    protected abstract fun genClassBuilder(element: TypeElement,
+                                           options: BuildOptions): TypeSpec.Builder
+    protected abstract fun genBuildOptions(element: TypeElement): BuildOptions
+    protected abstract fun getSupportClass(): Class<out Annotation>
+
     protected open fun genOnCreateAdapter(element: TypeElement,
-                                          classBuilder: TypeSpec.Builder): FunSpec.Builder? {
+                                          classBuilder: TypeSpec.Builder,
+                                          options: BuildOptions): FunSpec.Builder? {
         val typeName = element.simpleName.toString()
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
@@ -115,12 +99,12 @@ open class BaseListFragmentProcessor : BaseProcessor() {
     }
 
     protected open fun genSubmitData(element: TypeElement,
-                                     classBuilder: TypeSpec.Builder): FunSpec.Builder? {
+                                     classBuilder: TypeSpec.Builder,
+                                     options: BuildOptions): FunSpec.Builder? {
         val typeName = element.simpleName.toString()
         val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
+        val paged = options.paged
 
         val objectTypeName = ClassName(packageName, typeName)
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
@@ -137,9 +121,9 @@ open class BaseListFragmentProcessor : BaseProcessor() {
     }
 
     protected open fun genBindData(element: TypeElement,
-                                   classBuilder: TypeSpec.Builder): FunSpec.Builder? {
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
-        val dataSource = fragmentAnnotation.dataSource
+                                   classBuilder: TypeSpec.Builder,
+                                   options: BuildOptions): FunSpec.Builder? {
+        val dataSource = options.dataSource
 
         val lifecycleScope = TypeNamesUtils.getLifecycleScopeTypeName()
         val collectLatest = TypeNamesUtils.getCollectLatestTypeName()
@@ -179,40 +163,15 @@ open class BaseListFragmentProcessor : BaseProcessor() {
         return methodOnBindDataBuilder
     }
 
-    protected open fun genOnCreateLayoutManager(element: TypeElement,
-                                                classBuilder: TypeSpec.Builder): FunSpec.Builder? {
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
-        val isGradLayout = fragmentAnnotation.gridLayout
-        val columns = fragmentAnnotation.columns
-
-        val layoutManager = TypeNamesUtils.getLayoutManagerTypeName()
-        val linearLayoutManager = TypeNamesUtils.getLinearLayoutManagerTypeName()
-        val gridLayoutManager = TypeNamesUtils.getGridLayoutManagerTypeName()
-
-        val methodOnCreateLayoutManagerBuilder = FunSpec.builder("onCreateLayoutManager")
-                .addModifiers(KModifier.PUBLIC)
-                .addModifiers(KModifier.OVERRIDE)
-                .returns(layoutManager)
-        if (isGradLayout) {
-            methodOnCreateLayoutManagerBuilder.addStatement(
-                    "return %T(context, %L)", gridLayoutManager, columns
-            )
-        } else {
-            methodOnCreateLayoutManagerBuilder.addStatement(
-                    "return %T(context)", linearLayoutManager
-            )
-        }
-
-        return methodOnCreateLayoutManagerBuilder
-    }
-
     protected open fun genGetDataSource(element: TypeElement,
-                                        classBuilder: TypeSpec.Builder): FunSpec.Builder? {
+                                        classBuilder: TypeSpec.Builder,
+                                        options: BuildOptions): FunSpec.Builder? {
         val typeName = element.simpleName.toString()
-        var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
-        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
+        val paged = options.paged
+        val dataSource = options.dataSource
+
         val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
         if (viewModelAnnotation == null) {
             warn("ViewModel annotation is missing on element: $element")
@@ -233,6 +192,7 @@ open class BaseListFragmentProcessor : BaseProcessor() {
         val objectTypeName = ClassName(packageName, typeName)
         val viewModelProvider = TypeNamesUtils.getViewModelProviderTypeName()
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
+        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
         val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
 
         val methodGetLiveDataBuilder = FunSpec.builder("getDataSource")
@@ -241,24 +201,40 @@ open class BaseListFragmentProcessor : BaseProcessor() {
                 .addStatement("val viewModel = %T(requireActivity()).get(%T::class.java)",
                         viewModelProvider, viewModel)
 //                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
-                .returns(if (paged) liveDataOfPagedListOfObjects else flowOfListOfObjects)
+                .returns(if (paged) liveDataOfPagedListOfObjects else {
+                  when(dataSource) {
+                      DataSource.LiveData -> liveDataOfListOfObjects
+                      DataSource.Flow -> flowOfListOfObjects
+                  }
+                })
+
         if (paged) {
             methodGetLiveDataBuilder.addStatement("return viewModel.%N",
                     GeneratedNames.getAllObjectsPagedPropertyName(typeName))
         } else {
-            methodGetLiveDataBuilder.addStatement("return viewModel.%N",
-                    GeneratedNames.getAllObjectsFlowPropertyName(typeName))
+            when (dataSource) {
+                DataSource.LiveData -> {
+                    methodGetLiveDataBuilder.addStatement("return viewModel.%N",
+                            GeneratedNames.getAllObjectsLivePropertyName(typeName))
+                }
+                DataSource.Flow -> {
+                    methodGetLiveDataBuilder.addStatement("return viewModel.%N",
+                            GeneratedNames.getAllObjectsFlowPropertyName(typeName))
+                }
+            }
         }
 
         return methodGetLiveDataBuilder
     }
 
     protected open fun genOnCreateView(element: TypeElement,
-                                       classBuilder: TypeSpec.Builder): FunSpec.Builder? {
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
-        val layout = fragmentAnnotation.layout
-        val layoutByName = fragmentAnnotation.layoutByName
-        val fillParent = fragmentAnnotation.fillParent
+                                       classBuilder: TypeSpec.Builder,
+                                       options: BuildOptions): FunSpec.Builder? {
+        val layoutByName = options.layoutByName
+        val layout = options.layout
+        val defaultLayout = options.defaultLayout
+        val defaultLayoutCompat = options.defaultLayoutCompat
+        val fillParent = options.fillParent
 
         val view = TypeNamesUtils.getViewTypeName()
         val bundle = TypeNamesUtils.getBundleTypeName()
@@ -288,9 +264,9 @@ open class BaseListFragmentProcessor : BaseProcessor() {
             }
             else -> {
                 val layoutIdentifier = if (fillParent) {
-                    "fragment_recycler_view"
+                    defaultLayout
                 } else {
-                    "fragment_recycler_view_compact"
+                    defaultLayoutCompat
                 }
                 methodOnCreateViewBuilder.addStatement("return inflater.inflate(%T.layout.%N, container, false)",
                         devbricksxR, layoutIdentifier)
