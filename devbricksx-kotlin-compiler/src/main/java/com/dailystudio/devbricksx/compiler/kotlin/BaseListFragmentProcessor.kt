@@ -12,7 +12,93 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
-abstract class AbsListFragmentProcessor : BaseProcessor() {
+open class BaseListFragmentProcessor : BaseProcessor() {
+
+    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
+        roundEnv.getElementsAnnotatedWith(ListFragment::class.java)
+                .forEach { element ->
+                    if (element.kind != ElementKind.CLASS) {
+                        error("Only classes can be annotated")
+                        return true
+                    }
+
+                    if (element is TypeElement) {
+                        val result = generateFragment(element)
+
+                        result?.let {
+                            writeToFile(it)
+                        }
+                    }
+                }
+
+
+        return true
+    }
+
+    protected open fun generateFragment(element: TypeElement) : GeneratedResult? {
+        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+
+        val classBuilder = genClassBuilder(element)
+
+        val methodBuilders = arrayOf(
+                ::genOnCreateAdapter,
+                ::genSubmitData,
+                ::genBindData,
+                ::genOnCreateLayoutManager,
+                ::genGetDataSource,
+                ::genOnCreateView
+        )
+
+        methodBuilders.forEach { func ->
+            val builder = func.invoke(element, classBuilder)
+            builder?.let {
+                classBuilder.addFunction(it.build())
+            }
+        }
+
+        return GeneratedResult(
+                GeneratedNames.getFragmentPackageName(packageName),
+                classBuilder)
+    }
+
+    protected open fun genClassBuilder(element: TypeElement): TypeSpec.Builder {
+        val typeName = element.simpleName.toString()
+        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+
+        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
+        val paging3 = fragmentAnnotation.usingPaging3
+
+        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
+        val paged = adapterAnnotation?.paged ?: true
+
+        val superFragmentClass =
+                AnnotationsUtils.getClassValueFromAnnotation(
+                        element, "superClass") ?:
+                if (paged && paging3) {
+                    TypeNamesUtils.getAbsPagingRecyclerViewFragmentTypeName()
+                } else {
+                    TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
+                }
+
+        val generatedClassName = GeneratedNames.getListFragmentName(typeName)
+
+        val objectTypeName = ClassName(packageName, typeName)
+        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
+        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
+        val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
+        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
+
+        val superFragment = superFragmentClass.parameterizedBy(
+                objectTypeName,
+                if (paged) pagedList else list,
+                if (paged) liveDataOfPagedListOfObjects else flowOfListOfObjects,
+                adapter)
+
+        return TypeSpec.classBuilder(generatedClassName)
+                .superclass(superFragment)
+                .addModifiers(KModifier.OPEN)
+    }
 
     protected open fun genOnCreateAdapter(element: TypeElement,
                                           classBuilder: TypeSpec.Builder): FunSpec.Builder? {
@@ -31,7 +117,7 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
     protected open fun genSubmitData(element: TypeElement,
                                      classBuilder: TypeSpec.Builder): FunSpec.Builder? {
         val typeName = element.simpleName.toString()
-        var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
         val adapterAnnotation = element.getAnnotation(Adapter::class.java)
         val paged = adapterAnnotation?.paged ?: true
@@ -212,100 +298,6 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
         }
 
         return methodOnCreateViewBuilder
-    }
-
-    protected open fun generateFragment(element: TypeElement) : GeneratedResult? {
-        val typeName = element.simpleName.toString()
-        var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
-
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
-        val paging3 = fragmentAnnotation.usingPaging3
-
-        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
-
-        val superFragmentClass =
-                AnnotationsUtils.getClassValueFromAnnotation(
-                        element, "superClass") ?:
-                if (paged && paging3) {
-                    TypeNamesUtils.getAbsPagingRecyclerViewFragmentTypeName()
-                } else {
-                    TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
-                }
-
-        val viewModelAnnotation = element.getAnnotation(ViewModel::class.java)
-        if (viewModelAnnotation == null) {
-            warn("ViewModel annotation is missing on element: $element")
-            return null
-        }
-
-        val viewModelName = if (viewModelAnnotation.group.isNotBlank()) {
-            GeneratedNames.getViewModelName(viewModelAnnotation.group)
-        } else {
-            GeneratedNames.getViewModelName(typeName)
-        }
-
-        val viewModelPackage = GeneratedNames.getViewModelPackageName(packageName)
-        debug("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
-
-        val generatedClassName = GeneratedNames.getListFragmentName(typeName)
-
-        val objectTypeName = ClassName(packageName, typeName)
-        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
-        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
-        val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
-        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
-        val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
-        val superFragment = superFragmentClass.parameterizedBy(
-                objectTypeName,
-                if (paged) pagedList else list,
-                if (paged) liveDataOfPagedListOfObjects else flowOfListOfObjects,
-                adapter)
-
-        val classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .superclass(superFragment)
-                .addModifiers(KModifier.OPEN)
-
-        val methodBuilderFuncs = arrayOf(
-                ::genOnCreateAdapter,
-                ::genSubmitData,
-                ::genBindData,
-                ::genOnCreateLayoutManager,
-                ::genGetDataSource,
-                ::genOnCreateView
-        )
-
-        methodBuilderFuncs.forEach { func ->
-            val builder = func.invoke(element, classBuilder)
-            builder?.let {
-                classBuilder.addFunction(it.build())
-            }
-        }
-
-        return GeneratedResult(
-                GeneratedNames.getFragmentPackageName(packageName),
-                classBuilder)
-    }
-
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        roundEnv.getElementsAnnotatedWith(ListFragment::class.java)
-                .forEach { element ->
-                    if (element.kind != ElementKind.CLASS) {
-                        error("Only classes can be annotated")
-                        return true
-                    }
-
-                    if (element is TypeElement) {
-                        val result = generateFragment(element)
-
-                        result?.let {
-                            writeToFile(it)
-                        }
-                    }
-                }
-
-
-        return true
     }
 
 }

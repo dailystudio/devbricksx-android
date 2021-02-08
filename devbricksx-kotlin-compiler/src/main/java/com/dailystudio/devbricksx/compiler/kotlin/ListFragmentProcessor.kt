@@ -5,7 +5,7 @@ import com.google.auto.service.AutoService
 import javax.annotation.processing.Processor
 
 @AutoService(Processor::class)
-class ListFragmentProcessor : AbsListFragmentProcessor() {
+class ListFragmentProcessor : BaseListFragmentProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(ListFragment::class.java.name)
