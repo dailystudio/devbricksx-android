@@ -4,10 +4,9 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.dailystudio.devbricksx.annotations.DaoExtension
-import com.dailystudio.devbricksx.annotations.RoomCompanion
-import com.dailystudio.devbricksx.annotations.ViewModel
+import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.quickstart.UserViewHolder
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +32,10 @@ interface SubredditRemoteKeyDaoExtension {
 
 }
 
+@ListFragment
 @ViewModel
+@Adapter(viewHolder = RedditPostViewHolder::class,
+        paged = true)
 @RoomCompanion(
         primaryKeys = [ "name" ],
         extension = RedditPostDaoExtension::class,

@@ -21,7 +21,6 @@ import java.util.*
 )
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
-        paged = false,
         layout = R.layout.layout_notebook,
         viewHolder = NotebookViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
@@ -66,6 +65,7 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
         layout = R.layout.layout_note,
+        paged = true,
         viewHolder = NoteViewHolder::class)
 @ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
         gridLayout = true,

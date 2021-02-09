@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.notebook.db
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import androidx.paging.PagingSource
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.DaoExtension
 import com.dailystudio.devbricksx.annotations.Page
@@ -26,7 +27,7 @@ abstract class NoteDaoExtension {
 
     @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
     @Page(pageSize = 50)
-    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): LiveData<PagedList<Note>>
+    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): PagingSource<Int, Note>
 
     @Query("SELECT COUNT(*) FROM note WHERE notebook_id = :notebookId")
     abstract fun countNotes(notebookId: Int): Int

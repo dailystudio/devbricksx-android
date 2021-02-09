@@ -20,22 +20,18 @@ class NonRecyclableListFragmentProcessor : AbsListFragmentProcessor() {
     }
 
     override fun genBuildOptions(element: TypeElement): BuildOptions {
-        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
-
         val fragmentAnnotation = element.getAnnotation(NonRecyclableListFragment::class.java)
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
         val dataSource = fragmentAnnotation.dataSource
-        val paging3 = fragmentAnnotation.usingPaging3
 
         return BuildOptions(
                 layout, layoutByName,
                 "fragment_non_recyclable_list_view", "fragment_non_recyclable_list_view_compact",
                 fillParent,
                 dataSource,
-                paged, paging3)
+                false)
     }
 
     override fun genClassBuilder(element: TypeElement,
@@ -44,13 +40,12 @@ class NonRecyclableListFragmentProcessor : AbsListFragmentProcessor() {
         var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
 
         val paged = options.paged
-        val paging3 = options.paging3
         val dataSource = options.dataSource
 
         val superFragmentClass =
                 AnnotationsUtils.getClassValueFromAnnotation(
                         element, "superClass") ?:
-                if (paged && paging3) {
+                if (paged) {
                     TypeNamesUtils.getAbsPagingNonRecyclableListViewFragmentTypeName()
                 } else {
                     TypeNamesUtils.getAbsNonRecyclableListViewFragmentTypeName()

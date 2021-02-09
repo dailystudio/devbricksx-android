@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.compiler.kotlin
 
-import com.dailystudio.devbricksx.annotations.Adapter
 import com.dailystudio.devbricksx.annotations.DataSource
 import com.dailystudio.devbricksx.annotations.ViewModel
 import com.dailystudio.devbricksx.compiler.kotlin.utils.TypeNamesUtils
@@ -15,8 +14,9 @@ open class BuildOptions(val layout: Int,
                         val defaultLayoutCompat: String = defaultLayout,
                         val fillParent: Boolean = false,
                         val dataSource: DataSource,
-                        val paged: Boolean,
-                        val paging3: Boolean)
+                        val paged: Boolean = false,
+                        val pageSize: Int = 20
+)
 
 abstract class AbsListFragmentProcessor : BaseProcessor() {
 
@@ -72,7 +72,6 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                 ::genOnCreateAdapter,
                 ::genSubmitData,
                 ::genBindData,
-//                ::genOnCreateLayoutManager,
                 ::genGetDataSource,
                 ::genOnCreateView
         )
@@ -108,16 +107,27 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
-        val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
-        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val listOfObjects = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val pagingDataOfObjects = TypeNamesUtils.getPagingDataOfTypeName(objectTypeName)
 
-        return FunSpec.builder("submitData")
+        val methodSubmitDataBuilder = FunSpec.builder("submitData")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
                 .addParameter("adapter", adapter)
-                .addParameter("data", if (paged) pagedList else list)
-                .addStatement("adapter.submitList(data)")
-                .addStatement("adapter.notifyDataSetChanged()")
+                .addParameter("data", if (paged) pagingDataOfObjects else listOfObjects)
+
+        if(paged) {
+            methodSubmitDataBuilder.addStatement(
+                    "adapter.submitData(lifecycle, data)")
+        } else {
+            methodSubmitDataBuilder.addStatement(
+                    "adapter.submitList(data)")
+
+        }
+
+        methodSubmitDataBuilder.addStatement("adapter.notifyDataSetChanged()")
+
+        return methodSubmitDataBuilder
     }
 
     protected open fun genBindData(element: TypeElement,
@@ -191,9 +201,17 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
 
         val objectTypeName = ClassName(packageName, typeName)
         val viewModelProvider = TypeNamesUtils.getViewModelProviderTypeName()
-        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
-        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
-        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
+        val listOfObjects = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val pagingDataOfObjects = TypeNamesUtils.getPagingDataOfTypeName(objectTypeName)
+        val pageConfig = TypeNamesUtils.getPageConfigTypeName()
+        val pager = TypeNamesUtils.getPagerTypeName()
+        val asLiveData = TypeNamesUtils.getAsLiveDataTypeName()
+
+        val dataType = if (paged) pagingDataOfObjects else listOfObjects
+        val dataSourceType = when (dataSource) {
+            DataSource.LiveData -> TypeNamesUtils.getLiveDataOfTypeName(dataType)
+            DataSource.Flow -> TypeNamesUtils.getFlowOfTypeName(dataType)
+        }
 
         val methodGetLiveDataBuilder = FunSpec.builder("getDataSource")
                 .addModifiers(KModifier.PUBLIC)
@@ -201,16 +219,31 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                 .addStatement("val viewModel = %T(requireActivity()).get(%T::class.java)",
                         viewModelProvider, viewModel)
 //                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
-                .returns(if (paged) liveDataOfPagedListOfObjects else {
-                  when(dataSource) {
-                      DataSource.LiveData -> liveDataOfListOfObjects
-                      DataSource.Flow -> flowOfListOfObjects
-                  }
-                })
+                .returns(dataSourceType)
 
         if (paged) {
-            methodGetLiveDataBuilder.addStatement("return viewModel.%N",
-                    GeneratedNames.getAllObjectsPagedPropertyName(typeName))
+            when (dataSource) {
+                DataSource.LiveData -> {
+                    methodGetLiveDataBuilder.addStatement(
+                            "return %T(\n" +
+                            "   %T(%L)) {\n" +
+                            "   viewModel.%N()\n" +
+                            "}.flow.%T()",
+                            pager, pageConfig, options.pageSize,
+                            GeneratedNames.getAllObjectsPagingSourceFunName(typeName),
+                            asLiveData
+                    )
+                }
+                DataSource.Flow -> {
+                    methodGetLiveDataBuilder.addStatement(
+                            "return %T(\n" +
+                                    "   %T(%L)) {\n" +
+                                    "   viewModel.%N()\n" +
+                                    "}.flow",
+                            pager, pageConfig, options.pageSize,
+                            GeneratedNames.getAllObjectsPagingSourceFunName(typeName))
+                }
+            }
         } else {
             when (dataSource) {
                 DataSource.LiveData -> {

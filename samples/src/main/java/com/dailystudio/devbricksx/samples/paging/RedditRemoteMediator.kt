@@ -61,6 +61,7 @@ class RedditRemoteMediator(
             ).data
 
             val items = data.children.map { it.data }
+            Logger.debug("new ${items.size} downloaded.")
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {

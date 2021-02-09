@@ -18,12 +18,10 @@ class ViewPagerFragmentBuildOptions(layout: Int,
                                     defaultLayoutCompat: String = defaultLayout,
                                     fillParent: Boolean,
                                     dataSource: DataSource,
-                                    paged: Boolean,
-                                    paging3: Boolean,
                                     val useFragment: Boolean,
                                     val offscreenPageLimit: Int)
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
-        fillParent, dataSource, paged, paging3)
+        fillParent, dataSource, false)
 
 
 @AutoService(Processor::class)
@@ -44,7 +42,7 @@ class ViewPagerFragmentProcessor : AbsListFragmentProcessor() {
         val superFragmentClass =
                 AnnotationsUtils.getClassValueFromAnnotation(
                         element, "superClass") ?:
-                if (options.paged && options.paging3) {
+                if (options.paged) {
                     TypeNamesUtils.getAbsPagingViewPagerFragmentTypeName()
                 } else {
                     TypeNamesUtils.getAbsViewPagerFragmentTypeName()
@@ -81,15 +79,11 @@ class ViewPagerFragmentProcessor : AbsListFragmentProcessor() {
     }
 
     override fun genBuildOptions(element: TypeElement): BuildOptions {
-        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
-        val paged = adapterAnnotation?.paged ?: true
-
         val fragmentAnnotation = element.getAnnotation(ViewPagerFragment::class.java)
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
         val dataSource = fragmentAnnotation.dataSource
-        val paging3 = fragmentAnnotation.usingPaging3
         val useFragment = fragmentAnnotation.useFragment
         val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
 
@@ -97,8 +91,7 @@ class ViewPagerFragmentProcessor : AbsListFragmentProcessor() {
                 layout, layoutByName,
                 "fragment_view_pager", "fragment_view_pager_compact",
                 fillParent,
-                dataSource, paged, paging3,
-                useFragment, offscreenPageLimit)
+                dataSource, useFragment, offscreenPageLimit)
     }
 
     override fun genOnCreateAdapter(element: TypeElement,

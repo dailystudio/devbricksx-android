@@ -52,8 +52,6 @@ class AdapterProcessor : BaseProcessor() {
         val layoutByName = annotation.layoutByName
         val viewType = annotation.viewType
         val notifyAfterListChanged = annotation.notifyAfterListChanged
-        val usingPagingDataAdapter =
-                (element.getAnnotation(ExperimentalPagingDataAdapter::class.java) != null)
 
         val viewHolder = AnnotationsUtils.getClassValueFromAnnotation(element, "viewHolder")
                 ?: return null
@@ -71,7 +69,7 @@ class AdapterProcessor : BaseProcessor() {
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .superclass(if (paged) {
-                    if (usingPagingDataAdapter) pagingDataAdapter else pagedListAdapter
+                    pagingDataAdapter
                 } else {
                     listAdapter
                 })

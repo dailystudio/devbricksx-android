@@ -19,7 +19,7 @@ object KotlinTypesUtils {
                 val liveDataTypeName = TypeNamesUtils.getLiveDataTypeName()
                 val javaListTypeName = TypeNamesUtils.getJavaListTypeName()
                 val listTypeName = TypeNamesUtils.getListTypeName()
-                val pagingSourceTypeName = TypeNamesUtils.getPagingSourceType()
+                val pagingSourceTypeName = TypeNamesUtils.getPagingSourceTypeName()
                 val flowTypeName = TypeNamesUtils.getFlowTypeName()
 
                 println("rawType = ${origTypeName.rawType}")

@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.inmemory
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
+import androidx.paging.PagingSource
 import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -206,6 +207,10 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         return InMemoryObjectDataSourceFactory(this)
     }
 
+    fun toPagingSource(): PagingSource<Int, Object> {
+        return InMemoryObjectPagingSource<Object>(this)
+    }
+
     fun toFlow(): Flow<List<Object>> = flow {
         Logger.debug("flow[${this.hashCode()}] is created.")
         val channel = Channel<List<Object>>(Channel.UNLIMITED)
@@ -280,6 +285,36 @@ class InMemoryObjectDataSourceFactory<Object: InMemoryObject<*>>(
 
     override fun create(): DataSource<Long, Object> {
         return InMemoryObjectDataSource(manager)
+    }
+
+}
+
+class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
+        private val manager: InMemoryObjectManager<*, Object>)
+    : PagingSource<Int, Object>(), InMemoryObjectObserver {
+
+    init {
+        manager.addObserver(this)
+    }
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Object> {
+        val listOfObjects = manager.toList()
+        val N = listOfObjects.size
+
+        val start = params.key ?: 0
+        val end = min(N, start + params.loadSize)
+        Logger.debug("start: $start, end: $end, size: ${listOfObjects.size}, load size: ${params.loadSize}")
+
+        return LoadResult.Page(
+                data = listOfObjects.subList(start, end),
+                prevKey = start,
+                nextKey = end
+        )
+
+    }
+
+    override fun onChanged() {
+        invalidate()
     }
 
 }

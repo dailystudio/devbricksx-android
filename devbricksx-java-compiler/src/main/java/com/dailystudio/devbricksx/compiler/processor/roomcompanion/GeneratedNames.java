@@ -177,4 +177,14 @@ public class GeneratedNames {
         return builder.toString();
     }
 
+    public static String getRepositoryAllObjectsPagingSourceMethodName(String className) {
+        StringBuilder builder = new StringBuilder("getAll");
+
+        builder.append(className);
+        builder.append('s');
+        builder.append("PagingSource");
+
+        return builder.toString();
+    }
+
 }

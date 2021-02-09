@@ -69,6 +69,10 @@ class ListDelegate<Item>(
     }
 
     fun startSelection(holder: RecyclerView.ViewHolder, position: Int) {
+        if (isInSelectionMode()) {
+            return
+        }
+
         Logger.debug("start selection mode")
         inSelectionMode = true
         clearSelection()
@@ -78,6 +82,10 @@ class ListDelegate<Item>(
     }
 
     fun stopSelection() {
+        if (!isInSelectionMode()) {
+            return
+        }
+
         Logger.debug("stop selection mode")
         inSelectionMode = false
         clearSelection()

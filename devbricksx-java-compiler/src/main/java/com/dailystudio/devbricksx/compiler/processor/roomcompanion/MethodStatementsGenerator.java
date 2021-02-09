@@ -363,6 +363,8 @@ public class MethodStatementsGenerator {
         methodSpecBuilder.beginControlFlow("if (companionsFactory == null)")
                 .addStatement("return null")
                 .endControlFlow()
+//                .addStatement("$T.INSTANCE.debug(\"companionsFactory = %s\", companionsFactory)",
+//                        TypeNamesUtils.getLoggerTypeName())
                 .addStatement("$T objectsFactory = companionsFactory.map($T.mapCompanionToObject)",
                         objectsFactory, companion)
                 .addStatement("return objectsFactory.asPagingSourceFactory().invoke()")

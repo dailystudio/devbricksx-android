@@ -78,6 +78,8 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
                 TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(packageName, typeName);
         TypeName flowOfListOfObjects =
                 TypeNamesUtils.getFlowOfListOfObjectsTypeName(packageName, typeName);
+        TypeName pagingSourceOfObjects =
+                TypeNamesUtils.getPagingSourceOfObjectsTypeName(packageName, typeName);
 
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(generatedClassName)
                 .addModifiers(Modifier.PUBLIC);
@@ -159,6 +161,15 @@ public class RoomCompanionRepositoryClassProcessor extends AbsSingleTypeElementP
         methodGetAllFlowBuilder.addStatement("return $N.getAllFlow()", daoFieldName);
 
         classBuilder.addMethod(methodGetAllFlowBuilder.build());
+
+        MethodSpec.Builder methodGetAllPagingSourceBuilder =
+                MethodSpec.methodBuilder(GeneratedNames.getRepositoryAllObjectsPagingSourceMethodName(typeName))
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(pagingSourceOfObjects);
+
+        methodGetAllPagingSourceBuilder.addStatement("return $N.getAllPagingSource()", daoFieldName);
+
+        classBuilder.addMethod(methodGetAllPagingSourceBuilder.build());
 
         MethodSpec methodInsertOne = MethodSpec.methodBuilder("insert")
                 .addModifiers(Modifier.PUBLIC)

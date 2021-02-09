@@ -188,6 +188,24 @@ class GeneratedNames {
             }
         }
 
+        fun getAllObjectsPagingSourceFunName(className: String) : String {
+            return buildString {
+                this.append("getAll")
+                this.append(className)
+                this.append("s")
+                this.append("PagingSource")
+            }
+        }
+
+        fun getAllObjectsPagingSourcePropertyName(className: String) : String {
+            return buildString {
+                this.append("all")
+                this.append(className)
+                this.append("s")
+                this.append("PagingSource")
+            }
+        }
+
         fun getPluralMethodName(methodName: String,
                                 className: String): String {
             return buildString {

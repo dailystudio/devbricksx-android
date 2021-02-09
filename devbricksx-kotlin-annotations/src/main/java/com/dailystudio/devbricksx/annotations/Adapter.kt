@@ -18,7 +18,7 @@ annotation class Adapter(
         val viewType: ViewType = ViewType.SingleLine,
         val layout: Int = -1,
         val layoutByName: String = "",
-        val paged: Boolean = true,
+        val paged: Boolean = false,
         val notifyAfterListChanged: Boolean = false
 )
 

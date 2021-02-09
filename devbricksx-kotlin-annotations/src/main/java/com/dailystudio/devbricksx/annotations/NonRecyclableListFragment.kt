@@ -9,6 +9,5 @@ annotation class NonRecyclableListFragment(
         val layoutByName: String = "",
         val fillParent: Boolean = true,
         val dataSource: DataSource = DataSource.LiveData,
-        val usingPaging3: Boolean = false,
         val superClass: KClass<*> = Void::class,
 )

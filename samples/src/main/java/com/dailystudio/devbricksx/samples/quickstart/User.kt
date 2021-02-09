@@ -14,7 +14,8 @@ import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
         extension = UserDaoExtension::class
 )
 @ViewModel
-@Adapter(viewHolder = UserViewHolder::class)
+@Adapter(viewHolder = UserViewHolder::class,
+        paged = true)
 @ListFragment
 data class User(@JvmField val uid: Int,
                 @JvmField val firstName: String?,

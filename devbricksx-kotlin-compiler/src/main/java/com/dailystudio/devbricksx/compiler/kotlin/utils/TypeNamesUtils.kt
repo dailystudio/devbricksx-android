@@ -174,6 +174,18 @@ class TypeNamesUtils {
             return ClassName("androidx.paging", "PagedListAdapter")
         }
 
+        fun getPagingDataTypeName(): ClassName {
+            return ClassName("androidx.paging", "PagingData")
+        }
+
+        fun getPageConfigTypeName(): Any {
+            return ClassName("androidx.paging", "PagingConfig")
+        }
+
+        fun getPagerTypeName(): Any {
+            return ClassName("androidx.paging", "Pager")
+        }
+
         fun getAbsPageListAdapterTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsPagedListAdapter")
         }
@@ -188,6 +200,12 @@ class TypeNamesUtils {
 
         fun getAbsListAdapterTypeName(): ClassName {
             return ClassName("com.dailystudio.devbricksx.ui", "AbsListAdapter")
+        }
+
+        fun getPagingDataOfTypeName(`object`: TypeName): TypeName {
+            val pagingData = getPagingDataTypeName()
+
+            return pagingData.parameterizedBy(`object`)
         }
 
         fun getPageListAdapterOfTypeName(`object`: TypeName,
@@ -254,7 +272,7 @@ class TypeNamesUtils {
             return ClassName("androidx.paging", "PagedList")
         }
 
-        fun getPagingSourceType(): ClassName {
+        fun getPagingSourceTypeName(): ClassName {
             return ClassName("androidx.paging", "PagingSource")
         }
 
@@ -296,6 +314,12 @@ class TypeNamesUtils {
             val flow = getFlowTypeName()
 
             return flow.parameterizedBy(typeName)
+        }
+
+        fun getPagingSourceOfTypeName(typeName: TypeName): TypeName {
+            val pagingSource = getPagingSourceTypeName()
+
+            return pagingSource.parameterizedBy(getIntegerTypeName(), typeName)
         }
 
         fun getLiveDataOfListOfObjectTypeName(typeName: TypeName): TypeName {

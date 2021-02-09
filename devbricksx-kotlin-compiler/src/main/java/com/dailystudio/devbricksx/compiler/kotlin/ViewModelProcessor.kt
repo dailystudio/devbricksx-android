@@ -155,6 +155,7 @@ class ViewModelProcessor : BaseProcessor() {
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectTypeName(`object`)
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(`object`)
         val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(`object`)
+        val pagingSourceOfObjects = TypeNamesUtils.getPagingSourceOfTypeName(`object`)
         val database = ClassName(packageName, databaseName)
         val dispatchers = TypeNamesUtils.getDispatchersTypeName()
         val launch = TypeNamesUtils.getLaunchMemberName()
@@ -184,9 +185,9 @@ class ViewModelProcessor : BaseProcessor() {
         if (inMemoryRepository) {
             classBuilder.addInitializerBlock(CodeBlock.of(
                     "   %N = %T()\n" +
-                            "   %N = %N.%N\n" +
-                            "   %N = %N.%N\n" +
-                            "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
+                    "   %N = %N.%N\n" +
+                    "   %N = %N.%N\n" +
+                    "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
                     repoVariableName, repo,
                     allName, repoVariableName, repoAllName,
                     allPagedName, repoVariableName, repoAllPagedName,
@@ -195,10 +196,10 @@ class ViewModelProcessor : BaseProcessor() {
         } else {
             classBuilder.addInitializerBlock(CodeBlock.of(
                     "   val %N = %T.getDatabase(application).%N()\n" +
-                        "   %N = %T(%N)\n" +
-                        "   %N = %N.%N\n" +
-                        "   %N = %N.%N\n" +
-                        "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
+                    "   %N = %T(%N)\n" +
+                    "   %N = %N.%N\n" +
+                    "   %N = %N.%N\n" +
+                    "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
                     daoVariableName, database, daoVariableName,
                     repoVariableName, repo, daoVariableName,
                     allName, repoVariableName, repoAllName,
@@ -206,6 +207,19 @@ class ViewModelProcessor : BaseProcessor() {
                     allFlowName, repoVariableName, repoAllFlowName, shareIn, viewModelScope, sharingStarted
             ))
         }
+
+        val methodGetAllPagingSourceBuilder = FunSpec.builder(
+                GeneratedNames.getAllObjectsPagingSourceFunName(typeName))
+                .returns(pagingSourceOfObjects)
+        methodGetAllPagingSourceBuilder.addStatement("return %N.%N",
+                repoVariableName,
+                GeneratedNames.getAllObjectsPagingSourcePropertyName(if (inMemoryRepository) {
+                    "Object"
+                } else {
+                    typeName
+                }))
+
+        classBuilder.addFunction(methodGetAllPagingSourceBuilder.build())
 
         val methodGetOneBuilder = FunSpec.builder(GeneratedNames.getMethodName("get", typeName))
                 .returns(`object`.copy(nullable = true))

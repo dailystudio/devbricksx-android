@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.repository
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.paging.PagingSource
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.inmemory.InMemoryObjectManager
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,8 @@ open class ObjectRepository<Key: Comparable<Key>, Object: InMemoryObject<Key>>(
             LivePagedListBuilder(manager.toDataSource(), pageSize).build()
 
     val allObjectsFlow: Flow<List<Object>> = manager.toFlow()
+
+    val allObjectsPagingSource: PagingSource<Int, Object> = manager.toPagingSource()
 
     fun get(key: Key): Object? {
         return manager.get(key)

@@ -43,6 +43,10 @@ public class TypeNamesUtils {
         return ClassName.get("androidx.lifecycle", "Transformations");
     }
 
+    public static ClassName getLoggerTypeName() {
+        return ClassName.get("com.dailystudio.devbricksx.development", "Logger");
+    }
+
     public static TypeName getMapFunctionOfTypeName(TypeName typeClassNameA,
                                                     TypeName typeClassNameB) {
         ClassName function = ClassName.get("androidx.arch.core.util", "Function");

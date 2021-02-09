@@ -21,11 +21,11 @@ class ListFragmentMethodBuilderOptions(layout: Int,
                                        fillParent: Boolean,
                                        dataSource: DataSource,
                                        paged: Boolean,
-                                       paging3: Boolean,
+                                       pageSize: Int,
                                        val isGradLayout: Boolean = false,
                                        val columns: Int)
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
-        fillParent, dataSource, paged, paging3)
+        fillParent, dataSource, paged, pageSize)
 
 @AutoService(Processor::class)
 open class ListFragmentProcessor : AbsListFragmentProcessor() {
@@ -45,13 +45,13 @@ open class ListFragmentProcessor : AbsListFragmentProcessor() {
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
-        val paging3 = fragmentAnnotation.usingPaging3
+        val pageSize = fragmentAnnotation.pageSize
 
         return ListFragmentMethodBuilderOptions(
                 layout, layoutByName,
                 "fragment_recycler_view", "fragment_recycler_view_compat",
                 fillParent,
-                dataSource, paged, paging3,
+                dataSource, paged, pageSize,
                 isGradLayout, columns)
     }
 
@@ -66,32 +66,27 @@ open class ListFragmentProcessor : AbsListFragmentProcessor() {
         val superFragmentClass =
                 AnnotationsUtils.getClassValueFromAnnotation(
                         element, "superClass") ?:
-                if (options.paged && options.paging3) {
-                    TypeNamesUtils.getAbsPagingRecyclerViewFragmentTypeName()
-                } else {
-                    TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
-                }
+                        TypeNamesUtils.getAbsRecyclerViewFragmentTypeName()
 
         val generatedClassName = GeneratedNames.getListFragmentName(typeName)
 
         val objectTypeName = ClassName(packageName, typeName)
-        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
-        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
-        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
-        val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
-        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val listOfObjects = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val pagingDataOfObjects = TypeNamesUtils.getPagingDataOfTypeName(objectTypeName)
+
+        val dataType = if (paged) pagingDataOfObjects else listOfObjects
+        val dataSourceType = when (dataSource) {
+            DataSource.LiveData -> TypeNamesUtils.getLiveDataOfTypeName(dataType)
+            DataSource.Flow -> TypeNamesUtils.getFlowOfTypeName(dataType)
+        }
+
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
 
         val superFragment = superFragmentClass.parameterizedBy(
-                objectTypeName,
-                if (paged) pagedList else list,
-                if (paged) liveDataOfPagedListOfObjects else {
-                    when(dataSource) {
-                        DataSource.LiveData -> liveDataOfListOfObjects
-                        DataSource.Flow -> flowOfListOfObjects
-                    }
-                },
-                adapter)
+                    objectTypeName,
+                    dataType,
+                    dataSourceType,
+                    adapter)
 
         return TypeSpec.classBuilder(generatedClassName)
                 .superclass(superFragment)
@@ -108,9 +103,9 @@ open class ListFragmentProcessor : AbsListFragmentProcessor() {
     protected open fun genOnCreateLayoutManager(element: TypeElement,
                                                 classBuilder: TypeSpec.Builder,
                                                 options: BuildOptions): FunSpec.Builder? {
-        val fragmentAnnotation = element.getAnnotation(ListFragment::class.java)
-        val isGradLayout = fragmentAnnotation.gridLayout
-        val columns = fragmentAnnotation.columns
+        val listBuildOptions = (options as ListFragmentMethodBuilderOptions)
+        val isGradLayout = listBuildOptions.isGradLayout
+        val columns = listBuildOptions.columns
 
         val layoutManager = TypeNamesUtils.getLayoutManagerTypeName()
         val linearLayoutManager = TypeNamesUtils.getLinearLayoutManagerTypeName()

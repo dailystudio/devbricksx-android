@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.PagedList
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
@@ -88,10 +92,13 @@ class NotesFragmentExt : NotesListFragment() {
                 .show()
     }
 
-    override fun getDataSource(): LiveData<PagedList<Note>> {
-        notebookViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
-        return notebookViewModel.getAllNotesOrderedByLastModifiedLivePaged(notebookId)
+    override fun getDataSource(): LiveData<PagingData<Note>> {
+        val viewModel = ViewModelProvider(requireActivity()).get(NoteViewModel::class.java)
+        return Pager(
+                PagingConfig(20)) {
+            viewModel.getAllNotesOrderedByLastModifiedLivePaged(notebookId)
+        }.flow.asLiveData()
     }
 
     override fun setupViews(fragmentView: View) {
