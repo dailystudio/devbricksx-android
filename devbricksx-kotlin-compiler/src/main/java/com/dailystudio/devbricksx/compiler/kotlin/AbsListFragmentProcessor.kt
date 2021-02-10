@@ -118,7 +118,7 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
 
         if(paged) {
             methodSubmitDataBuilder.addStatement(
-                    "adapter.submitData(lifecycle, data)")
+                    "adapter.submitList(lifecycle, data)")
         } else {
             methodSubmitDataBuilder.addStatement(
                     "adapter.submitList(data)")
