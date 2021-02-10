@@ -13,7 +13,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
         layoutByName = "fragment_images_pager")
 @Adapter(viewHolder = ImageViewHolder::class,
         viewType = ViewType.Page,
-        paged = false
 )
 @ViewModel
 @DiffUtil
