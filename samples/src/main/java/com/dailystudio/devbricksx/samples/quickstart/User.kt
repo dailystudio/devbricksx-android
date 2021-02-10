@@ -21,7 +21,6 @@ data class User(@JvmField val uid: Int,
                 @JvmField val firstName: String?,
                 @JvmField val lastName: String?)
 
-
 @DaoExtension(entity = User::class)
 interface UserDaoExtension {
     @Query("SELECT * FROM user WHERE uid IN (:userIds)")

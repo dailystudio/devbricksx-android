@@ -19,7 +19,8 @@ open class ObjectRepository<Key: Comparable<Key>, Object: InMemoryObject<Key>>(
 
     val allObjectsFlow: Flow<List<Object>> = manager.toFlow()
 
-    val allObjectsPagingSource: PagingSource<Int, Object> = manager.toPagingSource()
+    val allObjectsPagingSource: PagingSource<Int, Object> get() =
+        manager.toPagingSource()
 
     fun get(key: Key): Object? {
         return manager.get(key)

@@ -208,7 +208,7 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
     }
 
     fun toPagingSource(): PagingSource<Int, Object> {
-        return InMemoryObjectPagingSource<Object>(this)
+        return InMemoryObjectPagingSource(this)
     }
 
     fun toFlow(): Flow<List<Object>> = flow {
@@ -299,16 +299,21 @@ class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Object> {
         val listOfObjects = manager.toList()
-        val N = listOfObjects.size
 
         val start = params.key ?: 0
-        val end = min(N, start + params.loadSize)
-        Logger.debug("start: $start, end: $end, size: ${listOfObjects.size}, load size: ${params.loadSize}")
+        val end = min(listOfObjects.size, start + params.loadSize)
+        Logger.debug("start: $start, end: $end")
+
+        val nextKey = if (end >= listOfObjects.size - 1) {
+            null
+        } else {
+            end
+        }
 
         return LoadResult.Page(
                 data = listOfObjects.subList(start, end),
-                prevKey = start,
-                nextKey = end
+                prevKey = null,
+                nextKey = nextKey
         )
 
     }
