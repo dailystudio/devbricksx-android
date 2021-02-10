@@ -55,15 +55,11 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
     override fun onInactive() {
         super.onInactive()
 
-        Logger.debug("livedata: $this, current value: $value")
-
         manager.removeObserver(this)
     }
 
     override fun onChanged() {
         val data = manager.toList()
-
-        Logger.debug("livedata: $this, changed: $data")
 
         postValue(data)
     }
@@ -302,20 +298,21 @@ class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
 
         val start = params.key ?: 0
         val end = min(listOfObjects.size, start + params.loadSize)
-        Logger.debug("start: $start, end: $end")
 
+        val prevKey = null
         val nextKey = if (end >= listOfObjects.size - 1) {
             null
         } else {
             end
         }
 
+        Logger.debug("start: $start, end: $end, [prev: $prevKey, next: $nextKey]")
+
         return LoadResult.Page(
                 data = listOfObjects.subList(start, end),
                 prevKey = null,
                 nextKey = nextKey
         )
-
     }
 
     override fun onChanged() {

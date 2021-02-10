@@ -145,7 +145,7 @@ class AdapterProcessor : BaseProcessor() {
 
         classBuilder.addFunction(methodOnBindViewBuilder.build())
 
-        if (notifyAfterListChanged) {
+        if (notifyAfterListChanged && !paged) {
             val pagedListOfObjects =
                     TypeNamesUtils.getPageListOfTypeName(objectTypeName).copy(nullable = true)
             val mutableListOfObjects =

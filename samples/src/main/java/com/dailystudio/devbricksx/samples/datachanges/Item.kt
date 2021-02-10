@@ -6,9 +6,8 @@ import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 
-@Adapter(
-    viewHolder = ItemViewHolder::class,
-    viewType = ViewType.SingleLine
+@Adapter(viewHolder = ItemViewHolder::class,
+        viewType = ViewType.SingleLine,
 )
 @ListFragment(gridLayout = true, columns = 2)
 @DiffUtil

@@ -20,6 +20,9 @@ class NonRecyclableListFragmentProcessor : AbsListFragmentProcessor() {
     }
 
     override fun genBuildOptions(element: TypeElement): BuildOptions {
+        val adapterAnnotation = element.getAnnotation(Adapter::class.java)
+        val paged = adapterAnnotation?.paged ?: true
+
         val fragmentAnnotation = element.getAnnotation(NonRecyclableListFragment::class.java)
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
@@ -31,7 +34,7 @@ class NonRecyclableListFragmentProcessor : AbsListFragmentProcessor() {
                 "fragment_non_recyclable_list_view", "fragment_non_recyclable_list_view_compact",
                 fillParent,
                 dataSource,
-                false)
+                paged)
     }
 
     override fun genClassBuilder(element: TypeElement,
@@ -45,31 +48,26 @@ class NonRecyclableListFragmentProcessor : AbsListFragmentProcessor() {
         val superFragmentClass =
                 AnnotationsUtils.getClassValueFromAnnotation(
                         element, "superClass") ?:
-                if (paged) {
-                    TypeNamesUtils.getAbsPagingNonRecyclableListViewFragmentTypeName()
-                } else {
-                    TypeNamesUtils.getAbsNonRecyclableListViewFragmentTypeName()
-                }
+                        TypeNamesUtils.getAbsNonRecyclableListViewFragmentTypeName()
 
         val generatedClassName = GeneratedNames.getNonRecyclableListFragmentName(typeName)
 
         val objectTypeName = ClassName(packageName, typeName)
-        val pagedList = TypeNamesUtils.getPageListOfTypeName(objectTypeName)
-        val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(objectTypeName)
-        val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectsTypeName(objectTypeName)
-        val flowOfListOfObjects = TypeNamesUtils.getFlowOfListOfObjectTypeName(objectTypeName)
-        val list = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val listOfObjects = TypeNamesUtils.getListOfTypeName(objectTypeName)
+        val pagingDataOfObjects = TypeNamesUtils.getPagingDataOfTypeName(objectTypeName)
+
+        val dataType = if (paged) pagingDataOfObjects else listOfObjects
+        val dataSourceType = when (dataSource) {
+            DataSource.LiveData -> TypeNamesUtils.getLiveDataOfTypeName(dataType)
+            DataSource.Flow -> TypeNamesUtils.getFlowOfTypeName(dataType)
+        }
+
         val adapter = TypeNamesUtils.getAdapterTypeName(typeName, packageName)
 
         val superFragment = superFragmentClass.parameterizedBy(
                 objectTypeName,
-                if (paged) pagedList else list,
-                if (paged) liveDataOfPagedListOfObjects else {
-                    when(dataSource) {
-                        DataSource.LiveData -> liveDataOfListOfObjects
-                        DataSource.Flow -> flowOfListOfObjects
-                    }
-                },
+                dataType,
+                dataSourceType,
                 adapter)
 
         return TypeSpec.classBuilder(generatedClassName)

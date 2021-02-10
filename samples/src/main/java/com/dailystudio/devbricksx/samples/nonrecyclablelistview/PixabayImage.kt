@@ -22,7 +22,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 @Adapter(viewType = ViewType.Customized,
         layout = R.layout.layout_pixabay_image,
         viewHolder = PiaxbayImageViewHolder::class,
-        paged = false,
+        paged = true,
         notifyAfterListChanged = true)
 @InMemoryManager(key = Int::class)
 @InMemoryRepository(key = Int::class)
