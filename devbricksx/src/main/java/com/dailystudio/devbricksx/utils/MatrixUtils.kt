@@ -8,14 +8,22 @@ import kotlin.math.min
 
 object MatrixUtils {
 
+    var DEBUG_DETAIL = false
+    
+    private inline fun debugDetail(format: String, vararg args: Any?) {
+        if (DEBUG_DETAIL) {
+            Logger.debug(format, args)
+        }
+    }
+
     fun getTransformationMatrix(srcWidth: Int, srcHeight: Int,
                                 dstWidth: Int, dstHeight: Int,
                                 rotation: Int,
                                 maintainAspectRatio: Boolean = true,
                                 fitIn: Boolean = false): Matrix {
-        Logger.debug("srcWidth = $srcWidth, srcHeight = $srcHeight")
-        Logger.debug("dstWidth = $dstWidth, dstHeight = $dstHeight")
-        Logger.debug("rotation = $rotation")
+        debugDetail("srcWidth = $srcWidth, srcHeight = $srcHeight")
+        debugDetail("dstWidth = $dstWidth, dstHeight = $dstHeight")
+        debugDetail("rotation = $rotation")
         val matrix = Matrix()
 
         if (rotation != 0) {
@@ -32,18 +40,18 @@ object MatrixUtils {
         val srcTranspose = (abs(rotation) + 90) % 180 == 0
         val inWidth = if (srcTranspose) srcHeight else srcWidth
         val inHeight = if (srcTranspose) srcWidth else srcHeight
-        Logger.debug("inWidth = $inWidth, inHeight = $inHeight")
+        debugDetail("inWidth = $inWidth, inHeight = $inHeight")
 
         val srcInPortrait = (inWidth < inHeight)
 
         val outWidth = if (srcInPortrait) min(dstWidth, dstHeight) else max(dstWidth, dstHeight)
         val outHeight = if (srcInPortrait) max(dstWidth, dstHeight) else min(dstWidth, dstHeight)
-        Logger.debug("outWidth = $outWidth, outHeight = $outHeight")
+        debugDetail("outWidth = $outWidth, outHeight = $outHeight")
 
         if (inWidth != outWidth || inHeight != outHeight) {
             val scaleFactorX = outWidth / inWidth.toFloat()
             val scaleFactorY = outHeight / inHeight.toFloat()
-            Logger.debug("scaleFactorX = $scaleFactorX, scaleFactorY = $scaleFactorY")
+            debugDetail("scaleFactorX = $scaleFactorX, scaleFactorY = $scaleFactorY")
 
             val scaleFactor = if (fitIn) {
                 min(scaleFactorX, scaleFactorY)
@@ -59,7 +67,7 @@ object MatrixUtils {
 
             val scaledWidth = inWidth * scaleFactor
             val scaledHeight = inHeight * scaleFactor
-            Logger.debug("scaleWidth = $scaledWidth, scaleHeight = $scaledHeight")
+            debugDetail("scaleWidth = $scaledWidth, scaleHeight = $scaledHeight")
 
             if (rotation != 0) {
                 matrix.postTranslate(scaledWidth / 2.0f, scaledHeight / 2.0f)
@@ -67,7 +75,7 @@ object MatrixUtils {
 
             val translateX = (outWidth - scaledWidth) / 2.0f
             val translateY = (outHeight - scaledHeight) / 2.0f
-            Logger.debug("translateX = $translateX, translateY = $translateY")
+            debugDetail("translateX = $translateX, translateY = $translateY")
             matrix.postTranslate(translateX, translateY)
         } else {
             if (rotation != 0) {

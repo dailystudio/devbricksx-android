@@ -40,6 +40,8 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private fun generateBundles() {
+        MatrixUtils.DEBUG_DETAIL = true
+
         lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@CaseActivity).get(ImageBundleViewModel::class.java)
 
