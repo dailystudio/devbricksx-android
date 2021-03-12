@@ -53,6 +53,10 @@ class NotesFragmentExt : NotesListFragment() {
     override fun onResume() {
         super.onResume()
 
+        // Disable HOME button here. This avoids HOME button
+        // being displayed after user navigates back from
+        // note edit fragment
+        findActionBar()?.setDisplayHomeAsUpEnabled(false)
         changeTitle(notebookName)
     }
 
