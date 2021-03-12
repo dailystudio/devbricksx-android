@@ -94,10 +94,10 @@ class NotesFragmentExt : NotesListFragment() {
 
 
     override fun getDataSource(): LiveData<PagingData<Note>> {
-        val viewModel = ViewModelProvider(requireActivity()).get(NoteViewModel::class.java)
+        notebookViewModel = ViewModelProvider(requireActivity()).get(NoteViewModel::class.java)
         return Pager(
                 PagingConfig(20)) {
-            viewModel.getAllNotesOrderedByLastModifiedLivePaged(notebookId)
+            notebookViewModel.getAllNotesOrderedByLastModifiedLivePaged(notebookId)
         }.flow.asLiveData()
     }
 
