@@ -10,14 +10,16 @@ import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.samples.databinding.ActivityCaseImageMatrixBinding
 import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
 import com.dailystudio.devbricksx.utils.ImageUtils
 import com.dailystudio.devbricksx.utils.MatrixUtils
-import kotlinx.android.synthetic.main.activity_case_image_matrix.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CaseActivity : BaseCaseActivity() {
+
+    private lateinit var binding: ActivityCaseImageMatrixBinding
 
     companion object {
         private const val IMAGE_ASSET = "bicycle_1280.jpg"
@@ -28,13 +30,16 @@ class CaseActivity : BaseCaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_case_image_matrix)
+        binding = ActivityCaseImageMatrixBinding.inflate(layoutInflater)
+
+        val view = binding.root
+        setContentView(view)
 
         setupViews()
     }
 
     private fun setupViews() {
-        viewFrameStub.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+        binding.viewFrameStub.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
             generateBundles()
         }
     }
@@ -53,8 +58,8 @@ class CaseActivity : BaseCaseActivity() {
                 val originalPage = ImageBundle(1,"original",
                         it, Matrix())
                 val presentationPage =
-                        createPresentationImageBundle(it, viewFrameStub)
-                val fitPage = createFitImageBundle(it, viewFrameStub)
+                        createPresentationImageBundle(it, binding.viewFrameStub)
+                val fitPage = createFitImageBundle(it, binding.viewFrameStub)
 
                 viewModel.insertImageBundles(listOf(
                         editPage,

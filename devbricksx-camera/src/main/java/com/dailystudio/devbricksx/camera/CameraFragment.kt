@@ -262,7 +262,7 @@ open class CameraFragment: AbsPermissionsFragment() {
 
                     previewView?.let {
                         case.setSurfaceProvider(
-                                it.createSurfaceProvider(camera?.cameraInfo))
+                                it.surfaceProvider)
                     }
                 }
             }

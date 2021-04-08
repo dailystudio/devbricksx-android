@@ -1,7 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs'
+}
 
 android {
     compileSdkVersion COMPILE_SDK
@@ -43,6 +45,9 @@ android {
         jvmTarget = "1.8"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -64,6 +69,6 @@ dependencies {
 
     kapt project(':devbricksx-kotlin-compiler')
     kapt project(':devbricksx-java-compiler')
-    kapt "androidx.room:room-compiler:${project.ext.roomVersion}"
+    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 }

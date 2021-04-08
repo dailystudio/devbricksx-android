@@ -1,17 +1,21 @@
-apply plugin: 'java-library'
-apply plugin: 'com.github.panpf.bintray-publish'
+plugins {
+    id 'java-library'
+    id 'com.github.panpf.bintray-publish'
+}
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':devbricksx-java-annotations')
 
-    implementation 'com.squareup:javapoet:1.7.0'
-    implementation 'com.google.guava:guava:19.0'
-    implementation 'androidx.room:room-common:2.2.5'
+    implementation 'com.squareup:javapoet:1.13.0'
+    implementation 'com.google.guava:guava:24.1-jre'
+    implementation "androidx.room:room-common:${ROOM_VERSION}"
+
     implementation "com.google.auto.service:auto-service:1.0-rc4"
+
     annotationProcessor "com.google.auto.service:auto-service:1.0-rc4"
 }
 

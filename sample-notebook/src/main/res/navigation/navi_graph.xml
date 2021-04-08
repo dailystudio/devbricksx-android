@@ -11,8 +11,8 @@
         <action
             android:id="@+id/action_notebooksFragmentExt_to_notesFragmentExt"
             app:destination="@id/notesFragmentExt"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
         <action
             android:id="@+id/action_notebooksFragmentExt_to_aboutFragment"
             app:destination="@id/aboutFragment" />

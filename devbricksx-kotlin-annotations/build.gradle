@@ -1,15 +1,18 @@
-apply plugin: 'java-library'
-apply plugin: 'kotlin'
-apply plugin: 'com.github.panpf.bintray-publish'
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'com.github.panpf.bintray-publish'
+}
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.room:room-common:2.2.5'
+
+    implementation "androidx.room:room-common:${ROOM_VERSION}"
 }
 
 publish {

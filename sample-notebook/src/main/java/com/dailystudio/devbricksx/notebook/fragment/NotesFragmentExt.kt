@@ -26,6 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class NotesFragmentExt : NotesListFragment() {
@@ -80,7 +81,7 @@ class NotesFragmentExt : NotesListFragment() {
     }
 
     private fun performDeletion(items: List<Note>) {
-        MaterialAlertDialogBuilder(context)
+        MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.label_delete)
                 .setMessage(R.string.prompt_deletion)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
@@ -137,7 +138,9 @@ class NotesFragmentExt : NotesListFragment() {
                         noteId = item.id
                     }
 
-            findNavController().navigate(direction)
+            withContext(Dispatchers.Main) {
+                findNavController().navigate(direction)
+            }
         }
     }
 

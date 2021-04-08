@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -317,6 +318,10 @@ class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
 
     override fun onChanged() {
         invalidate()
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, Object>): Int? {
+        return state.anchorPosition
     }
 
 }

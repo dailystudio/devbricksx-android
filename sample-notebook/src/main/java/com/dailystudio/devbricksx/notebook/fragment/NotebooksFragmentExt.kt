@@ -15,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class NotebooksFragmentExt : NotebooksListFragment() {
 
@@ -74,7 +75,7 @@ class NotebooksFragmentExt : NotebooksListFragment() {
                 if (adapter?.isInSelectionMode() == true) {
                     val items = adapter?.getSelection()
                     items?.let {
-                        MaterialAlertDialogBuilder(context)
+                        MaterialAlertDialogBuilder(requireContext())
                                 .setTitle(R.string.label_delete)
                                 .setMessage(R.string.prompt_deletion)
                                 .setPositiveButton(android.R.string.ok) { dialog, which ->
@@ -111,7 +112,7 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
         nbNameView = view.findViewById(R.id.notebook_name)
 
-        MaterialAlertDialogBuilder(context)
+        MaterialAlertDialogBuilder(requireContext())
                 .setView(view)
                 .setPositiveButton(android.R.string.ok) { dialog, which ->
                     nbNameView?.let {
@@ -145,13 +146,15 @@ class NotebooksFragmentExt : NotebooksListFragment() {
             val viewModel =
                     ViewModelProvider(this@NotebooksFragmentExt).get(NotebookViewModel::class.java)
 
-            val notebook = viewModel?.getNotebook(item.id)
+            val notebook = viewModel.getNotebook(item.id)
             Logger.debug("retrieved notebook: $notebook")
 
             val direction = NotebooksFragmentExtDirections
                     .actionNotebooksFragmentExtToNotesFragmentExt(item.id, item.name ?: "")
 
-            findNavController().navigate(direction)
+            withContext(Dispatchers.Main) {
+                findNavController().navigate(direction)
+            }
         }
     }
 

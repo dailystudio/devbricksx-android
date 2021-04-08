@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.async.ManagedThread
 import com.dailystudio.devbricksx.audio.visualizer.RawAudioDataVisualizer
 import com.dailystudio.devbricksx.development.Logger
-import kotlinx.android.synthetic.main.fragment_audio_process.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.locks.ReentrantLock
