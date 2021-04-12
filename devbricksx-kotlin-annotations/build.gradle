@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'kotlin'
-    id 'com.github.panpf.bintray-publish'
 }
 
 sourceCompatibility = 1.8
@@ -15,13 +14,4 @@ dependencies {
     implementation "androidx.room:room-common:${ROOM_VERSION}"
 }
 
-publish {
-    userOrg = 'dailystudio'
-    groupId = 'com.dailystudio'
-    artifactId = 'devbricksx-kotlin-annotations'
-    publishVersion = VERSION_NAME
-    desc = 'DevBricks eXetrems Annotations'
-    bintrayUser = BINTRAY_USER
-    bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx-android'
-}
+apply from: '../buildscripts/maven_push.gradle'

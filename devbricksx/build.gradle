@@ -2,7 +2,6 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'com.github.panpf.bintray-publish'
 }
 
 android {
@@ -37,6 +36,7 @@ android {
 }
 
 dependencies {
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin
@@ -83,6 +83,7 @@ dependencies {
     // Libraries
     api project(':devbricksx-java-annotations')
     api project(':devbricksx-kotlin-annotations')
+
     kapt project(':devbricksx-kotlin-compiler')
     kapt project(':devbricksx-java-compiler')
 
@@ -93,13 +94,4 @@ dependencies {
     testImplementation "androidx.room:room-testing:${ROOM_VERSION}"
 }
 
-publish {
-    userOrg = 'dailystudio'
-    groupId = 'com.dailystudio'
-    artifactId = 'devbricksx'
-    publishVersion = VERSION_NAME
-    desc = 'DevBricks eXetrems'
-    bintrayUser = BINTRAY_USER
-    bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx'
-}
+apply from: '../buildscripts/maven_push.gradle'

@@ -2,7 +2,6 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'com.github.panpf.bintray-publish'
 }
 
 android {
@@ -48,13 +47,4 @@ dependencies {
     implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.2'
 }
 
-publish {
-    userOrg = 'dailystudio'
-    groupId = 'com.dailystudio'
-    artifactId = 'devbricksx-audio'
-    publishVersion = VERSION_NAME
-    desc = 'DevBricks eXetrems Audio Library'
-    bintrayUser = BINTRAY_USER
-    bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx-android'
-}
+apply from: '../buildscripts/maven_push.gradle'

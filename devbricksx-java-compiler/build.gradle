@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'com.github.panpf.bintray-publish'
 }
 
 sourceCompatibility = 1.8
@@ -19,13 +18,4 @@ dependencies {
     annotationProcessor "com.google.auto.service:auto-service:1.0-rc4"
 }
 
-publish {
-    userOrg = 'dailystudio'
-    groupId = 'com.dailystudio'
-    artifactId = 'devbricksx-java-compiler'
-    publishVersion = VERSION_NAME
-    desc = 'DevBricks eXetrems Annotation Processor'
-    bintrayUser = BINTRAY_USER
-    bintrayKey = BINTRAY_KEY
-    website = 'https://github.com/dailystudio/devbricksx-android'
-}
+apply from: '../buildscripts/maven_push.gradle'
