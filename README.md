@@ -94,8 +94,30 @@ Now you can enjoy this library in your way. The facilities provided in this libr
     
     Plenty of classes to simplify high-level development. Combine with [**Database**](./docs/database.md) facilities, you can save an object in database and then represent it in a list view with less than 20 lines of code.
 
+
+## Jcenter deprecation
+Since [JFrog to Shut down JCenter and Bintray](https://www.infoq.com/news/2021/02/jfrog-jcenter-bintray-closure/), starting from version **1.4.1**, all the artifacts will be maintained under the groupdId **cn.dailystudio**. The versions before that will still available under the groupId **com.dailystudio**.
+
+For example, if you want to refer to version **1.3.0**, you should add the following lines in your build.gradle
+
+```groovy
+repositories { 
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.dailystudio:devbricksx:1.3.1'
+
+    implementation 'com.dailystudio:devbricksx-java-annotations:1.3.1'
+    implementation 'com.dailystudio:devbricksx-kotlin-annotations:1.3.1'
+
+    kapt 'com.dailystudio:devbricksx-java-compiler:1.3.1'
+    kapt 'com.dailystudio:devbricksx-kotlin-compiler:1.3.1'
+}
+```
+
 ## License
-    Copyright 2020 Daily Studio.
+    Copyright 2021 Daily Studio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
