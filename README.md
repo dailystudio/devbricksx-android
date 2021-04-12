@@ -1,5 +1,5 @@
 # DevBricks X - Android
-[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Download](https://api.bintray.com/packages/dailystudio/maven/devbricksx/images/download.svg?version=1.4.1) ](https://bintray.com/dailystudio/maven/devbricksx/1.4.1/link)
+[![License](https://poser.pugx.org/dreamfactory/dreamfactory/license.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cn.dailystudio/devbricksx/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cn.dailystudio/devbricksx)
 
 **DevBricksX** is a remake and extended version of [DevBricks](https://github.com/dailystudio/devbricks). It provides plenty of useful classes that will be used in daily Android development. With these "bricks", your development will become:
 
@@ -15,33 +15,28 @@ With only a few lines, you can save in memory **User** objects into database and
 To use **DevBricks X** Libraries in your application, follow the steps below.
 
 ### Step 1: Installation
-Libraries are distributed via jcenter. Add the following dependencies in build.gradle of your application.
-
-
-#### Jcenter
-
-```groovy
-repositories { 
-    jcenter()
-}
-```
+Add the following dependencies in build.gradle of your application.
 
 #### Dependencies
 
 ```groovy
+repositories { 
+    mavenCentral()
+}
+
 dependencies {
     // Basic Library for Android development
-    implementation "com.dailystudio:devbricksx:$devbricksx_version"
+    implementation "cn.dailystudio:devbricksx:$devbricksx_version"
 
     // (Optional) Annotations and processors to generate low-level facilities, such as Dao, Database, etc. 
-    implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
-    kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
+    implementation "cn.dailystudio:devbricksx-java-annotations:$devbricksx_version"
+    kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
     // (Optional) If you use the feature above, DO NOT forget this line 
     kapt "androidx.room:room-compiler:ROOM_VERSION"
 
     // (Optional) Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
-    implementation "com.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
-    kapt "com.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
+    implementation "cn.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
+    kapt "cn.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
 }
 ```
 

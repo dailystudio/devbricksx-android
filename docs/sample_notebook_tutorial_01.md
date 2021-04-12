@@ -7,24 +7,20 @@ Before we starting to write any codes, you need to make sure you have configured
 
 Add the following dependencies in build.gradle of your application.
 
-#### Jcenter
-
-```groovy
-repositories { 
-    jcenter()
-}
-```
-
 #### Dependencies
 
 ```groovy
-dependencies {
-    implementation "com.dailystudio:devbricksx:$devbricksx_version"
-    implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
-    implementation "com.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
+repositories { 
+    mavenCentral()
+}
 
-    kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
-    kapt "com.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
+dependencies {
+    implementation "cn.dailystudio:devbricksx:$devbricksx_version"
+    implementation "cn.dailystudio:devbricksx-java-annotations:$devbricksx_version"
+    implementation "cn.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"
+
+    kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
+    kapt "cn.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
     kapt "androidx.room:room-compiler:ROOM_VERSION"
 }
 ```

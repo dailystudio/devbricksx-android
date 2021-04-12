@@ -5,21 +5,17 @@ This library provides a set of annotations that simplify your development work w
 ## Installation
 To use annotation and its compiler, add the following dependencies in build.gradle of your application.
 
-#### Jcenter
-
-```groovy
-repositories { 
-    jcenter()
-}
-```
-
 #### Dependencies
 
 ```groovy
-dependencies {
-     implementation "com.dailystudio:devbricksx-java-annotations:$devbricksx_version"
+repositories { 
+    mavenCentral()
+}
 
-     kapt "com.dailystudio:devbricksx-java-compiler:$devbricksx_version"
+dependencies {
+     implementation "cn.dailystudio:devbricksx-java-annotations:$devbricksx_version"
+
+     kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
      kapt "androidx.room:room-compiler:ROOM_VERSION"
 }
 ```
