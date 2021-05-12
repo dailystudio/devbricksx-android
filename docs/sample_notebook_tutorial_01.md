@@ -21,7 +21,7 @@ dependencies {
 
     kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
     kapt "cn.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
-    kapt "androidx.room:room-compiler:ROOM_VERSION"
+    kapt "androidx.room:room-compiler:2.3.0-beta03"
 }
 ```
 
