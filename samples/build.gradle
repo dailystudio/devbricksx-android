@@ -62,6 +62,7 @@ dependencies {
     implementation "com.airbnb.android:lottie:${project.ext.lottieVersion}"
     implementation "com.squareup.retrofit2:retrofit:${project.ext.retrofitVersion}"
     implementation "com.squareup.retrofit2:converter-gson:${project.ext.retrofitVersion}"
+    implementation "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
 
     implementation project(":devbricksx")
     implementation project(":devbricksx-camera")

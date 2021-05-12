@@ -77,9 +77,6 @@ dependencies {
     // GSon
     api "com.google.code.gson:gson:${project.ext.gsonVersion}"
 
-    // KDispatcher
-    api "com.rasalexman.kdispatcher:kdispatcher:${project.ext.kdispatcherVersion}"
-
     // Libraries
     api project(':devbricksx-java-annotations')
     api project(':devbricksx-kotlin-annotations')
@@ -88,9 +85,9 @@ dependencies {
     kapt project(':devbricksx-java-compiler')
 
     // Test helpers
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     testImplementation "androidx.room:room-testing:${ROOM_VERSION}"
 }
 

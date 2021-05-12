@@ -1,11 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.4.31'
-    ext.bintray_publish_version = '1.0.0'
+    ext.kotlin_version = '1.4.32'
     ext.nav_version = "2.3.1"
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -14,7 +13,6 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath "com.github.panpf.bintray-publish:bintray-publish:$bintray_publish_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
 }
@@ -22,7 +20,9 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+
+        maven { url 'https://jitpack.io' }
     }
 
     tasks.withType(Exec) {
