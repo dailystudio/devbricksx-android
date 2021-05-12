@@ -23,8 +23,5 @@ for artifact in ${artifactsToPublish[@]}; do
   ./gradlew ${task} > /dev/null
 done
 
-#
-#./gradlew clean
-#
-#./updateVersionInDocs.sh
-#./updateRoomVersionInDocs.sh
+./updateVersionInDocs.sh
+./updateRoomVersionInDocs.sh
