@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
 import android.os.Build
+import android.os.Process
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -65,6 +66,10 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
                 drawingActive = true
 
                 execute {
+                    /*
+                     * MUST HAVE: to avoid drawing thread affect the main thread performance
+                     */
+                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
                     renderFrames()
                 }
             }
