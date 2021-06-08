@@ -1,0 +1,70 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs'
+}
+
+android {
+    compileSdkVersion COMPILE_SDK
+    buildToolsVersion BUILD_TOOLS
+
+    defaultConfig {
+        applicationId "com.dailystudio.devbricksx.gallery"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation "com.squareup.retrofit2:retrofit:${project.ext.retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${project.ext.retrofitVersion}"
+    implementation "androidx.navigation:navigation-fragment-ktx:${project.ext.navigationVersion}"
+    implementation "androidx.navigation:navigation-ui-ktx:${project.ext.navigationVersion}"
+    implementation "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
+
+    implementation project(":devbricksx")
+
+    kapt project(':devbricksx-kotlin-compiler')
+    kapt project(':devbricksx-java-compiler')
+
+    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
+}
