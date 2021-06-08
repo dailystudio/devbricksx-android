@@ -14,12 +14,5 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val ret = UnsplashApi()
-                .listPhotos(this@MainActivity)
-
-            Logger.debug("ret: $ret")
-        }
-
     }
 }

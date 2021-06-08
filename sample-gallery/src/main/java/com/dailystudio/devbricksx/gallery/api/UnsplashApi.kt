@@ -2,10 +2,13 @@ package com.dailystudio.devbricksx.gallery.api
 
 import android.content.Context
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.gallery.api.data.Links
+import com.dailystudio.devbricksx.gallery.api.data.PagedPhotos
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.GET
+import retrofit2.http.Query
 import java.io.IOException
 
 interface UnsplashApiInterface {
@@ -15,11 +18,16 @@ interface UnsplashApiInterface {
         const val PHOTOS_PATH = "photos"
 
         const val PARAM_CLIENT_ID = "client_id"
+        const val PARAM_PAGE = "page"
+        const val PARAM_PER_PAGE = "per_page"
     }
 
 
     @GET("/$PHOTOS_PATH")
-    fun listPhotos(): Call<Array<Photo>>
+    fun listPhotos(
+        @Query(PARAM_PAGE)page: Int = 1,
+        @Query(PARAM_PER_PAGE)perPage: Int = 10
+    ): Call<Array<Photo>>
 
 }
 
@@ -36,19 +44,22 @@ class UnsplashApi: BaseApi<UnsplashApiInterface>() {
 
     }
 
-
     fun listPhotos(context: Context,
+                   page: Int = 1,
+                   perPage: Int = 10,
                    callback: Callback<Array<Photo>>? = null
-    ): Array<Photo>? {
+    ): PagedPhotos? {
         val uniAppInterface = getInterface()
 
-        val call = uniAppInterface?.listPhotos()
+        val call = uniAppInterface?.listPhotos(page, perPage)
         if (callback == null) {
             var ret: Array<Photo>? = null
+            var links: Links? = null
             try {
                 val response = call?.execute()
                 if (response != null) {
                     ret = response.body()
+                    links = Links.fromString(response.headers()["Link"])
                 }
             } catch (e: IOException) {
                 Logger.error(
@@ -56,16 +67,16 @@ class UnsplashApi: BaseApi<UnsplashApiInterface>() {
                     e.toString()
                 )
 
-                ret = arrayOf()
+                ret = null
+                links = null
             }
 
-            return ret
+            return PagedPhotos(ret, links)
         }
 
         call?.enqueue(callback)
 
         return null
-
     }
 
     @Synchronized
