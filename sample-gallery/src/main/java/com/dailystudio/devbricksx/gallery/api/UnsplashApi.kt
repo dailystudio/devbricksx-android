@@ -20,6 +20,10 @@ interface UnsplashApiInterface {
         const val PARAM_CLIENT_ID = "client_id"
         const val PARAM_PAGE = "page"
         const val PARAM_PER_PAGE = "per_page"
+
+        const val DEFAULT_PAGE = 1
+        const val DEFAULT_PER_PAGE = 10
+        const val MAX_PER_PAGE = 20
     }
 
 

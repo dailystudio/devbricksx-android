@@ -1,16 +1,24 @@
 package com.dailystudio.devbricksx.gallery.db
 
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.View
+import android.widget.ImageView
 import androidx.paging.PagingSource
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.gallery.Constants
+import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
-import java.sql.Timestamp
+import com.nostra13.universalimageloader.core.ImageLoader
+import java.lang.NumberFormatException
 
-@ListFragment
+@ListFragment(
+    gridLayout = true,
+    columns = 2
+)
 @ViewModel
 @Adapter(
     viewHolder = PhotoItemViewHolder::class,
@@ -38,7 +46,8 @@ data class PhotoItem(
             channel: String = "default"): PhotoItem {
             return PhotoItem(photo.id,
                 channel,
-                Timestamp.valueOf(photo.updated_at).time,
+//                Timestamp.valueOf(photo.updated_at).time,
+                System.currentTimeMillis(),
                 photo.user.name,
                 photo.description,
                 photo.urls.thumb,
@@ -51,7 +60,7 @@ data class PhotoItem(
 @DaoExtension(entity = PhotoItem::class)
 interface PhotoItemDaoExtension {
 
-    @Query("SELECT * FROM photoitem ORDER BY last_modified DESC")
+    @Query("SELECT * FROM photoitem ORDER BY last_modified ASC")
     fun listPhotos(): PagingSource<Int, PhotoItem>
 
     @Query("DELETE FROM photoitem WHERE channel = :channel")
@@ -61,6 +70,17 @@ interface PhotoItemDaoExtension {
 
 
 class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView) {
+
+    override fun bindMedia(item: PhotoItem, iconView: ImageView?) {
+        val builder = Constants.DEFAULT_IMAGE_LOADER_OPTIONS_BUILDER
+//                .cacheInMemory(false)
+//                .cacheOnDisk(false)
+
+        ImageLoader.getInstance().displayImage(item.thumbnailUrl,
+            iconView,
+            builder.build())
+    }
+
     override fun getMedia(item: PhotoItem): Drawable? {
         return null
     }
@@ -85,6 +105,33 @@ data class UnsplashPageLinks(
     @JvmField val last: String? = null,
 ) {
     companion object {
+
+        fun getPageFromLink(link: String): Int {
+            val uri = Uri.parse(link)
+
+            val paramPage = uri.getQueryParameter(
+                UnsplashApiInterface.PARAM_PAGE)
+                    ?: UnsplashApiInterface.DEFAULT_PAGE.toString()
+            return try {
+                paramPage.toInt()
+            } catch (e: NumberFormatException) {
+                UnsplashApiInterface.DEFAULT_PAGE
+            }
+        }
+
+        fun getPerPageFromLink(link: String): Int {
+            val uri = Uri.parse(link)
+
+            val paramPage = uri.getQueryParameter(
+                UnsplashApiInterface.PARAM_PER_PAGE)
+                    ?: UnsplashApiInterface.DEFAULT_PER_PAGE.toString()
+
+            return try {
+                paramPage.toInt()
+            } catch (e: NumberFormatException) {
+                UnsplashApiInterface.DEFAULT_PER_PAGE
+            }
+        }
 
         fun fromUnsplashLinks(links: Links?,
                               channel: String = "default"

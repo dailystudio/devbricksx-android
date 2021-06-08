@@ -8,6 +8,7 @@ import androidx.room.withTransaction
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
+import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.PagedPhotos
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,8 +32,8 @@ class PhotoItemMediator(
 
             // Get the closest item from PagingState that we want to load data around.
             Logger.debug("loadType: $loadType")
-            val loadKey = when (loadType) {
-                LoadType.REFRESH -> null
+            val (page, perPage) = when (loadType) {
+                LoadType.REFRESH -> arrayOf(UnsplashApiInterface.DEFAULT_PAGE, UnsplashApiInterface.DEFAULT_PER_PAGE)
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
                     // Query DB for SubredditRemoteKey for the subreddit.
@@ -49,7 +50,8 @@ class PhotoItemMediator(
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
 
-                    remoteKey.next
+                    arrayOf(UnsplashPageLinks.getPageFromLink(remoteKey.next),
+                        UnsplashPageLinks.getPageFromLink(remoteKey.next))
                 }
             }
 
@@ -58,12 +60,9 @@ class PhotoItemMediator(
             val pagedPhotos = withContext(Dispatchers.IO) {
                 unsplashApi.listPhotos(
                     context,
-                    page = when (loadType) {
-                        LoadType.REFRESH -> 1
-                        else -> state.config.pageSize
-                    },
+                    page = page,
                     perPage = when (loadType) {
-                        LoadType.REFRESH -> state.config.initialLoadSize.coerceIn(10, 20)
+                        LoadType.REFRESH -> state.config.initialLoadSize
                         else -> state.config.pageSize
                     },
                 ) ?: PagedPhotos()
