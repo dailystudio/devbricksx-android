@@ -28,7 +28,6 @@ open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item
 
     protected open fun bindTitle(item: Item, titleView: TextView?) {
         val title = getTitle(item)
-        Logger.debug("title = [$title], empty = ${title?.isEmpty()}")
         titleView?.text = title
         titleView?.visibility = if (title == null || title.isEmpty()) View.GONE else View.VISIBLE
     }
