@@ -81,16 +81,25 @@ class PhotoItemMediator(
                 ) ?: PagedPhotos()
             }
 
-            val items = pagedPhotos.photos?.map {
-                PhotoItem.fromUnsplashPhoto(it)
-            } ?: arrayListOf()
+            val items = withContext(Dispatchers.IO) {
+                pagedPhotos.photos?.map {
+                    val oldOne = db.photoItemDao().getOne(it.id)
+
+                    PhotoItem.fromUnsplashPhoto(it).apply {
+                        Logger.debug("[Found]: find one: $oldOne")
+                        oldOne?.let {  oldItem ->
+                            created = oldItem.created
+                        }
+                    }
+                } ?: arrayListOf()
+            }
 
             Logger.debug("[MED] page = $page, perPage = $perPage, new ${pagedPhotos.photos?.size} photo(s) downloaded.")
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     db.unsplashPageLinksDao().deleteByChannel()
-                    db.photoItemDao().deleteByChannel()
+//                    db.photoItemDao().deleteByChannel()
                 }
 
                 db.unsplashPageLinksDao().insertOrUpdate(

@@ -2,20 +2,22 @@ package com.dailystudio.devbricksx.gallery.db
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import androidx.paging.PagingSource
 import androidx.room.Query
 import coil.load
 import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
-import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
-import java.lang.NumberFormatException
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 @ListFragment(
     gridLayout = true,
@@ -31,26 +33,32 @@ import java.lang.NumberFormatException
 @RoomCompanion(
     primaryKeys = ["id"],
     extension = PhotoItemDaoExtension::class,
+    converters = [DateConverter::class],
     database = "unsplash"
 )
-data class PhotoItem(
+class PhotoItem(
     @JvmField val id: String,
     @JvmField val channel: String,
-    @JvmField val lastModified: Long,
+    @JvmField var created: Date,
+    @JvmField val lastModified: Date,
     @JvmField val author: String,
     @JvmField val description: String?,
     @JvmField val thumbnailUrl: String,
     @JvmField val downloadUrl: String
 ) {
     companion object {
-
         fun fromUnsplashPhoto(
             photo: Photo,
             channel: String = "default"): PhotoItem {
+
+            val iso8601: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
+            val created = Date(System.currentTimeMillis())
+            val lastModified = iso8601.parse(photo.updated_at)
+
             return PhotoItem(photo.id,
                 channel,
-//                Timestamp.valueOf(photo.updated_at).time,
-                System.currentTimeMillis(),
+                created,
+                lastModified,
                 photo.user.name,
                 photo.description,
                 photo.urls.regular,
@@ -63,7 +71,7 @@ data class PhotoItem(
 @DaoExtension(entity = PhotoItem::class)
 interface PhotoItemDaoExtension {
 
-    @Query("SELECT * FROM photoitem ORDER BY last_modified ASC")
+    @Query("SELECT * FROM photoitem ORDER BY created ASC")
     fun listPhotos(): PagingSource<Int, PhotoItem>
 
     @Query("DELETE FROM photoitem WHERE channel = :channel")

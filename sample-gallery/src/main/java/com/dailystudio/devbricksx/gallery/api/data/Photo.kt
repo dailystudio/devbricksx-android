@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.gallery.api.data
 
 data class Photo(
     val id: String,
+    val created_at: String,
     val updated_at: String,
     val width: Int,
     val height: Int,
