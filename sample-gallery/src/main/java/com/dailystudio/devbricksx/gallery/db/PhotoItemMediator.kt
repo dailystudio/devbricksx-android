@@ -14,11 +14,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.lang.Exception
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
     private val channel: String = "default"
 ) : RemoteMediator<Int, PhotoItem>() {
+
+    var initialized = false
+
+    override suspend fun initialize(): InitializeAction {
+        /*
+         * always return LAUNCH_INITIAL_REFRESH will cause
+         * pager not update after resume
+         */
+        return if (!initialized) {
+            initialized = true
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        } else {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        }
+    }
 
     override suspend fun load(
         loadType: LoadType,
@@ -27,44 +43,38 @@ class PhotoItemMediator(
         try {
             val context = GlobalContextWrapper.context
                 ?: return MediatorResult.Success(endOfPaginationReached = true)
+            Logger.debug("[MED] loadType: $loadType")
 
             val db = UnsplashDatabase.getDatabase(context)
 
-            // Get the closest item from PagingState that we want to load data around.
-            Logger.debug("loadType: $loadType")
-            val (page, perPage) = when (loadType) {
-                LoadType.REFRESH -> arrayOf(UnsplashApiInterface.DEFAULT_PAGE, UnsplashApiInterface.DEFAULT_PER_PAGE)
+            val page = when (loadType) {
+                LoadType.REFRESH -> UnsplashApiInterface.DEFAULT_PAGE
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    // Query DB for SubredditRemoteKey for the subreddit.
-                    // SubredditRemoteKey is a wrapper object we use to keep track of page keys we
-                    // receive from the Reddit API to fetch the next or previous page.
                     val remoteKey = db.withTransaction {
                         db.unsplashPageLinksDao().remoteKeyByChannel(channel)
                     }
+                    Logger.debug("[MED] remoteKey: $remoteKey")
 
-                    // We must explicitly check if the page key is null when appending, since the
-                    // Reddit API informs the end of the list by returning null for page key, but
-                    // passing a null key to Reddit API will fetch the initial page.
                     if (remoteKey.next == null) {
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
 
-                    arrayOf(UnsplashPageLinks.getPageFromLink(remoteKey.next),
-                        UnsplashPageLinks.getPageFromLink(remoteKey.next))
+                    UnsplashPageLinks.getPageFromLink(remoteKey.next)
                 }
             }
 
+            val perPage =  when (loadType) {
+                LoadType.REFRESH -> state.config.initialLoadSize
+                else -> state.config.pageSize
+            }
             val unsplashApi = UnsplashApi()
 
             val pagedPhotos = withContext(Dispatchers.IO) {
                 unsplashApi.listPhotos(
                     context,
                     page = page,
-                    perPage = when (loadType) {
-                        LoadType.REFRESH -> state.config.initialLoadSize
-                        else -> state.config.pageSize
-                    },
+                    perPage = perPage,
                 ) ?: PagedPhotos()
             }
 
@@ -72,7 +82,7 @@ class PhotoItemMediator(
                 PhotoItem.fromUnsplashPhoto(it)
             } ?: arrayListOf()
 
-            Logger.debug("new ${pagedPhotos.photos?.size} photo(s) downloaded.")
+            Logger.debug("[MED] page = $page, perPage = $perPage, new ${pagedPhotos.photos?.size} photo(s) downloaded.")
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -86,6 +96,7 @@ class PhotoItemMediator(
             }
 
             val endOfPaginationReached = items.isEmpty()
+            Logger.debug("[MED] endOfPaginationReached = $endOfPaginationReached")
 
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {

@@ -6,13 +6,13 @@ import android.view.View
 import android.widget.ImageView
 import androidx.paging.PagingSource
 import androidx.room.Query
+import coil.load
 import com.dailystudio.devbricksx.annotations.*
-import com.dailystudio.devbricksx.gallery.Constants
+import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
-import com.nostra13.universalimageloader.core.ImageLoader
 import java.lang.NumberFormatException
 
 @ListFragment(
@@ -50,7 +50,7 @@ data class PhotoItem(
                 System.currentTimeMillis(),
                 photo.user.name,
                 photo.description,
-                photo.urls.thumb,
+                photo.urls.regular,
                 photo.urls.full)
         }
 
@@ -72,13 +72,9 @@ interface PhotoItemDaoExtension {
 class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView) {
 
     override fun bindMedia(item: PhotoItem, iconView: ImageView?) {
-        val builder = Constants.DEFAULT_IMAGE_LOADER_OPTIONS_BUILDER
-//                .cacheInMemory(false)
-//                .cacheOnDisk(false)
-
-        ImageLoader.getInstance().displayImage(item.thumbnailUrl,
-            iconView,
-            builder.build())
+        iconView?.load(item.thumbnailUrl) {
+            crossfade(true)
+        }
     }
 
     override fun getMedia(item: PhotoItem): Drawable? {
@@ -86,7 +82,7 @@ class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView
     }
 
     override fun getTitle(item: PhotoItem): CharSequence? {
-        return item.description
+        return item.author
     }
 
 }
