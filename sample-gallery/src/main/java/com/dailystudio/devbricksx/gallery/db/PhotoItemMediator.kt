@@ -9,7 +9,7 @@ import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
-import com.dailystudio.devbricksx.gallery.api.data.PagedPhotos
+import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -17,7 +17,7 @@ import java.io.IOException
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
-    private val channel: String = "default"
+    private val channel: String = "food"
 ) : RemoteMediator<Int, PhotoItem>() {
 
     var initialized = false
@@ -46,7 +46,7 @@ class PhotoItemMediator(
         try {
             val context = GlobalContextWrapper.context
                 ?: return MediatorResult.Success(endOfPaginationReached = true)
-            Logger.debug("[MED] loadType: $loadType")
+            Logger.debug("[MED] channel: $channel, loadType: $loadType")
 
             val db = UnsplashDatabase.getDatabase(context)
 
@@ -63,7 +63,7 @@ class PhotoItemMediator(
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
 
-                    UnsplashPageLinks.getPageFromLink(remoteKey.next)
+                    UnsplashApiInterface.getPageFromLink(remoteKey.next)
                 }
             }
 
@@ -74,15 +74,14 @@ class PhotoItemMediator(
             val unsplashApi = UnsplashApi()
 
             val pagedPhotos = withContext(Dispatchers.IO) {
-                unsplashApi.listPhotos(
-                    context,
+                unsplashApi.searchPhotos(query=channel,
                     page = page,
                     perPage = perPage,
-                ) ?: PagedPhotos()
+                ) ?: PageResults()
             }
 
             val items = withContext(Dispatchers.IO) {
-                pagedPhotos.photos?.map {
+                pagedPhotos.results?.map {
                     val oldOne = db.photoItemDao().getOne(it.id)
 
                     PhotoItem.fromUnsplashPhoto(it).apply {
@@ -94,16 +93,20 @@ class PhotoItemMediator(
                 } ?: arrayListOf()
             }
 
-            Logger.debug("[MED] page = $page, perPage = $perPage, new ${pagedPhotos.photos?.size} photo(s) downloaded.")
+            Logger.debug("[MED] page = $page, perPage = $perPage, new ${pagedPhotos.results?.size} photo(s) downloaded.")
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     db.unsplashPageLinksDao().deleteByChannel()
-//                    db.photoItemDao().deleteByChannel()
+                    db.photoItemDao().deleteByChannel()
                 }
 
                 db.unsplashPageLinksDao().insertOrUpdate(
-                    UnsplashPageLinks.fromUnsplashLinks(pagedPhotos.pageLinks))
+                    UnsplashPageLinks.fromUnsplashLinks(
+                        channel = channel,
+                        links = pagedPhotos.links
+                    )
+                )
                 db.photoItemDao().insertOrUpdate(items)
             }
 

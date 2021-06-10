@@ -6,7 +6,7 @@
 	<dimen name="photo_item_padding_v">0dp</dimen>
 
 	<dimen name="photo_item_title_font_size">12dp</dimen>
-	<dimen name="photo_item_title_height">60dp</dimen>
+	<dimen name="photo_item_title_height">150dp</dimen>
 	<dimen name="photo_item_title_padding_h">6dp</dimen>
 	<dimen name="photo_item_title_padding_v">6dp</dimen>
 	<dimen name="photo_item_supporting_font_size">10dp</dimen>

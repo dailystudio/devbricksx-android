@@ -18,7 +18,9 @@ data class Photo(
     }
 }
 
-data class PagedPhotos(
-    var photos: Array<Photo>? = null,
-    var pageLinks: Links? = null
+data class PageResults(
+    var total: Int = 0,
+    var total_pages: Int = 0,
+    var results: Array<Photo>? = null,
+    var links: Links? = null
 )

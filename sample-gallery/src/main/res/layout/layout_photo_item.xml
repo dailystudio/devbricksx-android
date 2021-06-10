@@ -26,6 +26,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+<!--
 
                 <TextView
                     android:id="@+id/card_supporting_text"
@@ -34,6 +35,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/photo_item_supporting_height"/>
+-->
 
                 <TextView
                     android:id="@+id/card_title"

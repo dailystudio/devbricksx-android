@@ -21,7 +21,7 @@ class PhotoItemsListFragmentExt(): PhotoItemsListFragment() {
     override fun getDataSource(): LiveData<PagingData<PhotoItem>> {
         val viewModel = ViewModelProvider(this)
             .get(PhotoItemViewModel::class.java)
-        val pager =  Pager(
+        val pager = Pager(
             PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
             remoteMediator = PhotoItemMediator()) {
             viewModel.listPhotos()

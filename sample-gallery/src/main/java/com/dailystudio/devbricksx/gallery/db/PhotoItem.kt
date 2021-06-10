@@ -13,6 +13,7 @@ import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
+import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -80,7 +81,7 @@ interface PhotoItemDaoExtension {
 }
 
 
-class PhotoItemViewHolder(itemView: View): AbsInformativeCardViewHolder<PhotoItem>(itemView) {
+class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView) {
 
     override fun bindMedia(item: PhotoItem, iconView: ImageView?) {
         iconView?.load(item.thumbnailUrl)
@@ -95,14 +96,6 @@ class PhotoItemViewHolder(itemView: View): AbsInformativeCardViewHolder<PhotoIte
 
         return context.getString(
             R.string.label_author, item.author)
-    }
-
-    override fun getSupportingText(item: PhotoItem): CharSequence? {
-        val context = itemView.context
-
-
-        return context.getString(
-            R.string.label_website)
     }
 
 }
@@ -121,34 +114,6 @@ data class UnsplashPageLinks(
     @JvmField val last: String? = null,
 ) {
     companion object {
-
-        fun getPageFromLink(link: String): Int {
-            val uri = Uri.parse(link)
-
-            val paramPage = uri.getQueryParameter(
-                UnsplashApiInterface.PARAM_PAGE)
-                    ?: UnsplashApiInterface.DEFAULT_PAGE.toString()
-            return try {
-                paramPage.toInt()
-            } catch (e: NumberFormatException) {
-                UnsplashApiInterface.DEFAULT_PAGE
-            }
-        }
-
-        fun getPerPageFromLink(link: String): Int {
-            val uri = Uri.parse(link)
-
-            val paramPage = uri.getQueryParameter(
-                UnsplashApiInterface.PARAM_PER_PAGE)
-                    ?: UnsplashApiInterface.DEFAULT_PER_PAGE.toString()
-
-            return try {
-                paramPage.toInt()
-            } catch (e: NumberFormatException) {
-                UnsplashApiInterface.DEFAULT_PER_PAGE
-            }
-        }
-
         fun fromUnsplashLinks(links: Links?,
                               channel: String = "default"
         ): UnsplashPageLinks {
