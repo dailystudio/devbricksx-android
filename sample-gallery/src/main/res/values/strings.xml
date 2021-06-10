@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Gallery</string>
+
+    <string name="label_author">by %1$s\u00A0</string>
+    <string name="label_website">unsplash.com\u00A0</string>
+
 </resources>

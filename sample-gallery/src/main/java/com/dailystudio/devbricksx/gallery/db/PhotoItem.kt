@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.gallery.db
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.text.Html
 import android.view.View
 import android.widget.ImageView
 import androidx.paging.PagingSource
@@ -13,6 +14,7 @@ import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
+import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
 import java.lang.NumberFormatException
 
 @ListFragment(
@@ -22,7 +24,8 @@ import java.lang.NumberFormatException
 @ViewModel
 @Adapter(
     viewHolder = PhotoItemViewHolder::class,
-    viewType = ViewType.CardImmersive,
+    viewType = ViewType.Customized,
+    layout = R.layout.layout_photo_item,
     paged = true
 )
 @RoomCompanion(
@@ -69,20 +72,29 @@ interface PhotoItemDaoExtension {
 }
 
 
-class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView) {
+class PhotoItemViewHolder(itemView: View): AbsInformativeCardViewHolder<PhotoItem>(itemView) {
 
     override fun bindMedia(item: PhotoItem, iconView: ImageView?) {
-        iconView?.load(item.thumbnailUrl) {
-            crossfade(true)
-        }
+        iconView?.load(item.thumbnailUrl)
     }
 
     override fun getMedia(item: PhotoItem): Drawable? {
         return null
     }
 
-    override fun getTitle(item: PhotoItem): CharSequence? {
-        return item.author
+    override fun getTitle(item: PhotoItem): CharSequence {
+        val context = itemView.context
+
+        return context.getString(
+            R.string.label_author, item.author)
+    }
+
+    override fun getSupportingText(item: PhotoItem): CharSequence? {
+        val context = itemView.context
+
+
+        return context.getString(
+            R.string.label_website)
     }
 
 }

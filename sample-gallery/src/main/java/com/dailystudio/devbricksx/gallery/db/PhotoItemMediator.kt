@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
@@ -28,12 +27,16 @@ class PhotoItemMediator(
          * always return LAUNCH_INITIAL_REFRESH will cause
          * pager not update after resume
          */
-        return if (!initialized) {
+        val ret = if (!initialized) {
             initialized = true
             InitializeAction.LAUNCH_INITIAL_REFRESH
         } else {
             InitializeAction.SKIP_INITIAL_REFRESH
         }
+
+        Logger.debug("[MED] mediator initialized: $ret")
+
+        return ret
     }
 
     override suspend fun load(
