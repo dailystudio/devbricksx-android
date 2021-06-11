@@ -8,6 +8,7 @@ import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModel
 class PhotoItemViewModelExt(application: Application): PhotoItemViewModel(application) {
 
     private val _currPhotoQuery = MutableLiveData<String?>(null)
+
     val photoQuery: LiveData<String?>
         get() = _currPhotoQuery
 
