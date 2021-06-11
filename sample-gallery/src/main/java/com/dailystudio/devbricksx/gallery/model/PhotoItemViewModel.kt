@@ -9,10 +9,10 @@ class PhotoItemViewModelExt(application: Application): PhotoItemViewModel(applic
 
     private val _currPhotoQuery = MutableLiveData(Constants.QUERY_ALL)
 
-    val photoQuery: LiveData<String?>
+    val photoQuery: LiveData<String>
         get() = _currPhotoQuery
 
-    fun searchPhotos(query: String?) {
+    fun searchPhotos(query: String) {
         _currPhotoQuery.value = query
     }
 

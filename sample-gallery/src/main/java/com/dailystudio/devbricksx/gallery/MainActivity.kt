@@ -14,6 +14,7 @@ import com.dailystudio.devbricksx.gallery.api.UnsplashApi
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class MainActivity : DevBricksActivity() {
@@ -37,11 +38,13 @@ class MainActivity : DevBricksActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
+        val query = viewModel.photoQuery.value
+
         val clearSearchMenuItem = menu.findItem(R.id.action_clear_search)
         clearSearchMenuItem.isVisible = (viewModel.photoQuery.value != Constants.QUERY_ALL)
         val queryText: TextView? = clearSearchMenuItem.actionView
             .findViewById(R.id.query_text)
-        queryText?.text = viewModel.photoQuery.value
+        queryText?.text = query
         queryText?.setOnClickListener {
             queryPhotos(Constants.QUERY_ALL)
         }
@@ -66,11 +69,18 @@ class MainActivity : DevBricksActivity() {
 
         })
 
+        if (Constants.QUERY_ALL != query) {
+            searchView.post {
+                searchView.setQuery(query, false)
+            }
+        }
+
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Logger.debug("final query: $query")
-                queryPhotos(query)
+                val newQuery = query ?: Constants.QUERY_ALL
+                Logger.debug("final query: $newQuery")
+                queryPhotos(newQuery.toLowerCase())
 
                 searchMenuItem.collapseActionView()
 
@@ -99,7 +109,7 @@ class MainActivity : DevBricksActivity() {
         }
     }
 
-    private fun queryPhotos(query: String?) {
+    private fun queryPhotos(query: String) {
         viewModel.searchPhotos(query)
     }
 
