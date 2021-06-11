@@ -10,26 +10,45 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.gallery.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
-import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModel
 
-class PhotoItemsListFragmentExt(): PhotoItemsListFragment() {
+class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
+
+    lateinit var viewModel: PhotoItemViewModelExt
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(requireActivity())
+            .get(PhotoItemViewModelExt::class.java)
+    }
 
     @ExperimentalPagingApi
     override fun getDataSource(): LiveData<PagingData<PhotoItem>> {
-        val viewModel = ViewModelProvider(this)
-            .get(PhotoItemViewModel::class.java)
+        val query = viewModel.photoQuery.value ?: "Food"
+
+        Logger.debug("request paging: query = $query")
+
         val pager = Pager(
             PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
-            remoteMediator = PhotoItemMediator()) {
+            remoteMediator = PhotoItemMediator(query)) {
             viewModel.listPhotos()
         }
 
         Logger.debug("[MED] pager = $pager")
 
         return pager.flow.asLiveData()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.photoQuery.observe(viewLifecycleOwner, {
+            reload()
+        })
     }
 
 

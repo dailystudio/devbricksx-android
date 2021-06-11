@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.text.DecimalFormat
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
@@ -81,13 +82,15 @@ class PhotoItemMediator(
             }
 
             val items = withContext(Dispatchers.IO) {
-                pagedPhotos.results?.map {
-                    val oldOne = db.photoItemDao().getOne(it.id)
-
-                    PhotoItem.fromUnsplashPhoto(it).apply {
-                        Logger.debug("[Found]: find one: $oldOne")
-                        oldOne?.let {  oldItem ->
-                            created = oldItem.created
+                pagedPhotos.results?.mapIndexed { index, photo ->
+                    PhotoItem.fromUnsplashPhoto(photo).apply {
+                        val oldOne = db.photoItemDao().getOne(photo.id)
+                        if (oldOne == null) {
+                            cachedIndex = "$page.${index.toString().padStart(3, '0')}"
+                            Logger.debug("[CACHE]: [id: ${photo.id}] new index = $cachedIndex")
+                        } else {
+                            cachedIndex = oldOne.cachedIndex
+                            Logger.debug("[CACHE]: [id: ${photo.id}] existed, skip update cache index (${cachedIndex})")
                         }
                     }
                 } ?: arrayListOf()
@@ -107,6 +110,7 @@ class PhotoItemMediator(
                         links = pagedPhotos.links
                     )
                 )
+
                 db.photoItemDao().insertOrUpdate(items)
             }
 

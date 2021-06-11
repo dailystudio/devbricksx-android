@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.gallery.db
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import androidx.paging.PagingSource
@@ -9,12 +10,14 @@ import androidx.room.Query
 import coil.load
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.database.DateConverter
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
+import java.lang.IllegalArgumentException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,7 +43,8 @@ import java.util.*
 class PhotoItem(
     @JvmField val id: String,
     @JvmField val channel: String,
-    @JvmField var created: Date,
+    @JvmField var cachedIndex: String,
+    @JvmField val created: Date,
     @JvmField val lastModified: Date,
     @JvmField val author: String,
     @JvmField val description: String?,
@@ -52,12 +56,34 @@ class PhotoItem(
             photo: Photo,
             channel: String = "default"): PhotoItem {
 
-            val iso8601: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
-            val created = Date(System.currentTimeMillis())
-            val lastModified = iso8601.parse(photo.updated_at)
+            val iso8601: DateFormat =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX",
+                        Locale.getDefault())
+                } else {
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ",
+                        Locale.getDefault())
+                }
+
+            val created = try {
+                iso8601.parse(photo.created_at)
+            } catch (e: IllegalArgumentException) {
+                Logger.error("failed to parse date from [${photo.updated_at}: $e")
+
+                Date(System.currentTimeMillis())
+            }
+
+            val lastModified = try {
+                iso8601.parse(photo.updated_at)
+            } catch (e: IllegalArgumentException) {
+                Logger.error("failed to parse date from [${photo.updated_at}: $e")
+
+                Date(System.currentTimeMillis())
+            }
 
             return PhotoItem(photo.id,
                 channel,
+                "0.0",
                 created,
                 lastModified,
                 photo.user.name,
@@ -72,7 +98,7 @@ class PhotoItem(
 @DaoExtension(entity = PhotoItem::class)
 interface PhotoItemDaoExtension {
 
-    @Query("SELECT * FROM photoitem ORDER BY created ASC")
+    @Query("SELECT * FROM photoitem ORDER BY cached_index ASC")
     fun listPhotos(): PagingSource<Int, PhotoItem>
 
     @Query("DELETE FROM photoitem WHERE channel = :channel")
@@ -130,9 +156,6 @@ data class UnsplashPageLinks(
         }
 
     }
-
-    val hasMore: Boolean
-        get() = next != null
 }
 
 

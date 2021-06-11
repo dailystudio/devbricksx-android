@@ -4,4 +4,8 @@
     <string name="label_author">by %1$s\u00A0</string>
     <string name="label_website">unsplash.com\u00A0</string>
 
+    <string name="menu_search">Search</string>
+    <string name="menu_about">About</string>
+
+
 </resources>
