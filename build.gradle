@@ -34,10 +34,9 @@ allprojects {
 }
 
 ext {
-
     ROOM_VERSION = "2.3.0-beta03"
 
-    // Jcenter publish credentials
+    // publish credentials
     if (file("private.properties").exists()) {
         Properties props = new Properties()
         props.load(new FileInputStream(file("private.properties")))
@@ -54,6 +53,16 @@ ext {
     } else {
         BINTRAY_KEY = ""
         BINTRAY_USER = ""
+    }
+
+    // Unsplash.com API
+    if (file("sample-gallery/apikey.unsplash").exists()) {
+        Properties props = new Properties()
+        props.load(new FileInputStream(file("sample-gallery/apikey.unsplash")))
+
+        UNSPLASH_API_KEY = props.getProperty('API_KEY')
+    } else {
+        UNSPLASH_API_KEY = ""
     }
 
     // Compile Settings

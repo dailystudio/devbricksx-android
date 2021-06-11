@@ -30,15 +30,13 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
     override fun getDataSource(): LiveData<PagingData<PhotoItem>> {
         val query = viewModel.photoQuery.value ?: "Food"
 
-        Logger.debug("request paging: query = $query")
-
         val pager = Pager(
             PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
             remoteMediator = PhotoItemMediator(query)) {
             viewModel.listPhotos()
         }
 
-        Logger.debug("[MED] pager = $pager")
+        Logger.debug("[MED] request paging: query = $query, pager = $pager")
 
         return pager.flow.asLiveData()
     }

@@ -1,7 +1,9 @@
 package com.dailystudio.devbricksx.gallery.api
 
 import android.net.Uri
+import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import com.dailystudio.devbricksx.gallery.api.data.Photo
@@ -184,9 +186,13 @@ class UnsplashApi: BaseApi<UnsplashApiInterface>() {
 
     private var mHeaderInterceptor = object : HeaderInterceptor() {
 
-        override fun getHeaders(): Map<String, String>? {
+        override fun getHeaders(): Map<String, String> {
+            val apiKey = GlobalContextWrapper.context?.let {
+                it.getString(R.string.api_key)
+            }
+
             return mutableMapOf(
-                "Authorization" to "Client-ID nNy9rRzkq02t0Sp429fR4gG2vgiXbB9bR1AM2w03-y0"
+                "Authorization" to "Client-ID $apiKey"
             )
         }
 

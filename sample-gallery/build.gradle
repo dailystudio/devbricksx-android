@@ -21,9 +21,12 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        resValue "string", "api_key", "${project.UNSPLASH_API_KEY}"
     }
 
     buildTypes {
+
         release {
             minifyEnabled true
             shrinkResources true
