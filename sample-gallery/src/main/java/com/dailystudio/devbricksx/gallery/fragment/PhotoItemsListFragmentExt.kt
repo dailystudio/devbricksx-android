@@ -19,6 +19,7 @@ import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
 class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
 
     lateinit var viewModel: PhotoItemViewModelExt
+    private var lastQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +31,7 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
     @ExperimentalPagingApi
     override fun getDataSource(): LiveData<PagingData<PhotoItem>> {
         val query = viewModel.photoQuery.value ?: Constants.QUERY_ALL
+        lastQuery = query
 
         val pager = Pager(
             PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
@@ -45,7 +47,14 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.photoQuery.observe(viewLifecycleOwner, {
+        viewModel.photoQuery.observe(viewLifecycleOwner, { query ->
+            Logger.debug("query request: $query")
+            if (lastQuery == query) {
+                Logger.info("skip duplicated query: $query [last: $lastQuery]")
+
+                return@observe
+            }
+
             reload()
         })
     }

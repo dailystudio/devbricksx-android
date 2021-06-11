@@ -39,6 +39,7 @@ import java.util.*
 )
 class PhotoItem(
     @JvmField val id: String,
+    @JvmField var cachedIndex: String,
     @JvmField val created: Date,
     @JvmField val lastModified: Date,
     @JvmField val author: String,
@@ -47,9 +48,7 @@ class PhotoItem(
     @JvmField val downloadUrl: String
 ) {
     companion object {
-        fun fromUnsplashPhoto(
-            photo: Photo): PhotoItem {
-
+        fun fromUnsplashPhoto(photo: Photo): PhotoItem {
             val iso8601: DateFormat =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX",
@@ -76,6 +75,7 @@ class PhotoItem(
             }
 
             return PhotoItem(photo.id,
+                "0.0",
                 created,
                 lastModified,
                 photo.user.name,
@@ -90,7 +90,7 @@ class PhotoItem(
 @DaoExtension(entity = PhotoItem::class)
 interface PhotoItemDaoExtension {
 
-    @Query("SELECT * FROM photoitem ORDER BY last_modified DESC")
+    @Query("SELECT * FROM photoitem ORDER BY cached_index ASC")
     fun listPhotos(): PagingSource<Int, PhotoItem>
 
     @Query("DELETE FROM photoitem")

@@ -26,7 +26,7 @@ interface UnsplashApiInterface {
         const val PARAM_QUERY = "query"
 
         const val DEFAULT_PAGE = 1
-        const val DEFAULT_PER_PAGE = 60
+        const val DEFAULT_PER_PAGE = 20
         const val MAX_PER_PAGE = 30
 
         fun getPageFromLink(link: String?): Int {

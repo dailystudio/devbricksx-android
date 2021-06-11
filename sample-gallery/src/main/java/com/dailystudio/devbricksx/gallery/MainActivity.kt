@@ -3,6 +3,8 @@ package com.dailystudio.devbricksx.gallery
 import android.app.SearchManager
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,15 +27,44 @@ class MainActivity : DevBricksActivity() {
 
         viewModel = ViewModelProvider(this).get(
             PhotoItemViewModelExt::class.java)
+
+        viewModel.photoQuery.observe(this, {
+            invalidateOptionsMenu()
+        })
 //        testApi()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
+        val clearSearchMenuItem = menu.findItem(R.id.action_clear_search)
+        clearSearchMenuItem.isVisible = (viewModel.photoQuery.value != Constants.QUERY_ALL)
+        val queryText: TextView? = clearSearchMenuItem.actionView
+            .findViewById(R.id.query_text)
+        queryText?.text = viewModel.photoQuery.value
+        queryText?.setOnClickListener {
+            queryPhotos(Constants.QUERY_ALL)
+        }
+
         val searchMenuItem = menu.findItem(R.id.action_search);
         val searchView: SearchView =
             searchMenuItem.actionView as SearchView
+
+        searchMenuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                clearSearchMenuItem.isVisible = false
+
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                clearSearchMenuItem.isVisible = true
+
+                return true
+            }
+
+        })
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
 
@@ -56,6 +87,16 @@ class MainActivity : DevBricksActivity() {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_about -> {
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun queryPhotos(query: String?) {

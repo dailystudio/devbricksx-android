@@ -69,8 +69,8 @@ class PhotoItemMediator(
             }
 
             val perPage =  when (loadType) {
-                LoadType.REFRESH -> UnsplashApiInterface.DEFAULT_PER_PAGE
-                else -> UnsplashApiInterface.DEFAULT_PER_PAGE
+                LoadType.REFRESH -> state.config.initialLoadSize
+                else -> state.config.pageSize
             }
             val unsplashApi = UnsplashApi()
 
@@ -90,8 +90,10 @@ class PhotoItemMediator(
             }
 
             val items = withContext(Dispatchers.IO) {
-                pagedPhotos.results?.mapIndexed { _, photo ->
-                    PhotoItem.fromUnsplashPhoto(photo)
+                pagedPhotos.results?.mapIndexed { index, photo ->
+                    PhotoItem.fromUnsplashPhoto(photo).apply {
+                        cachedIndex = "$page.${index.toString().padStart(3, '0')}"
+                    }
                 } ?: arrayListOf()
             }
 
