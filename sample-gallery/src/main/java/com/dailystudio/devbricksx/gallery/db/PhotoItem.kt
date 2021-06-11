@@ -1,7 +1,6 @@
 package com.dailystudio.devbricksx.gallery.db
 
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.view.View
 import android.widget.ImageView
@@ -12,11 +11,9 @@ import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.R
-import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
-import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
 import java.lang.IllegalArgumentException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -42,8 +39,6 @@ import java.util.*
 )
 class PhotoItem(
     @JvmField val id: String,
-    @JvmField val channel: String,
-    @JvmField var cachedIndex: String,
     @JvmField val created: Date,
     @JvmField val lastModified: Date,
     @JvmField val author: String,
@@ -53,8 +48,7 @@ class PhotoItem(
 ) {
     companion object {
         fun fromUnsplashPhoto(
-            photo: Photo,
-            channel: String): PhotoItem {
+            photo: Photo): PhotoItem {
 
             val iso8601: DateFormat =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -82,8 +76,6 @@ class PhotoItem(
             }
 
             return PhotoItem(photo.id,
-                channel,
-                "0.0",
                 created,
                 lastModified,
                 photo.user.name,
@@ -98,11 +90,11 @@ class PhotoItem(
 @DaoExtension(entity = PhotoItem::class)
 interface PhotoItemDaoExtension {
 
-    @Query("SELECT * FROM photoitem WHERE channel = :channel ORDER BY last_modified DESC")
-    fun listPhotosByChannel(channel: String): PagingSource<Int, PhotoItem>
+    @Query("SELECT * FROM photoitem ORDER BY last_modified DESC")
+    fun listPhotos(): PagingSource<Int, PhotoItem>
 
-    @Query("DELETE FROM photoitem WHERE channel = :channel")
-    fun deleteByChannel(channel: String)
+    @Query("DELETE FROM photoitem")
+    fun deletePhotos()
 
 }
 
@@ -126,29 +118,29 @@ class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView
 
 }
 
-
 @RoomCompanion(
-    primaryKeys = [ "channel" ],
-    extension = UnsplashRemoteKeyDaoExtension::class,
+    primaryKeys = [ "keyword" ],
+    extension = UnsplashPageLinksDaoExtension::class,
     database = "unsplash"
 )
 data class UnsplashPageLinks(
-    @JvmField val channel: String,
+    @JvmField val keyword: String,
     @JvmField val first: String? = null,
     @JvmField val prev: String? = null,
     @JvmField val next: String? = null,
     @JvmField val last: String? = null,
 ) {
     companion object {
+
         fun fromUnsplashLinks(links: Links?,
-                              channel: String = "default"
+                              keyword: String
         ): UnsplashPageLinks {
             if (links == null) {
-                return UnsplashPageLinks(channel)
+                return UnsplashPageLinks(keyword)
             }
 
             return UnsplashPageLinks(
-                channel,
+                keyword,
                 links.first,
                 links.prev,
                 links.next,
@@ -160,12 +152,12 @@ data class UnsplashPageLinks(
 
 
 @DaoExtension(entity = UnsplashPageLinks::class)
-interface UnsplashRemoteKeyDaoExtension {
+interface UnsplashPageLinksDaoExtension {
 
-    @Query("SELECT * FROM unsplashpagelinks WHERE channel = :channel")
-    fun remoteKeyByChannel(channel: String): UnsplashPageLinks
+    @Query("SELECT * FROM unsplashpagelinks WHERE keyword = :keyword")
+    fun linksForKeyword(keyword: String): UnsplashPageLinks
 
-    @Query("DELETE FROM unsplashpagelinks WHERE channel = :channel")
-    fun deleteByChannel(channel: String)
+    @Query("DELETE FROM unsplashpagelinks WHERE keyword = :keyword")
+    fun deleteLinksForKeyword(keyword: String)
 
 }

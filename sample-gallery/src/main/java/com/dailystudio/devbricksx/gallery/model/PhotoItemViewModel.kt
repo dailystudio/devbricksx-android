@@ -3,12 +3,11 @@ package com.dailystudio.devbricksx.gallery.model
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
-import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModel
+import com.dailystudio.devbricksx.gallery.Constants
 
 class PhotoItemViewModelExt(application: Application): PhotoItemViewModel(application) {
 
-    private val _currPhotoQuery = MutableLiveData<String?>(UnsplashApiInterface.DEFAULT_CHANNEL)
+    private val _currPhotoQuery = MutableLiveData(Constants.QUERY_ALL)
 
     val photoQuery: LiveData<String?>
         get() = _currPhotoQuery

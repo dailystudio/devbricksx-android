@@ -7,6 +7,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
@@ -14,14 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
-import java.text.DecimalFormat
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
-    private val channel: String = UnsplashApiInterface.DEFAULT_CHANNEL
+    private val query: String = Constants.QUERY_ALL
 ) : RemoteMediator<Int, PhotoItem>() {
 
-    var initialized = false
+    private var initialized = false
 
     override suspend fun initialize(): InitializeAction {
         /*
@@ -47,7 +47,7 @@ class PhotoItemMediator(
         try {
             val context = GlobalContextWrapper.context
                 ?: return MediatorResult.Success(endOfPaginationReached = true)
-            Logger.debug("[MED] channel: $channel, loadType: $loadType")
+            Logger.debug("[MED] query: $query, loadType: $loadType")
 
             val db = UnsplashDatabase.getDatabase(context)
 
@@ -55,16 +55,16 @@ class PhotoItemMediator(
                 LoadType.REFRESH -> UnsplashApiInterface.DEFAULT_PAGE
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    val remoteKey = db.withTransaction {
-                        db.unsplashPageLinksDao().remoteKeyByChannel(channel)
+                    val links = db.withTransaction {
+                        db.unsplashPageLinksDao().linksForKeyword(query)
                     }
-                    Logger.debug("[MED] remoteKey: $remoteKey")
+                    Logger.debug("[MED] remoteKey: $links")
 
-                    if (remoteKey.next == null) {
+                    if (links.next == null) {
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
 
-                    UnsplashApiInterface.getPageFromLink(remoteKey.next)
+                    UnsplashApiInterface.getPageFromLink(links.next)
                 }
             }
 
@@ -75,24 +75,23 @@ class PhotoItemMediator(
             val unsplashApi = UnsplashApi()
 
             val pagedPhotos = withContext(Dispatchers.IO) {
-                unsplashApi.searchPhotos(query=channel,
-                    page = page,
-                    perPage = perPage,
-                ) ?: PageResults()
+                if (query == Constants.QUERY_ALL) {
+                    unsplashApi.listPhotos(
+                        page = page,
+                        perPage = perPage,
+                    ) ?: PageResults()
+                } else {
+                    unsplashApi.searchPhotos(
+                        query = query,
+                        page = page,
+                        perPage = perPage,
+                    ) ?: PageResults()
+                }
             }
 
             val items = withContext(Dispatchers.IO) {
-                pagedPhotos.results?.mapIndexed { index, photo ->
-                    PhotoItem.fromUnsplashPhoto(photo, channel).apply {
-                        val oldOne = db.photoItemDao().getOne(photo.id)
-                        if (oldOne == null) {
-                            cachedIndex = "$page.${index.toString().padStart(3, '0')}"
-                            Logger.debug("[CACHE]: [id: ${photo.id}] new index = $cachedIndex")
-                        } else {
-                            cachedIndex = oldOne.cachedIndex
-                            Logger.debug("[CACHE]: [id: ${photo.id}] existed, skip update cache index (${cachedIndex})")
-                        }
-                    }
+                pagedPhotos.results?.mapIndexed { _, photo ->
+                    PhotoItem.fromUnsplashPhoto(photo)
                 } ?: arrayListOf()
             }
 
@@ -100,14 +99,14 @@ class PhotoItemMediator(
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    db.unsplashPageLinksDao().deleteByChannel(channel)
-                    db.photoItemDao().deleteByChannel(channel)
+                    db.unsplashPageLinksDao().deleteLinksForKeyword(query)
+                    db.photoItemDao().deletePhotos()
                 }
 
                 db.unsplashPageLinksDao().insertOrUpdate(
                     UnsplashPageLinks.fromUnsplashLinks(
-                        channel = channel,
-                        links = pagedPhotos.links
+                        links = pagedPhotos.links,
+                        keyword = query
                     )
                 )
 
