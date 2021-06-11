@@ -29,6 +29,8 @@ interface UnsplashApiInterface {
         const val DEFAULT_PER_PAGE = 20
         const val MAX_PER_PAGE = 30
 
+        const val DEFAULT_CHANNEL = "Food"
+
         fun getPageFromLink(link: String?): Int {
             if (link == null) {
                 return 0

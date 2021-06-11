@@ -18,7 +18,7 @@ import java.text.DecimalFormat
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
-    private val channel: String = "food"
+    private val channel: String = UnsplashApiInterface.DEFAULT_CHANNEL
 ) : RemoteMediator<Int, PhotoItem>() {
 
     var initialized = false
@@ -69,8 +69,8 @@ class PhotoItemMediator(
             }
 
             val perPage =  when (loadType) {
-                LoadType.REFRESH -> state.config.initialLoadSize
-                else -> state.config.pageSize
+                LoadType.REFRESH -> UnsplashApiInterface.DEFAULT_PER_PAGE
+                else -> UnsplashApiInterface.DEFAULT_PER_PAGE
             }
             val unsplashApi = UnsplashApi()
 
@@ -83,7 +83,7 @@ class PhotoItemMediator(
 
             val items = withContext(Dispatchers.IO) {
                 pagedPhotos.results?.mapIndexed { index, photo ->
-                    PhotoItem.fromUnsplashPhoto(photo).apply {
+                    PhotoItem.fromUnsplashPhoto(photo, channel).apply {
                         val oldOne = db.photoItemDao().getOne(photo.id)
                         if (oldOne == null) {
                             cachedIndex = "$page.${index.toString().padStart(3, '0')}"
@@ -100,8 +100,8 @@ class PhotoItemMediator(
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    db.unsplashPageLinksDao().deleteByChannel()
-                    db.photoItemDao().deleteByChannel()
+                    db.unsplashPageLinksDao().deleteByChannel(channel)
+                    db.photoItemDao().deleteByChannel(channel)
                 }
 
                 db.unsplashPageLinksDao().insertOrUpdate(

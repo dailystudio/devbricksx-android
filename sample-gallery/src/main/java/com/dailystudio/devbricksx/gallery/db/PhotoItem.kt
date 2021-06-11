@@ -54,7 +54,7 @@ class PhotoItem(
     companion object {
         fun fromUnsplashPhoto(
             photo: Photo,
-            channel: String = "default"): PhotoItem {
+            channel: String): PhotoItem {
 
             val iso8601: DateFormat =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -68,7 +68,7 @@ class PhotoItem(
             val created = try {
                 iso8601.parse(photo.created_at)
             } catch (e: IllegalArgumentException) {
-                Logger.error("failed to parse date from [${photo.updated_at}: $e")
+                Logger.error("failed to parse date from [${photo.created_at}: $e")
 
                 Date(System.currentTimeMillis())
             }
@@ -98,11 +98,11 @@ class PhotoItem(
 @DaoExtension(entity = PhotoItem::class)
 interface PhotoItemDaoExtension {
 
-    @Query("SELECT * FROM photoitem ORDER BY cached_index ASC")
-    fun listPhotos(): PagingSource<Int, PhotoItem>
+    @Query("SELECT * FROM photoitem WHERE channel = :channel ORDER BY last_modified DESC")
+    fun listPhotosByChannel(channel: String): PagingSource<Int, PhotoItem>
 
     @Query("DELETE FROM photoitem WHERE channel = :channel")
-    fun deleteByChannel(channel: String = "default")
+    fun deleteByChannel(channel: String)
 
 }
 
@@ -166,6 +166,6 @@ interface UnsplashRemoteKeyDaoExtension {
     fun remoteKeyByChannel(channel: String): UnsplashPageLinks
 
     @Query("DELETE FROM unsplashpagelinks WHERE channel = :channel")
-    fun deleteByChannel(channel: String = "default")
+    fun deleteByChannel(channel: String)
 
 }

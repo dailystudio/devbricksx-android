@@ -10,7 +10,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.gallery.PhotoItemViewModelExt
+import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
@@ -28,12 +28,12 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
 
     @ExperimentalPagingApi
     override fun getDataSource(): LiveData<PagingData<PhotoItem>> {
-        val query = viewModel.photoQuery.value ?: "Food"
+        val query = viewModel.photoQuery.value ?: UnsplashApiInterface.DEFAULT_CHANNEL
 
         val pager = Pager(
             PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
             remoteMediator = PhotoItemMediator(query)) {
-            viewModel.listPhotos()
+            viewModel.listPhotosByChannel(query)
         }
 
         Logger.debug("[MED] request paging: query = $query, pager = $pager")

@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.app.activity.DevBricksActivity
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
+import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
