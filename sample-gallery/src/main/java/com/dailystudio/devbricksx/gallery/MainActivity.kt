@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.app.activity.DevBricksActivity
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
+import com.dailystudio.devbricksx.gallery.fragment.AboutFragment
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +33,6 @@ class MainActivity : DevBricksActivity() {
         viewModel.photoQuery.observe(this, {
             invalidateOptionsMenu()
         })
-//        testApi()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,6 +58,12 @@ class MainActivity : DevBricksActivity() {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 clearSearchMenuItem.isVisible = false
 
+                if (Constants.QUERY_ALL != query) {
+                    searchView.post {
+                        searchView.setQuery(query, false)
+                    }
+                }
+
                 return true
             }
 
@@ -68,12 +74,6 @@ class MainActivity : DevBricksActivity() {
             }
 
         })
-
-        if (Constants.QUERY_ALL != query) {
-            searchView.post {
-                searchView.setQuery(query, false)
-            }
-        }
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
 
@@ -102,6 +102,10 @@ class MainActivity : DevBricksActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_about -> {
+                val fragment = AboutFragment()
+
+                fragment.show(supportFragmentManager, "about")
+
                 true
             }
 
@@ -111,15 +115,6 @@ class MainActivity : DevBricksActivity() {
 
     private fun queryPhotos(query: String) {
         viewModel.searchPhotos(query)
-    }
-
-    private fun testApi() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val ret = UnsplashApi().searchPhotos("Food")
-            ret?.results?.map {
-                Logger.debug("food photo: $it")
-            }
-        }
     }
 
 }
