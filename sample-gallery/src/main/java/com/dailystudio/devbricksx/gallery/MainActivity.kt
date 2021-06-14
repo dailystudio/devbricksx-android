@@ -68,7 +68,7 @@ class MainActivity : DevBricksActivity() {
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                clearSearchMenuItem.isVisible = true
+                clearSearchMenuItem.isVisible = (viewModel.photoQuery.value != Constants.QUERY_ALL)
 
                 return true
             }
