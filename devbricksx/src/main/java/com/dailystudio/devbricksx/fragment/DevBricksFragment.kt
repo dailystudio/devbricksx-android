@@ -1,8 +1,23 @@
 package com.dailystudio.devbricksx.fragment
 
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 
 open class DevBricksFragment: Fragment() {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        bindIntent(requireActivity().intent)
+    }
+
+    open fun onNewIntent(intent: Intent?) {
+        bindIntent(intent)
+    }
+
+    open fun bindIntent(intent: Intent?) {}
 
     open fun showChildFragment(fragmentId: Int) {
         showChildFragment(fragmentId, 0)
