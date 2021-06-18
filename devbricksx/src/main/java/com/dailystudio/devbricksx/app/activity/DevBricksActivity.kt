@@ -1,9 +1,17 @@
 package com.dailystudio.devbricksx.app.activity
 
+import android.view.View
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.dailystudio.devbricksx.R
+import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import com.google.android.material.snackbar.Snackbar
 
 open class DevBricksActivity : AppCompatActivity() {
+
+    private var snackBar: Snackbar? = null
 
     fun showFragment(fragmentId: Int) {
         showFragment(fragmentId, 0)
@@ -84,6 +92,52 @@ open class DevBricksActivity : AppCompatActivity() {
     fun findFragment(fragmentId: Int): Fragment? {
         val frgmgr = supportFragmentManager ?: return null
         return frgmgr.findFragmentById(fragmentId)
+    }
+
+    open fun showPrompt(prompt: CharSequence,
+                        duration: Int = Snackbar.LENGTH_INDEFINITE,
+                        @ColorInt textColor: Int? = null,
+                        @ColorInt backgroundColor: Int? = null,
+                        anchorView: View? = null) {
+        val contextView: View = anchorView
+            ?: findViewById(R.id.content)
+            ?: window.decorView
+
+        if (snackBar != null) {
+            hidePrompt()
+        }
+
+        snackBar = Snackbar.make(contextView,
+            prompt, duration).apply {
+
+            textColor?.let {
+                setTextColor(it)
+            }
+
+            val bgColorTint = backgroundColor ?: ResourcesCompatUtils.getColor(
+                this@DevBricksActivity, R.color.snack_bar_bg_color)
+            setBackgroundTint(bgColorTint)
+
+            Logger.debug("snack bar shown: %s", this)
+        }.also {
+            it.show()
+        }
+    }
+
+    open fun updatePrompt(prompt: CharSequence) {
+        snackBar?.let {
+            if (it.isShownOrQueued) {
+                it.setText(prompt)
+            }
+        }
+    }
+
+    open fun hidePrompt() {
+        snackBar?.let {
+            it.dismiss()
+            Logger.debug("snack bar dismissed: %s", it)
+        }
+        snackBar = null
     }
 
 }

@@ -26,5 +26,6 @@
 
     <string name="prompt_pixabay">\@pixabay</string>
     <string name="prompt_no_samples">No samples found.</string>
+    <string name="prompt_welcome">Welcome to DevBricksX</string>
 
 </resources>

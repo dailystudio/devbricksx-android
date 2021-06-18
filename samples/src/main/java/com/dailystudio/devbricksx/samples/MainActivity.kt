@@ -6,17 +6,21 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.dailystudio.devbricksx.app.activity.DevBricksActivity
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.fragment.AboutFragment
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 import com.dailystudio.devbricksx.samples.usecase.UseCaseJsonDeserializer
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModel
 import com.dailystudio.devbricksx.utils.JSONUtils
+import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonDeserializer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DevBricksActivity() {
 
     companion object {
 
@@ -29,6 +33,15 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
         generateCases()
+
+        showPrompt(getString(R.string.prompt_welcome),
+            anchorView = findViewById(R.id.fragment_root),
+        )
+
+        lifecycleScope.launch() {
+            delay(5000)
+            hidePrompt()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

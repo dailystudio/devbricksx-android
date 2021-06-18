@@ -36,7 +36,7 @@
     <color name="action_bar_bg_color">@color/light_black</color>
     <color name="action_bar_popup_content_overlay">#90000000</color>
 
-    <color name="snack_bar_bg_color">#C0000000</color>
+    <color name="snack_bar_bg_color">#D0000000</color>
     <color name="card_title_bg_color">@color/light_black</color>
     <color name="default_ripple_color">@color/light_white</color>
 
