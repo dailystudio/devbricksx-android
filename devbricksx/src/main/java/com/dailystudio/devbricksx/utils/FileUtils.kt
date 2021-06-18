@@ -411,4 +411,64 @@ object FileUtils {
         return md5
     }
 
+    fun copyRawFile(context: Context,
+                    rawFile: String,
+                    dstFile: String
+    ): Boolean {
+        val res = context.resources ?: return false
+        val resId = res.getIdentifier(
+            rawFile,
+            "raw", context.packageName
+        )
+
+        if (resId <= 0) {
+            return false
+        }
+        val istream = res.openRawResource(resId) ?: return false
+        val ostream = FileOutputStream(dstFile)
+        return ResourcesUtils.copyToFile(istream, ostream)
+    }
+
+    fun isAssetFileExisted(context: Context, assetFile: String): Boolean {
+        if (TextUtils.isEmpty(assetFile)) {
+            return false
+        }
+
+        val assetManager = context.assets
+        var inputStream: InputStream? = null
+        try {
+            inputStream = assetManager.open(assetFile)
+            return true
+        } catch (e: IOException) {
+        } finally {
+            try {
+                inputStream?.close()
+            } catch (e: IOException) {
+                Logger.error("failed to close file [$assetFile]: $e")
+            }
+        }
+
+        return false
+    }
+
+    fun copyAssetFile(
+        context: Context,
+        assetFile: String,
+        dstFile: String
+    ): Boolean {
+        val asstmgr = context.assets ?: return false
+
+        val istream = try {
+            asstmgr.open(assetFile)
+        } catch (e: Exception) {
+            Logger.error("failed to open asset file: $assetFile")
+
+            null
+        }
+
+        val ostream = FileOutputStream(dstFile)
+
+        return ResourcesUtils.copyToFile(istream, ostream)
+    }
+
 }
