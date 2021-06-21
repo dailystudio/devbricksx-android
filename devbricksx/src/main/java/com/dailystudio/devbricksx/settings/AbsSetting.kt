@@ -9,7 +9,8 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
-data class SettingChange(val name: String)
+data class SettingChange(val name: String,
+                         val timestamp: Long = System.currentTimeMillis())
 
 abstract class AbsSetting(val context: Context,
                           val name: String,
@@ -70,7 +71,7 @@ abstract class AbsSetting(val context: Context,
     }
 
     fun notifySettingChange() {
-        Logger.debug("notify setting: ${name}")
+        Logger.debug("notify setting: $name")
         Settings.postValue(SettingChange(name))
     }
 
