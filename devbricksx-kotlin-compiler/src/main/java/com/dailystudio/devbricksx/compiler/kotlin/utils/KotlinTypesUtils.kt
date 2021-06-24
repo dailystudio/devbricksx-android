@@ -11,7 +11,12 @@ object KotlinTypesUtils {
                              origTypeName: TypeName): TypeName {
         val array = TypeNamesUtils.getArrayTypeName(objectTypeName)
         val javaLong = TypeNamesUtils.getJavaLongTypeName()
+        val javaShort = TypeNamesUtils.getJavaShortTypeName()
         val javaInteger = TypeNamesUtils.getJavaIntegerTypeName()
+        val javaFloat = TypeNamesUtils.getJavaFloatTypeName()
+        val javaDouble = TypeNamesUtils.getJavaDoubleTypeName()
+        val javaByte = TypeNamesUtils.getJavaByteTypeName()
+        val javaBoolean = TypeNamesUtils.getJavaBooleanTypeName()
         val javaString = TypeNamesUtils.getJavaStringTypeName()
 
         when (origTypeName) {
@@ -69,9 +74,27 @@ object KotlinTypesUtils {
                         if (typeArguments.isNotEmpty()) {
                             val ta0Name = typeArguments[0].toString()
                             when (ta0Name) {
-                                "kotlin.Int" -> {
+                                "kotlin.Int",
+                                "kotlin.Short",
+                                "kotlin.Long",
+                                "kotlin.Byte",
+                                "kotlin.UInt",
+                                "kotlin.UShort",
+                                "kotlin.ULong",
+                                "kotlin.UByte",
+                                "kotlin.Float",
+                                "kotlin.Double",
+                                "kotlin.Boolean", -> {
                                     val primitiveType = ta0Name.removePrefix("kotlin")
                                     return ClassName("kotlin", "${primitiveType}Array")
+                                }
+                                else -> {
+                                    if (typeArguments.isNotEmpty()) {
+                                        val newTypeName = javaToKotlinTypeName(objectTypeName,
+                                            typeArguments[0])
+
+                                        return array.parameterizedBy(newTypeName)
+                                    }
                                 }
                             }
                         }
@@ -83,8 +106,28 @@ object KotlinTypesUtils {
                 return TypeNamesUtils.getLongTypeName()
             }
 
+            javaShort -> {
+                return TypeNamesUtils.getShortTypeName()
+            }
+
             javaInteger -> {
                 return TypeNamesUtils.getIntegerTypeName()
+            }
+
+            javaFloat -> {
+                return TypeNamesUtils.getFloatTypeName()
+            }
+
+            javaDouble -> {
+                return TypeNamesUtils.getDoubleTypeName()
+            }
+
+            javaByte -> {
+                return TypeNamesUtils.getByteTypeName()
+            }
+
+            javaBoolean -> {
+                return TypeNamesUtils.getBooleanTypeName()
             }
 
             javaString -> {

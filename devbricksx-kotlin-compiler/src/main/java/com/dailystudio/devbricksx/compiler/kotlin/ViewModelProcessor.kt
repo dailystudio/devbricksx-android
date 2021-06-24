@@ -361,7 +361,7 @@ class ViewModelProcessor : BaseProcessor() {
                                      classBuilder: TypeSpec.Builder) {
 //        val methodName = executableElement.simpleName.toString().kotlinGetterName()
         val methodName = executableElement.simpleName.toString()
-        var returnTypeName = KotlinTypesUtils.javaToKotlinTypeName(objectTypeName, executableElement.returnType.asTypeName())
+        val returnTypeName = KotlinTypesUtils.javaToKotlinTypeName(objectTypeName, executableElement.returnType.asTypeName())
         debug("returnTypeName = $returnTypeName")
 
         val hasReturn: Boolean = !TypeNamesUtils.isTypeNameUnit(returnTypeName)

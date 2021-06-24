@@ -14,7 +14,7 @@ class TypeNamesUtils {
             return getUnitTypeName() == typeName
         }
 
-        fun getArrayTypeName(typeName: TypeName): TypeName {
+        fun getArrayTypeName(typeName: TypeName): ClassName {
             return ClassName("kotlin", "Array")
         }
 
@@ -396,8 +396,28 @@ class TypeNamesUtils {
             return ClassName("java.lang", "Long")
         }
 
+        fun getJavaShortTypeName(): ClassName {
+            return ClassName("java.lang", "Short")
+        }
+
         fun getJavaIntegerTypeName(): ClassName {
             return ClassName("java.lang", "Integer")
+        }
+
+        fun getJavaFloatTypeName(): ClassName {
+            return ClassName("java.lang", "Float")
+        }
+
+        fun getJavaDoubleTypeName(): ClassName {
+            return ClassName("java.lang", "Double")
+        }
+
+        fun getJavaBooleanTypeName(): ClassName {
+            return ClassName("java.lang", "Boolean")
+        }
+
+        fun getJavaByteTypeName(): ClassName {
+            return ClassName("java.lang", "Byte")
         }
 
         fun getJavaStringTypeName(): ClassName {
@@ -408,20 +428,32 @@ class TypeNamesUtils {
             return ClassName("kotlin", "Long")
         }
 
+        fun getShortTypeName(): ClassName {
+            return ClassName("kotlin", "Short")
+        }
+
         fun getIntegerTypeName(): ClassName {
             return ClassName("kotlin", "Int")
         }
 
-        fun getStringTypeName(): ClassName {
-            return ClassName("kotlin", "String")
+        fun getFloatTypeName(): ClassName {
+            return ClassName("kotlin", "Float")
+        }
+
+        fun getDoubleTypeName(): ClassName {
+            return ClassName("kotlin", "Double")
+        }
+
+        fun getByteTypeName(): ClassName {
+            return ClassName("kotlin", "Byte")
         }
 
         fun getBooleanTypeName(): ClassName {
             return ClassName("kotlin", "Boolean")
         }
 
-        fun getFloatTypeName(): ClassName {
-            return ClassName("kotlin", "Float")
+        fun getStringTypeName(): ClassName {
+            return ClassName("kotlin", "String")
         }
 
         fun getLoggerTypeName(): ClassName {
@@ -429,11 +461,11 @@ class TypeNamesUtils {
         }
 
         fun javaToKotlinTypeName(origTypeName: TypeName): TypeName {
-            val javaString = TypeNamesUtils.getJavaStringTypeName()
+            val javaString = getJavaStringTypeName()
 
             when (origTypeName) {
                 javaString -> {
-                    return TypeNamesUtils.getStringTypeName()
+                    return getStringTypeName()
                 }
             }
 
