@@ -89,14 +89,14 @@ class ViewModelProcessor : BaseProcessor() {
             return null
         }
 
-        var typeName = if (group.contains(".")) {
+        val typeName = if (group.contains(".")) {
              group.split(".").last()
         } else {
             group
         }
 
         val generatedClassName = GeneratedNames.getViewModelName(typeName)
-        var packageName = processingEnv.elementUtils.getPackageOf(elements[0]).toString()
+        val packageName = processingEnv.elementUtils.getPackageOf(elements[0]).toString()
 
         val viewModelPackageName =
                 GeneratedNames.getViewModelPackageName(packageName)
@@ -121,7 +121,7 @@ class ViewModelProcessor : BaseProcessor() {
                                              classBuilder: TypeSpec.Builder,
                                              daoExtElements: Map<ClassName, TypeElement>) {
         val typeName = element.simpleName.toString()
-        var packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
         debug("typeName = $typeName, packageName = $packageName")
 
         val roomCompanion = element.getAnnotation(RoomCompanion::class.java)
@@ -150,7 +150,8 @@ class ViewModelProcessor : BaseProcessor() {
         val objectsVariableName = GeneratedNames.getObjectsVariableName(typeName)
 
         val `object` = ClassName(packageName, typeName)
-        val repo = ClassName(repoPackageName, repoName)
+        val repo = AnnotationsUtils.getClassValueFromAnnotation(
+            element, "repository") ?: ClassName(repoPackageName, repoName)
         val listOfObjects = TypeNamesUtils.getListOfTypeName(`object`)
         val liveDataOfListOfObjects = TypeNamesUtils.getLiveDataOfListOfObjectTypeName(`object`)
         val liveDataOfPagedListOfObjects = TypeNamesUtils.getLiveDataOfPagedListOfObjectsTypeName(`object`)

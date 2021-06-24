@@ -7,6 +7,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.dailystudio.devbricksx.annotations.OverrideProperty;
 import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.Constants;
@@ -141,6 +142,11 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
 
                 if (varElement.getAnnotation(Ignore.class) != null) {
                     warn("skip [Ignore] field ...");
+                    continue;
+                }
+
+                if (varElement.getAnnotation(OverrideProperty.class) != null) {
+                    warn("skip [OverrideProperty] field ...");
                     continue;
                 }
 

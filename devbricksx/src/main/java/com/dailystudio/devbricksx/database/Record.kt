@@ -40,7 +40,7 @@ open class SelectableRecord(id: Int = 0) : Record(id), SelectableListItem {
 
 @RoomCompanion(primaryKeys = ["id"],
     converters = [DateConverter::class])
-open class StringIdRecord(@JvmField val id: String) {
+open class StringIdRecord(@JvmField open val id: String) {
     @JvmField var created: Date? = null
     @JvmField var lastModified: Date? = null
 

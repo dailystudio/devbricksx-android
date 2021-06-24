@@ -9,6 +9,7 @@ import androidx.room.Query
 import coil.load
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.database.DateConverter
+import com.dailystudio.devbricksx.database.StringIdRecord
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
@@ -37,16 +38,14 @@ import java.util.*
     converters = [DateConverter::class],
     database = "unsplash"
 )
-class PhotoItem(
-    @JvmField val id: String,
+data class PhotoItem(@JvmField @OverrideProperty override val id: String,
     @JvmField var cachedIndex: String,
-    @JvmField val created: Date,
-    @JvmField val lastModified: Date,
     @JvmField val author: String,
     @JvmField val description: String?,
     @JvmField val thumbnailUrl: String,
     @JvmField val downloadUrl: String
-) {
+): StringIdRecord(id) {
+
     companion object {
         fun fromUnsplashPhoto(photo: Photo): PhotoItem {
             val iso8601: DateFormat =
@@ -74,14 +73,17 @@ class PhotoItem(
                 Date(System.currentTimeMillis())
             }
 
-            return PhotoItem(photo.id,
+            return PhotoItem(
+                photo.id,
                 "0.0",
-                created,
-                lastModified,
                 photo.user.name,
                 photo.description,
                 photo.urls.regular,
-                photo.urls.full)
+                photo.urls.full
+            ).apply {
+                this.created = created
+                this.lastModified = lastModified
+            }
         }
 
     }
