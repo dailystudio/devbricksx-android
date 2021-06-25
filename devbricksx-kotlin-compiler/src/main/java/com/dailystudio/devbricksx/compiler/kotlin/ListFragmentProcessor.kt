@@ -114,7 +114,7 @@ open class ListFragmentProcessor : AbsListFragmentProcessor() {
         val methodOnCreateLayoutManagerBuilder = FunSpec.builder("onCreateLayoutManager")
                 .addModifiers(KModifier.PUBLIC)
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(layoutManager)
+                .returns(layoutManager.copy(nullable = true))
         if (isGradLayout) {
             methodOnCreateLayoutManagerBuilder.addStatement(
                     "return %T(context, %L)", gridLayoutManager, columns

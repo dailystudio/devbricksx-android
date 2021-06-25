@@ -37,7 +37,11 @@ abstract class AbsRecyclerViewFragment<Item, ListData, ListDataSource, Adapter>
         adapter?.setOnSelectionChangedListener(selectionClickListener)
 
         adapterView?.adapter = adapter
-        adapterView?.layoutManager = onCreateLayoutManager()
+
+        val layoutManager = onCreateLayoutManager()
+        if (layoutManager != null) {
+            adapterView?.layoutManager = layoutManager
+        }
     }
 
     override fun onDestroy() {
@@ -70,7 +74,7 @@ abstract class AbsRecyclerViewFragment<Item, ListData, ListDataSource, Adapter>
     protected open fun onSelectionChanged(selectedItems: List<Item>) {
     }
 
-    protected abstract fun onCreateLayoutManager(): RecyclerView.LayoutManager
+    protected abstract fun onCreateLayoutManager(): RecyclerView.LayoutManager?
 
     private val itemClickListener: OnItemClickListener<Item> = object : OnItemClickListener<Item> {
 
