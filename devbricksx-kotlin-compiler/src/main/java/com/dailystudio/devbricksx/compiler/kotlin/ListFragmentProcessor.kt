@@ -49,7 +49,7 @@ open class ListFragmentProcessor : AbsListFragmentProcessor() {
 
         return ListFragmentMethodBuilderOptions(
                 layout, layoutByName,
-                "fragment_recycler_view", "fragment_recycler_view_compat",
+                "fragment_recycler_view", "fragment_recycler_view_compact",
                 fillParent,
                 dataSource, paged, pageSize,
                 isGradLayout, columns)
