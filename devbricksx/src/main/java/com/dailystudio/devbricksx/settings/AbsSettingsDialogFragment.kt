@@ -8,10 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDialogFragment
 import com.dailystudio.devbricksx.R
+import com.dailystudio.devbricksx.fragment.DevBricksDialogFragment
 
-abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
+abstract class AbsSettingsDialogFragment: DevBricksDialogFragment() {
 
     private var settingsView: SettingsView? = null
 
@@ -20,6 +20,21 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
 
         val dialogView: View = LayoutInflater.from(context).inflate(
                 R.layout.fragment_settings_dialog, null)
+
+        setCustomizedView(dialogView)
+
+        val builder = AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setPositiveButton(android.R.string.ok
+                ) { _, _ -> }
+
+        return builder.create()
+    }
+
+    override fun setupCustomizedView(view: View?) {
+        super.setupCustomizedView(view)
+
+        val dialogView = view ?: return
 
         val thumbView: ImageView? = dialogView.findViewById(R.id.settings_dialog_thumb)
         if (thumbView != null) {
@@ -34,7 +49,7 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
         }
 
         settingsView = dialogView.findViewById(
-                R.id.settings_view)
+            R.id.settings_view)
 
         val divider: View? = dialogView.findViewById(R.id.settings_divider)
         divider?.visibility = if (shouldDisplayDivider()) {
@@ -44,13 +59,6 @@ abstract class AbsSettingsDialogFragment: AppCompatDialogFragment() {
         }
 
         reloadSettings(requireContext())
-
-        val builder = AlertDialog.Builder(context)
-                .setView(dialogView)
-                .setPositiveButton(android.R.string.ok
-                ) { _, _ -> }
-
-        return builder.create()
     }
 
     protected open fun getDialogThumbImageDrawable(): Drawable? {
