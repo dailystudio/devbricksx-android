@@ -28,7 +28,7 @@ dependencies {
 #### Latest version
 
 ```groovy
-devbricksx_version = "1.5.0"
+devbricksx_version = "1.5.1"
 ```
 
 Synchronizing the project configurations, and then let's move to the codes.
