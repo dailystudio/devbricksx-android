@@ -8,6 +8,7 @@ import com.squareup.kotlinpoet.*
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
@@ -57,9 +58,10 @@ class InMemoryRepositoryProcessor : BaseProcessor() {
                 GeneratedNames.getManagerName(typeName))
 
         val classBuilder = TypeSpec.classBuilder(generatedClassName)
-                .superclass(repositoryTypeName)
-                .addSuperclassConstructorParameter("%T", managerTypeName)
-                .addSuperclassConstructorParameter("%L", pageSize)
+            .superclass(repositoryTypeName)
+            .addSuperclassConstructorParameter("%T", managerTypeName)
+            .addSuperclassConstructorParameter("%L", pageSize)
+            .addModifiers(KModifier.OPEN)
 
         return GeneratedResult(
                 GeneratedNames.getRepositoryPackageName(packageName),
