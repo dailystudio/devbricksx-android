@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.database
 
-class DoubleArrayConverter: AbsTypedArrayConverter<Double>() {
+open class DoubleArrayConverter: AbsTypedArrayConverter<Double>() {
 
     override fun createTypedArray(size: Int): Array<Double> {
         return Array(size) { .0 }

@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.database
 
-class LongArrayConverter: AbsTypedArrayConverter<Long>() {
+open class LongArrayConverter: AbsTypedArrayConverter<Long>() {
 
     override fun createTypedArray(size: Int): Array<Long> {
         return Array(size) { 0L }

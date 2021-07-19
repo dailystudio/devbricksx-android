@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.database
 
-class ByteArrayConverter: AbsTypedArrayConverter<Byte>() {
+open class ByteArrayConverter: AbsTypedArrayConverter<Byte>() {
 
     override fun createTypedArray(size: Int): Array<Byte> {
         return Array(size) { 0 }

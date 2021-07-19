@@ -12,7 +12,7 @@ abstract class AbsTypedArrayConverter<T> {
     }
 
     @TypeConverter
-    fun stringToArray(str: String?): Array<T>? {
+    open fun stringToArray(str: String?): Array<T>? {
         val listOfStrings = str?.split(",")?.map {
             it.trim()
         } ?: return null
@@ -26,7 +26,7 @@ abstract class AbsTypedArrayConverter<T> {
     }
 
     @TypeConverter
-    fun arrayToString(array: Array<T>?): String? {
+    open fun arrayToString(array: Array<T>?): String? {
         if (array == null) {
             return null
         }
