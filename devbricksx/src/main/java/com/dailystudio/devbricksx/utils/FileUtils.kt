@@ -284,19 +284,22 @@ object FileUtils {
     }
 
     fun saveToFile(bytes: ByteArray?, file: File): Boolean {
+        return saveToFile(bytes, FileOutputStream(file))
+    }
+
+    fun saveToFile(bytes: ByteArray?, out: OutputStream): Boolean {
         if (bytes == null) {
             return false
         }
 
         return try {
-            val out = FileOutputStream(file)
             out.write(bytes)
             out.flush()
             out.close()
 
             true
         } catch (e: IOException) {
-            Logger.debug("save bytes to file [$file] failure: $e")
+            Logger.debug("save bytes to output stream failure: $e")
 
             false
         }

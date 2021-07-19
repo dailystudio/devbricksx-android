@@ -1,34 +1,13 @@
 package com.dailystudio.devbricksx.database
 
-import androidx.room.TypeConverter
+class LongArrayConverter: AbsTypedArrayConverter<Long>() {
 
-class LongArrayConverter {
-
-    @TypeConverter
-    fun stringToArray(str: String?): Array<Long>? {
-        val listOfStrings = str?.split(",") ?: return null
-
-        val items = mutableListOf<Long>()
-        for (s in listOfStrings) {
-            items.add(s.toLong())
-        }
-
-        return items.toTypedArray()
+    override fun createTypedArray(size: Int): Array<Long> {
+        return Array(size) { 0L }
     }
 
-    @TypeConverter
-    fun arrayToString(array: Array<Long>?): String? {
-        if (array == null) {
-            return null
-        }
-
-        return buildString {
-            for ((i, item) in array.withIndex()) {
-                append(item)
-                if (i < array.size - 1) {
-                    append(", ")
-                }
-            }
-        }
+    override fun stringToType(str: String): Long {
+        return str.toLong()
     }
+
 }

@@ -1,34 +1,13 @@
 package com.dailystudio.devbricksx.database
 
-import androidx.room.TypeConverter
+class ByteArrayConverter: AbsTypedArrayConverter<Byte>() {
 
-class ByteArrayConverter {
-
-    @TypeConverter
-    fun stringToArray(str: String?): Array<Byte>? {
-        val listOfStrings = str?.split(",") ?: return null
-
-        val items = mutableListOf<Byte>()
-        for (s in listOfStrings) {
-            items.add(s.toByte())
-        }
-
-        return items.toTypedArray()
+    override fun createTypedArray(size: Int): Array<Byte> {
+        return Array(size) { 0 }
     }
 
-    @TypeConverter
-    fun arrayToString(array: Array<Byte>?): String? {
-        if (array == null) {
-            return null
-        }
-
-        return buildString {
-            for ((i, item) in array.withIndex()) {
-                append(item)
-                if (i < array.size - 1) {
-                    append(", ")
-                }
-            }
-        }
+    override fun stringToType(str: String): Byte {
+        return str.toByte()
     }
+
 }

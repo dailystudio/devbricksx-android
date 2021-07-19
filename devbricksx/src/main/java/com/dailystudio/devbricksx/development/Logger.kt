@@ -35,7 +35,8 @@ object Logger {
         var logToken: LogToken? = token
         val compose = String.format(
             DEBUG_MSG_TEMPL,
-            getCallingMethodName(2), format
+            getCallingMethodName(2),
+            format.replace("%", "%%")
         )
 
         if (logToken == null) {
@@ -135,8 +136,7 @@ object Logger {
 
     private fun getCallingSimpleClassName(traceLevel: Int): String {
         val className = getCallingClassName(traceLevel + 1) ?: return UNKNOWN_CLASS
-        var kls: Class<*>?
-        kls = try {
+        val kls: Class<*>? = try {
             Class.forName(className)
         } catch (e: ClassNotFoundException) {
             null
