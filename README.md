@@ -43,7 +43,7 @@ dependencies {
 #### Latest version
 
 ```groovy
-devbricksx_version = "1.5.3"
+devbricksx_version = "1.5.4"
 ```
 
 ### Step 2: Application initialization (Optional)
