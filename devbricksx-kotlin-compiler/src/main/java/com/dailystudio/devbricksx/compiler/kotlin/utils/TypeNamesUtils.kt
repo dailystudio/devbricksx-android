@@ -102,6 +102,14 @@ class TypeNamesUtils {
             return ClassName("androidx.lifecycle", "lifecycleScope")
         }
 
+        fun getRepeatOnLifecycleTypeName(): ClassName {
+            return ClassName("androidx.lifecycle", "repeatOnLifecycle")
+        }
+
+        fun getLifecycleStateTypeName(): ClassName {
+            return ClassName("androidx.lifecycle.Lifecycle", "State")
+        }
+
         fun getCollectLatestTypeName(): ClassName {
             return ClassName("kotlinx.coroutines.flow", "collectLatest")
         }
@@ -144,6 +152,10 @@ class TypeNamesUtils {
 
         fun getLaunchMemberName() : MemberName {
             return MemberName("kotlinx.coroutines", "launch")
+        }
+
+        fun getLaunchClassName() : ClassName {
+            return ClassName("kotlinx.coroutines", "launch")
         }
 
         fun getJobTypeName() : ClassName {

@@ -16,7 +16,7 @@ import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 @ViewModel
 @Adapter(viewHolder = UserViewHolder::class,
         paged = true)
-@ListFragment
+@ListFragment(dataSource = DataSource.Flow)
 data class User(@JvmField val uid: Int,
                 @JvmField val firstName: String?,
                 @JvmField val lastName: String?)

@@ -146,15 +146,32 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
 
         when (dataSource) {
             DataSource.Flow -> {
+                val lifecycleState = TypeNamesUtils.getLifecycleStateTypeName()
+                val job = TypeNamesUtils.getJobTypeName().copy(nullable = true)
+                val repeatOnLifecycle = TypeNamesUtils.getRepeatOnLifecycleTypeName()
+                val launch = TypeNamesUtils.getLaunchClassName()
+
+                val collectJobBuilder = PropertySpec.builder("collectJob", job)
+                    .addModifiers(KModifier.PRIVATE)
+                    .mutable()
+                    .initializer("null")
+
+                classBuilder.addProperty(collectJobBuilder.build())
+
                 methodOnBindDataBuilder.addCode(
-                        "%T.launchWhenCreated {\n" +
-                                "   dataSource.%T { listOfItems ->\n" +
-                                "       adapter?.let {\n" +
-                                "           submitData(it, listOfItems)\n" +
-                                "       }\n" +
-                                "   }\n" +
-                                "}",
-                        lifecycleScope, collectLatest
+                        "collectJob = %T.%T {\n" +
+                        "   lifecycle.%T(%T.RESUMED) {\n" +
+                        "       dataSource.%T { listOfItems ->\n" +
+                        "           adapter?.let {\n" +
+                        "               submitData(it, listOfItems)\n" +
+                        "           }\n" +
+                        "       }\n" +
+                        "   }\n" +
+                        "}",
+                    lifecycleScope,
+                    launch,
+                    repeatOnLifecycle,
+                    lifecycleState, collectLatest
                 )
             }
 
