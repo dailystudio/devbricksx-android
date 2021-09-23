@@ -159,6 +159,7 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                 classBuilder.addProperty(collectJobBuilder.build())
 
                 methodOnBindDataBuilder.addCode(
+                        "collectJob?.cancel()\n" +
                         "collectJob = %T.%T {\n" +
                         "   lifecycle.%T(%T.RESUMED) {\n" +
                         "       dataSource.%T { listOfItems ->\n" +
