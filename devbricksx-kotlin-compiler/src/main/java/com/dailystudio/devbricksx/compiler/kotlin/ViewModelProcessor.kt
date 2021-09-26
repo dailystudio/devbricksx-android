@@ -188,7 +188,7 @@ class ViewModelProcessor : BaseProcessor() {
                     "   %N = %T()\n" +
                     "   %N = %N.%N\n" +
                     "   %N = %N.%N\n" +
-                    "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
+                    "   %N = %N.%N.%T(%T, %T.Eagerly, 1)\n",
                     repoVariableName, repo,
                     allName, repoVariableName, repoAllName,
                     allPagedName, repoVariableName, repoAllPagedName,
