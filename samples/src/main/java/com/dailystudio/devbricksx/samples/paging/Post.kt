@@ -32,7 +32,7 @@ interface SubredditRemoteKeyDaoExtension {
 
 }
 
-@ListFragment
+@ListFragment (dataSource = DataSource.Flow)
 @ViewModel
 @Adapter(viewHolder = RedditPostViewHolder::class,
         paged = true)

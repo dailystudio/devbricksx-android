@@ -11,7 +11,11 @@ import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
 import com.nostra13.universalimageloader.core.ImageLoader
 
-@ViewPagerFragment(useFragment = true, offscreenPageLimit = 2)
+@ViewPagerFragment(
+    useFragment = true,
+    offscreenPageLimit = 2,
+    dataSource = DataSource.Flow
+)
 @FragmentAdapter(pageFragment = ImageFragment::class)
 @ViewModel
 @DiffUtil

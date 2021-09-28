@@ -41,7 +41,7 @@ class UserViewHolder(itemView: View): AbsSingleLineViewHolder<User>(itemView) {
         return buildString {
             append(item.firstName)
             append(' ')
-            append(item.lastName?.toUpperCase())
+            append(item.lastName?.uppercase())
         }
     }
 

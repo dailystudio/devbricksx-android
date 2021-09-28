@@ -214,7 +214,9 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
 
         val observer = object: InMemoryObjectObserver {
             override fun onChanged() {
-                channel.offer(toList())
+                val data = toList()
+
+                channel.trySend(data)
             }
         }
 
@@ -290,11 +292,19 @@ class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
         private val manager: InMemoryObjectManager<*, Object>)
     : PagingSource<Int, Object>(), InMemoryObjectObserver {
 
+    companion object {
+        var DEBUG_PAGING_3 = false
+    }
+
     init {
         manager.addObserver(this)
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Object> {
+        if (DEBUG_PAGING_3) {
+            Logger.debug("[PG3] params: ${params.javaClass.simpleName}, [key: ${params.key}, loadSize: ${params.loadSize}]")
+        }
+
         val listOfObjects = manager.toList()
 
         val start = params.key ?: 0
@@ -307,7 +317,9 @@ class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
             end
         }
 
-        Logger.debug("start: $start, end: $end, [prev: $prevKey, next: $nextKey]")
+        if (DEBUG_PAGING_3) {
+            Logger.debug("[PG3] start: $start, end: $end, [prev: $prevKey, next: $nextKey]")
+        }
 
         return LoadResult.Page(
                 data = listOfObjects.subList(start, end),
@@ -321,7 +333,32 @@ class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
     }
 
     override fun getRefreshKey(state: PagingState<Int, Object>): Int? {
-        return state.anchorPosition
+        if (DEBUG_PAGING_3) {
+            Logger.debug("[PG3]: state.pages = ${state.pages.size}")
+            Logger.debug("[PG3]: state.anchorPosition = ${state.anchorPosition}")
+            Logger.debug("[PG3]: state.config.initialLoadSize = ${state.config.initialLoadSize}")
+            Logger.debug("[PG3]: state.config.jumpThreshold = ${state.config.jumpThreshold}")
+            Logger.debug("[PG3]: state.config.anchorPosition = ${state.config.maxSize}")
+            Logger.debug("[PG3]: state.config.pageSize = ${state.config.pageSize}")
+            Logger.debug("[PG3]: state.config.prefetchDistance = ${state.config.prefetchDistance}")
+            Logger.debug("[PG3]: state.config.enablePlaceholders = ${state.config.enablePlaceholders}")
+        }
+        val refreshKey = state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            if (DEBUG_PAGING_3) {
+                Logger.debug("[PG3]: anchorPage.prevKey = ${anchorPage?.prevKey}")
+                Logger.debug("[PG3]: anchorPage.nextKey = ${anchorPage?.nextKey}")
+                Logger.debug("[PG3]: anchorPage.data.size = ${anchorPage?.data?.size}")
+            }
+
+            anchorPage?.prevKey?.plus(state.config.pageSize) ?: anchorPage?.nextKey?.minus(anchorPage.data.size)
+        }
+
+        if (DEBUG_PAGING_3) {
+            Logger.debug("[PG3]: refreshKey = $refreshKey")
+        }
+
+        return refreshKey
     }
 
 }

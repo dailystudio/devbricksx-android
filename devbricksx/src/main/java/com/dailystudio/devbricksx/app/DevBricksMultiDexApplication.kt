@@ -54,8 +54,8 @@ open class DevBricksMultiDexApplication : MultiDexApplication() {
     }
 
     override fun attachBaseContext(base: Context?) {
-        MultiDex.install(base)
         super.attachBaseContext(base)
+        MultiDex.install(base)
     }
 
 }

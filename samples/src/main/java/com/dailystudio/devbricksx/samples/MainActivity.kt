@@ -29,7 +29,6 @@ class MainActivity : DevBricksActivity() {
 
         setContentView(R.layout.activity_main)
 
-        Logger.debug("100% user are using this library")
         generateCases()
     }
 

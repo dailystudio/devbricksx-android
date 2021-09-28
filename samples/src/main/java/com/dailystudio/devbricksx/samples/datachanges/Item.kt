@@ -9,7 +9,11 @@ import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 @Adapter(viewHolder = ItemViewHolder::class,
         viewType = ViewType.SingleLine,
 )
-@ListFragment(gridLayout = true, columns = 2)
+@ListFragment(
+    gridLayout = true,
+    columns = 2,
+    dataSource = DataSource.Flow
+)
 @DiffUtil
 @ViewModel
 @InMemoryRepository(key = String::class)

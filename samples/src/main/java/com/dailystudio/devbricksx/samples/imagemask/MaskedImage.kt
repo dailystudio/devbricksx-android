@@ -8,7 +8,7 @@ import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsPageViewHolder
 
-@ViewPagerFragment
+@ViewPagerFragment (dataSource = DataSource.Flow)
 @Adapter(viewHolder = ImageResultViewHolder::class,
         viewType = ViewType.Page,
         paged = false

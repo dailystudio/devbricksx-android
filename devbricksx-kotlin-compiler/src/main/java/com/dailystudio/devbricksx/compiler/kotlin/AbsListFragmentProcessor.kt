@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.*
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
+import kotlin.math.log
 
 open class BuildOptions(val layout: Int,
                         val layoutByName: String = "",
@@ -150,6 +151,7 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                 val job = TypeNamesUtils.getJobTypeName().copy(nullable = true)
                 val repeatOnLifecycle = TypeNamesUtils.getRepeatOnLifecycleTypeName()
                 val launch = TypeNamesUtils.getLaunchClassName()
+                val logger = TypeNamesUtils.getLoggerTypeName()
 
                 val collectJobBuilder = PropertySpec.builder("collectJob", job)
                     .addModifiers(KModifier.PRIVATE)
@@ -159,20 +161,27 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                 classBuilder.addProperty(collectJobBuilder.build())
 
                 methodOnBindDataBuilder.addCode(
+                        "%T.debug(\"collectJob to cancel: \${collectJob}\")\n" +
                         "collectJob?.cancel()\n" +
                         "collectJob = %T.%T {\n" +
                         "   lifecycle.%T(%T.RESUMED) {\n" +
+                        "       %T.debug(\"repeat collect on flow [\$dataSource]\")\n" +
                         "       dataSource.%T { listOfItems ->\n" +
+                        "           %T.debug(\"collected new data for flow [\$dataSource]: \${listOfItems}\")\n" +
                         "           adapter?.let {\n" +
                         "               submitData(it, listOfItems)\n" +
                         "           }\n" +
                         "       }\n" +
                         "   }\n" +
                         "}",
+                    logger,
                     lifecycleScope,
                     launch,
                     repeatOnLifecycle,
-                    lifecycleState, collectLatest
+                    lifecycleState,
+                    logger,
+                    collectLatest,
+                    logger
                 )
             }
 

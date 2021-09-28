@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.samples.apps
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.TextView
@@ -10,9 +9,9 @@ import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
-@ListFragment(gridLayout = true)
+@ListFragment(gridLayout = true, dataSource = DataSource.Flow)
 @Adapter(viewHolder = TestPackageViewHolder::class,
-        viewType = ViewType.SingleLine)
+    viewType = ViewType.SingleLine)
 @ViewModel
 @InMemoryRepository(key = String::class)
 @InMemoryManager(key = String::class)

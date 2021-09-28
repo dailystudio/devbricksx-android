@@ -22,7 +22,10 @@ import java.lang.reflect.Type
 @DiffUtil
 @Adapter(viewHolder = UseCaseViewHolder::class)
 @ViewModel
-@ListFragment(layout = R.layout.fragment_use_case)
+@ListFragment(
+    layout = R.layout.fragment_use_case,
+    dataSource = DataSource.Flow
+)
 data class UseCase(val name: String,
                    val `package`: String,
                    val title: String,

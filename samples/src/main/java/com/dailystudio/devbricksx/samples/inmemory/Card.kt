@@ -13,7 +13,7 @@ import java.util.*
 @Adapter(viewHolder = CardViewHolder::class,
         paged = true,
         viewType = ViewType.CardInformative)
-@ListFragment(gridLayout = true)
+@ListFragment(gridLayout = true, dataSource = DataSource.LiveData)
 @DiffUtil
 @InMemoryRepository(key = Int::class)
 @InMemoryManager(key = Int::class)

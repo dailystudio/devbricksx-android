@@ -6,7 +6,7 @@ import android.graphics.PointF
 import com.dailystudio.devbricksx.annotations.*
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 
-@ViewPagerFragment(useFragment = true)
+@ViewPagerFragment(useFragment = true, dataSource = DataSource.Flow)
 @FragmentAdapter(pageFragment = ImageBundleFragment::class)
 @DiffUtil
 @ViewModel

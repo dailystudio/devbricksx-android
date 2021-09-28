@@ -16,7 +16,7 @@ enum class MessageType {
     Receive
 }
 
-@ListFragment
+@ListFragment (dataSource = DataSource.Flow)
 @ViewModel
 @Adapter(
     layout = R.layout.layout_chat_record,
