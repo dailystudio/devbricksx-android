@@ -15,6 +15,7 @@ import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
+import kotlinx.coroutines.flow.Flow
 
 class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
 
@@ -28,20 +29,24 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
             .get(PhotoItemViewModelExt::class.java)
     }
 
+    override fun setupViews(fragmentView: View) {
+        super.setupViews(fragmentView)
+
+        disableItemChangeDuration()
+    }
+
     @ExperimentalPagingApi
-    override fun getDataSource(): LiveData<PagingData<PhotoItem>> {
+    override fun getDataSource(): Flow<PagingData<PhotoItem>> {
         val query = viewModel.photoQuery.value ?: Constants.QUERY_ALL
         lastQuery = query
 
-        val pager = Pager(
+        return Pager(
             PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
             remoteMediator = PhotoItemMediator(query)) {
             viewModel.listPhotos()
-        }
-
-        Logger.debug("[MED] request paging: query = $query, pager = $pager")
-
-        return pager.flow.asLiveData()
+        }.also {
+            Logger.debug("[MED] request paging: query = $query, pager = $it")
+        }.flow
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

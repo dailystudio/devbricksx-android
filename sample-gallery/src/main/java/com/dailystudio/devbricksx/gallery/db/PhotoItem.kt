@@ -23,7 +23,8 @@ import java.util.*
 
 @ListFragment(
     gridLayout = true,
-    columns = 2
+    columns = 2,
+    dataSource = DataSource.Flow
 )
 @ViewModel
 @Adapter(
