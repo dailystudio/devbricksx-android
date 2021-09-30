@@ -50,6 +50,14 @@ abstract class AbsRecyclerViewFragment<Item, ListData, ListDataSource, Adapter>
         adapter?.unregisterAdapterDataObserver(adapterObserver)
     }
 
+    fun enableItemChangeDuration(duration: Long = 250L) {
+        adapterView?.itemAnimator?.changeDuration = duration
+    }
+
+    fun disableItemChangeDuration() {
+        adapterView?.itemAnimator?.changeDuration = 0
+    }
+
     fun setRecyclerViewTouchEnabled(enabled: Boolean) {
         if (!enabled) {
             adapterView?.addOnItemTouchListener(itemTouchListener)

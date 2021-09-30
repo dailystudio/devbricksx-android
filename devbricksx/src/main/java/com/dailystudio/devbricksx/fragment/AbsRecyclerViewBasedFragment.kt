@@ -20,7 +20,7 @@ abstract class AbsRecyclerViewBasedFragment<Item, ListData, ListDataSource, Adap
     protected open fun setupViews(fragmentView: View) {
     }
 
-    protected open fun reload() {
+    open fun reload() {
         bindData()
     }
 
