@@ -57,6 +57,7 @@ class AdapterProcessor : BaseProcessor() {
                 ?: return null
 
         val generatedClassName = GeneratedNames.getAdapterName(typeName)
+        val propDiffCallback = "diffCallback"
 
         val objectTypeName = ClassName(packageName, typeName)
         val pagedListAdapter = TypeNamesUtils.getAbsPageListAdapterOfTypeName(objectTypeName, viewHolder)
@@ -73,8 +74,13 @@ class AdapterProcessor : BaseProcessor() {
                 } else {
                     listAdapter
                 })
-                .addSuperclassConstructorParameter("DIFF_CALLBACK")
-                .addModifiers(KModifier.OPEN)
+            .primaryConstructor(FunSpec.constructorBuilder()
+                .addParameter(ParameterSpec.builder(propDiffCallback, itemCallback)
+                    .defaultValue("DIFF_CALLBACK")
+                    .build())
+                .build())
+            .addSuperclassConstructorParameter(propDiffCallback)
+            .addModifiers(KModifier.OPEN)
 
         val classCompanionBuilder = TypeSpec.companionObjectBuilder();
 
