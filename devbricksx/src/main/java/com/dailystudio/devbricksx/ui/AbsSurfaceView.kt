@@ -83,7 +83,9 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
             return
         }
 
-        drawingActive = false
+        synchronized(drawingActive) {
+            drawingActive = false
+        }
 
         drawingService?.let {
             try {
@@ -105,7 +107,6 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
         var canvas: Canvas? = null
 
         while (true) {
-
             synchronized(drawingActive) {
                 if (!drawingActive) {
                     return
@@ -128,7 +129,12 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
                 }
             } finally {
                 canvas?.let {
-                    holder.unlockCanvasAndPost(canvas)
+                    try {
+
+                        holder.unlockCanvasAndPost(canvas)
+                    } catch (e: Exception) {
+                        Logger.error("failed to unlock surface: $e")
+                    }
                 }
             }
 

@@ -136,7 +136,7 @@ open class ViewPagerFragmentProcessor : AbsListFragmentProcessor() {
                 .returns(adapter)
 
         if (useFragment) {
-            methodOnCreateAdapterBuilder.addStatement("return %T(parentFragmentManager, lifecycle)", adapter)
+            methodOnCreateAdapterBuilder.addStatement("return %T(childFragmentManager, lifecycle)", adapter)
         } else {
             methodOnCreateAdapterBuilder.addStatement("return %T()", adapter)
         }
