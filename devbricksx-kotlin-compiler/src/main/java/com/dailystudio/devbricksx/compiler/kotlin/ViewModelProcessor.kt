@@ -200,7 +200,7 @@ class ViewModelProcessor : BaseProcessor() {
                     "   %N = %T(%N)\n" +
                     "   %N = %N.%N\n" +
                     "   %N = %N.%N\n" +
-                    "   %N = %N.%N.%T(%T, %T.Eagerly)\n",
+                    "   %N = %N.%N.%T(%T, %T.Eagerly, 1)\n",
                     daoVariableName, database, daoVariableName,
                     repoVariableName, repo, daoVariableName,
                     allName, repoVariableName, repoAllName,
