@@ -8,9 +8,9 @@ import java.util.*
 @RoomCompanion(primaryKeys = ["id"],
         autoGenerate = true,
         converters = [DateConverter::class])
-open class Record(@JvmField val id: Int = 0) {
-    @JvmField var created: Date? = null
-    @JvmField var lastModified: Date? = null
+open class Record(val id: Int = 0) {
+    var created: Date? = null
+    var lastModified: Date? = null
 
     override fun toString(): String {
         return buildString {
@@ -40,9 +40,9 @@ open class SelectableRecord(id: Int = 0) : Record(id), SelectableListItem {
 
 @RoomCompanion(primaryKeys = ["id"],
     converters = [DateConverter::class])
-open class StringIdRecord(@JvmField open val id: String) {
-    @JvmField var created: Date? = null
-    @JvmField var lastModified: Date? = null
+open class StringIdRecord(open val id: String) {
+    var created: Date? = null
+    var lastModified: Date? = null
 
     override fun toString(): String {
         return buildString {

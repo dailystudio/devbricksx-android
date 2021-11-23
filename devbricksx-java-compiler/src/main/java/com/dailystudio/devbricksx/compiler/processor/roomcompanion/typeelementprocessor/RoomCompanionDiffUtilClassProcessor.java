@@ -6,6 +6,7 @@ import com.dailystudio.devbricksx.annotations.RoomCompanion;
 import com.dailystudio.devbricksx.compiler.processor.AbsSingleTypeElementProcessor;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.GeneratedNames;
 import com.dailystudio.devbricksx.compiler.processor.roomcompanion.TypeNamesUtils;
+import com.dailystudio.devbricksx.compiler.utils.NameUtils;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
@@ -161,35 +162,36 @@ public class RoomCompanionDiffUtilClassProcessor extends AbsSingleTypeElementPro
             fieldType = fields.get(fieldName);
 
             if (fieldType.getKind().isPrimitive()) {
-                builder.append("oldObject.");
-                builder.append(fieldName);
-                builder.append(" == ");
-                builder.append("newObject.");
-                builder.append(fieldName);
+                builder.append("oldObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("() == ");
+                builder.append("newObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("()");
             } else {
                 builder.append("(");
-                builder.append("oldObject.");
-                builder.append(fieldName);
-                builder.append(" == null");
+                builder.append("oldObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("() == null");
                 builder.append(" && ");
-                builder.append("newObject.");
-                builder.append(fieldName);
-                builder.append(" == null");
+                builder.append("newObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("() == null");
                 builder.append(" || ");
-                builder.append("oldObject.");
-                builder.append(fieldName);
-                builder.append(" != null");
+                builder.append("oldObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("() != null");
                 builder.append(" && ");
-                builder.append("newObject.");
-                builder.append(fieldName);
-                builder.append(" != null");
+                builder.append("newObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("() != null");
                 builder.append(" && ");
-                builder.append("oldObject.");
-                builder.append(fieldName);
-                builder.append(".equals(");
-                builder.append("newObject.");
-                builder.append(fieldName);
-                builder.append(")");
+                builder.append("oldObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("().equals(");
+                builder.append("newObject.get");
+                builder.append(NameUtils.capitalizeName(fieldName));
+                builder.append("())");
                 builder.append(")");
             }
 

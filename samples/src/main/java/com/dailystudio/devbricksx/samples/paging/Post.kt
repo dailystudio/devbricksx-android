@@ -16,10 +16,8 @@ import kotlinx.coroutines.flow.Flow
         extension = SubredditRemoteKeyDaoExtension::class,
         database = "reddit"
 )
-data class SubredditRemoteKey(
-        @JvmField val subreddit: String,
-        @JvmField val nextPageKey: String?
-)
+data class SubredditRemoteKey(val subreddit: String,
+                              val nextPageKey: String?)
 
 @DaoExtension(entity = SubredditRemoteKey::class)
 interface SubredditRemoteKeyDaoExtension {
@@ -42,18 +40,18 @@ interface SubredditRemoteKeyDaoExtension {
         database = "reddit"
 )
 data class RedditPost(
-        @JvmField val name: String,
-        @JvmField val title: String,
-        @JvmField val score: Int,
-        @JvmField val author: String,
-        @JvmField val subreddit: String,
-        @JvmField val num_comments: Int,
-        @JvmField val created: Long,
-        @JvmField val thumbnail: String?,
-        @JvmField val url: String?) {
+        val name: String,
+        val title: String,
+        val score: Int,
+        val author: String,
+        val subreddit: String,
+        val num_comments: Int,
+        val created: Long,
+        val thumbnail: String?,
+        val url: String?) {
     // to be consistent w/ changing backend order, we need to keep a data like this
 
-    @JvmField var indexInResponse: Int = -1
+    var indexInResponse: Int = -1
 
     override fun toString(): String {
         return buildString {

@@ -254,8 +254,8 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         }
 
         for (String fieldName: fieldsOutsideConstructor) {
-            methodCopyFieldsToObjectBuilder.addStatement("object.$N = this.$N",
-                    fieldName,
+            methodCopyFieldsToObjectBuilder.addStatement("object.set$N(this.$N)",
+                    NameUtils.capitalizeName(fieldName),
                     fieldName);
         }
 
@@ -280,9 +280,9 @@ public class RoomCompanionClassProcessor extends AbsSingleTypeElementProcessor {
         }
 
         for (String fieldName: fields) {
-            methodCopyFieldsFromObjectBuilder.addStatement("this.$N = object.$N",
+            methodCopyFieldsFromObjectBuilder.addStatement("this.$N = object.get$N()",
                     fieldName,
-                    fieldName);
+                    NameUtils.capitalizeName(fieldName));
         }
 
         classBuilder.addMethod(methodCopyFieldsFromObjectBuilder.build());

@@ -17,9 +17,9 @@ import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 @Adapter(viewHolder = UserViewHolder::class,
         paged = true)
 @ListFragment(dataSource = DataSource.Flow)
-data class User(@JvmField val uid: Int,
-                @JvmField val firstName: String?,
-                @JvmField val lastName: String?)
+data class User(val uid: Int,
+                val firstName: String?,
+                val lastName: String?)
 
 @DaoExtension(entity = User::class)
 interface UserDaoExtension {

@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.Flow
 
 open class RedditPostsListFragmentExt : RedditPostsListFragment() {
 
-  @ExperimentalPagingApi
-  override fun getDataSource(): Flow<PagingData<RedditPost>> {
-    val viewModel = ViewModelProvider(this).get(RedditPostViewModel::class.java)
-    return Pager(
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getDataSource(): Flow<PagingData<RedditPost>> {
+        val viewModel = ViewModelProvider(this).get(RedditPostViewModel::class.java)
+        return Pager(
             PagingConfig(/* pageSize = */ 20),
             remoteMediator = RedditRemoteMediator("androiddev")) {
-      viewModel.postsBySubreddit("androiddev")
-    }.flow
-  }
+            viewModel.postsBySubreddit("androiddev")
+        }.flow
+    }
 
 }
