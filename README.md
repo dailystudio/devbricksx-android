@@ -46,6 +46,25 @@ dependencies {
 devbricksx_version = "1.5.9"
 ```
 
+#### Compile options
+Add the following compile options in build.gradle of your application module.
+
+```groovy
+compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+
+kotlinOptions {
+    jvmTarget = "1.8"
+}
+```
+
+> IMPORTANT:
+>
+> After version **1.5.9**, you MUST add these compile options in your build script to use Java 1.8 binary code. And, REMOVE all the **@JvmField** in your codes.
+>
+
 ### Step 2: Application initialization (Optional)
 This step helps you to integrate parts of utilities automatically, such as Logging facilities. 
 
