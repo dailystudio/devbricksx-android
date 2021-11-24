@@ -42,7 +42,7 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
 
     }
 
-    @JvmField var name: String? = null
+    var name: String? = null
     @Ignore var notesCount: Int = 0
 
     override fun toString(): String {
@@ -90,9 +90,9 @@ class Note(id: Int = 0) : SelectableRecord(id) {
 
     }
 
-    @JvmField var notebook_id: Int = -1
-    @JvmField var title: String? = null
-    @JvmField var desc: String? = null
+    var notebook_id: Int = -1
+    var title: String? = null
+    var desc: String? = null
 
     override fun toString(): String {
         return buildString {

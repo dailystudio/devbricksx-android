@@ -39,12 +39,12 @@ import java.util.*
     converters = [DateConverter::class],
     database = "unsplash"
 )
-data class PhotoItem(@JvmField @OverrideProperty override val id: String,
-    @JvmField var cachedIndex: String,
-    @JvmField val author: String,
-    @JvmField val description: String?,
-    @JvmField val thumbnailUrl: String,
-    @JvmField val downloadUrl: String
+data class PhotoItem(@OverrideProperty override val id: String,
+    var cachedIndex: String,
+    val author: String,
+    val description: String?,
+    val thumbnailUrl: String,
+    val downloadUrl: String
 ): StringIdRecord(id) {
 
     companion object {
@@ -127,11 +127,11 @@ class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView
     database = "unsplash"
 )
 data class UnsplashPageLinks(
-    @JvmField val keyword: String,
-    @JvmField val first: String? = null,
-    @JvmField val prev: String? = null,
-    @JvmField val next: String? = null,
-    @JvmField val last: String? = null,
+    val keyword: String,
+    val first: String? = null,
+    val prev: String? = null,
+    val next: String? = null,
+    val last: String? = null,
 ) {
     companion object {
 

@@ -35,7 +35,7 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
         disableItemChangeDuration()
     }
 
-    @ExperimentalPagingApi
+    @OptIn(ExperimentalPagingApi::class)
     override fun getDataSource(): Flow<PagingData<PhotoItem>> {
         val query = viewModel.photoQuery.value ?: Constants.QUERY_ALL
         lastQuery = query
