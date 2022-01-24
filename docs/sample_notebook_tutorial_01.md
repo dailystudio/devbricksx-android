@@ -21,14 +21,14 @@ dependencies {
 
     kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
     kapt "cn.dailystudio:devbricksx-kotlin-compiler:$devbricksx_version"
-    kapt "androidx.room:room-compiler:2.3.0-beta03"
+    kapt "androidx.room:room-compiler:2.4.1"
 }
 ```
 
 #### Latest version
 
 ```groovy
-devbricksx_version = "1.5.9"
+devbricksx_version = "1.6.0"
 ```
 
 Synchronizing the project configurations, and then let's move to the codes.
