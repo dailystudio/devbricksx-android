@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.6.0'
+    ext.kotlin_version = '1.6.10'
     ext.nav_version = "2.3.1"
 
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -34,7 +34,7 @@ allprojects {
 }
 
 ext {
-    ROOM_VERSION = "2.3.0-beta03"
+    ROOM_VERSION = "2.4.1"
 
     // publish credentials
     if (file("private.properties").exists()) {

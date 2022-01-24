@@ -1,8 +1,8 @@
 package com.dailystudio.devbricksx.gallery
 
-import com.dailystudio.devbricksx.app.DevBricksApplication
+import com.dailystudio.devbricksx.app.DevBricksMultiDexApplication
 
-class GalleryApplication : DevBricksApplication() {
+class GalleryApplication : DevBricksMultiDexApplication() {
 
     override fun isDebugBuild(): Boolean {
         return BuildConfig.DEBUG
