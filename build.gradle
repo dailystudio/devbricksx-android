@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:7.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -67,7 +67,7 @@ ext {
 
     // Compile Settings
     COMPILE_SDK = 31
-    BUILD_TOOLS = '30.0.2'
+    BUILD_TOOLS = '32.0.0'
     VERSION_NAME = version()
     VERSION_CODE = versionCode().toInteger()
 
