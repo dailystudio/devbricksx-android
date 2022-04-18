@@ -44,6 +44,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/demo_attribution"
                 android:text="@string/animation_attribution"
                 style="@style/AttributeText"
                 android:layout_gravity="bottom"

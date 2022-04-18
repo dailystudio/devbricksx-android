@@ -27,6 +27,7 @@ class SettingsDemoFragment : Fragment() {
     private var demoTextView: TextView? = null
     private var demoTextCard: CardView? = null
     private var demoAnimation: LottieAnimationView? = null
+    private var demoAttribution: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_settings_demo, null)
@@ -40,11 +41,13 @@ class SettingsDemoFragment : Fragment() {
         demoTextView = fragmentView.findViewById(R.id.demo_text)
         demoTextCard = fragmentView.findViewById(R.id.demo_text_card)
         demoAnimation = fragmentView.findViewById(R.id.demo_animation)
+        demoAttribution = fragmentView.findViewById(R.id.demo_attribution)
 
         syncText()
         syncRoundedCorner()
         syncTextStyle()
         syncAnimation()
+        syncAttribution()
 
         Settings.observe(viewLifecycleOwner, Observer {
             when (it.name) {
@@ -61,6 +64,9 @@ class SettingsDemoFragment : Fragment() {
                 }
                 SampleSettingsPrefs.PREF_ANIM_DURATION -> {
                     syncAnimation()
+                }
+                SampleSettingsPrefs.PREF_DISPLAY_ATTRIBUTION -> {
+                    syncAttribution()
                 }
             }
         })
@@ -126,6 +132,14 @@ class SettingsDemoFragment : Fragment() {
             SampleSettingsPrefs.instance.cornerRadius
         } else {
             0f
+        }
+    }
+
+    private fun syncAttribution() {
+        demoAttribution?.visibility = if (SampleSettingsPrefs.instance.displayAttribution) {
+            View.VISIBLE
+        } else {
+            View.GONE
         }
     }
 

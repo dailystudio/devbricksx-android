@@ -67,6 +67,7 @@ ext {
 
     // Compile Settings
     COMPILE_SDK = 31
+    TARGET_SDK = 31
     BUILD_TOOLS = '32.0.0'
     VERSION_NAME = version()
     VERSION_CODE = versionCode().toInteger()

@@ -11,6 +11,21 @@ import kotlin.math.roundToLong
 object SampleSettingsHelper {
 
     fun createSettings(context: Context): Array<AbsSetting> {
+        val displayAttribution = object: SwitchSetting(context,
+            SampleSettingsPrefs.PREF_DISPLAY_ATTRIBUTION,
+            R.drawable.ic_setting_rounded_corner,
+            R.string.setting_display_attr,
+            -1) {
+
+            override fun isOn(): Boolean {
+                return SampleSettingsPrefs.instance.displayAttribution
+            }
+
+            override fun setOn(on: Boolean) {
+                SampleSettingsPrefs.instance.displayAttribution = on
+            }
+
+        }
         var radiusSetting: AbsSetting? = null
         val roundedCornerSetting = object: SwitchSetting(context,
                 SampleSettingsPrefs.PREF_ROUNDED_CORNER,
@@ -169,11 +184,12 @@ object SampleSettingsHelper {
         }
 
         return arrayOf(textInputSetting,
-                maxLinesSetting,
-                roundedCornerSetting,
-                radiusSetting,
-                textStyleSetting,
-                animDurationSetting
+            maxLinesSetting,
+            displayAttribution,
+            roundedCornerSetting,
+            radiusSetting,
+            textStyleSetting,
+            animDurationSetting
         )
     }
 

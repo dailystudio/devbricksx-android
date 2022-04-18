@@ -15,6 +15,7 @@
     <string name="default_demo_text">Welcome to settings demonstration! You can change settings below and the result will be reflected here immediately.</string>
     <string name="demo_text_hint">Write something here …</string>
 
+    <string name="setting_display_attr">Display attribution</string>
     <string name="setting_rounded_corner">Display rounded corner</string>
     <string name="setting_radius">Radius of rounded corner</string>
     <string name="setting_max_lines">Maximum text lines</string>
