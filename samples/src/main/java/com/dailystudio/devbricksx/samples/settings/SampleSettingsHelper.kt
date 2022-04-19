@@ -14,7 +14,7 @@ object SampleSettingsHelper {
     fun createSettings(context: Context): Array<AbsSetting> {
         val displayAttribution = object: SwitchSetting(context,
             SampleSettingsPrefs.PREF_DISPLAY_ATTRIBUTION,
-            R.drawable.ic_setting_rounded_corner,
+            R.drawable.ic_setting_attribution,
             R.string.setting_display_attr,
             -1) {
 
