@@ -1,6 +1,6 @@
 #!/bin/sh
 
-roomVersion="2.4.1"
+roomVersion="2.4.2"
 
 echo "Updating Room version to [${roomVersion}]"
 
