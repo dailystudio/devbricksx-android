@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/setting_switch"
             android:thumbTint="@color/colorAccent"
             android:layout_alignParentRight="true"

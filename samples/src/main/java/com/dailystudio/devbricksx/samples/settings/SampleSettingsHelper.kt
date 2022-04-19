@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.samples.settings
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.settings.*
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
@@ -18,10 +19,13 @@ object SampleSettingsHelper {
             -1) {
 
             override fun isOn(): Boolean {
+                Logger.debug("SS: get attr: ${SampleSettingsPrefs.instance.displayAttribution}")
                 return SampleSettingsPrefs.instance.displayAttribution
             }
 
             override fun setOn(on: Boolean) {
+                Logger.debug("SS: set attr: ${on}")
+
                 SampleSettingsPrefs.instance.displayAttribution = on
             }
 
@@ -34,10 +38,14 @@ object SampleSettingsHelper {
                 -1) {
 
             override fun isOn(): Boolean {
+                Logger.debug("SS: get round corner: ${SampleSettingsPrefs.instance.displayAttribution}")
+
                 return SampleSettingsPrefs.instance.roundedCorner
             }
 
             override fun setOn(on: Boolean) {
+                Logger.debug("SS: set round corner: ${on}")
+
                 SampleSettingsPrefs.instance.roundedCorner = on
 
                 radiusSetting?.enabled = on

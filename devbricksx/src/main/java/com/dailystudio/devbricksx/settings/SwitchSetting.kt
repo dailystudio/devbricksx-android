@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Switch
+import androidx.appcompat.widget.SwitchCompat
 import com.dailystudio.devbricksx.R
 
 abstract class SwitchSetting(context: Context,
@@ -21,7 +22,7 @@ abstract class SwitchSetting(context: Context,
 
 open class SwitchSettingLayoutHolder : TextSettingLayoutHolder() {
 
-    private var switch: Switch? = null
+    private var switch: SwitchCompat? = null
 
     override fun onCreateView(context: Context, layoutInflater: LayoutInflater, setting: AbsSetting): View {
         return layoutInflater.inflate(
