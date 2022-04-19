@@ -43,7 +43,7 @@ dependencies {
 #### Latest version
 
 ```groovy
-devbricksx_version = "1.6.2"
+devbricksx_version = "1.6.3"
 ```
 
 #### Compile options
