@@ -3,14 +3,35 @@ package com.dailystudio.devbricksx.preference
 import android.content.*
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
 import com.dailystudio.devbricksx.development.Logger
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 
 data class PrefsChange(val appPrefs: AbsPrefs,
                        val prefKey: String)
 
 abstract class AbsPrefs {
 
+    private var changesChannel: Channel<PrefsChange>? = null
+
     val prefsChange: MutableLiveData<PrefsChange> = MutableLiveData()
+    val prefsChanges: Flow<PrefsChange> = flow {
+        try {
+            changesChannel = Channel<PrefsChange>();
+
+            changesChannel?.consumeEach { change ->
+                Logger.debug("new change [${change.prefKey}] comes to channel [$changesChannel]")
+                emit(change)
+            }
+        } finally {
+            Logger.debug("change flow[${this@flow.hashCode()}] is destroyed.")
+        }
+    }
 
     private fun getSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
@@ -134,8 +155,12 @@ abstract class AbsPrefs {
             return
         }
 
+        val change = PrefsChange(this, key)
         Logger.debug("preference changed: [$key]")
-        prefsChange.postValue(PrefsChange(this, key))
+        prefsChange.postValue(change)
+
+        Logger.debug("send change [$key] to channel [$changesChannel]")
+        changesChannel?.trySend(change)
     }
 
     protected abstract val prefName: String

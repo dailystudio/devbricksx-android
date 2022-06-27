@@ -10,11 +10,14 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.LottieAnimationView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.settings.Settings
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class SettingsDemoFragment : Fragment() {
 
@@ -49,27 +52,44 @@ class SettingsDemoFragment : Fragment() {
         syncAnimation()
         syncAttribution()
 
+/*
         Settings.observe(viewLifecycleOwner, Observer {
-            when (it.name) {
-                SampleSettingsPrefs.PREF_ROUNDED_CORNER,
-                SampleSettingsPrefs.PREF_CORNER_RADIUS -> {
-                    syncRoundedCorner()
-                }
-                TextStyleSettingsPrefs.PREF_TEXT_STYLE,
-                TextStyleSettingsPrefs.PREF_MAX_LINES -> {
-                    syncTextStyle()
-                }
-                TextSettingsPrefs.PREF_TEXT_INPUT -> {
-                    syncText()
-                }
-                SampleSettingsPrefs.PREF_ANIM_DURATION -> {
-                    syncAnimation()
-                }
-                SampleSettingsPrefs.PREF_DISPLAY_ATTRIBUTION -> {
-                    syncAttribution()
-                }
-            }
+            handleSettingsChanges(it.name)
         })
+*/
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                Logger.debug("collection flow changes: flow = ${SampleSettingsPrefs.instance.prefsChanges}")
+                SampleSettingsPrefs.instance.prefsChanges.collect {
+                    Logger.debug("handle flow change: $it")
+                    handleSettingsChanges(it.prefKey)
+                }
+
+            }
+        }
+    }
+
+    private fun handleSettingsChanges(name: String) {
+        when (name) {
+            SampleSettingsPrefs.PREF_ROUNDED_CORNER,
+            SampleSettingsPrefs.PREF_CORNER_RADIUS -> {
+                syncRoundedCorner()
+            }
+            TextStyleSettingsPrefs.PREF_TEXT_STYLE,
+            TextStyleSettingsPrefs.PREF_MAX_LINES -> {
+                syncTextStyle()
+            }
+            TextSettingsPrefs.PREF_TEXT_INPUT -> {
+                syncText()
+            }
+            SampleSettingsPrefs.PREF_ANIM_DURATION -> {
+                syncAnimation()
+            }
+            SampleSettingsPrefs.PREF_DISPLAY_ATTRIBUTION -> {
+                syncAttribution()
+            }
+        }
     }
 
     private fun syncAnimation() {
