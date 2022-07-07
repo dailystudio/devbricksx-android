@@ -18,28 +18,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-abstract class AbsAboutFragment : AppCompatDialogFragment() {
+abstract class AbsAboutFragment : DevBricksDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val context = requireContext()
 
-        val dialogView: View = LayoutInflater.from(context).inflate(
+        val dialogView:View = LayoutInflater.from(context).inflate(
             fragmentLayoutResource, null)
 
-        val thumbView: View? = dialogView.findViewById(R.id.about_app_thumb)
-        bindThumb(thumbView)
-
-        val versionView: View? = dialogView.findViewById(R.id.about_app_ver)
-        bindVersion(versionView)
-
-        val nameView: View? = dialogView.findViewById(R.id.about_app_name)
-        bindName(nameView)
-
-        val descView: View? = dialogView.findViewById(R.id.about_app_desc)
-        bindDesc(descView)
-
-        val appIconView: View? = dialogView.findViewById(R.id.about_app_icon)
-        bindIcon(appIconView)
+        setCustomizedView(dialogView)
 
         val builder = AlertDialog.Builder(context)
                 .setView(dialogView)
@@ -47,6 +34,25 @@ abstract class AbsAboutFragment : AppCompatDialogFragment() {
                 ) { _, _ -> }
 
         return builder.create()
+    }
+
+    override fun setCustomizedView(view: View?) {
+        super.setCustomizedView(view)
+
+        val thumbView: View? = view?.findViewById(R.id.about_app_thumb)
+        bindThumb(thumbView)
+
+        val versionView: View? = view?.findViewById(R.id.about_app_ver)
+        bindVersion(versionView)
+
+        val nameView: View? = view?.findViewById(R.id.about_app_name)
+        bindName(nameView)
+
+        val descView: View? = view?.findViewById(R.id.about_app_desc)
+        bindDesc(descView)
+
+        val appIconView: View? = view?.findViewById(R.id.about_app_icon)
+        bindIcon(appIconView)
     }
 
     protected open fun bindThumb(view: View?) {
