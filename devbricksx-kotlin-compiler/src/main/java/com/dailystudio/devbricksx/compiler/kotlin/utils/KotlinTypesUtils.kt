@@ -99,6 +99,8 @@ object KotlinTypesUtils {
                             }
                         }
                     }
+
+                    else -> {}
                 }
             }
 
@@ -133,6 +135,8 @@ object KotlinTypesUtils {
             javaString -> {
                 return TypeNamesUtils.getStringTypeName()
             }
+
+            else -> {}
         }
 
         return origTypeName

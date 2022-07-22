@@ -475,13 +475,14 @@ class TypeNamesUtils {
         fun javaToKotlinTypeName(origTypeName: TypeName): TypeName {
             val javaString = getJavaStringTypeName()
 
-            when (origTypeName) {
+            return when (origTypeName) {
                 javaString -> {
-                    return getStringTypeName()
+                    getStringTypeName()
+                }
+                else -> {
+                    origTypeName
                 }
             }
-
-            return origTypeName
         }
 
     }

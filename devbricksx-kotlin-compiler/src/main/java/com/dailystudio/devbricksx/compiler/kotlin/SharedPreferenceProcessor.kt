@@ -243,6 +243,8 @@ class SharedPreferenceProcessor : BaseProcessor() {
 
                         initializerBuilder.addStatement("%S", defaultVal)
                     }
+
+                    else -> {}
                 }
 
                 propBuilder.getter(getterBuilder.build())
