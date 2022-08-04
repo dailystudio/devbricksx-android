@@ -1,3 +1,9 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
 include ':devbricksx-audio'
 include ':devbricksx'
 include ':devbricksx-kotlin-annotations'
@@ -8,3 +14,6 @@ include ':devbricksx-camera'
 include ':samples'
 include ':sample-notebook'
 include ':sample-gallery'
+include ':devbricksx-annotations'
+include ':devbricksx-compiler'
+include ':devbricksx-compiler-samples'
