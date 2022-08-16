@@ -11,6 +11,13 @@ abstract class BaseSymbolProcessor(
     protected val environment: SymbolProcessorEnvironment
 ) : SymbolProcessor {
 
+    enum class LogType {
+        LOGGING,
+        WARN,
+        ERROR,
+        INFO,
+    }
+
     private val logger = environment.logger
 
     protected fun loggerTag(): String {
@@ -21,24 +28,58 @@ abstract class BaseSymbolProcessor(
         }
     }
 
-    protected fun logging(message: String, symbol: KSNode? = null) {
-        logger.logging("${loggerTag()} $message", symbol)
+    private fun loggingImpl(type: LogType,
+                            message: String,
+                            tag: String?,
+                            symbol: KSNode? = null) {
+        val leadingTag = if (tag.isNullOrEmpty()) {
+            loggerTag()
+        } else {
+            tag
+        }
+
+        when (type) {
+            LogType.LOGGING -> logger.logging("$leadingTag $message", symbol)
+            LogType.WARN -> logger.warn("$leadingTag $message", symbol)
+            LogType.INFO -> logger.info("$leadingTag $message", symbol)
+            LogType.ERROR -> logger.error("$leadingTag $message", symbol)
+        }
+
     }
 
-    protected fun info(message: String, symbol: KSNode? = null) {
-        logger.info("${loggerTag()} $message", symbol)
+    fun logging(message: String, tag: String?, symbol: KSNode? = null) {
+        loggingImpl(LogType.LOGGING, message, tag, symbol)
     }
 
-    protected fun error(message: String, symbol: KSNode? = null) {
-        logger.error("${loggerTag()} $message", symbol)
+    fun logging(message: String, symbol: KSNode? = null) {
+        logging(message, null, symbol)
     }
 
-    protected fun warn(message: String, symbol: KSNode? = null) {
-        logger.warn("${loggerTag()}  $message", symbol)
+    fun warn(message: String, tag: String?, symbol: KSNode? = null) {
+        loggingImpl(LogType.WARN, message, tag, symbol)
     }
 
+    fun warn(message: String, symbol: KSNode? = null) {
+        warn(message, null, symbol)
+    }
 
-    protected fun writeToFile(result: GeneratedResult) {
+    fun info(message: String, tag: String?, symbol: KSNode? = null) {
+        loggingImpl(LogType.INFO, message, tag, symbol)
+    }
+
+    fun info(message: String, symbol: KSNode? = null) {
+        info(message, null, symbol)
+    }
+
+    fun error(message: String, tag: String?, symbol: KSNode? = null) {
+        loggingImpl(LogType.ERROR, message, tag, symbol)
+    }
+
+    fun error(message: String, symbol: KSNode? = null) {
+        error(message, null, symbol)
+    }
+
+    fun writeToFile(result: GeneratedResult) {
         val typeSpec = result.classBuilder.build()
 
         typeSpec.name?.let { name ->
