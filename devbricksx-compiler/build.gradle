@@ -12,6 +12,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    implementation("com.google.devtools.ksp:symbol-processing:$ksp_version")
     implementation("com.google.devtools.ksp:symbol-processing-api:$ksp_version")
     implementation("com.squareup:kotlinpoet:1.12.0")
     implementation("com.squareup:kotlinpoet-ksp:1.12.0")

@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 annotation class RoomCompanion(
-    val primaryKeys: Array<String>,
+    val primaryKeys: Array<String> = [],
     val autoGenerate: Boolean = false,
     val converters: Array<KClass<*>> = [],
     val foreignKeys: Array<ForeignKey> = [],

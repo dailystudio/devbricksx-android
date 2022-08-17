@@ -12,10 +12,12 @@ abstract class StepsSymbolProcessor (environment: SymbolProcessorEnvironment)
         warn("kotlin version: ${KotlinVersion.CURRENT}")
 
         for (step in steps) {
-            val results = step.runStep(resolver)
-
-            for (r in results) {
-                writeToFile(r)
+            step.runStep(resolver)?.let {
+                for (r in it) {
+                    writeToFile(r)
+                }
+            }.also {
+                warn("results = $it")
             }
         }
 
