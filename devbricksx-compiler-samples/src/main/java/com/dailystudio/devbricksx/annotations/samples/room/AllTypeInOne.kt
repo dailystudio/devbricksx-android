@@ -5,11 +5,12 @@ import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
 @RoomCompanion(
     primaryKeys = ["id"]
 )
-class AllTypeInOne(val id: Int) {
-    val intType: Int = 0
-    val shortType: Short = 0
-    val longType: Long = 0
-    val floatType: Float = 0f
-    val doubleType: Double = 0.0
-    val stringType: String = ""
+class AllTypesInOne(val id: Int
+) {
+    var intType: Int = 0
+    var shortType: Short = 0
+    var longType: Long = 0
+    var floatType: Float = 0f
+    var doubleType: Double = 0.0
+    var stringType: String = ""
 }

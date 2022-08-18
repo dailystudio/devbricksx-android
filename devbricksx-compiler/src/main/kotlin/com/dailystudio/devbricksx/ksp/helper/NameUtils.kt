@@ -34,6 +34,13 @@ fun String.lowerCamelCaseName(): String {
     return builder.toString()
 }
 
+fun String.underscoreLowerCamelCaseName(): String {
+    return buildString {
+        append("_")
+        append(this@underscoreLowerCamelCaseName.lowerCamelCaseName())
+    }
+}
+
 fun String.kotlinGetterName(): String {
     if (!startsWith("get")) {
         return this

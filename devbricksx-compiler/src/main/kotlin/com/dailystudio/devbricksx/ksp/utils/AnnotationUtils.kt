@@ -5,6 +5,7 @@ import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import kotlin.reflect.KClass
 
+
 inline fun <reified R> KSAnnotation.findArgument(argName: String): R {
     return arguments.first {
         it.name?.getShortName() == argName

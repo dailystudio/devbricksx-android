@@ -60,8 +60,8 @@ class DatabaseStep(processor: BaseSymbolProcessor)
                 .addMember("version = %L", dbVersion)
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
-//            .superclass(typeOfRoomDatabase())
-            .addAnnotation(databaseAnnotationBuilder.build())
+//            .superclass(TypeNameUtils.typeOfRoomDatabase())
+//            .addAnnotation(databaseAnnotationBuilder.build())
 
         return GeneratedResult(packageName, classBuilder)
     }
