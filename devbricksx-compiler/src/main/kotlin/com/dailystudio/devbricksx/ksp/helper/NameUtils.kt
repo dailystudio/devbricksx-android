@@ -34,6 +34,17 @@ fun String.lowerCamelCaseName(): String {
     return builder.toString()
 }
 
+fun String.toVariableOrParamName(): String {
+    return this@toVariableOrParamName.lowerCamelCaseName()
+}
+
+fun String.toVariableOrParamNameOfCollection(): String {
+    return buildString {
+        append(this@toVariableOrParamNameOfCollection.toVariableOrParamName())
+        append('s')
+    }
+}
+
 fun String.underscoreLowerCamelCaseName(): String {
     return buildString {
         append("_")

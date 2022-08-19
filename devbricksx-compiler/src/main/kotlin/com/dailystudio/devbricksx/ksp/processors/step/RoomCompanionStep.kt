@@ -6,9 +6,7 @@ import androidx.room.PrimaryKey
 import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
-import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
-import com.dailystudio.devbricksx.ksp.helper.lowerCamelCaseName
-import com.dailystudio.devbricksx.ksp.helper.underlineCaseName
+import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
@@ -24,6 +22,9 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         private const val METHOD_TO_OBJECT = "toObject"
         private const val METHOD_COPY_FIELDS_FROM_OBJECT = "copyFieldsFromObject"
         private const val METHOD_COPY_FIELDS_TO_OBJECT = "copyFieldsToObject"
+
+        private const val PROP_NAME_MAP_TO_OBJECT = "mapCompanionToObject"
+        private const val PROP_NAME_MAP_TO_OBJECTS = "mapCompanionsToObjects"
     }
 
     override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
@@ -148,8 +149,12 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         val typeOfObject = TypeNameUtils.typeOfObject(packageName, typeName)
         val typeOfCompanion = TypeNameUtils.typeOfCompanion(packageName, typeName)
-        val nameOfObjectParamOrVariable = typeName.lowerCamelCaseName()
-        val nameOfCompanionParamOrVariable = typeNameToGenerate.lowerCamelCaseName()
+        val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
+        val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
+        val nameOfObject = typeName.toVariableOrParamName()
+        val nameOfCompanion = typeNameToGenerate.toVariableOrParamName()
+        val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
+        val nameOfCompanions = typeNameToGenerate.toVariableOrParamNameOfCollection()
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
             .addModifiers(KModifier.OPEN)
@@ -185,18 +190,18 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         val methodCopyFieldsFromObject = FunSpec.builder(METHOD_COPY_FIELDS_FROM_OBJECT)
             .addModifiers(KModifier.PUBLIC)
-            .addParameter(nameOfObjectParamOrVariable, typeOfObject)
+            .addParameter(nameOfObject, typeOfObject)
         if (supperTypeHasRoomCompanion) {
             methodCopyFieldsFromObject.addStatement(
                 "super.%N(%N)", METHOD_COPY_FIELDS_FROM_OBJECT,
-                nameOfObjectParamOrVariable
+                nameOfObject
             )
         }
 
         propsInCurrentType.forEach {
             methodCopyFieldsFromObject.addStatement(
                 "this.%N = %N.%N",
-                it, nameOfObjectParamOrVariable, it
+                it, nameOfObject, it
             )
         }
 
@@ -204,69 +209,102 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         val methodCopyFieldsToObject = FunSpec.builder(METHOD_COPY_FIELDS_TO_OBJECT)
             .addModifiers(KModifier.PUBLIC)
-            .addParameter(nameOfObjectParamOrVariable, typeOfObject)
+            .addParameter(nameOfObject, typeOfObject)
         if (supperTypeHasRoomCompanion) {
             methodCopyFieldsToObject.addStatement(
                 "super.%N(%N)", METHOD_COPY_FIELDS_TO_OBJECT,
-                nameOfObjectParamOrVariable
+                nameOfObject
             )
         }
 
         propsInCurrentType.forEach {
             methodCopyFieldsToObject.addStatement(
                 "%N.%N = this.%N",
-                nameOfObjectParamOrVariable, it, it
+                nameOfObject, it, it
             )
         }
 
         classBuilder.addFunction(methodCopyFieldsToObject.build())
 
-        val methodFromObject = FunSpec.builder(METHOD_FROM_OBJECT)
+        val methodFromObjectBuilder = FunSpec.builder(METHOD_FROM_OBJECT)
             .addModifiers(KModifier.PUBLIC)
-            .addParameter(nameOfObjectParamOrVariable, typeOfObject)
+            .addParameter(nameOfObject, typeOfObject)
             .returns(typeOfCompanion)
 
-        methodFromObject.addStatement(
+        methodFromObjectBuilder.addStatement(
             "val %N = %T(%L)",
-            nameOfCompanionParamOrVariable,
+            nameOfCompanion,
             typeOfCompanion,
             propsInConstructor.joinToString(separator = ", ") {
-                "${nameOfObjectParamOrVariable}.$it"
+                "${nameOfObject}.$it"
             }
         )
-        methodFromObject.addStatement(
+        methodFromObjectBuilder.addStatement(
             "%N.%N(%N)",
-            nameOfCompanionParamOrVariable,
+            nameOfCompanion,
             METHOD_COPY_FIELDS_FROM_OBJECT,
-            nameOfObjectParamOrVariable
+            nameOfObject
         )
-        methodFromObject.addStatement("return %N",
-            nameOfCompanionParamOrVariable)
+        methodFromObjectBuilder.addStatement("return %N",
+            nameOfCompanion)
 
-        classCompanionBuilder.addFunction(methodFromObject.build())
+        classCompanionBuilder.addFunction(methodFromObjectBuilder.build())
 
-        val methodToObject = FunSpec.builder(METHOD_TO_OBJECT)
-            .addParameter(nameOfCompanionParamOrVariable, typeOfCompanion)
+        val methodToObjectBuilder = FunSpec.builder(METHOD_TO_OBJECT)
+            .addModifiers(KModifier.OPEN)
             .returns(typeOfObject)
 
-        methodToObject.addStatement(
-            "val %N = %T(%L)",
-            nameOfObjectParamOrVariable,
-            typeOfObject,
-            propsInConstructor.joinToString(separator = ", ") {
-                "${nameOfCompanionParamOrVariable}.$it"
-            }
-        )
-        methodToObject.addStatement(
-            "%N.%N(%N)",
-            nameOfCompanionParamOrVariable,
-            METHOD_COPY_FIELDS_TO_OBJECT,
-            nameOfObjectParamOrVariable
-        )
-        methodToObject.addStatement("return %N",
-            nameOfObjectParamOrVariable)
+        if (supperTypeHasRoomCompanion) {
+            methodToObjectBuilder.addModifiers(KModifier.OVERRIDE)
+        }
 
-        classCompanionBuilder.addFunction(methodToObject.build())
+        methodToObjectBuilder.addStatement(
+            "val %N = %T(%L)",
+            nameOfObject,
+            typeOfObject,
+            propsInConstructor.joinToString(separator = ", ")
+        )
+        methodToObjectBuilder.addStatement(
+            "%N(%N)",
+            METHOD_COPY_FIELDS_TO_OBJECT,
+            nameOfObject
+        )
+        methodToObjectBuilder.addStatement("return %N",
+            nameOfObject)
+
+        classBuilder.addFunction(methodToObjectBuilder.build())
+
+        val propMapToObjectBuilder = PropertySpec.builder(PROP_NAME_MAP_TO_OBJECT,
+            TypeNameUtils.typeOfMapFunction(typeOfCompanion, typeOfObject))
+            .initializer("""
+                object : Function<%T, %T> {
+                    override fun apply(%N: %T): %T {
+                        return %N.toObject()
+                    }
+                }
+            """.trimIndent(),
+                typeOfCompanion, typeOfObject,
+                nameOfCompanion, typeOfCompanion, typeOfObject,
+                nameOfCompanion
+            )
+
+        classCompanionBuilder.addProperty(propMapToObjectBuilder.build())
+
+        val propMapToObjectsBuilder = PropertySpec.builder(PROP_NAME_MAP_TO_OBJECTS,
+            TypeNameUtils.typeOfMapFunction(typeOfListOfCompanions, typeOfListOfObjects))
+            .initializer("""
+                object : Function<%T, %T> {
+                    override fun apply(%N: %T): %T {
+                        return %N.map { it.toObject() }
+                    }
+                }
+            """.trimIndent(),
+                typeOfListOfCompanions, typeOfListOfObjects,
+                nameOfCompanions, typeOfListOfCompanions, typeOfListOfObjects,
+                nameOfCompanions
+            )
+
+        classCompanionBuilder.addProperty(propMapToObjectsBuilder.build())
 
         classBuilder.addType(classCompanionBuilder.build())
 

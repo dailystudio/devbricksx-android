@@ -5,6 +5,7 @@ import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 object TypeNameUtils {
 
@@ -26,6 +27,23 @@ object TypeNameUtils {
 
     fun typeOfRoomDatabase(): ClassName {
         return ClassName("androidx.room", "RoomDatabase")
+    }
+
+    fun typeOfMapFunction(typeName1: TypeName, typeName2: TypeName): TypeName {
+        val classNameOfMapFunction =
+            ClassName("androidx.arch.core.util", "Function")
+        return classNameOfMapFunction.parameterizedBy(
+            typeName1, typeName2)
+    }
+
+    fun typeOfList(): ClassName {
+        return ClassName("kotlin.collections", "List")
+    }
+
+    fun typeOfListOf(typeName: TypeName): TypeName {
+        val list = typeOfList()
+
+        return list.parameterizedBy(typeName)
     }
 
     fun defaultValOfTypeName(typeName: TypeName): String {

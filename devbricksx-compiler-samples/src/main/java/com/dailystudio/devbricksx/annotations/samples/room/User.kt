@@ -20,7 +20,6 @@ open class User(open val uid: Int,
     var portrait: String? = null
 }
 
-
 @RoomCompanion
 data class RichUser(override val uid: Int,
                     override val firstName: String? = null,
