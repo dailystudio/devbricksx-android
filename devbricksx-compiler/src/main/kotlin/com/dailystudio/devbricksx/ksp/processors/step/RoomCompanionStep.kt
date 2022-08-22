@@ -10,8 +10,12 @@ import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ksp.toAnnotationSpec
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class RoomCompanionStep (processor: BaseSymbolProcessor)
@@ -71,6 +75,14 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         val primaryKeys: MutableList<String> =
             roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
         warn("primaryKeys: $primaryKeys")
+
+        val foreignKeys: MutableList<KSAnnotation> =
+            roomCompanion?.findArgument("foreignKeys") ?: mutableListOf()
+        warn("foreignKeys: $foreignKeys")
+
+        val indices: MutableList<KSAnnotation> =
+            roomCompanion?.findArgument("indices") ?: mutableListOf()
+        warn("indices: $indices")
 
         val constructorBuilder = FunSpec.constructorBuilder()
 
@@ -147,13 +159,46 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
                 buildPrimaryKeysString(primaryKeys))
         }
 
+        if (foreignKeys.isNotEmpty()) {
+            warn("processing: foreign keys [$foreignKeys]")
+
+            val strOfForeignKeys = foreignKeys.joinToString(separator = ",") {
+                val annotationSpec = it.toAnnotationSpec()
+
+                val entity = it.findArgument<KSType>("entity").toClassName()
+                val packageNameOfEntity = entity.packageName
+                val typeNameOfEntity = entity.simpleName
+
+                warn("processing: foreign key of [$packageNameOfEntity, $typeNameOfEntity]")
+                annotationSpec.toString()
+                    .replace(typeNameOfEntity, GeneratedNames.getRoomCompanionName(typeNameOfEntity))
+                    .removePrefix("@")
+            }
+            warn("processing: new foreign keys str = [$strOfForeignKeys]")
+
+            entityAnnotationBuilder.addMember("foreignKeys = [%L]", strOfForeignKeys)
+        }
+
+        if (indices.isNotEmpty()) {
+            warn("processing: indices [$indices]")
+
+            val strOfIndices = indices.joinToString(separator = ",") {
+                val annotationSpec = it.toAnnotationSpec()
+
+                annotationSpec.toString()
+                    .removePrefix("@")
+            }
+            warn("processing: new indices str = [$strOfIndices]")
+
+            entityAnnotationBuilder.addMember("indices = [%L]", strOfIndices)
+        }
+
         val typeOfObject = TypeNameUtils.typeOfObject(packageName, typeName)
         val typeOfCompanion = TypeNameUtils.typeOfCompanion(packageName, typeName)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfCompanion = typeNameToGenerate.toVariableOrParamName()
-        val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
         val nameOfCompanions = typeNameToGenerate.toVariableOrParamNameOfCollection()
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
