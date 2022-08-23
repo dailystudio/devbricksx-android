@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors
 
 import com.dailystudio.devbricksx.ksp.ProcessStep
+import com.dailystudio.devbricksx.ksp.processors.step.DaoStep
 import com.dailystudio.devbricksx.ksp.processors.step.DatabaseStep
 import com.dailystudio.devbricksx.ksp.processors.step.RoomCompanionStep
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -11,8 +12,9 @@ class RoomCompanionProcessor(
 
     override val steps: Array<ProcessStep>
         get() = arrayOf(
-          RoomCompanionStep(this),
-          DatabaseStep(this),
+            RoomCompanionStep(this),
+            DatabaseStep(this),
+            DaoStep(this),
         )
 
 }

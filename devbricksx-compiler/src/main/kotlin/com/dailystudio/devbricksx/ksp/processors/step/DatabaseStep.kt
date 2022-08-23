@@ -6,6 +6,7 @@ import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
+import com.dailystudio.devbricksx.ksp.helper.lowerCamelCaseName
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
@@ -73,11 +74,11 @@ class DatabaseStep(processor: BaseSymbolProcessor)
         strOfEntitiesBuilder.append(" ]")
 
         val typeNamesOfEntities = symbols.map {
-            val packageName = it.packageName()
-            val typeName = it.typeName()
+            val packageNameOfSymbol = it.packageName()
+            val typeNameOfSymbol = it.typeName()
 
-            ClassName(packageName,
-                GeneratedNames.getRoomCompanionName(typeName))
+            ClassName(packageNameOfSymbol,
+                GeneratedNames.getRoomCompanionName(typeNameOfSymbol))
         }.toTypedArray()
 
         val databaseAnnotationBuilder: AnnotationSpec.Builder =
@@ -181,6 +182,20 @@ class DatabaseStep(processor: BaseSymbolProcessor)
         classCompanionBuilder.addFunction(methodGetDatabaseDefaultBuilder.build())
 
         classBuilder.addType(classCompanionBuilder.build())
+
+        for (symbol in symbols) {
+            val packageNameOfSymbol = symbol.packageName()
+            val typeNameOfSymbol = symbol.typeName()
+
+            val nameOfDao = GeneratedNames.getRoomCompanionDaoName(typeNameOfSymbol)
+            val typeOfDao = ClassName(packageNameOfSymbol, nameOfDao)
+
+            val methodDaoBuilder = FunSpec.builder(nameOfDao.lowerCamelCaseName())
+                .addModifiers(KModifier.ABSTRACT, KModifier.PUBLIC)
+                .returns(typeOfDao)
+
+            classBuilder.addFunction(methodDaoBuilder.build())
+        }
 
         return GeneratedResult(packageName, classBuilder)
     }

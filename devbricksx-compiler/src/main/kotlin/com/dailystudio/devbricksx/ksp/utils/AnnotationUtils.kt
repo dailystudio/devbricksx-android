@@ -26,7 +26,6 @@ fun KSClassDeclaration.getAnnotation(
     return found
 }
 
-
 fun KSClassDeclaration.collectTypesInAnnotationArguments(
     annotationClass: KClass<out Annotation>,
     nameOfArgument: String,

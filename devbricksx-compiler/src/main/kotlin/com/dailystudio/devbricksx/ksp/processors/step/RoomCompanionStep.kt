@@ -76,8 +76,9 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         val roomCompanion = symbol.getAnnotation(RoomCompanion::class, resolver)
         warn("roomCompanion: ${roomCompanion?.arguments}")
 
-        val primaryKeys: MutableList<String> =
-            roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
+        val primaryKeys: Set<String> =
+//            roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
+            RoomPrimaryKeysUtils.findPrimaryKeyNames(symbol, resolver)
         warn("primaryKeys: $primaryKeys")
 
         val foreignKeys: MutableList<KSAnnotation> =
@@ -107,18 +108,6 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
             constructorBuilder.addParameter(paramSpecBuilder.build())
             propsInConstructor.add(nameOfParam)
-        }
-
-        if (primaryKeys.isEmpty()) {
-            val defaultPrimaryKey = if (propsInConstructor.isNotEmpty()) {
-                propsInConstructor.first()
-            } else {
-                propsAll.first()
-            }
-
-            warn("No primary key defined. using [$defaultPrimaryKey] by default")
-
-            primaryKeys.add(defaultPrimaryKey)
         }
 
         val propSpecs = mutableListOf<PropertySpec>()
@@ -374,11 +363,11 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         return GeneratedResult(packageName, classBuilder)
     }
 
-    private fun buildPrimaryKeysString(primaryKeys: List<String>): String {
+    private fun buildPrimaryKeysString(primaryKeys: Set<String>): String {
         val prKeysBuilder = StringBuilder("{ ")
-        for (i in primaryKeys.indices) {
+        for ((i, primaryKey) in primaryKeys.withIndex()) {
             prKeysBuilder.append("\"")
-            prKeysBuilder.append(primaryKeys[i])
+            prKeysBuilder.append(primaryKey)
             prKeysBuilder.append("\"")
             if (i < primaryKeys.size - 1) {
                 prKeysBuilder.append(", ")
@@ -387,7 +376,5 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         prKeysBuilder.append(" }")
         return prKeysBuilder.toString()
     }
-
-
 
 }
