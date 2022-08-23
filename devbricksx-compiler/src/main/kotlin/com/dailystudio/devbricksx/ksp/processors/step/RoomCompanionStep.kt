@@ -39,12 +39,16 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         val typeNameToGenerate = GeneratedNames.getRoomCompanionName(typeName)
 
-        val typeOfAny = TypeNameUtils.typeOfKotlinAny(resolver)
-
+        val typeOfAny = TypeNamesUtils.typeOfKotlinAny(resolver)
         val hasSuperType = (superType != typeOfAny)
         var supperTypeHasRoomCompanion = false
+
         var packageNameOfSuperType = ""
         var typeNameOfSuperType = ""
+
+        val allProperties = symbol.getAllProperties()
+
+        val propsAll = allProperties.map { it.simpleName.getShortName() }.toSet()
         val propsInSuperType = mutableSetOf<String>()
         val propsInConstructor = mutableSetOf<String>()
         val propsInSuperTypeConstructor = mutableSetOf<String>()
@@ -80,6 +84,10 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             roomCompanion?.findArgument("foreignKeys") ?: mutableListOf()
         warn("foreignKeys: $foreignKeys")
 
+        val autoGenerate: Boolean =
+            roomCompanion?.findArgument("autoGenerate") ?: false
+        warn("autoGenerate: $autoGenerate")
+
         val indices: MutableList<KSAnnotation> =
             roomCompanion?.findArgument("indices") ?: mutableListOf()
         warn("indices: $indices")
@@ -90,6 +98,10 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             val nameOfParam = param.name?.getShortName() ?: return@forEach
             warn("processing constructor params: $nameOfParam")
 
+            if (!param.isVal && !param.isVar) {
+                error("For @RoomCompanion annotated class [$symbol], only val or var is supported in primary constructor params: $nameOfParam")
+            }
+
             val paramSpecBuilder = ParameterSpec.builder(nameOfParam,
                 param.type.toTypeName())
 
@@ -97,9 +109,21 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             propsInConstructor.add(nameOfParam)
         }
 
+        if (primaryKeys.isEmpty()) {
+            val defaultPrimaryKey = if (propsInConstructor.isNotEmpty()) {
+                propsInConstructor.first()
+            } else {
+                propsAll.first()
+            }
+
+            warn("No primary key defined. using [$defaultPrimaryKey] by default")
+
+            primaryKeys.add(defaultPrimaryKey)
+        }
+
         val propSpecs = mutableListOf<PropertySpec>()
         val primaryKeysFound = mutableSetOf<String>()
-        for ((i, prop) in symbol.getAllProperties().withIndex()) {
+        for ((i, prop) in allProperties.withIndex()) {
             val nameOfProp = prop.simpleName.getShortName()
             val typeOfProp = prop.type.toTypeName()
             warn("processing prop [$i]: $prop [${typeOfProp}]")
@@ -119,7 +143,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
                     error("prop [$nameOfProp] in [$symbol] is immutable. This blocks accessing from generated code. Please change to var or ignore with @Ignore")
                 }
 
-                val defaultVal = TypeNameUtils.defaultValOfTypeName(typeOfProp)
+                val defaultVal = TypeNamesUtils.defaultValOfTypeName(typeOfProp)
                 warn("default val of [$typeOfProp]: $defaultVal")
                 propSpecBuilder.initializer(defaultVal)
             }
@@ -129,11 +153,6 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
                     .addMember("name = %S", nameOfProp.underlineCaseName())
                     .build()
             )
-
-            if (primaryKeys.isEmpty() && i == 0) {
-                warn("No primary key defined. using [$nameOfProp] by default")
-                primaryKeys.add(nameOfProp)
-            }
 
             if (primaryKeys.contains(nameOfProp)) {
                 propSpecBuilder.addAnnotation(PrimaryKey::class)
@@ -193,10 +212,10 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             entityAnnotationBuilder.addMember("indices = [%L]", strOfIndices)
         }
 
-        val typeOfObject = TypeNameUtils.typeOfObject(packageName, typeName)
-        val typeOfCompanion = TypeNameUtils.typeOfCompanion(packageName, typeName)
-        val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
-        val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
+        val typeOfObject = TypeNamesUtils.typeOfObject(packageName, typeName)
+        val typeOfCompanion = TypeNamesUtils.typeOfCompanion(packageName, typeName)
+        val typeOfListOfObjects = TypeNamesUtils.typeOfListOf(typeOfObject)
+        val typeOfListOfCompanions = TypeNamesUtils.typeOfListOf(typeOfCompanion)
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfCompanion = typeNameToGenerate.toVariableOrParamName()
         val nameOfCompanions = typeNameToGenerate.toVariableOrParamNameOfCollection()
@@ -208,7 +227,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         if (supperTypeHasRoomCompanion) {
             val typeOfSuperClass =
-                TypeNameUtils.typeOfObject(packageNameOfSuperType,
+                TypeNamesUtils.typeOfObject(packageNameOfSuperType,
                     GeneratedNames.getRoomCompanionName(typeNameOfSuperType))
 
             classBuilder.superclass(typeOfSuperClass)
@@ -226,7 +245,6 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             classBuilder.addProperty(it)
         }
 
-        val propsAll = propSpecs.map { it.name }.toSet()
         val propsInCurrentType =
             propsAll - propsInSuperType - propsInConstructor
         warn("props: all = $propsAll, from super = $propsInSuperType, constructor = $propsInConstructor")
@@ -320,7 +338,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodToObjectBuilder.build())
 
         val propMapToObjectBuilder = PropertySpec.builder(PROP_NAME_MAP_TO_OBJECT,
-            TypeNameUtils.typeOfMapFunction(typeOfCompanion, typeOfObject))
+            TypeNamesUtils.typeOfMapFunction(typeOfCompanion, typeOfObject))
             .initializer("""
                 object : Function<%T, %T> {
                     override fun apply(%N: %T): %T {
@@ -336,7 +354,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         classCompanionBuilder.addProperty(propMapToObjectBuilder.build())
 
         val propMapToObjectsBuilder = PropertySpec.builder(PROP_NAME_MAP_TO_OBJECTS,
-            TypeNameUtils.typeOfMapFunction(typeOfListOfCompanions, typeOfListOfObjects))
+            TypeNamesUtils.typeOfMapFunction(typeOfListOfCompanions, typeOfListOfObjects))
             .initializer("""
                 object : Function<%T, %T> {
                     override fun apply(%N: %T): %T {

@@ -1,13 +1,6 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
 import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
-import java.util.*
-
-@RoomCompanion
-open class Record(open val id: Int) {
-    var lastModified: Date? = null
-    var created: Date? = null
-}
 
 @RoomCompanion
 open class User(open val uid: Int,

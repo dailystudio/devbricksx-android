@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
 import androidx.room.Database
+import androidx.room.TypeConverters
 import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.GroupedSymbolsProcessStep
@@ -9,11 +10,19 @@ import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.TypeSpec
+import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ksp.toTypeName
 
 class DatabaseStep(processor: BaseSymbolProcessor)
     : GroupedSymbolsProcessStep(RoomCompanion::class.qualifiedName!!, processor) {
+
+    companion object {
+        private const val INSTANCE_OF_DATABASE = "sInstance"
+
+        private const val METHOD_GET_DATABASE = "getDatabase"
+    }
 
     override fun processSymbolByGroup(
         resolver: Resolver,
@@ -31,6 +40,9 @@ class DatabaseStep(processor: BaseSymbolProcessor)
         warn("process database [$database]: symbols = $symbols")
 
         val strOfEntitiesBuilder = StringBuilder("entities = [ ")
+        val converters = mutableSetOf<KSType>()
+        val migrations = mutableSetOf<KSType>()
+
         var dbVersion = 1
         for ((i, symbol) in symbols.withIndex()) {
             val companion = symbol.getAnnotation(RoomCompanion::class, resolver)
@@ -43,25 +55,132 @@ class DatabaseStep(processor: BaseSymbolProcessor)
                 }
             }
 
-            strOfEntitiesBuilder.append("%N::class")
+            val convertersInSymbol =
+                symbol.collectTypesInAnnotationArguments(
+                    RoomCompanion::class, "converters", resolver)
+            converters.addAll(convertersInSymbol)
 
+            val migrationsInSymbol =
+                symbol.collectTypesInAnnotationArguments(
+                    RoomCompanion::class, "migrations", resolver)
+            migrations.addAll(migrationsInSymbol)
+
+            strOfEntitiesBuilder.append("%T::class")
             if (i < symbols.size - 1) {
                 strOfEntitiesBuilder.append(", ")
             }
         }
         strOfEntitiesBuilder.append(" ]")
 
-        val typeNamesOfEntities =
-            symbols.map { GeneratedNames.getRoomCompanionName(it.typeName()) }.toTypedArray()
+        val typeNamesOfEntities = symbols.map {
+            val packageName = it.packageName()
+            val typeName = it.typeName()
+
+            ClassName(packageName,
+                GeneratedNames.getRoomCompanionName(typeName))
+        }.toTypedArray()
 
         val databaseAnnotationBuilder: AnnotationSpec.Builder =
             AnnotationSpec.builder(Database::class)
                 .addMember(strOfEntitiesBuilder.toString(), *typeNamesOfEntities)
                 .addMember("version = %L", dbVersion)
 
+        val typeOfDatabase = ClassName(packageName, typeNameToGenerate)
+        val typeOfContext = TypeNamesUtils.typeOfContext()
+        val typeOfMigration = TypeNamesUtils.typeOfMigration()
+        val typeOfArrayOfMigrations = ARRAY.parameterizedBy(typeOfMigration)
+
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
-//            .superclass(TypeNameUtils.typeOfRoomDatabase())
-//            .addAnnotation(databaseAnnotationBuilder.build())
+            .superclass(TypeNamesUtils.typeOfRoomDatabase())
+            .addAnnotation(databaseAnnotationBuilder.build())
+            .addModifiers(KModifier.ABSTRACT)
+
+        val classCompanionBuilder = TypeSpec.companionObjectBuilder()
+
+        if (converters.isNotEmpty()) {
+            val strOfConvertersBuilder = converters.joinToString(separator = ",") {
+                "%T::class"
+            }
+
+            val typesOfConverters = converters.map { it.toTypeName() }.toTypedArray()
+            warn("adding type converters: $typesOfConverters, str = $strOfConvertersBuilder")
+            val typeConvertersAnnotationBuilder =
+                AnnotationSpec.builder(TypeConverters::class)
+                    .addMember(strOfConvertersBuilder,
+                        *typesOfConverters)
+
+            classBuilder.addAnnotation(typeConvertersAnnotationBuilder.build())
+        }
+
+        val instancePropBuilder = PropertySpec.builder(INSTANCE_OF_DATABASE, typeOfDatabase.copy(nullable = true))
+            .addModifiers(KModifier.PRIVATE)
+            .mutable(true)
+            .initializer("null")
+
+        classCompanionBuilder.addProperty(instancePropBuilder.build())
+
+        val methodGetDatabaseWithMigrationsBuilder = FunSpec.builder(METHOD_GET_DATABASE)
+            .addParameter("context", typeOfContext)
+            .addParameter("migrations", typeOfArrayOfMigrations.copy(nullable = true))
+            .addAnnotation(AnnotationSpec.builder(Synchronized::class).build())
+            .returns(typeOfDatabase)
+            .addStatement("var database = %N", INSTANCE_OF_DATABASE)
+            .beginControlFlow("if (database == null)")
+            .addStatement("""
+                val builder = %T.databaseBuilder(
+                    context.getApplicationContext(), 
+                    %T::class.java, 
+                    "%L")
+                """.trimIndent(),
+                TypeNamesUtils.typeOfRoom(),
+                typeOfDatabase,
+                database)
+            .beginControlFlow("if (migrations != null)")
+            .addStatement("builder.addMigrations(*migrations)")
+            .endControlFlow();
+
+        if (dbVersion > 1) {
+            val typeOfDummyMigration =
+                TypeNamesUtils.typeOfDummyMigration()
+
+            methodGetDatabaseWithMigrationsBuilder.beginControlFlow("else")
+
+            methodGetDatabaseWithMigrationsBuilder.addStatement(
+                "val customizedMigrations = mutableListOf<%T>()",
+                typeOfMigration)
+            if (migrations.isEmpty()) {
+                methodGetDatabaseWithMigrationsBuilder.addStatement(
+                    "customizedMigrations.add(%T(1, %L))",
+                    typeOfDummyMigration, dbVersion)
+            } else {
+                for (migration in migrations) {
+                    methodGetDatabaseWithMigrationsBuilder.addStatement(
+                        "customizedMigrations.add(%T())",
+                        migration.toTypeName()
+                    )
+                }
+            }
+
+            methodGetDatabaseWithMigrationsBuilder
+                .addStatement("builder.addMigrations(*customizedMigrations.toTypedArray())")
+                .endControlFlow()
+        }
+
+        methodGetDatabaseWithMigrationsBuilder
+            .addStatement("database = builder.build()")
+            .addStatement("%N = database", INSTANCE_OF_DATABASE)
+            .endControlFlow()
+            .addStatement("return database")
+
+        classCompanionBuilder.addFunction(methodGetDatabaseWithMigrationsBuilder.build())
+
+        val methodGetDatabaseDefaultBuilder = FunSpec.builder(METHOD_GET_DATABASE)
+            .addParameter("context", typeOfContext)
+            .addStatement("return %N(context, null)", METHOD_GET_DATABASE)
+            .returns(typeOfDatabase)
+        classCompanionBuilder.addFunction(methodGetDatabaseDefaultBuilder.build())
+
+        classBuilder.addType(classCompanionBuilder.build())
 
         return GeneratedResult(packageName, classBuilder)
     }

@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-object TypeNameUtils {
+object TypeNamesUtils {
 
     fun typeOfKotlinAny(resolver: Resolver): KSClassDeclaration? {
         return resolver.getClassDeclarationByName<Any>()
@@ -16,6 +16,11 @@ object TypeNameUtils {
     fun typeOf(resolver: Resolver, typeString: String): KSClassDeclaration? {
         return resolver.getClassDeclarationByName(typeString)
     }
+
+    fun typeOfContext(): ClassName {
+        return ClassName("android.content", "Context")
+    }
+
 
     fun typeOfObject(packageName: String, typeName: String): ClassName {
         return ClassName(packageName, typeName)
@@ -27,6 +32,24 @@ object TypeNameUtils {
 
     fun typeOfRoomDatabase(): ClassName {
         return ClassName("androidx.room", "RoomDatabase")
+    }
+
+    fun typeOfRoom(): ClassName {
+        return ClassName("androidx.room", "Room")
+    }
+
+    fun typeOfRoomDatabaseBuilderOf(typeName: TypeName): TypeName {
+        val builder = ClassName("androidx.room.RoomDatabase", "Builder")
+
+        return builder.parameterizedBy(typeName)
+    }
+
+    fun typeOfMigration(): ClassName {
+        return ClassName("androidx.room.migration", "Migration")
+    }
+
+    fun typeOfDummyMigration(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.database", "DummyMigration")
     }
 
     fun typeOfMapFunction(typeName1: TypeName, typeName2: TypeName): TypeName {

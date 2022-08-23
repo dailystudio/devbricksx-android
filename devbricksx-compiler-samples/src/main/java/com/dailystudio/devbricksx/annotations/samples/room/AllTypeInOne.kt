@@ -5,8 +5,8 @@ import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
 @RoomCompanion(
     primaryKeys = ["id"]
 )
-class AllTypesInOne(val id: Int
-) {
+class AllTypesInOne() {
+    var id: Int = 0
     var intType: Int = 0
     var shortType: Short = 0
     var longType: Long = 0

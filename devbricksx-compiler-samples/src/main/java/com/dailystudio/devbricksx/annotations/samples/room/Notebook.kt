@@ -3,7 +3,16 @@ package com.dailystudio.devbricksx.annotations.samples.room
 import androidx.room.ForeignKey
 import androidx.room.Index
 import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.database.DateConverter
+import java.util.*
 
+@RoomCompanion(
+    converters = [DateConverter::class, DateConverter::class, ]
+)
+open class Record(open val id: Int) {
+    var lastModified: Date? = null
+    var created: Date? = null
+}
 
 @RoomCompanion(
     database = "notes",
