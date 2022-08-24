@@ -21,7 +21,6 @@ object TypeNamesUtils {
         return ClassName("android.content", "Context")
     }
 
-
     fun typeOfObject(packageName: String, typeName: String): ClassName {
         return ClassName(packageName, typeName)
     }
@@ -57,6 +56,45 @@ object TypeNamesUtils {
             ClassName("androidx.arch.core.util", "Function")
         return classNameOfMapFunction.parameterizedBy(
             typeName1, typeName2)
+    }
+
+    fun typeOfLiveDataMapFunction(): ClassName {
+        return ClassName("androidx.lifecycle", "map")
+    }
+
+    fun typeOfDataSourceFactory(): ClassName {
+        return ClassName("androidx.paging.DataSource", "Factory")
+    }
+
+    fun typeOfDataSourceFactoryOf(typeName: TypeName): TypeName {
+        val classNameODataSourceFactory = typeOfDataSourceFactory()
+
+        return classNameODataSourceFactory.parameterizedBy(
+            Integer::class.asClassName(), typeName)
+    }
+
+    fun typeOfLiveData(): ClassName {
+        return ClassName("androidx.lifecycle", "LiveData")
+    }
+
+    fun typeOfLiveDataOf(typeName: TypeName): TypeName {
+        val typeOfLiveData = typeOfLiveData()
+
+        return typeOfLiveData.parameterizedBy(typeName)
+    }
+
+    fun typeOfTransformations(): ClassName {
+        return ClassName("androidx.lifecycle", "Transformations")
+    }
+
+    fun typeOfFlow(): ClassName {
+        return ClassName("kotlinx.coroutines.flow", "Flow")
+    }
+
+    fun typeOfFlowOf(typeName: TypeName): TypeName {
+        val typeOfFlow = typeOfFlow()
+
+        return typeOfFlow.parameterizedBy(typeName)
     }
 
     fun typeOfList(): ClassName {
