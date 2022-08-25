@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
-import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
 
 @RoomCompanion
 open class User(open val uid: Int,

@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.ksp.utils
 
-import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.ksp.helper.underlineCaseName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration

@@ -1,7 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
 import androidx.room.*
-import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.FuncSpecStatementsGenerator

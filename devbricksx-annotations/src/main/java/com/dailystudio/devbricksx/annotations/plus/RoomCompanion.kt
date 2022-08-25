@@ -1,4 +1,4 @@
-package com.dailylstudio.devbricksx.annotations.plus
+package com.dailystudio.devbricksx.annotations.plus
 
 import androidx.room.ForeignKey
 import androidx.room.Index

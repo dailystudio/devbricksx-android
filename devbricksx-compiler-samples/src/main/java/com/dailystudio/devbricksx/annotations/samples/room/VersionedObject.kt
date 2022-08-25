@@ -2,10 +2,10 @@ package com.dailystudio.devbricksx.annotations.samples.room
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.dailylstudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.development.Logger
 
-@RoomCompanion (
+@RoomCompanion(
     autoGenerate = true,
     migrations = [
         VersionedObjectMigrationV1toV2::class,
