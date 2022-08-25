@@ -9,13 +9,12 @@ import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.helper.toVariableOrParamName
 import com.dailystudio.devbricksx.ksp.helper.toVariableOrParamNameOfCollection
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
-import com.dailystudio.devbricksx.ksp.utils.RoomPrimaryKeysUtils
-import com.dailystudio.devbricksx.ksp.utils.TypeNamesUtils
-import com.dailystudio.devbricksx.ksp.utils.packageName
-import com.dailystudio.devbricksx.ksp.utils.typeName
+import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ksp.toClassName
 
 class DaoStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(RoomCompanion::class.qualifiedName!!, processor) {
@@ -36,10 +35,6 @@ class DaoStep (processor: BaseSymbolProcessor)
         private const val METHOD_WRAPPER_GET_ALL_LIVE_PAGED = "getAllLivePaged"
         private const val METHOD_WRAPPER_GET_ALL_PAGING_SOURCE = "getAllPagingSource"
 
-
-        private fun nameOfWrapperFunc(nameOfFunc: String): String {
-            return nameOfFunc.removePrefix("_")
-        }
     }
 
     override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
@@ -51,29 +46,35 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         val primaryKeys = RoomPrimaryKeysUtils.findPrimaryKeys(symbol, resolver)
 
-        val typeOfObject = TypeNamesUtils.typeOfObject(packageName, typeName)
-        val typeOfCompanion = TypeNamesUtils.typeOfCompanion(packageName, typeName)
-        val typeOfListOfObjects = TypeNamesUtils.typeOfListOf(typeOfObject)
-        val typeOfListOfCompanions = TypeNamesUtils.typeOfListOf(typeOfCompanion)
+        val typeOfDaoExtension = symbol
+            .getAnnotation(RoomCompanion::class, resolver)
+            ?.findArgument<KSType>("extension")
+            ?.toClassName()
+        warn("type of daoExtension: $typeOfDaoExtension")
+
+        val typeOfObject = TypeNameUtils.typeOfObject(packageName, typeName)
+        val typeOfCompanion = TypeNameUtils.typeOfCompanion(packageName, typeName)
+        val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
+        val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
         val typeOfDataSourceFactoryOfCompanion =
-            TypeNamesUtils.typeOfDataSourceFactoryOf(typeOfCompanion)
+            TypeNameUtils.typeOfDataSourceFactoryOf(typeOfCompanion)
         val typeOfPagingSourceOfCompanion =
-            TypeNamesUtils.typeOfPagingSourceOf(typeOfCompanion)
+            TypeNameUtils.typeOfPagingSourceOf(typeOfCompanion)
         val typeOfPagingSourceOfObject =
-            TypeNamesUtils.typeOfPagingSourceOf(typeOfObject)
-        val typeOfLiveDataOfObject = TypeNamesUtils.typeOfLiveDataOf(typeOfObject)
-        val typeOfLiveDataOfCompanion = TypeNamesUtils.typeOfLiveDataOf(typeOfCompanion)
+            TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
+        val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
+        val typeOfLiveDataOfCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion)
         val typeOfLiveDataOfListOfCompanions =
-            TypeNamesUtils.typeOfLiveDataOf(typeOfListOfCompanions)
+            TypeNameUtils.typeOfLiveDataOf(typeOfListOfCompanions)
         val typeOfLiveDataOfListOfObjects =
-            TypeNamesUtils.typeOfLiveDataOf(typeOfListOfObjects)
+            TypeNameUtils.typeOfLiveDataOf(typeOfListOfObjects)
         val typeOfFlowOfListOfCompanions =
-            TypeNamesUtils.typeOfFlowOf(typeOfListOfCompanions)
+            TypeNameUtils.typeOfFlowOf(typeOfListOfCompanions)
         val typeOfFlowOfListOfObjects =
-            TypeNamesUtils.typeOfFlowOf(typeOfListOfObjects)
+            TypeNameUtils.typeOfFlowOf(typeOfListOfObjects)
         val typeOfLiveDataOfPagedListOfObjects =
-            TypeNamesUtils.typeOfLiveDataOf(TypeNamesUtils.typeOfPagedListOf(typeOfObject))
-        val typeOfListOfLong = TypeNamesUtils.typeOfListOf(LONG)
+            TypeNameUtils.typeOfLiveDataOf(TypeNameUtils.typeOfPagedListOf(typeOfObject))
+        val typeOfListOfLong = TypeNameUtils.typeOfListOf(LONG)
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
         val nameOfCompanion = typeNameOfCompanion.toVariableOrParamName()
@@ -88,6 +89,15 @@ class DaoStep (processor: BaseSymbolProcessor)
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
             .addAnnotation(Dao::class)
             .addModifiers(KModifier.ABSTRACT)
+
+        if (typeOfDaoExtension != null && typeOfDaoExtension != UNIT) {
+            val packageNameOfDaoExtension = typeOfDaoExtension.packageName
+            val typeNameOfDaoExtension = typeOfDaoExtension.simpleName
+            classBuilder.superclass(
+                ClassName(packageNameOfDaoExtension,
+                    GeneratedNames.getDaoExtensionCompanionName(typeNameOfDaoExtension))
+            )
+        }
 
         val methodGetOneBuilder: FunSpec.Builder =
             FunSpec.builder(METHOD_GET_ONE)
@@ -251,7 +261,8 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodDeleteAllBuilder.build())
 
-        val methodWrapperOfGetOneBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ONE))
+        val methodWrapperOfGetOneBuilder = FunSpec.builder(
+            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ONE))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfObject)
 
@@ -263,7 +274,8 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodWrapperOfGetOneBuilder.build())
 
-        val methodWrapperOfGetOneLiveBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ONE_LIVE))
+        val methodWrapperOfGetOneLiveBuilder = FunSpec.builder(
+            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ONE_LIVE))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfObject)
 
@@ -275,7 +287,8 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodWrapperOfGetOneLiveBuilder.build())
 
-        val methodWrapperOfGetAllBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ALL))
+        val methodWrapperOfGetAllBuilder = FunSpec.builder(
+            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ALL))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfListOfObjects)
 
@@ -284,7 +297,8 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodWrapperOfGetAllBuilder.build())
 
-        val methodWrapperOfGetAllLiveBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ALL_LIVE))
+        val methodWrapperOfGetAllLiveBuilder = FunSpec.builder(
+            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ALL_LIVE))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfListOfObjects)
 
@@ -294,7 +308,8 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodWrapperOfGetAllLiveBuilder.build())
 
-        val methodWrapperOfGetAllFlowBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ALL_FLOW))
+        val methodWrapperOfGetAllFlowBuilder = FunSpec.builder(
+            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ALL_FLOW))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfFlowOfListOfObjects)
 
@@ -305,7 +320,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodWrapperOfGetAllFlowBuilder.build())
 
         val methodWrapperOfGetAllLivePagedBuilder = FunSpec.builder(
-            nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_LIVE_PAGED))
+            GeneratedNames.nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_LIVE_PAGED))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfPagedListOfObjects)
 
@@ -317,7 +332,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodWrapperOfGetAllLivePagedBuilder.build())
 
         val methodWrapperOfGetAllPagingSourceBuilder = FunSpec.builder(
-            nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_PAGING_SOURCE))
+            GeneratedNames.nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_PAGING_SOURCE))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfPagingSourceOfObject)
 
@@ -336,7 +351,8 @@ class DaoStep (processor: BaseSymbolProcessor)
             val methodName = it.first
             val returnType = it.second
 
-            val methodWrapperOfActionOnOneBuilder = FunSpec.builder(nameOfWrapperFunc(methodName))
+            val methodWrapperOfActionOnOneBuilder = FunSpec.builder(
+                GeneratedNames.nameOfWrapperFunc(methodName))
                 .addModifiers(KModifier.PUBLIC)
                 .addParameter(nameOfObject, typeOfObject)
                 .returns(returnType)
@@ -356,7 +372,8 @@ class DaoStep (processor: BaseSymbolProcessor)
             val methodName = it.first
             val returnType = it.second
 
-            val methodWrapperOfActionOnAllBuilder = FunSpec.builder(nameOfWrapperFunc(methodName))
+            val methodWrapperOfActionOnAllBuilder = FunSpec.builder(
+                GeneratedNames.nameOfWrapperFunc(methodName))
                 .addModifiers(KModifier.PUBLIC)
                 .addParameter(nameOfObjects, typeOfListOfObjects)
                 .returns(returnType)

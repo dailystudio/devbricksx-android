@@ -87,12 +87,12 @@ class DatabaseStep(processor: BaseSymbolProcessor)
                 .addMember("version = %L", dbVersion)
 
         val typeOfDatabase = ClassName(packageName, typeNameToGenerate)
-        val typeOfContext = TypeNamesUtils.typeOfContext()
-        val typeOfMigration = TypeNamesUtils.typeOfMigration()
+        val typeOfContext = TypeNameUtils.typeOfContext()
+        val typeOfMigration = TypeNameUtils.typeOfMigration()
         val typeOfArrayOfMigrations = ARRAY.parameterizedBy(typeOfMigration)
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
-            .superclass(TypeNamesUtils.typeOfRoomDatabase())
+            .superclass(TypeNameUtils.typeOfRoomDatabase())
             .addAnnotation(databaseAnnotationBuilder.build())
             .addModifiers(KModifier.ABSTRACT)
 
@@ -133,7 +133,7 @@ class DatabaseStep(processor: BaseSymbolProcessor)
                     %T::class.java, 
                     "%L")
                 """.trimIndent(),
-                TypeNamesUtils.typeOfRoom(),
+                TypeNameUtils.typeOfRoom(),
                 typeOfDatabase,
                 database)
             .beginControlFlow("if (migrations != null)")
@@ -142,7 +142,7 @@ class DatabaseStep(processor: BaseSymbolProcessor)
 
         if (dbVersion > 1) {
             val typeOfDummyMigration =
-                TypeNamesUtils.typeOfDummyMigration()
+                TypeNameUtils.typeOfDummyMigration()
 
             methodGetDatabaseWithMigrationsBuilder.beginControlFlow("else")
 

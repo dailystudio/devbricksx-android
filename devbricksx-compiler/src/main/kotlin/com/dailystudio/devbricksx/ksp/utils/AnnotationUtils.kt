@@ -11,7 +11,7 @@ inline fun <reified R> KSAnnotation.findArgument(argName: String): R {
     }.value as R
 }
 
-fun KSClassDeclaration.getAnnotation(
+fun KSDeclaration.getAnnotation(
     annotationClass: KClass<out Annotation>,
     resolver: Resolver
 ): KSAnnotation? {
@@ -34,7 +34,7 @@ fun KSClassDeclaration.collectTypesInAnnotationArguments(
 
     val converters = mutableSetOf<KSType>()
 
-    if (superClassType() != TypeNamesUtils.typeOfKotlinAny(resolver)) {
+    if (superClassType() != TypeNameUtils.typeOfKotlinAny(resolver)) {
         val convertersInSuperType =
             superClassType().collectTypesInAnnotationArguments(annotationClass,
                 nameOfArgument, resolver)

@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-object TypeNamesUtils {
+object TypeNameUtils {
 
     fun typeOfKotlinAny(resolver: Resolver): KSClassDeclaration? {
         return resolver.getClassDeclarationByName<Any>()
@@ -23,6 +23,10 @@ object TypeNamesUtils {
 
     fun typeOfObject(packageName: String, typeName: String): ClassName {
         return ClassName(packageName, typeName)
+    }
+
+    fun typeOfCompanion(objectType: ClassName): ClassName {
+        return typeOfCompanion(objectType.packageName, objectType.simpleName)
     }
 
     fun typeOfCompanion(packageName: String, typeName: String): ClassName {
@@ -134,6 +138,10 @@ object TypeNamesUtils {
         val list = typeOfList()
 
         return list.parameterizedBy(typeName)
+    }
+
+    fun typeOfArrayOf(typeName: TypeName): TypeName {
+        return ARRAY.parameterizedBy(typeName)
     }
 
     fun defaultValOfTypeName(typeName: TypeName): String {

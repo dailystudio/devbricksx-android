@@ -26,7 +26,8 @@ open class Record(open val id: Int) {
         childColumns = ["notebook_id"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index(value = ["id", "notebook_id"])]
+    indices = [Index(value = ["id", "notebook_id"])],
+    extension = NoteDaoExtension::class
 )
 data class Note(override val id: Int,
                 val name: String,
@@ -45,7 +46,8 @@ data class Note(override val id: Int,
 }
 
 @RoomCompanion(
-    database = "notes"
+    database = "notes",
+    extension = NotebookDaoExtension::class
 )
 data class Notebook(override val id: Int,
                     val name: String,

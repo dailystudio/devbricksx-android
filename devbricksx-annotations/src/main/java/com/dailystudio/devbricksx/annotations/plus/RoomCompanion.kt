@@ -12,7 +12,7 @@ annotation class RoomCompanion(
     val converters: Array<KClass<*>> = [],
     val foreignKeys: Array<ForeignKey> = [],
     val indices: Array<Index> = [],
-    val extension: KClass<*> = Void::class,  // database name
+    val extension: KClass<*> = Unit::class,  // database name
     val database: String = "",  // database version
     val databaseVersion: Int = 1,  // database migrations
     val migrations: Array<KClass<*>> = [],  // dao settings

@@ -33,6 +33,25 @@ object GeneratedNames {
         return builder.toString()
     }
 
+    fun nameOfWrappedFunc(nameOfFunc: String): String {
+        return buildString {
+            append("_")
+            append(nameOfFunc)
+        }
+    }
+
+    fun mappedNameOfParamInWrappedFunc(nameOfParam: String): String {
+        return buildString {
+            append("_")
+            append(nameOfParam)
+        }
+    }
+
+    fun nameOfWrapperFunc(nameOfFunc: String): String {
+        return nameOfFunc.removePrefix("_")
+    }
+
+
     fun getTableName(className: String): String {
         return className.lowercase(Locale.getDefault())
     }
