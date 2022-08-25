@@ -33,6 +33,10 @@ class DaoStep (processor: BaseSymbolProcessor)
         private const val METHOD_INSERT_OR_UPDATE = "_insertOrUpdate"
         private const val METHOD_DELETE = "_delete"
 
+        private const val METHOD_WRAPPER_GET_ALL_LIVE_PAGED = "getAllLivePaged"
+        private const val METHOD_WRAPPER_GET_ALL_PAGING_SOURCE = "getAllPagingSource"
+
+
         private fun nameOfWrapperFunc(nameOfFunc: String): String {
             return nameOfFunc.removePrefix("_")
         }
@@ -53,14 +57,23 @@ class DaoStep (processor: BaseSymbolProcessor)
         val typeOfListOfCompanions = TypeNamesUtils.typeOfListOf(typeOfCompanion)
         val typeOfDataSourceFactoryOfCompanion =
             TypeNamesUtils.typeOfDataSourceFactoryOf(typeOfCompanion)
+        val typeOfPagingSourceOfCompanion =
+            TypeNamesUtils.typeOfPagingSourceOf(typeOfCompanion)
+        val typeOfPagingSourceOfObject =
+            TypeNamesUtils.typeOfPagingSourceOf(typeOfObject)
         val typeOfLiveDataOfObject = TypeNamesUtils.typeOfLiveDataOf(typeOfObject)
         val typeOfLiveDataOfCompanion = TypeNamesUtils.typeOfLiveDataOf(typeOfCompanion)
         val typeOfLiveDataOfListOfCompanions =
             TypeNamesUtils.typeOfLiveDataOf(typeOfListOfCompanions)
         val typeOfLiveDataOfListOfObjects =
             TypeNamesUtils.typeOfLiveDataOf(typeOfListOfObjects)
-        val typeOfFlowOfListOfCompanion =
+        val typeOfFlowOfListOfCompanions =
             TypeNamesUtils.typeOfFlowOf(typeOfListOfCompanions)
+        val typeOfFlowOfListOfObjects =
+            TypeNamesUtils.typeOfFlowOf(typeOfListOfObjects)
+        val typeOfLiveDataOfPagedListOfObjects =
+            TypeNamesUtils.typeOfLiveDataOf(TypeNamesUtils.typeOfPagedListOf(typeOfObject))
+        val typeOfListOfLong = TypeNamesUtils.typeOfListOf(LONG)
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
         val nameOfCompanion = typeNameOfCompanion.toVariableOrParamName()
@@ -146,7 +159,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         val methodGetAllFlowBuilder: FunSpec.Builder =
             FunSpec.builder(METHOD_GET_ALL_FLOW)
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
-                .returns(typeOfFlowOfListOfCompanion)
+                .returns(typeOfFlowOfListOfCompanions)
 
         methodGetAllFlowBuilder.addAnnotation(
             AnnotationSpec.builder(Query::class)
@@ -159,7 +172,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         val methodInsertOneBuilder = FunSpec.builder(METHOD_INSERT)
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObject, typeOfCompanion)
-            .returns(Long::class.asTypeName())
+            .returns(LONG)
 
         methodInsertOneBuilder.addAnnotation(
             AnnotationSpec.builder(Insert::class)
@@ -172,7 +185,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         val methodInsertAllBuilder = FunSpec.builder(METHOD_INSERT)
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObjects, typeOfListOfCompanions)
-            .returns(TypeNamesUtils.typeOfListOf(Long::class.asTypeName()))
+            .returns(typeOfListOfLong)
 
         methodInsertAllBuilder.addAnnotation(
             AnnotationSpec.builder(Insert::class)
@@ -231,6 +244,13 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodDeleteOneBuilder.build())
 
+        val methodDeleteAllBuilder = FunSpec.builder(METHOD_DELETE)
+            .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
+            .addParameter(nameOfObjects, typeOfListOfCompanions)
+            .addAnnotation(Delete::class)
+
+        classBuilder.addFunction(methodDeleteAllBuilder.build())
+
         val methodWrapperOfGetOneBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ONE))
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfObject)
@@ -273,6 +293,83 @@ class DaoStep (processor: BaseSymbolProcessor)
             METHOD_GET_ALL_LIVE)
 
         classBuilder.addFunction(methodWrapperOfGetAllLiveBuilder.build())
+
+        val methodWrapperOfGetAllFlowBuilder = FunSpec.builder(nameOfWrapperFunc(METHOD_GET_ALL_FLOW))
+            .addModifiers(KModifier.PUBLIC)
+            .returns(typeOfFlowOfListOfObjects)
+
+        FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(methodWrapperOfGetAllFlowBuilder,
+            typeOfObject,
+            METHOD_GET_ALL_FLOW)
+
+        classBuilder.addFunction(methodWrapperOfGetAllFlowBuilder.build())
+
+        val methodWrapperOfGetAllLivePagedBuilder = FunSpec.builder(
+            nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_LIVE_PAGED))
+            .addModifiers(KModifier.PUBLIC)
+            .returns(typeOfLiveDataOfPagedListOfObjects)
+
+        FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
+            methodWrapperOfGetAllLivePagedBuilder,
+            20,
+            METHOD_GET_ALL_DATA_SOURCE)
+
+        classBuilder.addFunction(methodWrapperOfGetAllLivePagedBuilder.build())
+
+        val methodWrapperOfGetAllPagingSourceBuilder = FunSpec.builder(
+            nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_PAGING_SOURCE))
+            .addModifiers(KModifier.PUBLIC)
+            .returns(typeOfPagingSourceOfObject)
+
+        FuncSpecStatementsGenerator.mapOutputToPagingSource(
+            methodWrapperOfGetAllPagingSourceBuilder,
+            METHOD_GET_ALL_DATA_SOURCE)
+
+        classBuilder.addFunction(methodWrapperOfGetAllPagingSourceBuilder.build())
+
+        arrayOf(
+            Pair(METHOD_INSERT, LONG),
+            Pair(METHOD_UPDATE, UNIT),
+            Pair(METHOD_INSERT_OR_UPDATE, UNIT),
+            Pair(METHOD_DELETE, UNIT),
+        ).forEach {
+            val methodName = it.first
+            val returnType = it.second
+
+            val methodWrapperOfActionOnOneBuilder = FunSpec.builder(nameOfWrapperFunc(methodName))
+                .addModifiers(KModifier.PUBLIC)
+                .addParameter(nameOfObject, typeOfObject)
+                .returns(returnType)
+                .addStatement(
+                    "return %N(%T.fromObject(%N))",
+                    methodName, typeOfCompanion, nameOfObject
+                )
+
+            classBuilder.addFunction(methodWrapperOfActionOnOneBuilder.build())
+        }
+
+        arrayOf(
+            Pair(METHOD_INSERT, typeOfListOfLong),
+            Pair(METHOD_UPDATE, UNIT),
+            Pair(METHOD_INSERT_OR_UPDATE, UNIT),
+        ).forEach {
+            val methodName = it.first
+            val returnType = it.second
+
+            val methodWrapperOfActionOnAllBuilder = FunSpec.builder(nameOfWrapperFunc(methodName))
+                .addModifiers(KModifier.PUBLIC)
+                .addParameter(nameOfObjects, typeOfListOfObjects)
+                .returns(returnType)
+                .addStatement(
+                    """
+                        return %N(%N.map({
+                            %T.fromObject(it)
+                        }))
+                    """.trimIndent(),
+                    methodName, nameOfObjects, typeOfCompanion
+                )
+            classBuilder.addFunction(methodWrapperOfActionOnAllBuilder.build())
+        }
 
         return GeneratedResult(packageName, classBuilder)
     }

@@ -62,6 +62,10 @@ object TypeNamesUtils {
         return ClassName("androidx.lifecycle", "map")
     }
 
+    fun typeOfFlowMapFunction(): TypeName {
+        return ClassName("kotlinx.coroutines.flow", "map")
+    }
+
     fun typeOfDataSourceFactory(): ClassName {
         return ClassName("androidx.paging.DataSource", "Factory")
     }
@@ -73,14 +77,39 @@ object TypeNamesUtils {
             Integer::class.asClassName(), typeName)
     }
 
+    fun typeOfPagingSource(): ClassName {
+        return ClassName("androidx.paging", "PagingSource")
+    }
+
+    fun typeOfPagingSourceOf(typeName: TypeName): TypeName {
+        val classNameOfPagingSource = typeOfPagingSource()
+
+        return classNameOfPagingSource.parameterizedBy(
+            INT, typeName)
+    }
+
     fun typeOfLiveData(): ClassName {
         return ClassName("androidx.lifecycle", "LiveData")
     }
 
     fun typeOfLiveDataOf(typeName: TypeName): TypeName {
-        val typeOfLiveData = typeOfLiveData()
+        val classNameOfLiveData = typeOfLiveData()
 
-        return typeOfLiveData.parameterizedBy(typeName)
+        return classNameOfLiveData.parameterizedBy(typeName)
+    }
+
+    fun typeOfPagedListBuilder(): ClassName {
+        return ClassName("androidx.paging", "LivePagedListBuilder")
+    }
+
+    fun typeOfPagedList(): ClassName {
+        return ClassName("androidx.paging", "PagedList")
+    }
+
+    fun typeOfPagedListOf(typeName: TypeName): TypeName {
+        val classNameOfPagedList = typeOfPagedList()
+
+        return classNameOfPagedList.parameterizedBy(typeName)
     }
 
     fun typeOfTransformations(): ClassName {

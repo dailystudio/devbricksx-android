@@ -54,6 +54,7 @@ dependencies {
     // Room relatives
     api "androidx.room:room-runtime:${ROOM_VERSION}"
     api "androidx.room:room-ktx:${ROOM_VERSION}"
+    api "androidx.room:room-paging:${ROOM_VERSION}"
     kapt "androidx.room:room-compiler:${ROOM_VERSION}"
 
     // LifeCycle relatives

@@ -20,14 +20,15 @@ object FuncSpecStatementsGenerator {
                                     nameOfWrappedFunc: String,
                                     strOfParamsOfWrappedFunc: String? = null) {
         funcSpecBuilder
-            .addStatement("""
-                return this.%N(%L).%T { 
-                    it.toObject() 
-                }
-            """.trimIndent(),
-            nameOfWrappedFunc,
-            strOfParamsOfWrappedFunc ?: "",
-            TypeNamesUtils.typeOfLiveDataMapFunction()
+            .addStatement(
+                """
+                    return %T.map(this.%N(%L)) { 
+                        it.toObject() 
+                    }
+                """.trimIndent(),
+                TypeNamesUtils.typeOfTransformations(),
+                nameOfWrappedFunc,
+                strOfParamsOfWrappedFunc ?: "",
         )
     }
 
@@ -63,6 +64,58 @@ object FuncSpecStatementsGenerator {
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
             typeOfObject
+        )
+    }
+
+    fun mapOutputToFlowOfObjects(funcSpecBuilder: FunSpec.Builder,
+                                 typeOfObject: TypeName,
+                                 nameOfWrappedFunc: String,
+                                 strOfParamsOfWrappedFunc: String? = null) {
+        funcSpecBuilder.addStatement(
+            """
+                return this.%N(%L).%T {
+                  mutableListOf<%T>().apply {
+                    it.forEach {
+                      add(it.toObject())
+                    }
+                  }
+                }
+            """.trimIndent(),
+            nameOfWrappedFunc,
+            strOfParamsOfWrappedFunc ?: "",
+            TypeNamesUtils.typeOfFlowMapFunction(),
+            typeOfObject
+        )
+    }
+
+    fun mapOutputToLiveDataOfPagedListObjects(funcSpecBuilder: FunSpec.Builder,
+                                              pageSize: Int,
+                                              nameOfWrappedFunc: String,
+                                              strOfParamsOfWrappedFunc: String? = null) {
+        funcSpecBuilder.addStatement(
+            """
+                return %T(this.%N(%L).map({
+                    it.toObject()
+                }), %L).build()
+            """.trimIndent(),
+            TypeNamesUtils.typeOfPagedListBuilder(),
+            nameOfWrappedFunc,
+            strOfParamsOfWrappedFunc ?: "",
+            pageSize
+        )
+    }
+
+    fun mapOutputToPagingSource(funcSpecBuilder: FunSpec.Builder,
+                                nameOfWrappedFunc: String,
+                                strOfParamsOfWrappedFunc: String? = null) {
+        funcSpecBuilder.addStatement(
+            """
+                return this.%N(%L).map({
+                    it.toObject()
+                }).asPagingSourceFactory().invoke();
+            """.trimIndent(),
+            nameOfWrappedFunc,
+            strOfParamsOfWrappedFunc ?: "",
         )
     }
 
