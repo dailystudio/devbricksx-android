@@ -5,6 +5,7 @@ import com.dailystudio.devbricksx.annotations.plus.DaoExtension
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.FuncSpecStatementsGenerator
+import com.dailystudio.devbricksx.ksp.helper.FunctionNames
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -17,11 +18,8 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import kotlin.reflect.KClass
 
 class DaoExtensionStep (processor: BaseSymbolProcessor)
-    : SingleSymbolProcessStep(DaoExtension::class.qualifiedName!!, processor) {
+    : SingleSymbolProcessStep(DaoExtension::class, processor) {
 
-    companion object {
-
-    }
     override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
@@ -43,7 +41,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         }
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
-            .addAnnotation(Dao::class)
+//            .addAnnotation(Dao::class)
             .addModifiers(KModifier.ABSTRACT)
 
         when (symbol.classKind) {
@@ -129,7 +127,8 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         val typeOfLiveDataOfPagedListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(TypeNameUtils.typeOfPagedListOf(typeOfObject))
 
-        val methodWrappedBuilder = FunSpec.builder(GeneratedNames.nameOfWrappedFunc(nameOfFunc))
+        val methodWrappedBuilder = FunSpec.builder(
+            FunctionNames.toWrappedFunc(nameOfFunc))
             .addModifiers(KModifier.ABSTRACT, KModifier.PUBLIC)
             .addAnnotation(queryAnnotation.toAnnotationSpec())
 
@@ -168,51 +167,51 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         when (returnType) {
             typeOfObject -> FuncSpecStatementsGenerator.mapOutputToObject(
                 methodOverrideBuilder,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToObjects(
                 methodOverrideBuilder,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfObject -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(
                 methodOverrideBuilder,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(
                 methodOverrideBuilder,
                 typeOfObject,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToObjects(
                 methodOverrideBuilder,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfFlowOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(
                 methodOverrideBuilder,
                 typeOfObject,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfPagedListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
                 methodOverrideBuilder,
                 20,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfPagingSourceOfObject -> FuncSpecStatementsGenerator.mapOutputToPagingSource(
                 methodOverrideBuilder,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             else -> FuncSpecStatementsGenerator.mapDefault(
                 methodOverrideBuilder,
                 returnType != UNIT,
-                GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+                FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
         }
@@ -241,7 +240,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         val typeOfArrayOfCompanions = TypeNameUtils.typeOfArrayOf(typeOfCompanion)
 
         val methodWrappedBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrappedFunc(nameOfFunc))
+            FunctionNames.toWrappedFunc(nameOfFunc))
             .addModifiers(KModifier.ABSTRACT, KModifier.PUBLIC)
             .addAnnotation(annotation.toAnnotationSpec())
 
@@ -276,7 +275,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             }
 
             val mappedNameOfParam = if (mappedTypeOfParam != typeOfParam) {
-                GeneratedNames.mappedNameOfParamInWrappedFunc(nameOfParam)
+                FunctionNames.nameOfParamInWrappedFunc(nameOfParam)
             } else {
                 nameOfParam
             }
@@ -310,7 +309,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             typeOfObject,
             paramsToMap,
             hasReturn,
-            GeneratedNames.nameOfWrappedFunc(nameOfFunc),
+            FunctionNames.toWrappedFunc(nameOfFunc),
             strOfFunCallBuilder.toString()
         )
 

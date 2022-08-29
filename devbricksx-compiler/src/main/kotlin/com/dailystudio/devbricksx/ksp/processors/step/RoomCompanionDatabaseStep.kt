@@ -16,8 +16,8 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toTypeName
 
-class DatabaseStep(processor: BaseSymbolProcessor)
-    : GroupedSymbolsProcessStep(RoomCompanion::class.qualifiedName!!, processor) {
+class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
+    : GroupedSymbolsProcessStep(RoomCompanion::class, processor) {
 
     companion object {
         private const val INSTANCE_OF_DATABASE = "sInstance"

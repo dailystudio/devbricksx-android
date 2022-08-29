@@ -6,51 +6,30 @@ import javax.lang.model.element.VariableElement
 
 object GeneratedNames {
 
-    private const val COMPANION_PREFIX = "_"
+     const val COMPANION_PREFIX = "_"
 
-    private const val DATABASE_SUFFIX = "Database"
-    private const val DAO_SUFFIX = "Dao"
-    private const val DIFF_UTIL_SUFFIX = "DiffUtil"
-    private const val REPOSITORY_SUFFIX = "Repository"
-    private const val DATABASE_PACKAGE_SUFFIX = ".db"
-    private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
+     const val DATABASE_SUFFIX = "Database"
+     const val DAO_SUFFIX = "Dao"
+     const val DIFF_UTIL_SUFFIX = "DiffUtil"
+     const val REPOSITORY_SUFFIX = "Repository"
+     const val DATABASE_PACKAGE_SUFFIX = ".db"
+     const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
-    fun getShadowMethodName(method: String?): String {
-        val builder = StringBuilder(method)
-        builder.insert(0, COMPANION_PREFIX)
-        return builder.toString()
-    }
-
-    fun getShadowParameterName(parameter: KSClassDeclaration): String {
-        return getShadowParameterName(parameter.simpleName.toString())
-    }
-
-    fun getShadowParameterName(parameter: String?): String {
-        val builder = StringBuilder(parameter)
-        builder.append(COMPANION_PREFIX)
-        return builder.toString()
-    }
-
-    fun nameOfWrappedFunc(nameOfFunc: String): String {
+    fun nameOfFuncForCompanion(nameOfFunc: String): String {
         return buildString {
             append("_")
             append(nameOfFunc)
         }
     }
 
-    fun mappedNameOfParamInWrappedFunc(nameOfParam: String): String {
+    fun nameOfParamInFuncForCompanion(nameOfParam: String): String {
         return buildString {
             append("_")
             append(nameOfParam)
         }
     }
-
-    fun nameOfWrapperFunc(nameOfFunc: String): String {
-        return nameOfFunc.removePrefix("_")
-    }
-
 
     fun getTableName(className: String): String {
         return className.lowercase(Locale.getDefault())

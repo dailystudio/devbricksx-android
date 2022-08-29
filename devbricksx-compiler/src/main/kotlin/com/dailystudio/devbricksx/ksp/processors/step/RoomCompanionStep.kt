@@ -19,7 +19,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class RoomCompanionStep (processor: BaseSymbolProcessor)
-    : SingleSymbolProcessStep(RoomCompanion::class.qualifiedName!!, processor) {
+    : SingleSymbolProcessStep(RoomCompanion::class, processor) {
 
     companion object {
         private const val METHOD_FROM_OBJECT = "fromObject"

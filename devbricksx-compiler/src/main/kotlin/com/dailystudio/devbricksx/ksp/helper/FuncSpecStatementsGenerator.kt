@@ -152,8 +152,7 @@ object FuncSpecStatementsGenerator {
 
         for ((nameOfParam, param) in paramsToMap) {
             val typeOfParam = param.type.resolve().toTypeName()
-            val mappedNameOfParam = GeneratedNames
-                .mappedNameOfParamInWrappedFunc(nameOfParam)
+            val mappedNameOfParam = FunctionNames.nameOfParamInWrappedFunc(nameOfParam)
 
             when (typeOfParam) {
                 typeOfObject -> {

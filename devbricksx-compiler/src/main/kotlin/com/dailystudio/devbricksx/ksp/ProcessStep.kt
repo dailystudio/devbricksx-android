@@ -4,8 +4,9 @@ import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.ksp.toClassName
+import kotlin.reflect.KClass
 
-abstract class ProcessStep(val strOfAnnotation: String,
+abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
                            val processor: BaseSymbolProcessor,
 ) {
 
@@ -24,9 +25,11 @@ abstract class ProcessStep(val strOfAnnotation: String,
     }
 
     fun runStep(resolver: Resolver): List<GeneratedResult>? {
-        val symbols = resolver
-            .getSymbolsWithAnnotation(strOfAnnotation)
-            .filterIsInstance<KSClassDeclaration>()
+        val nameOfAnnotation = classOfAnnotation.qualifiedName
+        val symbols = nameOfAnnotation?.let {
+            resolver.getSymbolsWithAnnotation(nameOfAnnotation)
+                .filterIsInstance<KSClassDeclaration>()
+        }?: emptySequence()
 
         preProcessSymbols(resolver, symbols)
 
@@ -35,7 +38,7 @@ abstract class ProcessStep(val strOfAnnotation: String,
         postProcessSymbols(resolver, symbols, results)
 
         return results
-    }
+}
 
     protected fun warn(message: String) {
         processor.warn(message, logTagOfStep)
@@ -59,9 +62,9 @@ abstract class ProcessStep(val strOfAnnotation: String,
 
 }
 
-abstract class SingleSymbolProcessStep(strOfAnnotation: String,
+abstract class SingleSymbolProcessStep(classOfAnnotation: KClass<out Annotation>,
                                        processor: BaseSymbolProcessor,
-): ProcessStep(strOfAnnotation, processor) {
+): ProcessStep(classOfAnnotation, processor) {
 
     abstract fun processSymbol(resolver: Resolver,
                                symbol: KSClassDeclaration): GeneratedResult?
@@ -86,9 +89,9 @@ abstract class SingleSymbolProcessStep(strOfAnnotation: String,
 
 }
 
-abstract class GroupedSymbolsProcessStep(strOfAnnotation: String,
+abstract class GroupedSymbolsProcessStep(classOfAnnotation: KClass<out Annotation>,
                                          processor: BaseSymbolProcessor,
-): ProcessStep(strOfAnnotation, processor) {
+): ProcessStep(classOfAnnotation, processor) {
 
     private var mapOfSymbolGroups = emptyMap<String, List<KSClassDeclaration>>()
 

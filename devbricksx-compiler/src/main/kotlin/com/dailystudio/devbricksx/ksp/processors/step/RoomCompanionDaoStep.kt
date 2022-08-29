@@ -4,10 +4,7 @@ import androidx.room.*
 import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
-import com.dailystudio.devbricksx.ksp.helper.FuncSpecStatementsGenerator
-import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
-import com.dailystudio.devbricksx.ksp.helper.toVariableOrParamName
-import com.dailystudio.devbricksx.ksp.helper.toVariableOrParamNameOfCollection
+import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
@@ -16,26 +13,8 @@ import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
 
-class DaoStep (processor: BaseSymbolProcessor)
-    : SingleSymbolProcessStep(RoomCompanion::class.qualifiedName!!, processor) {
-
-    companion object {
-        private const val METHOD_GET_ONE = "_getOne"
-        private const val METHOD_GET_ONE_LIVE = "_getOneLive"
-        private const val METHOD_GET_ALL = "_getAll"
-        private const val METHOD_GET_ALL_LIVE = "_getAllLive"
-        private const val METHOD_GET_ALL_DATA_SOURCE = "_getAllDataSource"
-        private const val METHOD_GET_ALL_FLOW = "_getAllFlow"
-
-        private const val METHOD_INSERT = "_insert"
-        private const val METHOD_UPDATE = "_update"
-        private const val METHOD_INSERT_OR_UPDATE = "_insertOrUpdate"
-        private const val METHOD_DELETE = "_delete"
-
-        private const val METHOD_WRAPPER_GET_ALL_LIVE_PAGED = "getAllLivePaged"
-        private const val METHOD_WRAPPER_GET_ALL_PAGING_SOURCE = "getAllPagingSource"
-
-    }
+class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
+    : SingleSymbolProcessStep(RoomCompanion::class, processor) {
 
     override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
         val typeName = symbol.typeName()
@@ -77,8 +56,6 @@ class DaoStep (processor: BaseSymbolProcessor)
         val typeOfListOfLong = TypeNameUtils.typeOfListOf(LONG)
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
-        val nameOfCompanion = typeNameOfCompanion.toVariableOrParamName()
-        val nameOfCompanions = typeNameOfCompanion.toVariableOrParamNameOfCollection()
 
         val tableName = GeneratedNames.getTableName(typeName)
         val whereClauseForGetOneMethods  =
@@ -100,7 +77,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         }
 
         val methodGetOneBuilder: FunSpec.Builder =
-            FunSpec.builder(METHOD_GET_ONE)
+            FunSpec.builder(FunctionNames.GET_ONE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfCompanion)
         RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(methodGetOneBuilder, primaryKeys)
@@ -114,7 +91,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodGetOneBuilder.build())
 
         val methodGetOneLiveBuilder: FunSpec.Builder =
-            FunSpec.builder(METHOD_GET_ONE_LIVE)
+            FunSpec.builder(FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfLiveDataOfCompanion)
         RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(methodGetOneLiveBuilder, primaryKeys)
@@ -128,7 +105,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodGetOneLiveBuilder.build())
 
         val methodGetAllBuilder: FunSpec.Builder =
-            FunSpec.builder(METHOD_GET_ALL)
+            FunSpec.builder(FunctionNames.GET_ALL.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfListOfCompanions)
 
@@ -141,7 +118,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodGetAllBuilder.build())
 
         val methodGetAllLiveBuilder: FunSpec.Builder =
-            FunSpec.builder(METHOD_GET_ALL_LIVE)
+            FunSpec.builder(FunctionNames.GET_ALL_LIVE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfLiveDataOfListOfCompanions)
 
@@ -154,7 +131,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodGetAllLiveBuilder.build())
 
         val methodGetAllDataSourceFactoryBuilder: FunSpec.Builder =
-            FunSpec.builder(METHOD_GET_ALL_DATA_SOURCE)
+            FunSpec.builder(FunctionNames.GET_ALL_DATA_SOURCE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfDataSourceFactoryOfCompanion)
 
@@ -167,7 +144,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodGetAllDataSourceFactoryBuilder.build())
 
         val methodGetAllFlowBuilder: FunSpec.Builder =
-            FunSpec.builder(METHOD_GET_ALL_FLOW)
+            FunSpec.builder(FunctionNames.GET_ALL_FLOW.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfFlowOfListOfCompanions)
 
@@ -179,7 +156,7 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodGetAllFlowBuilder.build())
 
-        val methodInsertOneBuilder = FunSpec.builder(METHOD_INSERT)
+        val methodInsertOneBuilder = FunSpec.builder(FunctionNames.INSERT.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObject, typeOfCompanion)
             .returns(LONG)
@@ -192,7 +169,7 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodInsertOneBuilder.build())
 
-        val methodInsertAllBuilder = FunSpec.builder(METHOD_INSERT)
+        val methodInsertAllBuilder = FunSpec.builder(FunctionNames.INSERT.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObjects, typeOfListOfCompanions)
             .returns(typeOfListOfLong)
@@ -205,37 +182,38 @@ class DaoStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodInsertAllBuilder.build())
 
-        val methodUpdateOneBuilder = FunSpec.builder(METHOD_UPDATE)
+        val methodUpdateOneBuilder = FunSpec.builder(FunctionNames.UPDATE.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObject, typeOfCompanion)
             .addAnnotation(Update::class)
 
         classBuilder.addFunction(methodUpdateOneBuilder.build())
 
-        val methodUpdateAllBuilder = FunSpec.builder(METHOD_UPDATE)
+        val methodUpdateAllBuilder = FunSpec.builder(FunctionNames.UPDATE.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObjects, typeOfListOfCompanions)
             .addAnnotation(Update::class)
 
         classBuilder.addFunction(methodUpdateAllBuilder.build())
 
-        val methodInsertOrUpdateOneBuilder = FunSpec.builder(METHOD_INSERT_OR_UPDATE)
+        val methodInsertOrUpdateOneBuilder = FunSpec.builder(
+            FunctionNames.INSERT_OR_UPDATE.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
             .addParameter(nameOfObject, typeOfCompanion)
             .addAnnotation(Transaction::class)
-            .addStatement("val id = %N(%N)", METHOD_INSERT, nameOfObject)
+            .addStatement("val id = %N(%N)", FunctionNames.INSERT.nameOfFuncForCompanion(), nameOfObject)
             .beginControlFlow("if (id == -1L)")
-            .addStatement("%N(%N)", METHOD_UPDATE, nameOfObject)
+            .addStatement("%N(%N)", FunctionNames.UPDATE.nameOfFuncForCompanion(), nameOfObject)
             .endControlFlow()
 
         classBuilder.addFunction(methodInsertOrUpdateOneBuilder.build())
 
-        val methodInsertOrUpdateAllBuilder = FunSpec.builder(METHOD_INSERT_OR_UPDATE)
+        val methodInsertOrUpdateAllBuilder = FunSpec.builder(FunctionNames.INSERT_OR_UPDATE.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
             .addParameter(nameOfObjects, typeOfListOfCompanions)
             .addAnnotation(Transaction::class)
             .addStatement("val insertResults = %N(%N)",
-                METHOD_INSERT, nameOfObjects)
+                FunctionNames.INSERT.nameOfFuncForCompanion(), nameOfObjects)
             .addStatement("val toUpdate = mutableListOf<%T>()",
                 typeOfCompanion)
             .beginControlFlow("for ((i, result) in insertResults.withIndex())")
@@ -243,18 +221,18 @@ class DaoStep (processor: BaseSymbolProcessor)
             .addStatement("toUpdate.add(%N[i])", nameOfObjects)
             .endControlFlow()
             .endControlFlow()
-            .addStatement("toUpdate.forEach { %N(it) }", METHOD_UPDATE)
+            .addStatement("toUpdate.forEach { %N(it) }", FunctionNames.UPDATE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodInsertOrUpdateAllBuilder.build())
 
-        val methodDeleteOneBuilder = FunSpec.builder(METHOD_DELETE)
+        val methodDeleteOneBuilder = FunSpec.builder(FunctionNames.DELETE.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObject, typeOfCompanion)
             .addAnnotation(Delete::class)
 
         classBuilder.addFunction(methodDeleteOneBuilder.build())
 
-        val methodDeleteAllBuilder = FunSpec.builder(METHOD_DELETE)
+        val methodDeleteAllBuilder = FunSpec.builder(FunctionNames.DELETE.nameOfFuncForCompanion())
             .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
             .addParameter(nameOfObjects, typeOfListOfCompanions)
             .addAnnotation(Delete::class)
@@ -262,7 +240,7 @@ class DaoStep (processor: BaseSymbolProcessor)
         classBuilder.addFunction(methodDeleteAllBuilder.build())
 
         val methodWrapperOfGetOneBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ONE))
+            FunctionNames.GET_ONE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfObject)
 
@@ -270,12 +248,12 @@ class DaoStep (processor: BaseSymbolProcessor)
             methodWrapperOfGetOneBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToObject(methodWrapperOfGetOneBuilder,
-            METHOD_GET_ONE, getOneMethodCallParameters)
+            FunctionNames.GET_ONE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneBuilder.build())
 
         val methodWrapperOfGetOneLiveBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ONE_LIVE))
+            FunctionNames.GET_ONE_LIVE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfObject)
 
@@ -283,97 +261,97 @@ class DaoStep (processor: BaseSymbolProcessor)
             methodWrapperOfGetOneLiveBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(methodWrapperOfGetOneLiveBuilder,
-            METHOD_GET_ONE_LIVE, getOneMethodCallParameters)
+            FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneLiveBuilder.build())
 
         val methodWrapperOfGetAllBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ALL))
+            FunctionNames.GET_ALL.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfListOfObjects)
 
         FuncSpecStatementsGenerator.mapOutputToObjects(methodWrapperOfGetAllBuilder,
-            METHOD_GET_ALL)
+            FunctionNames.GET_ALL.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllBuilder.build())
 
         val methodWrapperOfGetAllLiveBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ALL_LIVE))
+            FunctionNames.GET_ALL_LIVE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfListOfObjects)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(methodWrapperOfGetAllLiveBuilder,
             typeOfObject,
-            METHOD_GET_ALL_LIVE)
+            FunctionNames.GET_ALL_LIVE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllLiveBuilder.build())
 
         val methodWrapperOfGetAllFlowBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_GET_ALL_FLOW))
+            FunctionNames.GET_ALL_FLOW.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfFlowOfListOfObjects)
 
         FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(methodWrapperOfGetAllFlowBuilder,
             typeOfObject,
-            METHOD_GET_ALL_FLOW)
+            FunctionNames.GET_ALL_FLOW.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllFlowBuilder.build())
 
         val methodWrapperOfGetAllLivePagedBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_LIVE_PAGED))
+            FunctionNames.GET_ALL_LIVE_PAGED.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfPagedListOfObjects)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
             methodWrapperOfGetAllLivePagedBuilder,
             20,
-            METHOD_GET_ALL_DATA_SOURCE)
+            FunctionNames.GET_ALL_DATA_SOURCE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllLivePagedBuilder.build())
 
         val methodWrapperOfGetAllPagingSourceBuilder = FunSpec.builder(
-            GeneratedNames.nameOfWrapperFunc(METHOD_WRAPPER_GET_ALL_PAGING_SOURCE))
+            FunctionNames.GET_ALL_PAGING_SOURCE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfPagingSourceOfObject)
 
         FuncSpecStatementsGenerator.mapOutputToPagingSource(
             methodWrapperOfGetAllPagingSourceBuilder,
-            METHOD_GET_ALL_DATA_SOURCE)
+            FunctionNames.GET_ALL_DATA_SOURCE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllPagingSourceBuilder.build())
 
         arrayOf(
-            Pair(METHOD_INSERT, LONG),
-            Pair(METHOD_UPDATE, UNIT),
-            Pair(METHOD_INSERT_OR_UPDATE, UNIT),
-            Pair(METHOD_DELETE, UNIT),
+            Pair(FunctionNames.INSERT, LONG),
+            Pair(FunctionNames.UPDATE, UNIT),
+            Pair(FunctionNames.INSERT_OR_UPDATE, UNIT),
+            Pair(FunctionNames.DELETE, UNIT),
         ).forEach {
             val methodName = it.first
             val returnType = it.second
 
             val methodWrapperOfActionOnOneBuilder = FunSpec.builder(
-                GeneratedNames.nameOfWrapperFunc(methodName))
+                methodName.nameOfFunc())
                 .addModifiers(KModifier.PUBLIC)
                 .addParameter(nameOfObject, typeOfObject)
                 .returns(returnType)
                 .addStatement(
                     "return %N(%T.fromObject(%N))",
-                    methodName, typeOfCompanion, nameOfObject
+                    methodName.nameOfFuncForCompanion(), typeOfCompanion, nameOfObject
                 )
 
             classBuilder.addFunction(methodWrapperOfActionOnOneBuilder.build())
         }
 
         arrayOf(
-            Pair(METHOD_INSERT, typeOfListOfLong),
-            Pair(METHOD_UPDATE, UNIT),
-            Pair(METHOD_INSERT_OR_UPDATE, UNIT),
+            Pair(FunctionNames.INSERT, typeOfListOfLong),
+            Pair(FunctionNames.UPDATE, UNIT),
+            Pair(FunctionNames.INSERT_OR_UPDATE, UNIT),
         ).forEach {
             val methodName = it.first
             val returnType = it.second
 
             val methodWrapperOfActionOnAllBuilder = FunSpec.builder(
-                GeneratedNames.nameOfWrapperFunc(methodName))
+                methodName.nameOfFunc())
                 .addModifiers(KModifier.PUBLIC)
                 .addParameter(nameOfObjects, typeOfListOfObjects)
                 .returns(returnType)
@@ -383,7 +361,7 @@ class DaoStep (processor: BaseSymbolProcessor)
                             %T.fromObject(it)
                         }))
                     """.trimIndent(),
-                    methodName, nameOfObjects, typeOfCompanion
+                    methodName.nameOfFuncForCompanion(), nameOfObjects, typeOfCompanion
                 )
             classBuilder.addFunction(methodWrapperOfActionOnAllBuilder.build())
         }

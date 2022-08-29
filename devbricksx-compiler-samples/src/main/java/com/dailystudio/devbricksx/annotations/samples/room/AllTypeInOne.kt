@@ -12,7 +12,8 @@ import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
 import kotlinx.coroutines.flow.Flow
 
 @RoomCompanion(
-    primaryKeys = ["id"]
+    primaryKeys = ["id"],
+    extension = AllTypesInOneDaoExtension::class
 )
 class AllTypesInOne {
     var id: Int = 0
@@ -43,16 +44,16 @@ abstract class AllTypesInOneDaoExtension {
     abstract fun selectAllByValOfIntTypeFlow(arrayOfInt: Array<Int>): Flow<List<AllTypesInOne>>
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
-    abstract fun selectAllByValOfIntTypePagedList(arrayOfInt: Array<Int>): PagedList<List<AllTypesInOne>>
+    abstract fun selectAllByValOfIntTypePagedList(arrayOfInt: Array<Int>): LiveData<PagedList<AllTypesInOne>>
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
-    abstract fun selectAllByValOfIntTypePagingSource(arrayOfInt: Array<Int>): PagingSource<Int, List<AllTypesInOne>>
+    abstract fun selectAllByValOfIntTypePagingSource(arrayOfInt: Array<Int>): PagingSource<Int, AllTypesInOne>
 
     @Query("SELECT * FROM alltypesinone WHERE id IN (:ids)")
     abstract fun loadAllByIds(ids: IntArray): List<AllTypesInOne>
 
     @Insert
-    abstract fun insertTwo(o1: AllTypesInOne, o2: AllTypesInOne, dummy: Int)
+    abstract fun insertTwo(o1: AllTypesInOne, o2: AllTypesInOne)
 
     @Insert
     abstract fun insertAll(ones: List<AllTypesInOne>) : List<Long>
