@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
+import com.google.devtools.ksp.isConstructor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
@@ -15,7 +16,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(RoomCompanion::class, processor) {
 
-    private val daoExtensionOfSymbols = mutableMapOf<ClassName, KSClassDeclaration>()
+    private val symbolsOfDaoExtension = mutableMapOf<ClassName, KSClassDeclaration>()
 
     override fun preProcessSymbols(resolver: Resolver, symbols: Sequence<KSClassDeclaration>) {
         super.preProcessSymbols(resolver, symbols)
@@ -28,7 +29,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             val daoExtension = it.getAnnotation(DaoExtension::class, resolver) ?: return@forEach
             val entity = daoExtension.findArgument<KSType>("entity")
 
-            daoExtensionOfSymbols[entity.toClassName()] = it
+            symbolsOfDaoExtension[entity.toClassName()] = it
         }
     }
 
@@ -37,7 +38,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         classes: Sequence<KSClassDeclaration>,
         results: List<GeneratedResult>?
     ) {
-        daoExtensionOfSymbols.clear()
+        symbolsOfDaoExtension.clear()
     }
 
     override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
@@ -86,23 +87,120 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
 
         classBuilder.primaryConstructor(constructorBuilder.build())
 
-        val methodGetOneBuilder: FunSpec.Builder =
-            FunSpec.builder(GeneratedNames.getRepositoryObjectMethodName(typeName))
-                .addModifiers(KModifier.PUBLIC)
-                .returns(typeOfObject)
+        arrayOf(
+            Pair(FunctionNames.GET_ONE, typeOfObject),
+            Pair(FunctionNames.GET_ONE_LIVE, typeOfLiveDataOfObject)
+        ).forEach {
+            val method = it.first
+            val typesOfReturn = it.second
+            val methodBuilder: FunSpec.Builder =
+                FunSpec.builder(method.nameOfFuncForType(typeName))
+                    .addModifiers(KModifier.PUBLIC)
+                    .returns(typesOfReturn)
 
-        RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(
-            methodGetOneBuilder, primaryKeys)
-        methodGetOneBuilder.addStatement(
-            "return %N.%N(%L)",
-            nameOfPropDao,
-            FunctionNames.GET_ONE.nameOfFunc(),
-            getOneMethodCallParameters
-        )
-        classBuilder.addFunction(methodGetOneBuilder.build())
+            RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(
+                methodBuilder, primaryKeys)
 
+            methodBuilder.addStatement(
+                "return %N.%N(%L)",
+                nameOfPropDao,
+                method.nameOfFunc(),
+                getOneMethodCallParameters
+            )
+
+            classBuilder.addFunction(methodBuilder.build())
+        }
+
+        arrayOf(
+            Pair(FunctionNames.GET_ALL, typeOfListOfObjects),
+            Pair(FunctionNames.GET_ALL_LIVE, typeOfLiveDataOfListOfObjects),
+            Pair(FunctionNames.GET_ALL_FLOW, typeOfFlowOfListOfObjects),
+            Pair(FunctionNames.GET_ALL_LIVE_PAGED, typeOfLiveDataOfPagedListOfObjects),
+            Pair(FunctionNames.GET_ALL_PAGING_SOURCE, typeOfPagingSourceOfObject),
+        ).forEach {
+            val method = it.first
+            val typesOfReturn = it.second
+            val methodBuilder: FunSpec.Builder =
+                FunSpec.builder(method.nameOfFuncForType(typeName))
+                    .addModifiers(KModifier.PUBLIC)
+                    .returns(typesOfReturn)
+
+            methodBuilder.addStatement(
+                "return %N.%N()",
+                nameOfPropDao,
+                method.nameOfFunc(),
+            )
+
+            classBuilder.addFunction(methodBuilder.build())
+        }
+
+        arrayOf(
+            Pair(FunctionNames.INSERT, LONG),
+            Pair(FunctionNames.UPDATE, UNIT),
+            Pair(FunctionNames.INSERT_OR_UPDATE, UNIT),
+            Pair(FunctionNames.DELETE, UNIT),
+        ).forEach {
+            val method = it.first
+            val typesOfReturn = it.second
+
+            val methodBuilder: FunSpec.Builder =
+                FunSpec.builder(method.nameOfFunc())
+                    .addModifiers(KModifier.PUBLIC)
+                    .addParameter(nameOfObject, typeOfObject)
+                    .returns(typesOfReturn)
+
+            methodBuilder.addStatement(
+                "return %N.%N(%N)",
+                nameOfPropDao,
+                method.nameOfFunc(),
+                nameOfObject
+            )
+
+            classBuilder.addFunction(methodBuilder.build())
+        }
+
+        arrayOf(
+            Pair(FunctionNames.INSERT, typeOfListOfLong),
+            Pair(FunctionNames.UPDATE, UNIT),
+            Pair(FunctionNames.INSERT_OR_UPDATE, UNIT),
+        ).forEach {
+            val method = it.first
+            val typesOfReturn = it.second
+
+            val methodBuilder: FunSpec.Builder =
+                FunSpec.builder(method.nameOfFunc())
+                    .addModifiers(KModifier.PUBLIC)
+                    .addParameter(nameOfObjects, typeOfListOfObjects)
+                    .returns(typesOfReturn)
+
+            methodBuilder.addStatement(
+                "return %N.%N(%N)",
+                nameOfPropDao,
+                method.nameOfFunc(),
+                nameOfObjects
+            )
+
+            classBuilder.addFunction(methodBuilder.build())
+        }
+
+        val symbolOfDaoExtension = symbolsOfDaoExtension[typeOfObject]
+        if (symbolOfDaoExtension != null) {
+            handleMethodsInDaoExtension(resolver, typeOfObject, symbolOfDaoExtension, classBuilder)
+        }
 
         return GeneratedResult(packageName, classBuilder)
     }
 
+    private fun handleMethodsInDaoExtension(resolver: Resolver,
+                                            typeOfObject: TypeName,
+                                            symbolOfDaoExtension: KSClassDeclaration,
+                                            classBuilder: TypeSpec.Builder) {
+        symbolOfDaoExtension.getAllFunctions().forEach {
+            if (it.isConstructor()) {
+                return@forEach
+            }
+
+            warn("wrapping extend fun: $it")
+        }
+    }
 }

@@ -50,6 +50,17 @@ enum class FunctionNames {
         }
     }
 
+    fun nameOfFuncForType(typeName: String): String {
+        val nameOfFunc = nameOfFunc()
+        return if (nameOfFunc.contains("getOne")) {
+            nameOfFunc.replaceFirst("getOne", "get${typeName}")
+        } else if (nameOfFunc.contains("getAll")) {
+            nameOfFunc.replaceFirst("getAll", "getAll${typeName}s")
+        } else {
+            nameOfFunc
+        }
+    }
+
     fun nameOfFuncForCompanion(): String {
         return toWrappedFunc(nameOfFunc())
     }
