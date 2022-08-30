@@ -12,6 +12,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toTypeName
 
 class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(RoomCompanion::class, processor) {
@@ -192,15 +193,92 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
     }
 
     private fun handleMethodsInDaoExtension(resolver: Resolver,
-                                            typeOfObject: TypeName,
+                                            typeOfObject: ClassName,
                                             symbolOfDaoExtension: KSClassDeclaration,
                                             classBuilder: TypeSpec.Builder) {
         symbolOfDaoExtension.getAllFunctions().forEach {
-            if (it.isConstructor()) {
+            if (!validForWrap(it)) {
                 return@forEach
             }
 
-            warn("wrapping extend fun: $it")
+            warn("wrapping fun in DaoExtension: $it")
+            wrapMethod(it, typeOfObject, classBuilder)
+        }
+    }
+
+    private fun wrapMethod(func: KSFunctionDeclaration,
+                           typeOfObject: ClassName,
+                           classBuilder: TypeSpec.Builder) {
+        val nameOfFunc = func.simpleName.getShortName()
+        val typeOfDao = ClassName(typeOfObject.packageName,
+            GeneratedNames.getRoomCompanionDaoName(typeOfObject.simpleName))
+        val nameOfPropDao: String =
+            typeOfDao.simpleName.lowerCamelCaseName()
+        val returnType = func.returnType?.toTypeName() ?: UNIT
+        val hasReturn = (returnType != UNIT)
+
+        val methodBuilder = FunSpec.builder(nameOfFunc)
+            .addModifiers(KModifier.PUBLIC)
+            .returns(returnType)
+
+        val strOfFunCallBuilder = StringBuilder()
+
+        for ((i, param) in func.parameters.withIndex()) {
+            val nameOfParam = param.name?.getShortName()?: continue
+            val typeOfParam = param.type.toTypeName()
+            val isVararg = param.isVararg
+
+            val paramBuilder = ParameterSpec.builder(nameOfParam, typeOfParam)
+            if (isVararg) {
+                paramBuilder.addModifiers(KModifier.VARARG)
+            }
+
+            if (param.isVararg) {
+                strOfFunCallBuilder.append('*')
+            }
+            methodBuilder.addParameter(paramBuilder.build())
+
+            strOfFunCallBuilder.append(nameOfParam)
+            if (i < func.parameters.size - 1) {
+                strOfFunCallBuilder.append(", ")
+            }
+        }
+
+        if (hasReturn) {
+            methodBuilder.addStatement(
+                """
+                    return %N.%N(%L)
+                """.trimIndent(),
+                nameOfPropDao,
+                nameOfFunc,
+                strOfFunCallBuilder.toString()
+            )
+        } else {
+            methodBuilder.addStatement(
+                """
+                    %N.%N(%L)
+                """.trimIndent(),
+                nameOfPropDao,
+                nameOfFunc,
+                strOfFunCallBuilder.toString()
+            )
+        }
+
+        classBuilder.addFunction(methodBuilder.build())
+    }
+
+    private fun validForWrap(func: KSFunctionDeclaration): Boolean {
+        return if (func.isConstructor()) {
+            false
+        } else {
+            val nameOfFunc = func.simpleName.getShortName()
+            val nameOfFuncToSkip = arrayOf(
+                "equals",
+                "hashCode",
+                "toString",
+            )
+
+            !(nameOfFuncToSkip.contains(nameOfFunc))
         }
     }
 }
