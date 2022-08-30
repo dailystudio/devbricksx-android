@@ -1,1 +1,2 @@
-com.dailystudio.devbricksx.ksp.DevBricksSymbolProcessorProvider
+com.dailystudio.devbricksx.ksp.RoomCompanionProcessorProvider
+com.dailystudio.devbricksx.ksp.InMemoryCompanionProcessorProvider
