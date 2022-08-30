@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.annotations.plus
+package com.dailystudio.devbricksx.annotations.data
 
 import kotlin.reflect.KClass
 

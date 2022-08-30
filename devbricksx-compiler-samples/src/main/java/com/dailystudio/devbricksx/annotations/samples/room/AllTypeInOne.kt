@@ -7,8 +7,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.dailystudio.devbricksx.annotations.plus.DaoExtension
-import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import kotlinx.coroutines.flow.Flow
 
 @RoomCompanion(

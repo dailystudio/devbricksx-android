@@ -1,7 +1,8 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
 import androidx.room.*
-import com.dailystudio.devbricksx.annotations.plus.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.Page
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.FuncSpecStatementsGenerator
@@ -62,16 +63,18 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
                 when (val typeNameOfAnnotation = it.annotationType.resolve().toTypeName()) {
                     Query::class.asTypeName() -> {
                         warn("processing query func: $func")
-                        handleQueryMethod(foundAnnotation, entity.toClassName(),
-                            func, classBuilder)
+                        handleQueryMethod(resolver, func,
+                            foundAnnotation, entity.toClassName(),
+                            classBuilder)
                     }
 
                     Insert::class.asTypeName(),
                     Update::class.asTypeName(),
                     Delete::class.asTypeName() -> {
                         warn("processing write action func: $func")
-                        handleWriteActionMethod(foundAnnotation, entity.toClassName(),
-                            func, classBuilder, typeNameOfAnnotation != Insert::class.asTypeName())
+                        handleWriteActionMethod(resolver, func,
+                            foundAnnotation, entity.toClassName(),
+                            classBuilder, typeNameOfAnnotation != Insert::class.asTypeName())
                     }
                     else -> {}
                 }
@@ -98,12 +101,20 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         return foundAnnotation
     }
 
-    private fun handleQueryMethod(queryAnnotation: KSAnnotation,
-                                  typeOfObject: ClassName,
+    private fun handleQueryMethod(resolver: Resolver,
                                   func: KSFunctionDeclaration,
+                                  queryAnnotation: KSAnnotation,
+                                  typeOfObject: ClassName,
                                   classBuilder: TypeSpec.Builder) {
         val nameOfFunc = func.simpleName.getShortName()
         val returnType = func.returnType?.toTypeName() ?: UNIT
+
+
+        var pageSize: Int = Page.DEFAULT_PAGE_SIZE
+        val pageAnnotation = func.getAnnotation(Page::class, resolver)
+        if (pageAnnotation != null) {
+            pageSize = pageAnnotation.findArgument("pageSize")
+        }
 
         val typeOfCompanion = TypeNameUtils.typeOfCompanion(typeOfObject)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
@@ -199,7 +210,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             )
             typeOfLiveDataOfPagedListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
                 methodOverrideBuilder,
-                20,
+                pageSize,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
@@ -221,9 +232,10 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
     }
 
 
-    private fun handleWriteActionMethod(annotation: KSAnnotation,
-                                        typeOfObject: ClassName,
+    private fun handleWriteActionMethod(resolver: Resolver,
                                         func: KSFunctionDeclaration,
+                                        annotation: KSAnnotation,
+                                        typeOfObject: ClassName,
                                         classBuilder: TypeSpec.Builder,
                                         alwaysReturnVoid: Boolean) {
         val nameOfFunc = func.simpleName.getShortName()

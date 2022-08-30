@@ -2,7 +2,7 @@ package com.dailystudio.devbricksx.ksp.processors.step
 
 import androidx.room.Database
 import androidx.room.TypeConverters
-import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames

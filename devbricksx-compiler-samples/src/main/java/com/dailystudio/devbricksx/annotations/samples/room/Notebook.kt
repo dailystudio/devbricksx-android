@@ -1,12 +1,14 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
+import androidx.lifecycle.LiveData
+import androidx.paging.PagedList
 import androidx.paging.PagingSource
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.Query
-import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
-import com.dailystudio.devbricksx.annotations.plus.DaoExtension
-import com.dailystudio.devbricksx.annotations.Page
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.Page
 import com.dailystudio.devbricksx.database.DateConverter
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -74,7 +76,10 @@ abstract class NoteDaoExtension {
 
     @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
     @Page(pageSize = 50)
-    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): PagingSource<Int, Note>
+    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): LiveData<PagedList<Note>>
+
+    @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
+    abstract fun getAllNotesOrderedByLastModifiedPagingSource(notebookId: Int): PagingSource<Int, Note>
 
     @Query("SELECT COUNT(*) FROM note WHERE notebook_id = :notebookId")
     abstract fun countNotes(notebookId: Int): Int

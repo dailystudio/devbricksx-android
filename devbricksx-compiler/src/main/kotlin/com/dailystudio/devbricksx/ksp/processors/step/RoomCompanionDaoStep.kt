@@ -1,7 +1,8 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
 import androidx.room.*
-import com.dailystudio.devbricksx.annotations.plus.RoomCompanion
+import com.dailystudio.devbricksx.annotations.data.Page
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.*
@@ -25,11 +26,20 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         val primaryKeys = RoomPrimaryKeysUtils.findPrimaryKeys(symbol, resolver)
 
-        val typeOfDaoExtension = symbol
-            .getAnnotation(RoomCompanion::class, resolver)
+        val roomCompanion = symbol.getAnnotation(RoomCompanion::class, resolver)
+
+        val typeOfDaoExtension =roomCompanion
             ?.findArgument<KSType>("extension")
             ?.toClassName()
         warn("type of daoExtension: $typeOfDaoExtension")
+
+        var pageSize: Int = roomCompanion
+            ?.findArgument("pageSize") ?: Page.DEFAULT_PAGE_SIZE
+        if (pageSize <= 0) {
+            error("page size must be positive. set to default")
+
+            pageSize = Page.DEFAULT_PAGE_SIZE
+        }
 
         val typeOfObject = TypeNameUtils.typeOfObject(packageName, typeName)
         val typeOfCompanion = TypeNameUtils.typeOfCompanion(packageName, typeName)
@@ -304,7 +314,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
             methodWrapperOfGetAllLivePagedBuilder,
-            20,
+            pageSize,
             FunctionNames.GET_ALL_DATA_SOURCE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllLivePagedBuilder.build())
