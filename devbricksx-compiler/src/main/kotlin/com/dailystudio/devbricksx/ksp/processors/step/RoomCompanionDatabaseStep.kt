@@ -29,9 +29,9 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
         resolver: Resolver,
         nameOfGroup: String,
         symbols: List<KSClassDeclaration>
-    ): GeneratedResult? {
+    ): List<GeneratedResult> {
         if (symbols.isEmpty()) {
-            return null
+            return emptyResult
         }
 
         val database = nameOfGroup
@@ -197,7 +197,7 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodDaoBuilder.build())
         }
 
-        return GeneratedResult(packageName, classBuilder)
+        return singleResult(packageName, classBuilder)
     }
 
     override fun categorizeSymbols(

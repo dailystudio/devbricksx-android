@@ -16,6 +16,10 @@ annotation class RoomCompanion(
     val database: String = "",  // database version
     val databaseVersion: Int = 1,  // database migrations
     val migrations: Array<KClass<*>> = [],  // dao settings
-    val pageSize: Int = 10,  // repository settings
+    val pageSize: Int = DEFAULT_PAGE_SIZE,  // repository settings
     val repository: Boolean = true
-)
+) {
+    companion object {
+        const val DEFAULT_PAGE_SIZE = InternalConstants.DEFAULT_PAGE_SIZE
+    }
+}

@@ -144,6 +144,32 @@ object TypeNameUtils {
         return ARRAY.parameterizedBy(typeName)
     }
 
+    fun typeOfInMemoryObject(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.inmemory","InMemoryObject")
+    }
+
+    fun typeOfInMemoryObjectManager(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.inmemory","InMemoryObjectManager")
+    }
+
+    fun typeOfObjectRepository(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.repository","ObjectRepository")
+    }
+
+    fun typeOfInMemoryObjectManagerOf(typeOfKey: TypeName,
+                                      typeOfObject: TypeName): TypeName {
+        val classNameOfManager = typeOfInMemoryObjectManager()
+
+        return classNameOfManager.parameterizedBy(typeOfKey, typeOfObject)
+    }
+
+    fun typeOfObjectRepositoryOf(typeOfKey: TypeName,
+                                 typeOfObject: TypeName): TypeName {
+        val classNameOfRepo = typeOfObjectRepository()
+
+        return classNameOfRepo.parameterizedBy(typeOfKey, typeOfObject)
+   }
+
     fun defaultValOfTypeName(typeName: TypeName): String {
         return if (typeName.isNullable) {
             return "null"

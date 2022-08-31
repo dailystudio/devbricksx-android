@@ -31,7 +31,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         private const val PROP_NAME_MAP_TO_OBJECTS = "mapCompanionsToObjects"
     }
 
-    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
+    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): List<GeneratedResult> {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
         val superType = symbol.superClassType()
@@ -153,7 +153,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         if (primaryKeysFound != primaryKeys.toSet()) {
             error("Not all primary keys are found ${primaryKeys - primaryKeysFound} in $symbol")
-            return null
+            return emptyResult
         }
 
         val entityAnnotationBuilder: AnnotationSpec.Builder =
@@ -360,7 +360,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         classBuilder.addType(classCompanionBuilder.build())
 
-        return GeneratedResult(packageName, classBuilder)
+        return singleResult(packageName, classBuilder)
     }
 
     private fun buildPrimaryKeysString(primaryKeys: Set<String>): String {

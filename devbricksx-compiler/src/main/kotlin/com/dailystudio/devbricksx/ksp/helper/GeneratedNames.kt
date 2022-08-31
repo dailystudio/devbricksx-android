@@ -6,14 +6,15 @@ import javax.lang.model.element.VariableElement
 
 object GeneratedNames {
 
-     const val COMPANION_PREFIX = "_"
+    private const val COMPANION_PREFIX = "_"
 
-     const val DATABASE_SUFFIX = "Database"
-     const val DAO_SUFFIX = "Dao"
-     const val DIFF_UTIL_SUFFIX = "DiffUtil"
-     const val REPOSITORY_SUFFIX = "Repository"
-     const val DATABASE_PACKAGE_SUFFIX = ".db"
-     const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
+    private const val DATABASE_SUFFIX = "Database"
+    private const val DAO_SUFFIX = "Dao"
+    private const val DIFF_UTIL_SUFFIX = "DiffUtil"
+    private const val REPOSITORY_SUFFIX = "Repository"
+    private const val MANAGER_SUFFIX = "Manager"
+    private const val DATABASE_PACKAGE_SUFFIX = ".db"
+    private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
@@ -99,6 +100,37 @@ object GeneratedNames {
         }
 
         return builder.toString()
+    }
+
+    fun getRepositoryName(className: String) : String {
+        return buildString {
+            this.append(className)
+            this.append(REPOSITORY_SUFFIX)
+        }
+    }
+
+    fun getManagerName(className: String) : String {
+        return buildString {
+            this.append(className)
+            this.append(MANAGER_SUFFIX)
+        }
+    }
+
+    private fun getPackageName(packageName: String, suffix: String) : String {
+        var basePackage = if (packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
+            packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX)
+        } else {
+            packageName
+        }
+
+        return buildString {
+            this.append(basePackage)
+            this.append(suffix)
+        }
+    }
+
+    fun getRepositoryPackageName(packageName: String) : String {
+        return getPackageName(packageName, REPOSITORY_PACKAGE_SUFFIX)
     }
 
 }

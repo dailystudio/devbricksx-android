@@ -5,7 +5,7 @@ package com.dailystudio.devbricksx.annotations.data
 annotation class Page(val pageSize: Int = DEFAULT_PAGE_SIZE) {
 
     companion object {
-        const val DEFAULT_PAGE_SIZE = 10
+        const val DEFAULT_PAGE_SIZE = InternalConstants.DEFAULT_PAGE_SIZE
     }
 
 }

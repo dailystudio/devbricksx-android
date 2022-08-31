@@ -17,7 +17,7 @@ import com.squareup.kotlinpoet.ksp.toClassName
 class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(RoomCompanion::class, processor) {
 
-    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
+    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): List<GeneratedResult> {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
@@ -34,7 +34,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         warn("type of daoExtension: $typeOfDaoExtension")
 
         var pageSize: Int = roomCompanion
-            ?.findArgument("pageSize") ?: Page.DEFAULT_PAGE_SIZE
+            ?.findArgument("pageSize") ?: RoomCompanion.DEFAULT_PAGE_SIZE
         if (pageSize <= 0) {
             error("page size must be positive. set to default")
 
@@ -376,7 +376,8 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodWrapperOfActionOnAllBuilder.build())
         }
 
-        return GeneratedResult(packageName, classBuilder)
+        return singleResult(
+            packageName, classBuilder)
     }
 
 }

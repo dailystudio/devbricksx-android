@@ -42,7 +42,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         symbolsOfDaoExtension.clear()
     }
 
-    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
+    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): List<GeneratedResult> {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
@@ -189,7 +189,9 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             handleMethodsInDaoExtension(resolver, typeOfObject, symbolOfDaoExtension, classBuilder)
         }
 
-        return GeneratedResult(packageName, classBuilder)
+        return singleResult(
+            GeneratedNames.getRepositoryPackageName(packageName),
+            classBuilder)
     }
 
     private fun handleMethodsInDaoExtension(resolver: Resolver,

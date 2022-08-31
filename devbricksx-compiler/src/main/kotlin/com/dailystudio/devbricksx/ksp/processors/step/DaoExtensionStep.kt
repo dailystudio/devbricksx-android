@@ -21,7 +21,8 @@ import kotlin.reflect.KClass
 class DaoExtensionStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(DaoExtension::class, processor) {
 
-    override fun processSymbol(resolver: Resolver, symbol: KSClassDeclaration): GeneratedResult? {
+    override fun processSymbol(resolver: Resolver,
+                               symbol: KSClassDeclaration): List<GeneratedResult> {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
@@ -30,15 +31,13 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
 
         val typeOfDaoExtension =
             ClassName(packageName, typeName)
-        val typeOfDaoExtensionCompanion =
-            ClassName(packageName, typeNameToGenerate)
 
         val daoExtension = symbol.getAnnotation(DaoExtension::class, resolver)
         val entity = daoExtension?.findArgument<KSType>("entity")
         if (entity == null) {
             error("entity of [$symbol] must be specified.")
 
-            return null
+            return emptyResult
         }
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
@@ -82,7 +81,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
 
         }
 
-        return GeneratedResult(packageName, classBuilder)
+        return singleResult(packageName, classBuilder)
     }
 
     private fun findSupportAnnotation(func: KSFunctionDeclaration,
