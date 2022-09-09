@@ -254,10 +254,10 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                     methodGetLiveDataBuilder.addStatement(
                             "return %T(\n" +
                             "   %T(%L)) {\n" +
-                            "   viewModel.%N()\n" +
+                            "   viewModel.%N\n" +
                             "}.flow.%T()",
                             pager, pageConfig, options.pageSize,
-                            GeneratedNames.getAllObjectsPagingSourceFunName(typeName),
+                            GeneratedNames.getAllObjectsPagingSourcePropertyName(typeName),
                             asLiveData
                     )
                 }
@@ -265,10 +265,10 @@ abstract class AbsListFragmentProcessor : BaseProcessor() {
                     methodGetLiveDataBuilder.addStatement(
                             "return %T(\n" +
                                     "   %T(%L)) {\n" +
-                                    "   viewModel.%N()\n" +
+                                    "   viewModel.%N\n" +
                                     "}.flow",
                             pager, pageConfig, options.pageSize,
-                            GeneratedNames.getAllObjectsPagingSourceFunName(typeName))
+                            GeneratedNames.getAllObjectsPagingSourcePropertyName(typeName))
                 }
             }
         } else {

@@ -50,16 +50,39 @@ enum class FunctionNames {
         }
     }
 
+
     fun nameOfFuncForType(typeName: String): String {
+        return nameOfFuncForType(typeName, false)
+    }
+
+    fun nameOfFuncForType(typeName: String, plural: Boolean): String {
         val nameOfFunc = nameOfFunc()
         return if (nameOfFunc.contains("getOne")) {
             nameOfFunc.replaceFirst("getOne", "get${typeName}")
         } else if (nameOfFunc.contains("getAll")) {
             nameOfFunc.replaceFirst("getAll", "getAll${typeName}s")
         } else {
-            nameOfFunc
+            buildString {
+                append(nameOfFunc)
+                append(typeName.capitalizeName())
+                if (plural) {
+                    append('s')
+                }
+            }
         }
     }
+
+    fun nameOfPropFuncForType(typeName: String): String {
+        val nameOfFunc = nameOfFunc()
+        return if (nameOfFunc.contains("getOne")) {
+            nameOfFunc.replaceFirst("getOne", "${typeName.lowerCamelCaseName()}")
+        } else if (nameOfFunc.contains("getAll")) {
+            nameOfFunc.replaceFirst("getAll", "all${typeName}s")
+        } else {
+            throw Exception("prop is NOT supported on input function.")
+        }
+    }
+
 
     fun nameOfFuncForCompanion(): String {
         return toWrappedFunc(nameOfFunc())

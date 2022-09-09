@@ -87,7 +87,7 @@ class CaseActivity : BaseCaseActivity() {
     private suspend fun testInstallations() {
         val viewModel = ViewModelProvider(this).get(TestPackageViewModel::class.java)
 
-        val packages = viewModel.getTestPackages()
+        val packages = viewModel.allTestPackages
         for (pkg in packages) {
             pkg.installed = AppUtils.isApplicationInstalled(this, pkg.packageName)
             Logger.debug("app [$pkg] installed: ${pkg.installed}")
@@ -101,7 +101,7 @@ class CaseActivity : BaseCaseActivity() {
     private suspend fun resolveIcons() {
         val viewModel = ViewModelProvider(this).get(TestPackageViewModel::class.java)
 
-        val packages = viewModel.getTestPackages()
+        val packages = viewModel.allTestPackages
         for (pkg in packages) {
             pkg.icon = null
             if (pkg.installed) {

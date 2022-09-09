@@ -6,6 +6,7 @@ import androidx.paging.PagingSource
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.Query
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.Page
@@ -21,6 +22,7 @@ open class Record(open val id: Int) {
     var created: Date? = null
 }
 
+@ViewModel(group = "note")
 @RoomCompanion(
     database = "notes",
     foreignKeys = [ForeignKey(entity = Notebook::class,
@@ -47,6 +49,7 @@ data class Note(override val id: Int,
 
 }
 
+@ViewModel(group = "note")
 @RoomCompanion(
     database = "notes",
     extension = NotebookDaoExtension::class

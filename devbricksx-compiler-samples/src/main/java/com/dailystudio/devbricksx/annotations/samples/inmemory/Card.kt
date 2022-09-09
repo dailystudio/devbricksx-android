@@ -1,13 +1,13 @@
-package com.dailystudio.devbricksx.annotations.samples.room
+package com.dailystudio.devbricksx.annotations.samples.inmemory
 
 import android.graphics.Color
-import com.dailystudio.devbricksx.annotations.InMemoryManager
-import com.dailystudio.devbricksx.annotations.InMemoryRepository
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.Ordering
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import java.util.*
 
+@ViewModel
 @InMemoryCompanion(ordering = Ordering.Descending)
 data class Card(val id: Int,
                 val title: String,

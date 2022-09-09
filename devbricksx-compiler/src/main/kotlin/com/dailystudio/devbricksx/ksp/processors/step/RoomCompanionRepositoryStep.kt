@@ -69,6 +69,9 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
         val nameOfPropDao: String = typeOfDao.simpleName.lowerCamelCaseName()
+        val nameOfAllLive = FunctionNames.GET_ALL_LIVE.nameOfPropFuncForType(typeName)
+        val nameOfAllLivePaged = FunctionNames.GET_ALL_LIVE_PAGED.nameOfPropFuncForType(typeName)
+        val nameOfAllFlow = FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(typeName)
 
         val getOneMethodCallParameters: String =
             RoomPrimaryKeysUtils.primaryKeysToFuncCallParameters(primaryKeys)
@@ -121,18 +124,18 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         ).forEach {
             val method = it.first
             val typesOfReturn = it.second
-            val methodBuilder: FunSpec.Builder =
-                FunSpec.builder(method.nameOfFuncForType(typeName))
-                    .addModifiers(KModifier.PUBLIC)
-                    .returns(typesOfReturn)
 
-            methodBuilder.addStatement(
-                "return %N.%N()",
+            val propBuilder =
+                PropertySpec.builder(method.nameOfPropFuncForType(typeName),typesOfReturn)
+                    .addModifiers(KModifier.PUBLIC)
+
+            propBuilder.initializer(
+                "%N.%N()",
                 nameOfPropDao,
                 method.nameOfFunc(),
             )
 
-            classBuilder.addFunction(methodBuilder.build())
+            classBuilder.addProperty(propBuilder.build())
         }
 
         arrayOf(

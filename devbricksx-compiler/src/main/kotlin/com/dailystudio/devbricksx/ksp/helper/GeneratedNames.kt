@@ -15,6 +15,8 @@ object GeneratedNames {
     private const val MANAGER_SUFFIX = "Manager"
     private const val DATABASE_PACKAGE_SUFFIX = ".db"
     private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
+    private const val VIEW_MODEL_SUFFIX = "ViewModel"
+    private const val VIEW_MODEL_PACKAGE_SUFFIX = ".model"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
@@ -131,6 +133,37 @@ object GeneratedNames {
 
     fun getRepositoryPackageName(packageName: String) : String {
         return getPackageName(packageName, REPOSITORY_PACKAGE_SUFFIX)
+    }
+
+    fun getViewModelName(className: String) : String {
+        return buildString {
+            this.append(className.capitalizeName())
+            this.append(VIEW_MODEL_SUFFIX)
+        }
+    }
+
+    fun getViewModelPackageName(packageName: String) : String {
+        return getPackageName(packageName, VIEW_MODEL_PACKAGE_SUFFIX)
+    }
+
+    fun getDaoVariableName(className: String) : String {
+        return buildString {
+            this.append(className)
+            this.append(DAO_SUFFIX)
+        }.lowerCamelCaseName()
+    }
+
+    fun getObjectVariableName(className: String): String {
+        return buildString {
+            this.append(className.lowerCamelCaseName())
+        }
+    }
+
+    fun getObjectsVariableName(className: String): String {
+        return buildString {
+            this.append(className.lowerCamelCaseName())
+            this.append('s')
+        }
     }
 
 }

@@ -17,10 +17,6 @@ object TypeNameUtils {
         return resolver.getClassDeclarationByName(typeString)
     }
 
-    fun typeOfContext(): ClassName {
-        return ClassName("android.content", "Context")
-    }
-
     fun typeOfObject(packageName: String, typeName: String): ClassName {
         return ClassName(packageName, typeName)
     }
@@ -31,6 +27,49 @@ object TypeNameUtils {
 
     fun typeOfCompanion(packageName: String, typeName: String): ClassName {
         return ClassName(packageName, GeneratedNames.getRoomCompanionName(typeName))
+    }
+    fun typeOfContext(): ClassName {
+        return ClassName("android.content", "Context")
+    }
+
+    fun typeOfApplication(): ClassName {
+        return ClassName("android.app", "Application")
+    }
+
+    fun typeOfAndroidViewModel(): ClassName {
+        return ClassName("androidx.lifecycle", "AndroidViewModel")
+    }
+
+    fun typeOfLaunchMemberName() : MemberName {
+        return MemberName("kotlinx.coroutines", "launch")
+    }
+
+    fun typeOfLaunchClassName() : ClassName {
+        return ClassName("kotlinx.coroutines", "launch")
+    }
+
+    fun typeOfJob() : ClassName {
+        return ClassName("kotlinx.coroutines", "Job")
+    }
+
+    fun typeOfDispatchers() : ClassName {
+        return ClassName("kotlinx.coroutines", "Dispatchers")
+    }
+
+    fun typeOfShareIn(): ClassName {
+        return ClassName("kotlinx.coroutines.flow", "shareIn")
+    }
+
+    fun typeOfSharingStarted(): ClassName {
+        return ClassName("kotlinx.coroutines.flow", "SharingStarted")
+    }
+
+    fun typeOfLifecycleScope(): ClassName {
+        return ClassName("androidx.lifecycle", "lifecycleScope")
+    }
+
+    fun typeOfViewModelScope(): ClassName {
+        return ClassName("androidx.lifecycle", "viewModelScope")
     }
 
     fun typeOfRoomDatabase(): ClassName {

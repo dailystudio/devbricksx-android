@@ -161,6 +161,14 @@ class GeneratedNames {
             }
         }
 
+        fun getAllObjectsPropertyName(className: String) : String {
+            return buildString {
+                this.append("all")
+                this.append(className)
+                this.append("s")
+            }
+        }
+
         fun getAllObjectsLivePropertyName(className: String) : String {
             return buildString {
                 this.append("all")
@@ -175,7 +183,7 @@ class GeneratedNames {
                 this.append("all")
                 this.append(className)
                 this.append("s")
-                this.append("Paged")
+                this.append("LivePaged")
             }
         }
 

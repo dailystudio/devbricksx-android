@@ -12,22 +12,17 @@ open class ObjectRepository<Key: Comparable<Key>, Object: InMemoryObject<Key>>(
         private val manager: InMemoryObjectManager<Key, Object>,
         private val pageSize: Int) {
 
+    val allObjects: List<Object>
+        get() = manager.toList()
     val allObjectsLive : LiveData<List<Object>> = manager.toLiveData()
-
-    val allObjectsPaged: LiveData<PagedList<Object>> =
-            LivePagedListBuilder(manager.toDataSource(), pageSize).build()
-
+    val allObjectsLivePaged: LiveData<PagedList<Object>> =
+        LivePagedListBuilder(manager.toDataSource(), pageSize).build()
     val allObjectsFlow: Flow<List<Object>> = manager.toFlow()
-
     val allObjectsPagingSource: PagingSource<Int, Object> get() =
         manager.toPagingSource()
 
     fun get(key: Key): Object? {
         return manager.get(key)
-    }
-
-    fun getAllObjects(): List<Object> {
-        return manager.toList()
     }
 
     fun insert(`object`: Object) {

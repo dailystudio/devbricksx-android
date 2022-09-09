@@ -51,7 +51,7 @@ class CaseActivity : BaseCaseActivity() {
                     ItemViewModel::class.java)
 
             while(true) {
-                val items = viewModel.getItems()
+                val items = viewModel.allItems
                 if (items.isNotEmpty()) {
                     val pickedIndex = RANDOM.nextInt(items.size)
 

@@ -162,7 +162,7 @@ public class GeneratedNames {
 
         builder.append(className);
         builder.append('s');
-        builder.append("Paged");
+        builder.append("LivePaged");
 
         return builder.toString();
     }
