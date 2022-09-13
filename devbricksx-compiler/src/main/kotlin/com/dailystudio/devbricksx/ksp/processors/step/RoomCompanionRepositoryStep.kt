@@ -189,7 +189,13 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
 
         val symbolOfDaoExtension = symbolsOfDaoExtension[typeOfObject]
         if (symbolOfDaoExtension != null) {
-            handleMethodsInDaoExtension(resolver, typeOfObject, symbolOfDaoExtension, classBuilder)
+            val typeOfDao =
+                ClassName(typeOfObject.packageName,
+                    GeneratedNames.getRoomCompanionDaoName(typeOfObject.simpleName))
+            DaoExtensionMethodWrapperUtils.handleMethodsInDaoExtension(
+                typeOfDao,
+                symbolOfDaoExtension, classBuilder
+            )
         }
 
         return singleResult(
@@ -197,93 +203,4 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             classBuilder)
     }
 
-    private fun handleMethodsInDaoExtension(resolver: Resolver,
-                                            typeOfObject: ClassName,
-                                            symbolOfDaoExtension: KSClassDeclaration,
-                                            classBuilder: TypeSpec.Builder) {
-        symbolOfDaoExtension.getAllFunctions().forEach {
-            if (!validForWrap(it)) {
-                return@forEach
-            }
-
-            warn("wrapping fun in DaoExtension: $it")
-            wrapMethod(it, typeOfObject, classBuilder)
-        }
-    }
-
-    private fun wrapMethod(func: KSFunctionDeclaration,
-                           typeOfObject: ClassName,
-                           classBuilder: TypeSpec.Builder) {
-        val nameOfFunc = func.simpleName.getShortName()
-        val typeOfDao = ClassName(typeOfObject.packageName,
-            GeneratedNames.getRoomCompanionDaoName(typeOfObject.simpleName))
-        val nameOfPropDao: String =
-            typeOfDao.simpleName.lowerCamelCaseName()
-        val returnType = func.returnType?.toTypeName() ?: UNIT
-        val hasReturn = (returnType != UNIT)
-
-        val methodBuilder = FunSpec.builder(nameOfFunc)
-            .addModifiers(KModifier.PUBLIC)
-            .returns(returnType)
-
-        val strOfFunCallBuilder = StringBuilder()
-
-        for ((i, param) in func.parameters.withIndex()) {
-            val nameOfParam = param.name?.getShortName()?: continue
-            val typeOfParam = param.type.toTypeName()
-            val isVararg = param.isVararg
-
-            val paramBuilder = ParameterSpec.builder(nameOfParam, typeOfParam)
-            if (isVararg) {
-                paramBuilder.addModifiers(KModifier.VARARG)
-            }
-
-            if (param.isVararg) {
-                strOfFunCallBuilder.append('*')
-            }
-            methodBuilder.addParameter(paramBuilder.build())
-
-            strOfFunCallBuilder.append(nameOfParam)
-            if (i < func.parameters.size - 1) {
-                strOfFunCallBuilder.append(", ")
-            }
-        }
-
-        if (hasReturn) {
-            methodBuilder.addStatement(
-                """
-                    return %N.%N(%L)
-                """.trimIndent(),
-                nameOfPropDao,
-                nameOfFunc,
-                strOfFunCallBuilder.toString()
-            )
-        } else {
-            methodBuilder.addStatement(
-                """
-                    %N.%N(%L)
-                """.trimIndent(),
-                nameOfPropDao,
-                nameOfFunc,
-                strOfFunCallBuilder.toString()
-            )
-        }
-
-        classBuilder.addFunction(methodBuilder.build())
-    }
-
-    private fun validForWrap(func: KSFunctionDeclaration): Boolean {
-        return if (func.isConstructor()) {
-            false
-        } else {
-            val nameOfFunc = func.simpleName.getShortName()
-            val nameOfFuncToSkip = arrayOf(
-                "equals",
-                "hashCode",
-                "toString",
-            )
-
-            !(nameOfFuncToSkip.contains(nameOfFunc))
-        }
-    }
 }

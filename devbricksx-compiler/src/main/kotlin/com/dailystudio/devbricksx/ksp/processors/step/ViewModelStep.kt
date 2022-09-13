@@ -9,8 +9,10 @@ import com.dailystudio.devbricksx.ksp.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
+import com.google.devtools.ksp.isConstructor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -306,6 +308,20 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             }
 
             classBuilder.addFunction(methodBuilder.build())
+        }
+
+        val symbolOfDaoExtension = symbolsOfDaoExtension[typeOfObject]
+        if (symbolOfDaoExtension != null) {
+            val typeOfRepo = ClassName(
+                GeneratedNames.getRepositoryPackageName(typeOfObject.packageName),
+                GeneratedNames.getRoomCompanionRepositoryName(typeOfObject.simpleName)
+            )
+
+            DaoExtensionMethodWrapperUtils.handleMethodsInDaoExtension(
+                typeOfRepo,
+                symbolOfDaoExtension,
+                classBuilder
+            )
         }
     }
 
