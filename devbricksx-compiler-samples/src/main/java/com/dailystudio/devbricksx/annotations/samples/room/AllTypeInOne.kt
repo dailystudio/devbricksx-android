@@ -23,6 +23,7 @@ class AllTypesInOne {
     var floatType: Float = 0f
     var doubleType: Double = 0.0
     var stringType: String = ""
+    var booleanType: Boolean = false
 }
 
 @DaoExtension(entity = AllTypesInOne::class)

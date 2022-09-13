@@ -219,6 +219,7 @@ object TypeNameUtils {
                 LONG -> "0L"
                 FLOAT -> "0f"
                 DOUBLE -> "0.0"
+                BOOLEAN -> "false"
                 else -> {
                     ""
                 }

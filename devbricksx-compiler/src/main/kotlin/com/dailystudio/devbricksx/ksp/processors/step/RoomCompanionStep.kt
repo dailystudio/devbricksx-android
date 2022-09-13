@@ -99,9 +99,12 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             val nameOfParam = param.name?.getShortName() ?: return@forEach
             warn("processing constructor params: $nameOfParam")
 
-            if (!param.isVal && !param.isVar) {
-                error("For @RoomCompanion annotated class [$symbol], only val or var is supported in primary constructor params: $nameOfParam")
-            }
+            /*
+             * TODO: Double check the necessity of the code below
+             */
+//            if (!param.isVal && !param.isVar) {
+//                error("For @RoomCompanion annotated class [$symbol], only val or var is supported in primary constructor params: $nameOfParam")
+//            }
 
             val paramSpecBuilder = ParameterSpec.builder(nameOfParam,
                 param.type.toTypeName())

@@ -1,10 +1,8 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
-import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
 import androidx.paging.PagingSource
 import androidx.room.ForeignKey
-import androidx.room.Index
+import androidx.room.Ignore
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
@@ -14,51 +12,82 @@ import com.dailystudio.devbricksx.database.DateConverter
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-@RoomCompanion(
-    converters = [DateConverter::class, DateConverter::class, ]
-)
-open class Record(open val id: Int) {
-    var lastModified: Date? = null
-    var created: Date? = null
-}
 
-@ViewModel(group = "note")
-@RoomCompanion(
+@RoomCompanion(primaryKeys = ["id"],
+    autoGenerate = true,
+    converters = [DateConverter::class],
+    extension = NotebookDaoExtension::class,
     database = "notes",
-    foreignKeys = [ForeignKey(entity = Notebook::class,
-        parentColumns = ["id"],
-        childColumns = ["notebook_id"],
-        onDelete = ForeignKey.CASCADE
-    )],
-    indices = [Index(value = ["id", "notebook_id"])],
-    extension = NoteDaoExtension::class
 )
-data class Note(override val id: Int,
-                val name: String,
-                var content: String?): Record(id)
-{
+@ViewModel
+open class Notebook(id: Int = 0) : SelectableRecord(id) {
+
     companion object {
 
-        fun fromString(str: String): Note? {
-            return null
+        fun createNoteBook(name: String): Notebook {
+            return Notebook(0).apply {
+                val now = System.currentTimeMillis()
+
+                this.name = name
+                this.created = Date(now)
+                this.lastModified = this.created
+            }
         }
 
     }
 
-    var notebookId: Int = -1
+    var name: String? = null
+    @Ignore
+    var notesCount: Int = 0
 
+    override fun toString(): String {
+        return buildString {
+            append("Notebook [$id]: $name")
+        }
+    }
 }
 
-@ViewModel(group = "note")
-@RoomCompanion(
+@RoomCompanion(primaryKeys = ["id"],
+    autoGenerate = true,
+    extension = NoteDaoExtension::class,
     database = "notes",
-    extension = NotebookDaoExtension::class
+    foreignKeys = [ ForeignKey(entity = Notebook::class,
+        parentColumns = ["id"],
+        childColumns = ["notebook_id"],
+        onDelete = ForeignKey.CASCADE
+    )]
 )
-data class Notebook(override val id: Int,
-                    val name: String,
-): Record(id) {
-}
+@ViewModel
+class Note(id: Int = 0) : SelectableRecord(id) {
 
+    companion object {
+
+        fun createNote(notebookId: Int,
+                       title: String?,
+                       desc: String?): Note {
+            return Note(0).apply {
+                val now = System.currentTimeMillis()
+
+                this.notebook_id = notebookId
+                this.title = title
+                this.desc = desc
+                this.created = Date(now)
+                this.lastModified = this.created
+            }
+        }
+
+    }
+
+    var notebook_id: Int = -1
+    var title: String? = null
+    var desc: String? = null
+
+    override fun toString(): String {
+        return buildString {
+            append("Note [$id, notebook: $notebook_id]: $title, [desc: $desc]")
+        }
+    }
+}
 
 @DaoExtension(entity = Notebook::class)
 abstract class NotebookDaoExtension {
@@ -79,10 +108,7 @@ abstract class NoteDaoExtension {
 
     @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
     @Page(pageSize = 50)
-    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): LiveData<PagedList<Note>>
-
-    @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
-    abstract fun getAllNotesOrderedByLastModifiedPagingSource(notebookId: Int): PagingSource<Int, Note>
+    abstract fun getAllNotesOrderedByLastModifiedLivePaged(notebookId: Int): PagingSource<Int, Note>
 
     @Query("SELECT COUNT(*) FROM note WHERE notebook_id = :notebookId")
     abstract fun countNotes(notebookId: Int): Int
