@@ -3,8 +3,12 @@ package com.dailystudio.devbricksx.annotations.samples.room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.development.Logger
 
+@Adapter(viewHolder = Unit::class)
+@ViewModel
 @RoomCompanion(
     autoGenerate = true,
     migrations = [

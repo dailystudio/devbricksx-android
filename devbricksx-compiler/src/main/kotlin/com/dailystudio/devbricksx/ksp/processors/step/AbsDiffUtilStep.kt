@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.ksp.processors.step
 
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
@@ -9,6 +10,7 @@ import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -30,11 +32,11 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         val typeNameToGenerate = GeneratedNames.getDiffUtilName(typeName)
         val typeOfObject = ClassName(packageName, typeName)
 
-        val isRoomCompanion = (symbol.getAnnotation(RoomCompanion::class, resolver) != null)
-        val isInMemoryCompanion = (symbol.getAnnotation(InMemoryCompanion::class, resolver) != null)
-        warn("check companion: isRoomCompanion = $isRoomCompanion, isInMemoryCompanion = $isInMemoryCompanion")
-        if (!isRoomCompanion && !isInMemoryCompanion) {
-            error("@Adapter only support types annotated with @RoomCompanion or @InMemoryCompanion")
+        val hasAdapterAnnotatedArrayType = (symbol.getAnnotation(Adapter::class, resolver) != null)
+        val openedClass = symbol.modifiers.contains(Modifier.OPEN)
+        warn("check necessity: modifiers = ${symbol.modifiers}, open = $openedClass, hasAdapterAnnotatedArrayType = $hasAdapterAnnotatedArrayType")
+        if (!hasAdapterAnnotatedArrayType && !openedClass) {
+            warn("final class is NOT annotated by @Adapter, skip DiffUtils generation")
 
             return emptyResult
         }
