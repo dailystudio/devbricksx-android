@@ -1,7 +1,11 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.view.Adapter
 
+@Adapter(
+    viewHolder = Unit::class
+)
 @RoomCompanion
 open class User(open val uid: Int,
                 open val firstName: String? = null,

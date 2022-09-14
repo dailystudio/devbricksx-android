@@ -207,7 +207,18 @@ object TypeNameUtils {
         val classNameOfRepo = typeOfObjectRepository()
 
         return classNameOfRepo.parameterizedBy(typeOfKey, typeOfObject)
-   }
+    }
+
+    fun typeOfItemCallback(): ClassName {
+        return ClassName("androidx.recyclerview.widget.DiffUtil", "ItemCallback")
+    }
+
+    fun typeOfItemCallbackOf(typeName: TypeName): TypeName {
+        val classNameOfItemCallback = typeOfItemCallback()
+
+        return classNameOfItemCallback.parameterizedBy(typeName)
+    }
+
 
     fun defaultValOfTypeName(typeName: TypeName): String {
         return if (typeName.isNullable) {

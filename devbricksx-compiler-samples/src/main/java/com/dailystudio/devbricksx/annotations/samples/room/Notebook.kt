@@ -8,11 +8,12 @@ import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.Page
+import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.database.DateConverter
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-
+@Adapter(viewHolder = Unit::class)
 @RoomCompanion(primaryKeys = ["id"],
     autoGenerate = true,
     converters = [DateConverter::class],
@@ -47,6 +48,7 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
     }
 }
 
+@Adapter(viewHolder = Unit::class)
 @RoomCompanion(primaryKeys = ["id"],
     autoGenerate = true,
     extension = NoteDaoExtension::class,

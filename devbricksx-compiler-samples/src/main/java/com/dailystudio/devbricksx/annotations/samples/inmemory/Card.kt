@@ -3,10 +3,12 @@ package com.dailystudio.devbricksx.annotations.samples.inmemory
 import android.graphics.Color
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.Ordering
+import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import java.util.*
 
+@Adapter(viewHolder = Unit::class)
 @ViewModel
 @InMemoryCompanion(ordering = Ordering.Descending)
 data class Card(val id: Int,

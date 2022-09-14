@@ -63,7 +63,7 @@ fun KSClassDeclaration.superClassType(): KSClassDeclaration {
     return superTypes
         .map { it.resolve().declaration }
         .filterIsInstance<KSClassDeclaration>()
-        .filter { it.classKind == ClassKind.CLASS }
+//        .filter { it.classKind == ClassKind.CLASS }
         .first()
 }
 
