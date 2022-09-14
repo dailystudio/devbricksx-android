@@ -13,7 +13,7 @@ import java.util.*
 @InMemoryCompanion(ordering = Ordering.Descending)
 data class Card(val id: Int,
                 val title: String,
-                val desc: String? = null) : InMemoryObject<Int> {
+                val desc: String? = null) : IntKeyInMemoryObject() {
 
     companion object {
         private val RAND : Random = Random(System.currentTimeMillis())
@@ -30,6 +30,5 @@ data class Card(val id: Int,
 
 }
 
-abstract class IncreasedIntKeyInMemoryObject: IntKeyInMemoryObject()
+@InMemoryCompanion(ordering = Ordering.Descending)
 abstract class IntKeyInMemoryObject: InMemoryObject<Int>
-//abstract class IntKeyInMemoryObject

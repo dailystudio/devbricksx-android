@@ -1,7 +1,5 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
-import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
-import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
@@ -32,12 +30,8 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         val typeNameToGenerate = GeneratedNames.getDiffUtilName(typeName)
         val typeOfObject = ClassName(packageName, typeName)
 
-        val hasAdapterAnnotatedArrayType = (symbol.getAnnotation(Adapter::class, resolver) != null)
-        val openedClass = symbol.modifiers.contains(Modifier.OPEN)
-        warn("check necessity: modifiers = ${symbol.modifiers}, open = $openedClass, hasAdapterAnnotatedArrayType = $hasAdapterAnnotatedArrayType")
-        if (!hasAdapterAnnotatedArrayType && !openedClass) {
-            warn("final class is NOT annotated by @Adapter, skip DiffUtils generation")
-
+        val matched = needToDiffUtil(resolver, symbol)
+        if (!matched) {
             return emptyResult
         }
 
@@ -68,6 +62,20 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         classBuilder.addFunction(methodContentsSameBuilder.build())
 
         return singleResult(packageName, classBuilder)
+    }
+
+    protected open fun needToDiffUtil(resolver: Resolver,
+                                      symbol: KSClassDeclaration): Boolean {
+        val hasAdapterAnnotatedArrayType = (symbol.getAnnotation(Adapter::class, resolver) != null)
+        val openedClass = symbol.modifiers.contains(Modifier.OPEN)
+        warn("check necessity: modifiers = ${symbol.modifiers}, open = $openedClass, hasAdapterAnnotatedArrayType = $hasAdapterAnnotatedArrayType")
+
+        val matched = (hasAdapterAnnotatedArrayType || openedClass)
+        if (!matched) {
+            warn("final class [$symbol] is NOT annotated by @Adapter, skip DiffUtils generation")
+        }
+
+        return matched
     }
 
     protected abstract fun attachEqualsStatements(resolver: Resolver,
