@@ -10,8 +10,7 @@ import com.dailystudio.devbricksx.ui.AbsViewHolder
 @Adapter(
     viewHolder = UserViewHolder::class,
     viewType = ViewType.Card,
-    paged = true
-//    notifyAfterListChanged = true
+    notifyAfterListChanged = true
 )
 @ViewModel
 @RoomCompanion

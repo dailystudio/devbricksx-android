@@ -168,7 +168,7 @@ class AdapterStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodOnCurrentListChanged.build())
         }
 
-        return singleResult(
+        return singleResult(symbol,
             GeneratedNames.getAdapterPackageName(packageName),
             classBuilder)
     }

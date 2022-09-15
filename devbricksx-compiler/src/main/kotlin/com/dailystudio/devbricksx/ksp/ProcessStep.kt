@@ -42,9 +42,16 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
         return results
     }
 
-    protected fun singleResult(packageName: String,
+    protected fun singleResult(sourceSymbol: KSClassDeclaration,
+                               packageName: String,
                                classBuilder: TypeSpec.Builder): List<GeneratedResult> {
-        return listOf(GeneratedResult(packageName, classBuilder))
+        return listOf(GeneratedResult(setOf(sourceSymbol), packageName, classBuilder))
+    }
+
+    protected fun singleResult(sourceSymbols: Collection<KSClassDeclaration>,
+                               packageName: String,
+                               classBuilder: TypeSpec.Builder): List<GeneratedResult> {
+        return listOf(GeneratedResult(sourceSymbols, packageName, classBuilder))
     }
 
     protected fun warn(message: String) {

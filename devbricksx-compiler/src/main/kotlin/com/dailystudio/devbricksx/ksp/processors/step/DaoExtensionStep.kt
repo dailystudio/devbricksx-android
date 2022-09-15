@@ -81,7 +81,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
 
         }
 
-        return singleResult(packageName, classBuilder)
+        return singleResult(symbol, packageName, classBuilder)
     }
 
     private fun findSupportAnnotation(func: KSFunctionDeclaration,

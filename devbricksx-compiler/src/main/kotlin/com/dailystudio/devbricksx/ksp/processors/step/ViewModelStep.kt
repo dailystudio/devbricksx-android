@@ -84,7 +84,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             generateFacilitiesOfSymbol(resolver, typeOfViewModel, symbol, classBuilder)
         }
 
-        return singleResult(viewModelPackageName, classBuilder)
+        return singleResult(symbols, viewModelPackageName, classBuilder)
     }
 
     private fun generateFacilitiesOfSymbol(resolver: Resolver,

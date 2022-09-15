@@ -1,8 +1,10 @@
 package com.dailystudio.devbricksx.ksp.processors
 
 import com.dailystudio.devbricksx.ksp.GeneratedResult
+import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSNode
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.writeTo
@@ -89,7 +91,16 @@ abstract class BaseSymbolProcessor(
 
             val file = fileBuilder.addType(typeSpec).build()
 
-            file.writeTo(environment.codeGenerator, false)
+            val sourceFiles = mutableSetOf<KSFile>()
+            for (sourceSymbol in result.sourceSymbols) {
+                val file = sourceSymbol.containingFile ?: continue
+                warn("add source file: $file")
+                sourceFiles.add(file)
+            }
+            val dependencies = Dependencies(aggregating = true,
+                *sourceFiles.toTypedArray())
+
+            file.writeTo(environment.codeGenerator, dependencies)
         }
     }
 

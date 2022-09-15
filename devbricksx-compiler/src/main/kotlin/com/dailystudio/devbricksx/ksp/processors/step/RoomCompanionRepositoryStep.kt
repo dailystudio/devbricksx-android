@@ -198,7 +198,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             )
         }
 
-        return singleResult(
+        return singleResult(symbol,
             GeneratedNames.getRepositoryPackageName(packageName),
             classBuilder)
     }

@@ -363,7 +363,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         classBuilder.addType(classCompanionBuilder.build())
 
-        return singleResult(packageName, classBuilder)
+        return singleResult(symbol, packageName, classBuilder)
     }
 
     private fun buildPrimaryKeysString(primaryKeys: Set<String>): String {

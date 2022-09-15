@@ -87,8 +87,8 @@ class InMemoryCompanionStep (processor: BaseSymbolProcessor)
             .addModifiers(KModifier.OPEN)
 
         return listOf(
-            GeneratedResult(packageName, classBuilderOfManager),
-            GeneratedResult(
+            GeneratedResult(symbol, packageName, classBuilderOfManager),
+            GeneratedResult(symbol,
                 GeneratedNames.getRepositoryPackageName(packageName),
                 classBuilderOfRepo)
         )

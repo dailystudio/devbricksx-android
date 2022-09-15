@@ -376,7 +376,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodWrapperOfActionOnAllBuilder.build())
         }
 
-        return singleResult(
+        return singleResult(symbol,
             packageName, classBuilder)
     }
 

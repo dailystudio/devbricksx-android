@@ -197,7 +197,7 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodDaoBuilder.build())
         }
 
-        return singleResult(packageName, classBuilder)
+        return singleResult(symbols, packageName, classBuilder)
     }
 
     override fun categorizeSymbols(
