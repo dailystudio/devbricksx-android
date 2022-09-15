@@ -9,10 +9,11 @@ import androidx.room.Query
 import androidx.room.Update
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import kotlinx.coroutines.flow.Flow
 
-@Adapter(viewHolder = Unit::class)
+@Adapter(viewHolder = DummyViewHolder::class)
 @RoomCompanion(
     primaryKeys = ["id"],
     extension = AllTypesInOneDaoExtension::class

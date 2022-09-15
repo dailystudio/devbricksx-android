@@ -40,6 +40,18 @@ object TypeNameUtils {
         return ClassName("androidx.lifecycle", "AndroidViewModel")
     }
 
+    fun typeOfViewGroup(): ClassName {
+        return ClassName("android.view", "ViewGroup")
+    }
+
+    fun typeOfLayoutInflater(): ClassName {
+        return ClassName("android.view", "LayoutInflater")
+    }
+
+    fun typeOfViewGroupLayoutParameter(): ClassName {
+        return ClassName("android.view.ViewGroup", "LayoutParams")
+    }
+
     fun typeOfLaunchMemberName() : MemberName {
         return MemberName("kotlinx.coroutines", "launch")
     }
@@ -131,6 +143,16 @@ object TypeNameUtils {
             INT, typeName)
     }
 
+    fun typeOfMutableList(): ClassName {
+        return ClassName("kotlin.collections", "MutableList")
+    }
+
+    fun typeOfMutableListOf(typeName: TypeName): TypeName {
+        val list = typeOfMutableList()
+
+        return list.parameterizedBy(typeName)
+    }
+
     fun typeOfLiveData(): ClassName {
         return ClassName("androidx.lifecycle", "LiveData")
     }
@@ -219,6 +241,31 @@ object TypeNameUtils {
         return classNameOfItemCallback.parameterizedBy(typeName)
     }
 
+    fun typeOfAbsListAdapter(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.ui", "AbsListAdapter")
+    }
+
+    fun typeOfAbsListAdapterOf(typeName: TypeName,
+                               viewHolder: TypeName): TypeName {
+        val listAdapter = typeOfAbsListAdapter()
+
+        return listAdapter.parameterizedBy(typeName, viewHolder)
+    }
+
+    fun typeOfAbsPagingDataAdapter(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.ui", "AbsPagingDataAdapter")
+    }
+
+    fun typeOfAbsAbsPagingDataAdapterOf(typeName: TypeName,
+                                        viewHolder: TypeName): TypeName {
+        val listAdapter = typeOfAbsPagingDataAdapter()
+
+        return listAdapter.parameterizedBy(typeName, viewHolder)
+    }
+
+    fun typeOfDevBricksXR(): ClassName {
+        return ClassName("com.dailystudio.devbricksx", "R")
+    }
 
     fun defaultValOfTypeName(typeName: TypeName): String {
         return if (typeName.isNullable) {

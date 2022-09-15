@@ -8,19 +8,23 @@ import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.Page
+import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.database.DateConverter
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
-@Adapter(viewHolder = Unit::class)
+@Adapter(
+    viewHolder = DummyViewHolder::class,
+    notifyAfterListChanged = true
+)
 @RoomCompanion(primaryKeys = ["id"],
     autoGenerate = true,
     converters = [DateConverter::class],
     extension = NotebookDaoExtension::class,
     database = "notes",
 )
-@ViewModel
+@ViewModel(group = "notes")
 open class Notebook(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
@@ -48,7 +52,10 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
     }
 }
 
-@Adapter(viewHolder = Unit::class)
+@Adapter(
+    viewHolder = DummyViewHolder::class,
+    notifyAfterListChanged = false
+)
 @RoomCompanion(primaryKeys = ["id"],
     autoGenerate = true,
     extension = NoteDaoExtension::class,
@@ -59,7 +66,7 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
         onDelete = ForeignKey.CASCADE
     )]
 )
-@ViewModel
+@ViewModel(group = "notes")
 class Note(id: Int = 0) : SelectableRecord(id) {
 
     companion object {

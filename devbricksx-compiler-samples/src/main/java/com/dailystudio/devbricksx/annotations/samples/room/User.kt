@@ -1,11 +1,17 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
+import android.view.View
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
+import com.dailystudio.devbricksx.ui.AbsViewHolder
 
 @Adapter(
-    viewHolder = Unit::class
+    viewHolder = UserViewHolder::class,
+    viewType = ViewType.Card,
+    paged = true
+//    notifyAfterListChanged = true
 )
 @ViewModel
 @RoomCompanion
@@ -25,3 +31,8 @@ data class RichUser(override val uid: Int,
                     val local: Boolean = false,
 ): User(uid, firstName, lastName)
 
+
+class UserViewHolder(view: View): AbsViewHolder<User>(view) {
+    override fun bind(item: User) {
+    }
+}

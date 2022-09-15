@@ -17,6 +17,9 @@ object GeneratedNames {
     private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
     private const val VIEW_MODEL_SUFFIX = "ViewModel"
     private const val VIEW_MODEL_PACKAGE_SUFFIX = ".model"
+    private const val UI_PACKAGE_SUFFIX = ".ui"
+    private const val ADAPTER_SUFFIX = "Adapter"
+    private const val FRAGMENT_PACKAGE_SUFFIX = ".fragment"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
@@ -144,6 +147,18 @@ object GeneratedNames {
 
     fun getViewModelPackageName(packageName: String) : String {
         return getPackageName(packageName, VIEW_MODEL_PACKAGE_SUFFIX)
+    }
+
+    fun getAdapterName(className: String) : String {
+        return buildString {
+            this.append(className.capitalizeName())
+            this.append('s')
+            this.append(ADAPTER_SUFFIX)
+        }
+    }
+
+    fun getAdapterPackageName(packageName: String) : String {
+        return getPackageName(packageName, UI_PACKAGE_SUFFIX)
     }
 
     fun getDaoVariableName(className: String) : String {

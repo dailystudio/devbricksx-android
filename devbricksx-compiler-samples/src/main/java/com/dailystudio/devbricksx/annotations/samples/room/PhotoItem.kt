@@ -4,11 +4,12 @@ import androidx.paging.PagingSource
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
 
-@Adapter(viewHolder = Unit::class)
+@Adapter(viewHolder = DummyViewHolder::class)
 @ViewModel
 @RoomCompanion(
     primaryKeys = ["id"],
@@ -39,7 +40,7 @@ interface PhotoItemDaoExtension {
 
 }
 
-@Adapter(viewHolder = Unit::class)
+@Adapter(viewHolder = DummyViewHolder::class)
 @ViewModel
 @RoomCompanion(
     primaryKeys = [ "keyword" ],
