@@ -32,7 +32,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         val typeOfDaoExtension =
             ClassName(packageName, typeName)
 
-        val daoExtension = symbol.getAnnotation(DaoExtension::class, resolver)
+        val daoExtension = symbol.getKSAnnotation(DaoExtension::class, resolver)
         val entity = daoExtension?.findArgument<KSType>("entity")
         if (entity == null) {
             error("entity of [$symbol] must be specified.")
@@ -90,7 +90,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
     ): KSAnnotation? {
         var foundAnnotation: KSAnnotation? = null
         for (clazz in classesOfAnnotations) {
-            val annotation = func.getAnnotation(clazz, resolver)
+            val annotation = func.getKSAnnotation(clazz, resolver)
             if (annotation != null) {
                 foundAnnotation = annotation
                 break
@@ -110,7 +110,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
 
 
         var pageSize: Int = Page.DEFAULT_PAGE_SIZE
-        val pageAnnotation = func.getAnnotation(Page::class, resolver)
+        val pageAnnotation = func.getKSAnnotation(Page::class, resolver)
         if (pageAnnotation != null) {
             pageSize = pageAnnotation.findArgument("pageSize")
         }

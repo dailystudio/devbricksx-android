@@ -19,7 +19,7 @@ object RoomPrimaryKeysUtils {
                         resolver: Resolver): Map<String, KSType> {
         val allPropertiesInSymbol = symbol.getAllProperties()
 
-        val roomCompanion = symbol.getAnnotation(RoomCompanion::class, resolver)
+        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
         val namesOfPrimaryKeys: MutableList<String> =
             roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
 

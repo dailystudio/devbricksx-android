@@ -27,7 +27,7 @@ class InMemoryCompanionStep (processor: BaseSymbolProcessor)
         val typeNameOfRepository = GeneratedNames.getRepositoryName(typeName)
 
         val annotation =
-            symbol.getAnnotation(InMemoryCompanion::class, resolver)
+            symbol.getKSAnnotation(InMemoryCompanion::class, resolver)
 
         val pageSize = annotation?.findArgument<Int>("pageSize")
             ?: InMemoryCompanion.DEFAULT_PAGE_SIZE

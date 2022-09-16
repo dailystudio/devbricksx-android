@@ -54,7 +54,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         val propsInSuperTypeConstructor = mutableSetOf<String>()
         if (hasSuperType) {
             val companionOfSuperType =
-                superType.getAnnotation(RoomCompanion::class, resolver)
+                superType.getKSAnnotation(RoomCompanion::class, resolver)
             warn("super roomCompanion: $companionOfSuperType")
 
             packageNameOfSuperType = superType.packageName()
@@ -73,7 +73,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         }
         warn("super type: [package: $packageNameOfSuperType, class: $typeNameOfSuperType], has companion = $supperTypeHasRoomCompanion")
 
-        val roomCompanion = symbol.getAnnotation(RoomCompanion::class, resolver)
+        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
         warn("roomCompanion: ${roomCompanion?.arguments}")
 
         val primaryKeys: Set<String> =

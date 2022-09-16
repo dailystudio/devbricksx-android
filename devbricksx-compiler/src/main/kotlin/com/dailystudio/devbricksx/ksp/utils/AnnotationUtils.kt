@@ -5,13 +5,7 @@ import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import kotlin.reflect.KClass
 
-inline fun <reified R> KSAnnotation.findArgument(argName: String): R {
-    return arguments.first {
-        it.name?.getShortName() == argName
-    }.value as R
-}
-
-fun KSDeclaration.getAnnotation(
+fun KSDeclaration.getKSAnnotation(
     annotationClass: KClass<out Annotation>,
     resolver: Resolver
 ): KSAnnotation? {
@@ -26,11 +20,17 @@ fun KSDeclaration.getAnnotation(
     return found
 }
 
+inline fun <reified R> KSAnnotation.findArgument(argName: String): R {
+    return arguments.first {
+        it.name?.getShortName() == argName
+    }.value as R
+}
+
 fun KSClassDeclaration.collectTypesInAnnotationArguments(
     annotationClass: KClass<out Annotation>,
     nameOfArgument: String,
     resolver: Resolver): Set<KSType> {
-    val companion = getAnnotation(annotationClass, resolver)
+    val companion = getKSAnnotation(annotationClass, resolver)
 
     val converters = mutableSetOf<KSType>()
 

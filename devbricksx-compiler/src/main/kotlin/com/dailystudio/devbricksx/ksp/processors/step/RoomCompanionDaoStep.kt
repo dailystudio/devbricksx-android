@@ -26,7 +26,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         val primaryKeys = RoomPrimaryKeysUtils.findPrimaryKeys(symbol, resolver)
 
-        val roomCompanion = symbol.getAnnotation(RoomCompanion::class, resolver)
+        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
 
         val typeOfDaoExtension =roomCompanion
             ?.findArgument<KSType>("extension")

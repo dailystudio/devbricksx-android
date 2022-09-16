@@ -7,12 +7,10 @@ import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
-import com.google.devtools.ksp.isConstructor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
-import com.squareup.kotlinpoet.ksp.toTypeName
 
 class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(RoomCompanion::class, processor) {
@@ -27,7 +25,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
                 .filterIsInstance<KSClassDeclaration>()
 
         symbolsWithDaoExtension.forEach {
-            val daoExtension = it.getAnnotation(DaoExtension::class, resolver) ?: return@forEach
+            val daoExtension = it.getKSAnnotation(DaoExtension::class, resolver) ?: return@forEach
             val entity = daoExtension.findArgument<KSType>("entity")
 
             symbolsOfDaoExtension[entity.toClassName()] = it

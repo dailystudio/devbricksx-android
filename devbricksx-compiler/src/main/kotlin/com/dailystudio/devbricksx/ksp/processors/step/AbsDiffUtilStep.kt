@@ -66,7 +66,7 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
 
     protected open fun needToDiffUtil(resolver: Resolver,
                                       symbol: KSClassDeclaration): Boolean {
-        val hasAdapterAnnotatedArrayType = (symbol.getAnnotation(Adapter::class, resolver) != null)
+        val hasAdapterAnnotatedArrayType = (symbol.getKSAnnotation(Adapter::class, resolver) != null)
         val openedClass = symbol.modifiers.contains(Modifier.OPEN)
         warn("check necessity: modifiers = ${symbol.modifiers}, open = $openedClass, hasAdapterAnnotatedArrayType = $hasAdapterAnnotatedArrayType")
 

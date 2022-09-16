@@ -29,7 +29,7 @@ class AdapterStep (processor: BaseSymbolProcessor)
         val packageName = symbol.packageName()
 
         val adapterAnnotation =
-            symbol.getAnnotation(Adapter::class, resolver) ?: return emptyResult
+            symbol.getKSAnnotation(Adapter::class, resolver) ?: return emptyResult
 
         val paged = adapterAnnotation.findArgument<Boolean>("paged")
         warn("adapter paged: $paged")

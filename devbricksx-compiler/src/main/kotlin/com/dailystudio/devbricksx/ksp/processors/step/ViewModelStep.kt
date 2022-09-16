@@ -9,10 +9,8 @@ import com.dailystudio.devbricksx.ksp.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
-import com.google.devtools.ksp.isConstructor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -31,7 +29,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                 .filterIsInstance<KSClassDeclaration>()
 
         symbolsWithDaoExtension.forEach {
-            val daoExtension = it.getAnnotation(DaoExtension::class, resolver) ?: return@forEach
+            val daoExtension = it.getKSAnnotation(DaoExtension::class, resolver) ?: return@forEach
             val entity = daoExtension.findArgument<KSType>("entity")
 
             symbolsOfDaoExtension[entity.toClassName()] = it
@@ -95,8 +93,8 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val packageName = symbol.packageName()
         warn("typeName = $typeName, packageName = $packageName")
 
-        val viewModel = symbol.getAnnotation(ViewModel::class, resolver)
-        val roomCompanion = symbol.getAnnotation(RoomCompanion::class, resolver)
+        val viewModel = symbol.getKSAnnotation(ViewModel::class, resolver)
+        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
         val database = roomCompanion?.findArgument<String>("database")
         val databaseClassName = if (!database.isNullOrEmpty()) {
             GeneratedNames.databaseToClassName(database)
@@ -105,7 +103,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         }
 
         val isInMemoryRepo =
-            (symbol.getAnnotation(InMemoryCompanion::class, resolver) != null)
+            (symbol.getKSAnnotation(InMemoryCompanion::class, resolver) != null)
 
         val repoName = GeneratedNames.getRepositoryName(typeName)
         val repoVariableName = repoName.lowerCamelCaseName()
@@ -332,7 +330,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val mapOfViewModels = mutableMapOf<String, MutableList<KSClassDeclaration>>()
 
         symbols.forEach { symbol ->
-            val companion = symbol.getAnnotation(ViewModel::class, resolver)
+            val companion = symbol.getKSAnnotation(ViewModel::class, resolver)
             companion?.let {
                 val typeName = symbol.typeName()
                 var group = it.findArgument<String?>("group")

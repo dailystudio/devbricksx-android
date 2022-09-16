@@ -46,7 +46,7 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
 
         var dbVersion = 1
         for ((i, symbol) in symbols.withIndex()) {
-            val companion = symbol.getAnnotation(RoomCompanion::class, resolver)
+            val companion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
 
             companion?.findArgument<Int>("databaseVersion")?.let { dbVerOfSymbol ->
                 if (dbVerOfSymbol > dbVersion) {
@@ -207,7 +207,7 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
         val mapOfDatabase = mutableMapOf<String, MutableList<KSClassDeclaration>>()
 
         symbols.forEach { symbol ->
-            val companion = symbol.getAnnotation(RoomCompanion::class, resolver)
+            val companion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
             companion?.let {
                 val typeName = symbol.typeName()
                 var database = it.findArgument<String?>("database")
