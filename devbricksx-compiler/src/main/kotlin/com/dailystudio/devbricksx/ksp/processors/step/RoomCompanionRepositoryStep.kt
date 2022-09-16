@@ -47,7 +47,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         val typeNameToGenerate =
             GeneratedNames.getRoomCompanionRepositoryName(typeName)
 
-        val primaryKeys = RoomPrimaryKeysUtils.findPrimaryKeys(symbol, resolver)
+        val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
 
         val typeOfRepository =
             ClassName(packageName, typeNameToGenerate)
@@ -72,7 +72,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         val nameOfAllFlow = FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(typeName)
 
         val getOneMethodCallParameters: String =
-            RoomPrimaryKeysUtils.primaryKeysToFuncCallParameters(primaryKeys)
+            RoomCompanionUtils.primaryKeysToFuncCallParameters(primaryKeys)
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
 
@@ -100,7 +100,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
                     .addModifiers(KModifier.PUBLIC)
                     .returns(typesOfReturn)
 
-            RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(
+            RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
                 methodBuilder, primaryKeys)
 
             methodBuilder.addStatement(

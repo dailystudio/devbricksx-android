@@ -41,17 +41,13 @@ class InMemoryCompanionStep (processor: BaseSymbolProcessor)
         }
         warn("ordering: $ordering")
 
-        val typeOfInMemoryObject = TypeNameUtils.typeOfInMemoryObject()
-        val found = findClassInSuperTypes(resolver, symbol, typeOfInMemoryObject)
-        warn("found class of [$typeOfInMemoryObject] in symbol [${symbol}]: $found ")
-        if (found == null) {
+        val typeOfKey = InMemoryCompanionUtils.getKeyForInMemoryObject(symbol)
+        warn("key of type[$symbol]: $typeOfKey")
+        if (typeOfKey == null) {
             error("InMemoryCompanion can ONLY annotate on derived classes of InMemoryObject.")
 
             return emptyResult
         }
-
-        val typeOfKey = found.arguments.first().toTypeName()
-        warn("type of key in [$typeOfInMemoryObject]: $typeOfKey")
 
         val typeOfObject = ClassName(packageName, typeName)
         val typeOfManager = TypeNameUtils.typeOfInMemoryObjectManagerOf(
@@ -92,20 +88,6 @@ class InMemoryCompanionStep (processor: BaseSymbolProcessor)
                 GeneratedNames.getRepositoryPackageName(packageName),
                 classBuilderOfRepo)
         )
-    }
-
-    private fun findClassInSuperTypes(resolver: Resolver,
-                                      symbol: KSClassDeclaration,
-                                      className: ClassName): KSType? {
-        symbol.getAllSuperTypes().forEach {
-            val classNameOfSupertype = it.toClassName()
-            warn("find class [$className]: super type [$classNameOfSupertype] of $symbol")
-            if (classNameOfSupertype == className) {
-                return it
-            }
-        }
-
-        return null
     }
 
 }

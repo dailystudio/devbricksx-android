@@ -1,11 +1,14 @@
 package com.dailystudio.devbricksx.ksp.utils
 
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
+import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ksp.toClassName
 
 object TypeNameUtils {
 
@@ -283,6 +286,19 @@ object TypeNameUtils {
                 }
             }
         }
+    }
+
+    fun findClassInSuperTypes(symbol: KSClassDeclaration,
+                              className: ClassName
+    ): KSType? {
+        symbol.getAllSuperTypes().forEach {
+            val classNameOfSupertype = it.toClassName()
+            if (classNameOfSupertype == className) {
+                return it
+            }
+        }
+
+        return null
     }
 
 }

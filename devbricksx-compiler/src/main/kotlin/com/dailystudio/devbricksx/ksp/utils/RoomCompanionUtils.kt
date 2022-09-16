@@ -2,26 +2,27 @@ package com.dailystudio.devbricksx.ksp.utils
 
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.helper.underlineCaseName
-import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ksp.toTypeName
 
-object RoomPrimaryKeysUtils {
+object RoomCompanionUtils {
 
-    fun findPrimaryKeyNames(symbol: KSClassDeclaration,
-                            resolver: Resolver): Set<String> {
-        return findPrimaryKeys(symbol, resolver).keys
+    fun findPrimaryKeyNames(symbol: KSClassDeclaration): Set<String> {
+        return findPrimaryKeys(symbol).keys
     }
 
-    fun findPrimaryKeys(symbol: KSClassDeclaration,
-                        resolver: Resolver): Map<String, KSType> {
+    fun findPrimaryKeys(symbol: KSClassDeclaration): Map<String, KSType> {
         val allPropertiesInSymbol = symbol.getAllProperties()
 
-        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
-        val namesOfPrimaryKeys: MutableList<String> =
-            roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
+        val roomCompanion = symbol.getAnnotation(RoomCompanion::class)
+            ?: return emptyMap()
+        val namesOfPrimaryKeys = mutableListOf<String>().apply {
+            roomCompanion.primaryKeys.forEach {
+                add(it)
+            }
+        }
 
         if (namesOfPrimaryKeys.isEmpty()) {
             val nameOfAllProps = allPropertiesInSymbol.map {

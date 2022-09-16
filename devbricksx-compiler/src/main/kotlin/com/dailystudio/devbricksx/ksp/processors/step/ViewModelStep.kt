@@ -127,8 +127,6 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
         val objectsVariableName = GeneratedNames.getObjectsVariableName(typeName)
 
-        val primaryKeys = RoomPrimaryKeysUtils.findPrimaryKeys(symbol, resolver)
-
         val repo = viewModel
             ?.findArgument<KSType>("repository")
             ?.toTypeName()
@@ -161,9 +159,6 @@ class ViewModelStep (processor: BaseSymbolProcessor)
 
         val nameOfObject = typeName.toVariableOrParamName()
         val nameOfObjects = typeName.toVariableOrParamNameOfCollection()
-
-        val getOneMethodCallParameters: String =
-            RoomPrimaryKeysUtils.primaryKeysToFuncCallParameters(primaryKeys)
 
         val propOfAllBuilder = PropertySpec.builder(allName, typeOfListOfObjects)
             .getter(FunSpec.getterBuilder()
@@ -222,16 +217,25 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                 .addModifiers(KModifier.PUBLIC)
                 .returns(typeOfObject.copy(nullable = true))
 
-        RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(
-            methodGetOneBuilder, primaryKeys)
-
         if (isInMemoryRepo) {
-            methodGetOneBuilder.addStatement(
-                "return %N.get(%L)",
-                repoVariableName,
-                getOneMethodCallParameters
-            )
+            val typeOfKey = InMemoryCompanionUtils
+                .getKeyForInMemoryObject(symbol)
+            if (typeOfKey != null) {
+                methodGetOneBuilder.addParameter("key", typeOfKey)
+
+                methodGetOneBuilder.addStatement(
+                    "return %N.get(key)",
+                    repoVariableName,
+                )
+            }
         } else {
+            val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
+            val getOneMethodCallParameters: String =
+                RoomCompanionUtils.primaryKeysToFuncCallParameters(primaryKeys)
+
+            RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
+                methodGetOneBuilder, primaryKeys)
+
             methodGetOneBuilder.addStatement(
                 "return %N.%N(%L)",
                 repoVariableName,

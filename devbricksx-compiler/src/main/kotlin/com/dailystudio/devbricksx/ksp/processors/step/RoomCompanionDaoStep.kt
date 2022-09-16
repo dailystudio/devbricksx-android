@@ -24,7 +24,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val typeNameOfCompanion = GeneratedNames.getRoomCompanionName(typeName)
         val typeNameToGenerate = GeneratedNames.getRoomCompanionDaoName(typeName)
 
-        val primaryKeys = RoomPrimaryKeysUtils.findPrimaryKeys(symbol, resolver)
+        val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
 
         val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
 
@@ -69,9 +69,9 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         val tableName = GeneratedNames.getTableName(typeName)
         val whereClauseForGetOneMethods  =
-            RoomPrimaryKeysUtils.primaryKeysToSQLiteWhereClause(primaryKeys)
+            RoomCompanionUtils.primaryKeysToSQLiteWhereClause(primaryKeys)
         val getOneMethodCallParameters: String =
-            RoomPrimaryKeysUtils.primaryKeysToFuncCallParameters(primaryKeys)
+            RoomCompanionUtils.primaryKeysToFuncCallParameters(primaryKeys)
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
             .addAnnotation(Dao::class)
@@ -90,7 +90,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             FunSpec.builder(FunctionNames.GET_ONE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfCompanion)
-        RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(methodGetOneBuilder, primaryKeys)
+        RoomCompanionUtils.attachPrimaryKeysToMethodParameters(methodGetOneBuilder, primaryKeys)
 
         methodGetOneBuilder.addAnnotation(
             AnnotationSpec.builder(Query::class)
@@ -104,7 +104,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             FunSpec.builder(FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
                 .returns(typeOfLiveDataOfCompanion)
-        RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(methodGetOneLiveBuilder, primaryKeys)
+        RoomCompanionUtils.attachPrimaryKeysToMethodParameters(methodGetOneLiveBuilder, primaryKeys)
 
         methodGetOneLiveBuilder.addAnnotation(
             AnnotationSpec.builder(Query::class)
@@ -254,7 +254,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfObject)
 
-        RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(
+        RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
             methodWrapperOfGetOneBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToObject(methodWrapperOfGetOneBuilder,
@@ -267,7 +267,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             .addModifiers(KModifier.PUBLIC)
             .returns(typeOfLiveDataOfObject)
 
-        RoomPrimaryKeysUtils.attachPrimaryKeysToMethodParameters(
+        RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
             methodWrapperOfGetOneLiveBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(methodWrapperOfGetOneLiveBuilder,

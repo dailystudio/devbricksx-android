@@ -78,7 +78,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         val primaryKeys: Set<String> =
 //            roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
-            RoomPrimaryKeysUtils.findPrimaryKeyNames(symbol, resolver)
+            RoomCompanionUtils.findPrimaryKeyNames(symbol)
         warn("primaryKeys: $primaryKeys")
 
         val foreignKeys: MutableList<KSAnnotation> =

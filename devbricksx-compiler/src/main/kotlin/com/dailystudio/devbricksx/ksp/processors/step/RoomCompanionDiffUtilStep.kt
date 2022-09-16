@@ -44,7 +44,7 @@ class RoomCompanionDiffUtilStep(processor: BaseSymbolProcessor)
             }
         }
 
-        val nameOfPrimaryKeys = RoomPrimaryKeysUtils.findPrimaryKeyNames(symbol, resolver)
+        val nameOfPrimaryKeys = RoomCompanionUtils.findPrimaryKeyNames(symbol)
         val equalsStatementOfPrimaryKeys = fieldsToEquals(nameOfPrimaryKeys)
         val equalsStatementOfFields = fieldsToEquals(propsAll - propsInSuperType)
 

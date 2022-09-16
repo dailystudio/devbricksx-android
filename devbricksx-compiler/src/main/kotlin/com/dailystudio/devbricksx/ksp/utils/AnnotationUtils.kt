@@ -1,12 +1,18 @@
 package com.dailystudio.devbricksx.ksp.utils
 
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import kotlin.reflect.KClass
 
-fun KSDeclaration.getKSAnnotation(
-    annotationClass: KClass<out Annotation>,
+@OptIn(KspExperimental::class)
+fun <T: Annotation> KSDeclaration.getAnnotation(
+    annotationClass: KClass<T>): T? = getAnnotationsByType(annotationClass).firstOrNull()
+
+fun <T: Annotation> KSDeclaration.getKSAnnotation(
+    annotationClass: KClass<T>,
     resolver: Resolver
 ): KSAnnotation? {
     var found: KSAnnotation? = null
