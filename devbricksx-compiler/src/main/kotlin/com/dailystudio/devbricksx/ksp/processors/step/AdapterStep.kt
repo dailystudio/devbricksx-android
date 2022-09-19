@@ -29,27 +29,22 @@ class AdapterStep (processor: BaseSymbolProcessor)
         val packageName = symbol.packageName()
 
         val adapterAnnotation =
+            symbol.getAnnotation(Adapter::class) ?: return emptyResult
+
+        val adapterKSAnnotation =
             symbol.getKSAnnotation(Adapter::class, resolver) ?: return emptyResult
 
-        val paged = adapterAnnotation.findArgument<Boolean>("paged")
+        val paged = adapterAnnotation.paged
         warn("adapter paged: $paged")
-        val viewType = try {
-            ViewType.valueOf(adapterAnnotation.findArgument<KSType>("viewType")
-                .declaration.toString())
-        } catch (e: Exception) {
-            error("get viewType failed of [$symbol]: $e")
-
-            ViewType.SingleLine
-        }
+        val viewType = adapterAnnotation.viewType
         warn("viewType: $viewType")
 
-        val layout = adapterAnnotation.findArgument<Int>("layout")
-        val layoutByName = adapterAnnotation.findArgument<String>("layoutByName")
-        val notifyAfterListChanged = adapterAnnotation.findArgument<Boolean>("notifyAfterListChanged")
+        val layout = adapterAnnotation.layout
+        val layoutByName = adapterAnnotation.layoutByName
+        val notifyAfterListChanged = adapterAnnotation.notifyAfterListChanged
 
-        val typeOfViewHolder =
-            adapterAnnotation.findArgument<KSType>("viewHolder")
-                .toTypeName()
+        val typeOfViewHolder = adapterKSAnnotation
+            .findArgument<KSType>("viewHolder").toTypeName()
 
         val typeNameToGenerate =
             GeneratedNames.getAdapterName(typeName)

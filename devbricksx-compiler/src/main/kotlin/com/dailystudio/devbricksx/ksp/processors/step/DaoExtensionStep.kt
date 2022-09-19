@@ -33,12 +33,9 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             ClassName(packageName, typeName)
 
         val daoExtension = symbol.getKSAnnotation(DaoExtension::class, resolver)
-        val entity = daoExtension?.findArgument<KSType>("entity")
-        if (entity == null) {
-            error("entity of [$symbol] must be specified.")
-
-            return emptyResult
-        }
+            ?: return emptyResult
+        val typeOfEntity = daoExtension.findArgument<KSType>("entity")
+            .toClassName()
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
 //            .addAnnotation(Dao::class)
@@ -63,7 +60,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
                     Query::class.asTypeName() -> {
                         warn("processing query func: $func")
                         handleQueryMethod(resolver, func,
-                            foundAnnotation, entity.toClassName(),
+                            foundAnnotation, typeOfEntity,
                             classBuilder)
                     }
 
@@ -72,7 +69,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
                     Delete::class.asTypeName() -> {
                         warn("processing write action func: $func")
                         handleWriteActionMethod(resolver, func,
-                            foundAnnotation, entity.toClassName(),
+                            foundAnnotation, typeOfEntity,
                             classBuilder, typeNameOfAnnotation != Insert::class.asTypeName())
                     }
                     else -> {}

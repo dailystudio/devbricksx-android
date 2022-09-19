@@ -26,19 +26,10 @@ class InMemoryCompanionStep (processor: BaseSymbolProcessor)
         val typeNameOfManager = GeneratedNames.getManagerName(typeName)
         val typeNameOfRepository = GeneratedNames.getRepositoryName(typeName)
 
-        val annotation =
-            symbol.getKSAnnotation(InMemoryCompanion::class, resolver)
+        val annotation = symbol.getAnnotation(InMemoryCompanion::class) ?: return emptyResult
 
-        val pageSize = annotation?.findArgument<Int>("pageSize")
-            ?: InMemoryCompanion.DEFAULT_PAGE_SIZE
-        val ordering = try {
-            Ordering.valueOf(annotation?.findArgument<KSType>("ordering")
-                ?.declaration?.toString() ?: Ordering.Ascending.toString())
-        } catch (e: Exception) {
-            error("get ordering failed of [$symbol]: $e")
-
-            Ordering.Ascending
-        }
+        val pageSize = annotation.pageSize
+        val ordering = annotation.ordering
         warn("ordering: $ordering")
 
         val typeOfKey = InMemoryCompanionUtils.getKeyForInMemoryObject(symbol)

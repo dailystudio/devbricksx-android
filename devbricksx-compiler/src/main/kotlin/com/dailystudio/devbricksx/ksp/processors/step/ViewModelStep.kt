@@ -77,7 +77,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                 .addParameter("application", TypeNameUtils.typeOfApplication())
                 .build())
 
-        for ((i, symbol) in symbols.withIndex()) {
+        for (symbol in symbols) {
             warn("processing view model [$symbol] in group [$nameOfGroup]")
             generateFacilitiesOfSymbol(resolver, typeOfViewModel, symbol, classBuilder)
         }
@@ -93,9 +93,10 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val packageName = symbol.packageName()
         warn("typeName = $typeName, packageName = $packageName")
 
-        val viewModel = symbol.getKSAnnotation(ViewModel::class, resolver)
-        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
-        val database = roomCompanion?.findArgument<String>("database")
+        val viewModelKS = symbol.getKSAnnotation(ViewModel::class, resolver)
+        val roomCompanion = symbol.getAnnotation(RoomCompanion::class)
+
+        val database = roomCompanion?.database
         val databaseClassName = if (!database.isNullOrEmpty()) {
             GeneratedNames.databaseToClassName(database)
         } else {
@@ -124,10 +125,8 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val repoAllPagingSourceName = FunctionNames.GET_ALL_PAGING_SOURCE.nameOfPropFuncForType(
             if (isInMemoryRepo) "Object" else typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
-        val objectVariableName = GeneratedNames.getObjectVariableName(typeName)
-        val objectsVariableName = GeneratedNames.getObjectsVariableName(typeName)
 
-        val repo = viewModel
+        val repo = viewModelKS
             ?.findArgument<KSType>("repository")
             ?.toTypeName()
         val typeOfRepo = if (repo == null || repo == UNIT) {
@@ -142,14 +141,12 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingSourceOfObject =
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
-        val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
         val typeOfLiveDataOfListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfObjects)
         val typeOfFlowOfListOfObjects =
             TypeNameUtils.typeOfFlowOf(typeOfListOfObjects)
         val typeOfLiveDataOfPagedListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(TypeNameUtils.typeOfPagedListOf(typeOfObject))
-        val typeOfListOfLong = TypeNameUtils.typeOfListOf(LONG)
         val typeOfDispatchers = TypeNameUtils.typeOfDispatchers()
         val typeOfLaunch = TypeNameUtils.typeOfLaunchMemberName()
         val typeOfJob = TypeNameUtils.typeOfJob()
@@ -314,13 +311,13 @@ class ViewModelStep (processor: BaseSymbolProcessor)
 
         val symbolOfDaoExtension = symbolsOfDaoExtension[typeOfObject]
         if (symbolOfDaoExtension != null) {
-            val typeOfRepo = ClassName(
+            val typeOfCaller = ClassName(
                 GeneratedNames.getRepositoryPackageName(typeOfObject.packageName),
                 GeneratedNames.getRoomCompanionRepositoryName(typeOfObject.simpleName)
             )
 
             DaoExtensionMethodWrapperUtils.handleMethodsInDaoExtension(
-                typeOfRepo,
+                typeOfCaller,
                 symbolOfDaoExtension,
                 classBuilder
             )

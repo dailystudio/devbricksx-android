@@ -21,20 +21,20 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
-        val typeNameOfCompanion = GeneratedNames.getRoomCompanionName(typeName)
         val typeNameToGenerate = GeneratedNames.getRoomCompanionDaoName(typeName)
 
         val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
 
-        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
+        val roomCompanion = symbol.getAnnotation(RoomCompanion::class) ?: return emptyResult
+        val roomCompanionKS =
+            symbol.getKSAnnotation(RoomCompanion::class, resolver) ?: return emptyResult
 
-        val typeOfDaoExtension =roomCompanion
-            ?.findArgument<KSType>("extension")
-            ?.toClassName()
+        val typeOfDaoExtension = roomCompanionKS
+            .findArgument<KSType>("extension")
+            .toClassName()
         warn("type of daoExtension: $typeOfDaoExtension")
 
-        var pageSize: Int = roomCompanion
-            ?.findArgument("pageSize") ?: RoomCompanion.DEFAULT_PAGE_SIZE
+        var pageSize: Int = roomCompanion.pageSize
         if (pageSize <= 0) {
             error("page size must be positive. set to default")
 
@@ -47,8 +47,6 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
         val typeOfDataSourceFactoryOfCompanion =
             TypeNameUtils.typeOfDataSourceFactoryOf(typeOfCompanion)
-        val typeOfPagingSourceOfCompanion =
-            TypeNameUtils.typeOfPagingSourceOf(typeOfCompanion)
         val typeOfPagingSourceOfObject =
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
         val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
@@ -77,7 +75,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             .addAnnotation(Dao::class)
             .addModifiers(KModifier.ABSTRACT)
 
-        if (typeOfDaoExtension != null && typeOfDaoExtension != UNIT) {
+        if (typeOfDaoExtension != UNIT) {
             val packageNameOfDaoExtension = typeOfDaoExtension.packageName
             val typeNameOfDaoExtension = typeOfDaoExtension.simpleName
             classBuilder.superclass(

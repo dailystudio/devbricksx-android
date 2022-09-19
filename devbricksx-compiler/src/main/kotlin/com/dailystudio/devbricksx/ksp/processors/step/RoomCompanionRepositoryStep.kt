@@ -25,7 +25,8 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
                 .filterIsInstance<KSClassDeclaration>()
 
         symbolsWithDaoExtension.forEach {
-            val daoExtension = it.getKSAnnotation(DaoExtension::class, resolver) ?: return@forEach
+            val daoExtension = it
+                .getKSAnnotation(DaoExtension::class, resolver) ?: return@forEach
             val entity = daoExtension.findArgument<KSType>("entity")
 
             symbolsOfDaoExtension[entity.toClassName()] = it
@@ -49,8 +50,6 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
 
         val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
 
-        val typeOfRepository =
-            ClassName(packageName, typeNameToGenerate)
         val typeOfDao = ClassName(packageName, GeneratedNames.getRoomCompanionDaoName(typeName))
         val typeOfObject = TypeNameUtils.typeOfObject(packageName, typeName)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)

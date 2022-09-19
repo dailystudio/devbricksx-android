@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
-import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.view.DiffUtil
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.google.devtools.ksp.processing.Resolver
@@ -20,7 +19,7 @@ class DefaultDiffUtilStep(processor: BaseSymbolProcessor)
         methodContentsSameBuilder.addStatement("return (newObject == oldObject)")
     }
 
-    override fun needToDiffUtil(resolver: Resolver, symbol: KSClassDeclaration): Boolean {
+    override fun needToDiffUtil(symbol: KSClassDeclaration): Boolean {
         return true
     }
 

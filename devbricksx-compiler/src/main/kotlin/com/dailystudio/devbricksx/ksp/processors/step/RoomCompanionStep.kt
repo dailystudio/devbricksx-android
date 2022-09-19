@@ -73,24 +73,22 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         }
         warn("super type: [package: $packageNameOfSuperType, class: $typeNameOfSuperType], has companion = $supperTypeHasRoomCompanion")
 
-        val roomCompanion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
-        warn("roomCompanion: ${roomCompanion?.arguments}")
+        val roomCompanion = symbol.getAnnotation(RoomCompanion::class) ?: return emptyResult
+        val roomCompanionKS = symbol.getKSAnnotation(RoomCompanion::class, resolver) ?: return emptyResult
 
         val primaryKeys: Set<String> =
-//            roomCompanion?.findArgument("primaryKeys") ?: mutableListOf()
             RoomCompanionUtils.findPrimaryKeyNames(symbol)
         warn("primaryKeys: $primaryKeys")
 
         val foreignKeys: MutableList<KSAnnotation> =
-            roomCompanion?.findArgument("foreignKeys") ?: mutableListOf()
+            roomCompanionKS.findArgument("foreignKeys") ?: mutableListOf()
         warn("foreignKeys: $foreignKeys")
 
-        val autoGenerate: Boolean =
-            roomCompanion?.findArgument("autoGenerate") ?: false
+        val autoGenerate: Boolean = roomCompanion.autoGenerate
         warn("autoGenerate: $autoGenerate")
 
         val indices: MutableList<KSAnnotation> =
-            roomCompanion?.findArgument("indices") ?: mutableListOf()
+            roomCompanionKS.findArgument("indices") ?: mutableListOf()
         warn("indices: $indices")
 
         val constructorBuilder = FunSpec.constructorBuilder()

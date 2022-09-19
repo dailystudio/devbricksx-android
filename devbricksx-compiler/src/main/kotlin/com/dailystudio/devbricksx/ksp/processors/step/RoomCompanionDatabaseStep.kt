@@ -46,14 +46,11 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
 
         var dbVersion = 1
         for ((i, symbol) in symbols.withIndex()) {
-            val companion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
+            val companion = symbol.getAnnotation(RoomCompanion::class) ?: continue
 
-            companion?.findArgument<Int>("databaseVersion")?.let { dbVerOfSymbol ->
-                if (dbVerOfSymbol > dbVersion) {
-                    dbVersion = dbVerOfSymbol
-
-                    info("databaseVersion [$dbVersion] of symbol[$symbol] is larger, using it as database version.")
-                }
+            if (companion.databaseVersion > dbVersion) {
+                dbVersion = companion.databaseVersion
+                info("databaseVersion [$dbVersion] of symbol[$symbol] is larger, using it as database version.")
             }
 
             val convertersInSymbol =
@@ -138,7 +135,7 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
                 database)
             .beginControlFlow("if (migrations != null)")
             .addStatement("builder.addMigrations(*migrations)")
-            .endControlFlow();
+            .endControlFlow()
 
         if (dbVersion > 1) {
             val typeOfDummyMigration =
@@ -207,27 +204,25 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
         val mapOfDatabase = mutableMapOf<String, MutableList<KSClassDeclaration>>()
 
         symbols.forEach { symbol ->
-            val companion = symbol.getKSAnnotation(RoomCompanion::class, resolver)
-            companion?.let {
-                val typeName = symbol.typeName()
-                var database = it.findArgument<String?>("database")
-                warn("database of symbol [$symbol]: $database")
+            val companion = symbol.getAnnotation(RoomCompanion::class) ?: return@forEach
+            val typeName = symbol.typeName()
+            var database = companion.database
+            warn("database of symbol [$symbol]: $database")
 
-                if (database.isNullOrEmpty()) {
-                    database = GeneratedNames.getRoomCompanionDatabaseName(
-                            typeName)
-                }
-
-                val symbolsInGroup = if (mapOfDatabase.containsKey(database)) {
-                    mapOfDatabase[database]
-                } else {
-                    mutableListOf<KSClassDeclaration>().also { list ->
-                        mapOfDatabase[database] = list
-                    }
-                }
-
-                symbolsInGroup?.add(symbol)
+            if (database.isEmpty()) {
+                database = GeneratedNames.getRoomCompanionDatabaseName(
+                        typeName)
             }
+
+            val symbolsInGroup = if (mapOfDatabase.containsKey(database)) {
+                mapOfDatabase[database]
+            } else {
+                mutableListOf<KSClassDeclaration>().also { list ->
+                    mapOfDatabase[database] = list
+                }
+            }
+
+            symbolsInGroup?.add(symbol)
         }
 
         return mapOfDatabase

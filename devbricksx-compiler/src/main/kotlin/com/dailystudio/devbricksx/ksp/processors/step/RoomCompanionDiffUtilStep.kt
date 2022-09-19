@@ -28,10 +28,8 @@ class RoomCompanionDiffUtilStep(processor: BaseSymbolProcessor)
         var typeOfSuperDiffUtil: ClassName? = null
 
         if (hasSuperType) {
-            val companionOfSuperType =
-                superSymbol.getKSAnnotation(RoomCompanion::class, resolver)
-            warn("super roomCompanion: $companionOfSuperType")
-            supperTypeHasRoomCompanion = (companionOfSuperType != null)
+            supperTypeHasRoomCompanion =
+                superSymbol.hasAnnotation(RoomCompanion::class)
 
             val packageNameOfSuperType = superSymbol.packageName()
             val typeNameOfSuperType = superSymbol.typeName()

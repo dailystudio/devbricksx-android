@@ -7,6 +7,9 @@ import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import kotlin.reflect.KClass
 
+fun <T: Annotation> KSDeclaration.hasAnnotation(annotationClass: KClass<T>): Boolean =
+    (getAnnotation(annotationClass) != null)
+
 @OptIn(KspExperimental::class)
 fun <T: Annotation> KSDeclaration.getAnnotation(
     annotationClass: KClass<T>): T? = getAnnotationsByType(annotationClass).firstOrNull()

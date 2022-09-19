@@ -30,7 +30,7 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         val typeNameToGenerate = GeneratedNames.getDiffUtilName(typeName)
         val typeOfObject = ClassName(packageName, typeName)
 
-        val matched = needToDiffUtil(resolver, symbol)
+        val matched = needToDiffUtil(symbol)
         if (!matched) {
             return emptyResult
         }
@@ -64,9 +64,8 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         return singleResult(symbol, packageName, classBuilder)
     }
 
-    protected open fun needToDiffUtil(resolver: Resolver,
-                                      symbol: KSClassDeclaration): Boolean {
-        val hasAdapterAnnotatedArrayType = (symbol.getKSAnnotation(Adapter::class, resolver) != null)
+    protected open fun needToDiffUtil(symbol: KSClassDeclaration): Boolean {
+        val hasAdapterAnnotatedArrayType = symbol.hasAnnotation(Adapter::class)
         val openedClass = symbol.modifiers.contains(Modifier.OPEN)
         warn("check necessity: modifiers = ${symbol.modifiers}, open = $openedClass, hasAdapterAnnotatedArrayType = $hasAdapterAnnotatedArrayType")
 
