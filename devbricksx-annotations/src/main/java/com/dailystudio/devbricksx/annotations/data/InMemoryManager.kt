@@ -1,5 +1,7 @@
 package com.dailystudio.devbricksx.annotations.data
 
+import com.dailystudio.devbricksx.annotations.InternalConstants
+
 enum class Ordering {
     Ascending,
     Descending

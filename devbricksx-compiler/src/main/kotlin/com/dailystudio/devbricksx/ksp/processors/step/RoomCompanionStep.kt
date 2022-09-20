@@ -4,8 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
-import com.dailystudio.devbricksx.ksp.GeneratedResult
-import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
+import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*

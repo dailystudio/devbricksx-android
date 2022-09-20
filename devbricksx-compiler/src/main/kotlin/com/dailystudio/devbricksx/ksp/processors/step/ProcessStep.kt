@@ -1,6 +1,7 @@
-package com.dailystudio.devbricksx.ksp
+package com.dailystudio.devbricksx.ksp.processors.step
 
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.TypeSpec

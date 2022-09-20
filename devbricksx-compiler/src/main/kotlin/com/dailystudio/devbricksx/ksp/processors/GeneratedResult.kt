@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp
+package com.dailystudio.devbricksx.ksp.processors
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.TypeSpec

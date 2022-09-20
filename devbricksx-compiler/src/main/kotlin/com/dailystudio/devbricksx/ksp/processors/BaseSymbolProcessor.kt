@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.ksp.processors
 
-import com.dailystudio.devbricksx.ksp.GeneratedResult
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment

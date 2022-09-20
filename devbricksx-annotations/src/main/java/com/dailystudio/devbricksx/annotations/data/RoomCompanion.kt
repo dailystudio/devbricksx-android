@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.annotations.data
 
 import androidx.room.ForeignKey
 import androidx.room.Index
+import com.dailystudio.devbricksx.annotations.InternalConstants
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)

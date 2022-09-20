@@ -2,18 +2,13 @@ package com.dailystudio.devbricksx.ksp.processors.step
 
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.Ordering
-import com.dailystudio.devbricksx.ksp.GeneratedResult
-import com.dailystudio.devbricksx.ksp.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.utils.*
-import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ksp.toClassName
-import com.squareup.kotlinpoet.ksp.toTypeName
 
 class InMemoryCompanionStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(InMemoryCompanion::class, processor) {

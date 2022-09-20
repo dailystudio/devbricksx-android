@@ -1,6 +1,6 @@
 package com.dailystudio.devbricksx.ksp.processors
 
-import com.dailystudio.devbricksx.ksp.ProcessStep
+import com.dailystudio.devbricksx.ksp.processors.step.ProcessStep
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
