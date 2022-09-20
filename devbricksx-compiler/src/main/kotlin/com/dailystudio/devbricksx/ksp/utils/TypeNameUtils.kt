@@ -47,6 +47,26 @@ object TypeNameUtils {
         return ClassName("android.view", "ViewGroup")
     }
 
+    fun typeOfLayoutManager() : ClassName {
+        return ClassName("androidx.recyclerview.widget.RecyclerView", "LayoutManager")
+    }
+
+    fun typeOfLinearLayoutManager() : ClassName {
+        return ClassName("androidx.recyclerview.widget", "LinearLayoutManager")
+    }
+
+    fun typeOfGridLayoutManager() : ClassName {
+        return ClassName("androidx.recyclerview.widget", "GridLayoutManager")
+    }
+
+    fun typeOfView() : ClassName {
+        return ClassName("android.view", "View")
+    }
+
+    fun typeOfBundle() : ClassName {
+        return ClassName("android.os", "Bundle")
+    }
+
     fun typeOfLayoutInflater(): ClassName {
         return ClassName("android.view", "LayoutInflater")
     }
@@ -83,8 +103,28 @@ object TypeNameUtils {
         return ClassName("androidx.lifecycle", "lifecycleScope")
     }
 
+    fun typeOfRepeatOnLifecycle(): ClassName {
+        return ClassName("androidx.lifecycle", "repeatOnLifecycle")
+    }
+
+    fun typeOfLifecycleState(): ClassName {
+        return ClassName("androidx.lifecycle.Lifecycle", "State")
+    }
+
+    fun typeOfCollectLatest(): ClassName {
+        return ClassName("kotlinx.coroutines.flow", "collectLatest")
+    }
+
+    fun typeOfObserver(): ClassName {
+        return ClassName("androidx.lifecycle", "Observer")
+    }
+
     fun typeOfViewModelScope(): ClassName {
         return ClassName("androidx.lifecycle", "viewModelScope")
+    }
+
+    fun typeOfViewModelProvider() : ClassName {
+        return ClassName("androidx.lifecycle", "ViewModelProvider")
     }
 
     fun typeOfRoomDatabase(): ClassName {
@@ -146,6 +186,24 @@ object TypeNameUtils {
             INT, typeName)
     }
 
+    fun typeOfPagingData(): ClassName {
+        return ClassName("androidx.paging", "PagingData")
+    }
+
+    fun typeOfPagingDataOf(typeName: TypeName): TypeName {
+        val pagingData = typeOfPagingData()
+
+        return pagingData.parameterizedBy(typeName)
+    }
+
+    fun typeOfPageConfig(): Any {
+        return ClassName("androidx.paging", "PagingConfig")
+    }
+
+    fun typeOfPager(): Any {
+        return ClassName("androidx.paging", "Pager")
+    }
+
     fun typeOfMutableList(): ClassName {
         return ClassName("kotlin.collections", "MutableList")
     }
@@ -164,6 +222,10 @@ object TypeNameUtils {
         val classNameOfLiveData = typeOfLiveData()
 
         return classNameOfLiveData.parameterizedBy(typeName)
+    }
+
+    fun typeOfAsLiveData(): ClassName {
+        return ClassName("androidx.lifecycle", "asLiveData")
     }
 
     fun typeOfPagedListBuilder(): ClassName {
@@ -268,6 +330,25 @@ object TypeNameUtils {
 
     fun typeOfDevBricksXR(): ClassName {
         return ClassName("com.dailystudio.devbricksx", "R")
+    }
+
+    fun typeOfDevBricksXLogger(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.development", "Logger")
+    }
+
+    fun typeOfAbsRecyclerViewFragment(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
+    }
+
+    fun typeOfAdapterOf(typeName: TypeName): ClassName {
+        require(typeName is ClassName)
+        return typeOfAdapterOf(typeName.simpleName, typeName.packageName)
+    }
+
+    fun typeOfAdapterOf(className: String,
+                        packageName: String) : ClassName {
+        return ClassName(GeneratedNames.getAdapterPackageName(packageName),
+            GeneratedNames.getAdapterName(className))
     }
 
     fun defaultValOfTypeName(typeName: TypeName): String {

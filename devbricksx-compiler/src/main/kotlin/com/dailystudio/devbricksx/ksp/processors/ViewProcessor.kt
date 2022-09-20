@@ -4,7 +4,7 @@ import com.dailystudio.devbricksx.ksp.processors.step.ProcessStep
 import com.dailystudio.devbricksx.ksp.processors.step.*
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 
-class ViewsProcessor(
+class ViewProcessor(
     environment: SymbolProcessorEnvironment
 ) : StepsSymbolProcessor(environment) {
 

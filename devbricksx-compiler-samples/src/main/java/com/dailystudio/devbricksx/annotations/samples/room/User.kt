@@ -2,15 +2,22 @@ package com.dailystudio.devbricksx.annotations.samples.room
 
 import android.view.View
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ui.AbsViewHolder
 
+@ListFragment(
+    dataSource = DataSource.Flow,
+    layoutByName = "fragment_dummy"
+)
 @Adapter(
     viewHolder = UserViewHolder::class,
     viewType = ViewType.Card,
-    notifyAfterListChanged = true
+    notifyAfterListChanged = true,
+    paged = true
 )
 @ViewModel
 @RoomCompanion

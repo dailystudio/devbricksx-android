@@ -20,6 +20,9 @@ object GeneratedNames {
     private const val UI_PACKAGE_SUFFIX = ".ui"
     private const val ADAPTER_SUFFIX = "Adapter"
     private const val FRAGMENT_PACKAGE_SUFFIX = ".fragment"
+    private const val LIST_FRAGMENT_SUFFIX = "ListFragment"
+    private const val NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX = "NonRecyclableListFragment"
+    private const val PAGER_FRAGMENT_SUFFIX = "PagerFragment"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
@@ -159,6 +162,18 @@ object GeneratedNames {
 
     fun getAdapterPackageName(packageName: String) : String {
         return getPackageName(packageName, UI_PACKAGE_SUFFIX)
+    }
+
+    fun getFragmentPackageName(packageName: String) : String {
+        return getPackageName(packageName, FRAGMENT_PACKAGE_SUFFIX)
+    }
+
+    fun getListFragmentName(className: String) : String {
+        return buildString {
+            this.append(className.capitalizeName())
+            this.append('s')
+            this.append(LIST_FRAGMENT_SUFFIX)
+        }
     }
 
     fun getDaoVariableName(className: String) : String {

@@ -1,4 +1,5 @@
 com.dailystudio.devbricksx.ksp.RoomCompanionProcessorProvider
 com.dailystudio.devbricksx.ksp.InMemoryCompanionProcessorProvider
 com.dailystudio.devbricksx.ksp.ViewModelProcessorProvider
-com.dailystudio.devbricksx.ksp.ViewsProcessorProvider
+com.dailystudio.devbricksx.ksp.ViewProcessorProvider
+com.dailystudio.devbricksx.ksp.FragmentProcessorProvider
