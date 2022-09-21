@@ -27,7 +27,7 @@ class ListFragmentMethodBuilderOptions(layout: Int,
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
     fillParent, dataSource, paged, pageSize)
 
-class ListFragmentStep (processor: BaseSymbolProcessor)
+class ListFragmentStep(processor: BaseSymbolProcessor)
     : AbsListFragmentStep(ListFragment::class, processor) {
 
     companion object {
@@ -112,12 +112,12 @@ class ListFragmentStep (processor: BaseSymbolProcessor)
         }
     }
 
-    protected open fun genOnCreateLayoutManager(resolver: Resolver,
-                                                symbol: KSClassDeclaration,
-                                                typeOfObject: TypeName,
-                                                classBuilder: TypeSpec.Builder,
-                                                options: BuildOptions
-    ): FunSpec.Builder? {
+    private fun genOnCreateLayoutManager(resolver: Resolver,
+                                         symbol: KSClassDeclaration,
+                                         typeOfObject: TypeName,
+                                         classBuilder: TypeSpec.Builder,
+                                         options: BuildOptions
+    ): FunSpec.Builder {
         val listBuildOptions = (options as ListFragmentMethodBuilderOptions)
         val isGradLayout = listBuildOptions.isGradLayout
         val columns = listBuildOptions.columns

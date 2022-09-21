@@ -23,6 +23,7 @@ object GeneratedNames {
     private const val LIST_FRAGMENT_SUFFIX = "ListFragment"
     private const val NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX = "NonRecyclableListFragment"
     private const val PAGER_FRAGMENT_SUFFIX = "PagerFragment"
+    private const val FRAGMENT_ADAPTER_SUFFIX = "FragmentAdapter"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
@@ -181,6 +182,22 @@ object GeneratedNames {
             this.append(className.capitalizeName())
             this.append('s')
             this.append(NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX)
+        }
+    }
+
+    fun getPagerFragmentName(className: String) : String {
+        return buildString {
+            this.append(className.capitalizeName())
+            this.append('s')
+            this.append(PAGER_FRAGMENT_SUFFIX)
+        }
+    }
+
+    fun getFragmentAdapterName(className: String) : String {
+        return buildString {
+            this.append(className.capitalize())
+            this.append('s')
+            this.append(FRAGMENT_ADAPTER_SUFFIX)
         }
     }
 

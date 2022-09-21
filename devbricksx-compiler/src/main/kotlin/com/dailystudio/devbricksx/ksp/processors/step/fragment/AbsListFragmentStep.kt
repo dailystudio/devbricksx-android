@@ -114,14 +114,14 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         val paged = options.paged
 
         val typeOfAdapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
-        val typeOfListOfObjets = TypeNameUtils.typeOfListOf(typeOfObject)
+        val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
 
         val methodSubmitDataBuilder = FunSpec.builder(METHOD_SUBMIT_DATA)
             .addModifiers(KModifier.PUBLIC)
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("adapter", typeOfAdapter)
-            .addParameter("data", if (paged) typeOfPagingDataOfObjects else typeOfListOfObjets)
+            .addParameter("data", if (paged) typeOfPagingDataOfObjects else typeOfListOfObjects)
 
         if(paged) {
             methodSubmitDataBuilder.addStatement(

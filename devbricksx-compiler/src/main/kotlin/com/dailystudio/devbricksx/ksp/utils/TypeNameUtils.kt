@@ -344,6 +344,13 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.fragment", "AbsNonRecyclableListViewFragment")
     }
 
+    fun typeOfAbsViewPagerFragment(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.fragment", "AbsViewPagerFragment")
+    }
+
+    fun typeOfAbsPagingViewPagerFragment(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.fragment", "AbsPagingViewPagerFragment")
+    }
 
     fun typeOfAdapterOf(typeName: TypeName): ClassName {
         require(typeName is ClassName)
@@ -355,6 +362,18 @@ object TypeNameUtils {
         return ClassName(GeneratedNames.getAdapterPackageName(packageName),
             GeneratedNames.getAdapterName(className))
     }
+
+    fun typeOfFragmentAdapterOf(typeName: TypeName): ClassName {
+        require(typeName is ClassName)
+        return typeOfFragmentAdapterOf(typeName.simpleName, typeName.packageName)
+    }
+
+    fun typeOfFragmentAdapterOf(className: String,
+                                packageName: String) : ClassName {
+        return ClassName(GeneratedNames.getAdapterPackageName(packageName),
+            GeneratedNames.getFragmentAdapterName(className))
+    }
+
 
     fun defaultValOfTypeName(typeName: TypeName): String {
         return if (typeName.isNullable) {

@@ -13,11 +13,8 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toClassName
 
-class NonRecyclableListFragmentStep (processor: BaseSymbolProcessor)
+class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
     : AbsListFragmentStep(NonRecyclableListFragment::class, processor) {
-
-    companion object {
-    }
 
     override fun genClassBuilder(
         resolver: Resolver,
