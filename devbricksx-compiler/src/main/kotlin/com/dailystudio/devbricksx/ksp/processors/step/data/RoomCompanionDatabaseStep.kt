@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp.processors.step
+package com.dailystudio.devbricksx.ksp.processors.step.data
 
 import androidx.room.Database
 import androidx.room.TypeConverters
@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.helper.lowerCamelCaseName
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
+import com.dailystudio.devbricksx.ksp.processors.step.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration

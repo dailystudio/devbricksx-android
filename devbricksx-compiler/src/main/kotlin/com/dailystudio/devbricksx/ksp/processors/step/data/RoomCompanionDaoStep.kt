@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp.processors.step
+package com.dailystudio.devbricksx.ksp.processors.step.data
 
 import androidx.room.*
 import com.dailystudio.devbricksx.annotations.data.Page
@@ -6,6 +6,7 @@ import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
+import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration

@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp.processors.step
+package com.dailystudio.devbricksx.ksp.processors.step.view
 
 import com.dailystudio.devbricksx.annotations.view.DiffUtil
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor

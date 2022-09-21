@@ -1,7 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors
 
 import com.dailystudio.devbricksx.ksp.processors.step.ProcessStep
-import com.dailystudio.devbricksx.ksp.processors.step.InMemoryCompanionStep
+import com.dailystudio.devbricksx.ksp.processors.step.data.InMemoryCompanionStep
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 
 class InMemoryCompanionProcessor(

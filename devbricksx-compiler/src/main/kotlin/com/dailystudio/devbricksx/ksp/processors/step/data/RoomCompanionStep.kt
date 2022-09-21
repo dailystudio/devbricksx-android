@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp.processors.step
+package com.dailystudio.devbricksx.ksp.processors.step.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -326,7 +327,8 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodToObjectBuilder.build())
 
-        val propMapToObjectBuilder = PropertySpec.builder(PROP_NAME_MAP_TO_OBJECT,
+        val propMapToObjectBuilder = PropertySpec.builder(
+            PROP_NAME_MAP_TO_OBJECT,
             TypeNameUtils.typeOfMapFunction(typeOfCompanion, typeOfObject))
             .initializer("""
                 object : Function<%T, %T> {
@@ -342,7 +344,8 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         classCompanionBuilder.addProperty(propMapToObjectBuilder.build())
 
-        val propMapToObjectsBuilder = PropertySpec.builder(PROP_NAME_MAP_TO_OBJECTS,
+        val propMapToObjectsBuilder = PropertySpec.builder(
+            PROP_NAME_MAP_TO_OBJECTS,
             TypeNameUtils.typeOfMapFunction(typeOfListOfCompanions, typeOfListOfObjects))
             .initializer("""
                 object : Function<%T, %T> {
