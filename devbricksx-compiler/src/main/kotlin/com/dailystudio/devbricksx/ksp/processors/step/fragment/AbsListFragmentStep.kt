@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp.processors.step
+package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
@@ -6,6 +6,7 @@ import com.dailystudio.devbricksx.ksp.helper.FunctionNames
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
+import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
 import com.dailystudio.devbricksx.ksp.utils.getAnnotation
 import com.dailystudio.devbricksx.ksp.utils.packageName
@@ -29,7 +30,8 @@ typealias BuilderOfMethod = (resolver: Resolver,
                              symbol: KSClassDeclaration,
                              typeOfObject: TypeName,
                              classBuilder: TypeSpec.Builder,
-                             options: BuildOptions) -> FunSpec.Builder?
+                             options: BuildOptions
+) -> FunSpec.Builder?
 
 abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                    processor: BaseSymbolProcessor
@@ -41,6 +43,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         const val METHOD_BIND_DATA = "bindData"
         const val METHOD_GET_DATA_SOURCE = "getDataSource"
         const val METHOD_ON_CREATE_VIEW = "onCreateView"
+
     }
 
     override fun processSymbol(
@@ -72,7 +75,8 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     protected abstract fun genClassBuilder(resolver: Resolver,
                                            symbol: KSClassDeclaration,
                                            typeOfObject: TypeName,
-                                           options: BuildOptions): TypeSpec.Builder?
+                                           options: BuildOptions
+    ): TypeSpec.Builder?
     protected abstract fun genBuildOptions(resolver: Resolver,
                                            symbol: KSClassDeclaration): BuildOptions?
 
@@ -86,12 +90,12 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         )
     }
 
-
     protected open fun genOnCreateAdapter(resolver: Resolver,
                                           symbol: KSClassDeclaration,
                                           typeOfObject: TypeName,
                                           classBuilder: TypeSpec.Builder,
-                                          options: BuildOptions): FunSpec.Builder? {
+                                          options: BuildOptions
+    ): FunSpec.Builder? {
         val adapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
 
         return FunSpec.builder(METHOD_ON_CREATE_ADAPTER)
@@ -105,7 +109,8 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                      symbol: KSClassDeclaration,
                                      typeOfObject: TypeName,
                                      classBuilder: TypeSpec.Builder,
-                                     options: BuildOptions): FunSpec.Builder? {
+                                     options: BuildOptions
+    ): FunSpec.Builder? {
         val paged = options.paged
 
         val typeOfAdapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
@@ -136,7 +141,8 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                    symbol: KSClassDeclaration,
                                    typeOfObject: TypeName,
                                    classBuilder: TypeSpec.Builder,
-                                   options: BuildOptions): FunSpec.Builder? {
+                                   options: BuildOptions
+    ): FunSpec.Builder? {
         val dataSource = options.dataSource
 
         val lifecycleScope = TypeNameUtils.typeOfLifecycleScope()
@@ -209,7 +215,8 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                         symbol: KSClassDeclaration,
                                         typeOfObject: TypeName,
                                         classBuilder: TypeSpec.Builder,
-                                        options: BuildOptions): FunSpec.Builder? {
+                                        options: BuildOptions
+    ): FunSpec.Builder? {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
@@ -302,7 +309,8 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                        symbol: KSClassDeclaration,
                                        typeOfObject: TypeName,
                                        classBuilder: TypeSpec.Builder,
-                                       options: BuildOptions): FunSpec.Builder? {
+                                       options: BuildOptions
+    ): FunSpec.Builder? {
         val layoutByName = options.layoutByName
         val layout = options.layout
         val defaultLayout = options.defaultLayout

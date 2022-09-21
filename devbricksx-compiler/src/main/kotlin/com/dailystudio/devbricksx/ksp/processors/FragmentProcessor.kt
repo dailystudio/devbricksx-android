@@ -1,7 +1,8 @@
 package com.dailystudio.devbricksx.ksp.processors
 
 import com.dailystudio.devbricksx.ksp.processors.step.ProcessStep
-import com.dailystudio.devbricksx.ksp.processors.step.*
+import com.dailystudio.devbricksx.ksp.processors.step.fragment.ListFragmentStep
+import com.dailystudio.devbricksx.ksp.processors.step.fragment.NonRecyclableListFragmentStep
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 
 class FragmentProcessor(
@@ -11,6 +12,7 @@ class FragmentProcessor(
     override val steps: Array<ProcessStep>
         get() = arrayOf(
             ListFragmentStep(this),
+            NonRecyclableListFragmentStep(this),
         )
 
 }

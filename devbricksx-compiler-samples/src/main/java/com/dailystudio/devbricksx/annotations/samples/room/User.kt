@@ -4,6 +4,7 @@ import android.view.View
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
@@ -29,7 +30,17 @@ open class User(open val uid: Int,
     var portrait: String? = null
 }
 
+
+@NonRecyclableListFragment(
+    dataSource = DataSource.LiveData
+)
 @ViewModel
+@Adapter(
+    viewHolder = UserViewHolder::class,
+    viewType = ViewType.Card,
+    notifyAfterListChanged = true,
+    paged = false
+)
 @RoomCompanion
 data class RichUser(override val uid: Int,
                     override val firstName: String? = null,

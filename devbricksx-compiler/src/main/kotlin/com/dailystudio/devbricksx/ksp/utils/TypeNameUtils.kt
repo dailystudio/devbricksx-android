@@ -340,6 +340,11 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
     }
 
+    fun typeOfAbsNonRecyclableListViewFragment(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.fragment", "AbsNonRecyclableListViewFragment")
+    }
+
+
     fun typeOfAdapterOf(typeName: TypeName): ClassName {
         require(typeName is ClassName)
         return typeOfAdapterOf(typeName.simpleName, typeName.packageName)

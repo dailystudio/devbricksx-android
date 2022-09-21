@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.ksp.processors.step
+package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
@@ -116,7 +116,8 @@ class ListFragmentStep (processor: BaseSymbolProcessor)
                                                 symbol: KSClassDeclaration,
                                                 typeOfObject: TypeName,
                                                 classBuilder: TypeSpec.Builder,
-                                                options: BuildOptions): FunSpec.Builder? {
+                                                options: BuildOptions
+    ): FunSpec.Builder? {
         val listBuildOptions = (options as ListFragmentMethodBuilderOptions)
         val isGradLayout = listBuildOptions.isGradLayout
         val columns = listBuildOptions.columns

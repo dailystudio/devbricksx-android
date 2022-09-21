@@ -176,6 +176,14 @@ object GeneratedNames {
         }
     }
 
+    fun getNonRecyclableListFragmentName(className: String) : String {
+        return buildString {
+            this.append(className.capitalizeName())
+            this.append('s')
+            this.append(NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX)
+        }
+    }
+
     fun getDaoVariableName(className: String) : String {
         return buildString {
             this.append(className)
