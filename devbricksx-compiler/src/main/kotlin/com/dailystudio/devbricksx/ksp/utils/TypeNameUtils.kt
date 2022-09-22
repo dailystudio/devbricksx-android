@@ -16,6 +16,10 @@ object TypeNameUtils {
         return resolver.getClassDeclarationByName<Any>()
     }
 
+    fun isTypeOfAny(symbol: KSClassDeclaration): Boolean {
+        return (symbol.toClassName() == ANY)
+    }
+
     fun typeOf(resolver: Resolver, typeString: String): KSClassDeclaration? {
         return resolver.getClassDeclarationByName(typeString)
     }
@@ -336,6 +340,10 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.development", "Logger")
     }
 
+    fun typeOfGlobalContextWrapper(): TypeName {
+        return ClassName("com.dailystudio.devbricksx", "GlobalContextWrapper")
+    }
+
     fun typeOfAbsRecyclerViewFragment(): ClassName {
         return ClassName("com.dailystudio.devbricksx.fragment", "AbsRecyclerViewFragment")
     }
@@ -374,8 +382,11 @@ object TypeNameUtils {
             GeneratedNames.getFragmentAdapterName(className))
     }
 
+    fun typeOfAbsPrefs(): TypeName {
+        return ClassName("com.dailystudio.devbricksx.preference", "AbsPrefs")
+    }
 
-    fun defaultValOfTypeName(typeName: TypeName): String {
+    fun defaultValOfType(typeName: TypeName): String {
         return if (typeName.isNullable) {
             return "null"
         } else {

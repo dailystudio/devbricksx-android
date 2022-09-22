@@ -133,7 +133,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
                     error("prop [$nameOfProp] in [$symbol] is immutable. This blocks accessing from generated code. Please change to var or ignore with @Ignore")
                 }
 
-                val defaultVal = TypeNameUtils.defaultValOfTypeName(typeOfProp)
+                val defaultVal = TypeNameUtils.defaultValOfType(typeOfProp)
                 warn("default val of [$typeOfProp]: $defaultVal")
                 propSpecBuilder.initializer(defaultVal)
             }

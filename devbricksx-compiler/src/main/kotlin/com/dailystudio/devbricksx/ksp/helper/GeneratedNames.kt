@@ -24,6 +24,8 @@ object GeneratedNames {
     private const val NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX = "NonRecyclableListFragment"
     private const val PAGER_FRAGMENT_SUFFIX = "PagerFragment"
     private const val FRAGMENT_ADAPTER_SUFFIX = "FragmentAdapter"
+    private const val SHARED_PREFS_SUFFIX = "Prefs"
+    private const val PREF_KEY_PREFIX = "PREF_"
 
     const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
 
@@ -198,6 +200,20 @@ object GeneratedNames {
             this.append(className.capitalize())
             this.append('s')
             this.append(FRAGMENT_ADAPTER_SUFFIX)
+        }
+    }
+
+    fun getSharedPrefsName(className: String) : String {
+        return buildString {
+            this.append(className)
+            this.append(SHARED_PREFS_SUFFIX)
+        }
+    }
+
+    fun getPreferenceKeyName(filedName: String): String {
+        return buildString {
+            append(PREF_KEY_PREFIX)
+            append(filedName.underlineCaseName().toUpperCase())
         }
     }
 
