@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.ksp.processors.step.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.helper.*

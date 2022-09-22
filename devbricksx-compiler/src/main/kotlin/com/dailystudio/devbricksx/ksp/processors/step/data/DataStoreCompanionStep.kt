@@ -2,20 +2,15 @@ package com.dailystudio.devbricksx.ksp.processors.step.data
 
 import com.dailystudio.devbricksx.annotations.data.DataStoreCompanion
 import com.dailystudio.devbricksx.annotations.data.StoreType
-import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
-import com.dailystudio.devbricksx.ksp.helper.capitalizeName
-import com.dailystudio.devbricksx.ksp.helper.kebabCaseName
+import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toTypeName
-import org.jetbrains.annotations.Nullable
 
 class DataStoreCompanionStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(DataStoreCompanion::class, processor)  {
@@ -93,15 +88,22 @@ class DataStoreCompanionStep (processor: BaseSymbolProcessor)
         symbol.getAllProperties().filter {
             propsInSymbol.contains(it.simpleName.getShortName())
         }.forEach {
-            val nameOfProp: String = it.simpleName.getShortName()
+            val defaultVal: String = it.getDefaultValue()
+            val nullable = it.isNullable()
+            val alias = it.getAlias()
+
+            val nameOfProp: String = if (alias.isNullOrEmpty()) {
+                it.simpleName.getShortName()
+            } else {
+                alias
+            }
+
             val nameOfKey: String = nameOfProp.kebabCaseName()
             val nameOfPrefKey: String = GeneratedNames.getPreferenceKeyName(nameOfProp)
 
-            val nullable = it.hasAnnotation(Nullable::class)
 
             val typeOfProp = it.type.toTypeName().copy(nullable = nullable)
-            val defaultVal = TypeNameUtils.defaultValOfType(typeOfProp)
-            val absPrefFuncType = it.type.toAbsPrefFuncType()
+            val absPrefFuncType = it.toAbsPrefsFuncType()
             if (absPrefFuncType == null) {
                 error("unsupported shared preference type [${it.type.toTypeName()}] in [$symbol]")
                 return emptyResult
@@ -158,16 +160,5 @@ class DataStoreCompanionStep (processor: BaseSymbolProcessor)
     private fun generateDataStore(resolver: Resolver,
                                   symbol: KSClassDeclaration): List<GeneratedResult> {
         return emptyResult
-    }
-
-    private fun KSTypeReference.toAbsPrefFuncType(): Pair<String, Boolean>? {
-        return when (resolve().declaration.simpleName.getShortName()) {
-            "Int" -> Pair("Integer", false)
-            "String" -> Pair("String", true)
-            "Float" -> Pair("Float", false)
-            "Long" -> Pair("Long", false)
-            "Boolean" -> Pair("Boolean", false)
-            else -> null
-        }
     }
 }

@@ -1,11 +1,13 @@
 package com.dailystudio.devbricksx.annotations.samples.settings
 
-import com.dailystudio.devbricksx.annotations.data.DataStoreCompanion
+import com.dailystudio.devbricksx.annotations.data.*
 
 @DataStoreCompanion
 open class BasicSettings(
+    @IntegerField(10)
     val intType: Int,
-    val stringType: String,
+    @StringField("abc")
+    val stringType: String?,
 ) {
 }
 
@@ -13,6 +15,8 @@ open class BasicSettings(
 class AdvancedSettings(
     intType: Int,
     stringType: String,
+    @FloatField(-1f)
     val floatType: Float,
+    @BooleanField(true, alias = "bt")
     val booleanType: Boolean
 ): BasicSettings(intType, stringType)
