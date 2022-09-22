@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
 import android.view.View
+import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
@@ -49,8 +50,11 @@ open class User(open val uid: Int,
 data class RichUser(override val uid: Int,
                     override val firstName: String? = null,
                     override val  lastName: String?,
-                    val local: Boolean = false,
-): User(uid, firstName, lastName)
+                    val abc: Int = 0,
+): User(uid, firstName, lastName) {
+    @IgnoreField
+    val local: Boolean = false
+}
 
 
 class UserViewHolder(view: View): AbsViewHolder<User>(view) {

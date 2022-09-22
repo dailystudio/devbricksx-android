@@ -2,11 +2,13 @@ package com.dailystudio.devbricksx.ksp.helper
 
 import com.dailystudio.devbricksx.annotations.data.*
 import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
+import com.dailystudio.devbricksx.ksp.utils.hasAnnotation
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toTypeName
+import org.jetbrains.annotations.Nullable
 
 
 fun KSPropertyDeclaration.toAbsPrefsFuncType(): Pair<String, Boolean>? {
@@ -54,34 +56,16 @@ fun KSPropertyDeclaration.getDefaultValue(): String {
 }
 
 fun KSPropertyDeclaration.isNullable(): Boolean {
-    if (type.resolve().isMarkedNullable) {
-        return true
-    }
-
-    val fieldAnnotation = findFieldAnnotation()
-        ?: false
-
-    return when (fieldAnnotation) {
-        is IntegerField -> fieldAnnotation.nullable
-        is LongField -> fieldAnnotation.nullable
-        is FloatField -> fieldAnnotation.nullable
-        is DoubleField -> fieldAnnotation.nullable
-        is BooleanField -> fieldAnnotation.nullable
-        is StringField -> fieldAnnotation.nullable
-        else -> false
+    return if (type.resolve().isMarkedNullable) {
+        true
+    } else {
+        hasAnnotation(Nullable::class)
     }
 }
-fun KSPropertyDeclaration.getAlias(): String? {
-    val fieldAnnotation = findFieldAnnotation()
-        ?: return null
 
-    return when (fieldAnnotation) {
-        is IntegerField -> fieldAnnotation.alias
-        is LongField -> fieldAnnotation.alias
-        is FloatField -> fieldAnnotation.alias
-        is DoubleField -> fieldAnnotation.alias
-        is BooleanField -> fieldAnnotation.alias
-        is StringField -> fieldAnnotation.alias
-        else -> null
-    }
+@OptIn(KspExperimental::class)
+fun KSPropertyDeclaration.getAlias(): String? {
+    val aliasAnnotation = getAnnotationsByType(FieldAlias::class).firstOrNull()
+
+    return aliasAnnotation?.alias
 }

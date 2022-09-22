@@ -47,11 +47,29 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
         var packageNameOfSuperType = ""
         var typeNameOfSuperType = ""
 
-        val allProperties = symbol.getAllProperties()
+        val propsInConstructor = symbol.primaryConstructor?.parameters?.mapNotNull {
+            it.name?.getShortName()
+        }?.toSet() ?: emptySet()
 
-        val propsAll = allProperties.map { it.simpleName.getShortName() }.toSet()
+        warn("propsInConstructor: $propsInConstructor")
+
+        val allProperties = symbol.getAllProperties()
+            .filter {
+                val nameOfProp = it.simpleName.getShortName()
+                val ignored = it.hasAnnotation(IgnoreField::class)
+
+                if (ignored && propsInConstructor.contains(nameOfProp)) {
+                    error("field [$nameOfProp] with @IgnoreField can not be placed in constructor.")
+                }
+
+                !ignored
+            }
+
+        val propsAll = allProperties.map {
+            it.simpleName.getShortName()
+        }.toSet()
         val propsInSuperType = mutableSetOf<String>()
-        val propsInConstructor = mutableSetOf<String>()
+//        val propsInConstructor = mutableSetOf<String>()
         val propsInSuperTypeConstructor = mutableSetOf<String>()
         if (hasSuperType) {
             val companionOfSuperType =
@@ -109,7 +127,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
                 param.type.toTypeName())
 
             constructorBuilder.addParameter(paramSpecBuilder.build())
-            propsInConstructor.add(nameOfParam)
+//            propsInConstructor.add(nameOfParam)
         }
 
         val propSpecs = mutableListOf<PropertySpec>()
@@ -134,14 +152,21 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
                     error("prop [$nameOfProp] in [$symbol] is immutable. This blocks accessing from generated code. Please change to var or ignore with @Ignore")
                 }
 
-                val defaultVal = TypeNameUtils.defaultValOfType(typeOfProp)
+                val defaultVal = prop.getDefaultValue()
                 warn("default val of [$typeOfProp]: $defaultVal")
                 propSpecBuilder.initializer(defaultVal)
             }
 
+            val alias = prop.getAlias()
+            val nameOfColumn = if (alias.isNullOrEmpty()) {
+                nameOfProp.underlineCaseName()
+            } else {
+                alias
+            }
+
             propSpecBuilder.addAnnotation(
                 AnnotationSpec.builder(ColumnInfo::class)
-                    .addMember("name = %S", nameOfProp.underlineCaseName())
+                    .addMember("name = %S", nameOfColumn)
                     .build()
             )
 

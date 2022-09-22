@@ -8,6 +8,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.FloatField
+import com.dailystudio.devbricksx.annotations.data.IntegerField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
 import com.dailystudio.devbricksx.annotations.view.Adapter
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
     extension = AllTypesInOneDaoExtension::class
 )
 class AllTypesInOne {
+    @IntegerField(12)
     var id: Int = 0
     var intType: Int = 0
     var shortType: Short = 0

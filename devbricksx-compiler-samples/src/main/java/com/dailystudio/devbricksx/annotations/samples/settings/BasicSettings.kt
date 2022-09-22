@@ -17,6 +17,7 @@ class AdvancedSettings(
     stringType: String,
     @FloatField(-1f)
     val floatType: Float,
-    @BooleanField(true, alias = "bt")
+    @BooleanField(true)
+    @FieldAlias("it-boolean-or-not")
     val booleanType: Boolean
 ): BasicSettings(intType, stringType)
