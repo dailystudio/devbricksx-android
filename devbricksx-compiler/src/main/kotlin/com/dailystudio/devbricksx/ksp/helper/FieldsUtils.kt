@@ -46,11 +46,11 @@ fun KSPropertyDeclaration.getDefaultValue(): String {
 
     return when (fieldAnnotation) {
         is IntegerField -> fieldAnnotation.defaultValue.toString()
-        is LongField -> fieldAnnotation.defaultValue.toString() + "l"
+        is LongField -> fieldAnnotation.defaultValue.toString() + "L"
         is FloatField -> fieldAnnotation.defaultValue.toString() + "f"
         is DoubleField -> fieldAnnotation.defaultValue.toString()
         is BooleanField -> fieldAnnotation.defaultValue.toString()
-        is StringField -> fieldAnnotation.defaultValue
+        is StringField -> "\"" + fieldAnnotation.defaultValue + "\""
         else -> ""
     }
 }

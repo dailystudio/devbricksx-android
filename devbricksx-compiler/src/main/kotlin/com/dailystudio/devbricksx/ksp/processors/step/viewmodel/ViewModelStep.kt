@@ -333,12 +333,12 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         symbols.forEach { symbol ->
             val companion = symbol.getKSAnnotation(ViewModel::class, resolver)
             companion?.let {
-                val typeName = symbol.typeName()
+                val fullTypeName = symbol.toClassName().canonicalName
                 var group = it.findArgument<String?>("group")
                 warn("group of symbol [$symbol]: $group")
 
                 if (group.isNullOrEmpty()) {
-                    group = typeName
+                    group = fullTypeName
                 }
 
                 val symbolsInGroup = if (mapOfViewModels.containsKey(group)) {

@@ -382,6 +382,24 @@ object TypeNameUtils {
             GeneratedNames.getFragmentAdapterName(className))
     }
 
+    fun typeOfAbsFragmentStateAdapter(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.ui", "AbsFragmentStateAdapter")
+    }
+
+    fun typeOfAbsFragmentStateAdapterOf(typeName: TypeName): TypeName {
+        val fragmentAdapter = typeOfAbsFragmentStateAdapter()
+
+        return fragmentAdapter.parameterizedBy(typeName)
+    }
+
+    fun typeOfLifecycle(): ClassName {
+        return ClassName("androidx.lifecycle", "Lifecycle")
+    }
+
+    fun typeOfFragmentManager(): ClassName {
+        return ClassName("androidx.fragment.app", "FragmentManager")
+    }
+
     fun typeOfAbsPrefs(): TypeName {
         return ClassName("com.dailystudio.devbricksx.preference", "AbsPrefs")
     }

@@ -15,7 +15,7 @@ annotation class IntegerField(val defaultValue: Int)
 
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FIELD)
-annotation class LongField(val defaultValue: Boolean)
+annotation class LongField(val defaultValue: Long)
 
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FIELD)

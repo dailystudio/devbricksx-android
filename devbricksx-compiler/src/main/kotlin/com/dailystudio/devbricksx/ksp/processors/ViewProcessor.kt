@@ -1,9 +1,10 @@
 package com.dailystudio.devbricksx.ksp.processors
 
 import com.dailystudio.devbricksx.ksp.processors.step.ProcessStep
-import com.dailystudio.devbricksx.ksp.processors.step.data.RoomCompanionDiffUtilStep
+import com.dailystudio.devbricksx.ksp.processors.step.view.RoomCompanionDiffUtilStep
 import com.dailystudio.devbricksx.ksp.processors.step.view.AdapterStep
 import com.dailystudio.devbricksx.ksp.processors.step.view.DefaultDiffUtilStep
+import com.dailystudio.devbricksx.ksp.processors.step.view.FragmentAdapterStep
 import com.dailystudio.devbricksx.ksp.processors.step.view.InMemoryCompanionDiffUtilStep
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 
@@ -17,6 +18,7 @@ class ViewProcessor(
             RoomCompanionDiffUtilStep(this),
             InMemoryCompanionDiffUtilStep(this),
             AdapterStep(this),
+            FragmentAdapterStep(this),
         )
 
 }

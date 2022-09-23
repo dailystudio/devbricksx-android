@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step.view
 
 import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
@@ -65,7 +66,9 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
     }
 
     protected open fun needToDiffUtil(symbol: KSClassDeclaration): Boolean {
-        val hasAdapterAnnotatedArrayType = symbol.hasAnnotation(Adapter::class)
+        val hasAdapterAnnotatedArrayType =
+            symbol.hasAnnotation(Adapter::class)
+                    || symbol.hasAnnotation(FragmentAdapter::class)
         val openedClass = symbol.modifiers.contains(Modifier.OPEN)
         warn("check necessity: modifiers = ${symbol.modifiers}, open = $openedClass, hasAdapterAnnotatedArrayType = $hasAdapterAnnotatedArrayType")
 
