@@ -27,7 +27,8 @@ class CaseActivity : BaseCaseActivity() {
                     Array<Image>::class.java)
 
             images?.let {
-                val viewModel = ViewModelProvider(this@CaseActivity).get(ImageViewModel::class.java)
+                val viewModel = ViewModelProvider(this@CaseActivity)
+                    .get(ImageViewModel::class.java)
 
                 for (img in images) {
                     viewModel.insertImage(img)

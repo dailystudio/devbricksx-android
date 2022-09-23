@@ -1,7 +1,8 @@
 package com.dailystudio.devbricksx.database
 
 import androidx.room.Ignore
-import com.dailystudio.devbricksx.annotations.RoomCompanion
+import com.dailystudio.devbricksx.annotations.data.IgnoreField
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ui.SelectableListItem
 import java.util.*
 
@@ -25,7 +26,7 @@ open class Record(val id: Int = 0) {
 )
 open class SelectableRecord(id: Int = 0) : Record(id), SelectableListItem {
 
-    @Ignore
+    @IgnoreField
     var selected: Boolean = false
 
     override fun isItemSelected(): Boolean {

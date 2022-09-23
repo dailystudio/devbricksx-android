@@ -3,15 +3,17 @@ package com.dailystudio.devbricksx.samples.imagematrix
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.PointF
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
+import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 
 @ViewPagerFragment(useFragment = true, dataSource = DataSource.Flow)
 @FragmentAdapter(pageFragment = ImageBundleFragment::class)
-@DiffUtil
 @ViewModel
-@InMemoryRepository(key = Int::class)
-@InMemoryManager(key = Int::class)
+@InMemoryCompanion
 data class ImageBundle(val id: Int,
                        val name: String,
                        val bitmap: Bitmap,

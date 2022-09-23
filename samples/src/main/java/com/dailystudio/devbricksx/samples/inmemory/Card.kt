@@ -3,7 +3,12 @@ package com.dailystudio.devbricksx.samples.inmemory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.ViewType
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
 import com.dailystudio.devbricksx.utils.ColorUtils
@@ -14,9 +19,7 @@ import java.util.*
         paged = true,
         viewType = ViewType.CardInformative)
 @ListFragment(gridLayout = true, dataSource = DataSource.LiveData)
-@DiffUtil
-@InMemoryRepository(key = Int::class)
-@InMemoryManager(key = Int::class)
+@InMemoryCompanion
 data class Card(val id: Int,
                 val title: String,
                 val desc: String? = null) : InMemoryObject<Int> {

@@ -78,7 +78,7 @@ class CaseActivity : BaseCaseActivity() {
             for (l in lines) {
                 val item = Item(l)
 
-                viewModel.insertItem(item).join()
+                viewModel.insertItem(item)
             }
         }
     }

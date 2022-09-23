@@ -126,11 +126,19 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
                 PropertySpec.builder(method.nameOfPropFuncForType(typeName),typesOfReturn)
                     .addModifiers(KModifier.PUBLIC)
 
-            propBuilder.initializer(
-                "%N.%N()",
-                nameOfPropDao,
-                method.nameOfFunc(),
-            )
+            if (method == FunctionNames.GET_ALL
+                || method == FunctionNames.GET_ALL_PAGING_SOURCE) {
+                propBuilder.getter(FunSpec.getterBuilder()
+                    .addStatement("return %N.%N()", nameOfPropDao, method.nameOfFunc())
+                    .build()
+                )
+            } else {
+                propBuilder.initializer(
+                    "%N.%N()",
+                    nameOfPropDao,
+                    method.nameOfFunc(),
+                )
+            }
 
             classBuilder.addProperty(propBuilder.build())
         }

@@ -1,17 +1,16 @@
 package com.dailystudio.devbricksx.samples.settings
 
-import com.dailystudio.devbricksx.annotations.PreferenceValue
-import com.dailystudio.devbricksx.annotations.SharedPreference
+import com.dailystudio.devbricksx.annotations.data.*
 
 
-@SharedPreference
-open class TextSettings(@PreferenceValue val textInput: String? = null)
+@DataStoreCompanion
+open class TextSettings(val textInput: String? = null)
 
-@SharedPreference
+@DataStoreCompanion
 open class TextStyleSettings(textInput: String? = null,
-                             @PreferenceValue(defaultValueStr = TEXT_STYLE_NORMAL)
+                             @StringField(TEXT_STYLE_NORMAL)
                              val textStyle: String = TEXT_STYLE_NORMAL,
-                             @PreferenceValue(defaultValueStr = DEFAULT_MAX_LINES.toString())
+                             @IntegerField(DEFAULT_MAX_LINES)
                              val maxLines: Int = DEFAULT_MAX_LINES) : TextSettings(textInput) {
 
     companion object {
@@ -29,17 +28,17 @@ open class TextStyleSettings(textInput: String? = null,
 
 }
 
-@SharedPreference
+@DataStoreCompanion
 class SampleSettings(textInput: String? = null,
-                     textStyle: String = TextStyleSettings.TEXT_STYLE_NORMAL,
-                     maxLines: Int = TextStyleSettings.DEFAULT_MAX_LINES,
-                     @PreferenceValue(defaultValueStr = "true")
+                     textStyle: String = TEXT_STYLE_NORMAL,
+                     maxLines: Int = DEFAULT_MAX_LINES,
+                     @BooleanField(true)
                      val displayAttribution: Boolean = true,
-                     @PreferenceValue(defaultValueStr = "false")
+                     @BooleanField(false)
                      val roundedCorner: Boolean = false,
-                     @PreferenceValue(defaultValueStr = DEFAULT_CORNER_RADIUS.toString())
+                     @FloatField(DEFAULT_CORNER_RADIUS)
                      val cornerRadius: Float = MIN_CORNER_RADIUS,
-                     @PreferenceValue(defaultValueStr = DEFAULT_ANIM_DURATION.toString())
+                     @LongField(DEFAULT_ANIM_DURATION)
                      val animDuration: Long = DEFAULT_ANIM_DURATION)
     : TextStyleSettings(textInput, textStyle, maxLines) {
 

@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
-import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
@@ -171,7 +171,17 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
             )
 
             if (primaryKeys.contains(nameOfProp)) {
-                propSpecBuilder.addAnnotation(PrimaryKey::class)
+                if (primaryKeys.size == 1) {
+                    val primaryKeyAnnotationBuilder =
+                        AnnotationSpec.builder(PrimaryKey::class)
+
+                    if (autoGenerate) {
+                        primaryKeyAnnotationBuilder.addMember("autoGenerate = %L", true)
+                    }
+
+                    propSpecBuilder.addAnnotation(primaryKeyAnnotationBuilder.build())
+                }
+
                 primaryKeysFound.add(nameOfProp)
             }
 

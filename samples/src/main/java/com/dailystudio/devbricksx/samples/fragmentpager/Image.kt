@@ -5,7 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
+import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.fragment.AbsPageFragment
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
@@ -18,9 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 )
 @FragmentAdapter(pageFragment = ImageFragment::class)
 @ViewModel
-@DiffUtil
-@InMemoryRepository(key = Int::class)
-@InMemoryManager(key = Int::class)
+@InMemoryCompanion
 data class Image(val id: Int,
                  val title: String,
                  val url: String,

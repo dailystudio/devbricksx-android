@@ -20,7 +20,8 @@ class RedditRemoteMediator(
         state: PagingState<Int, RedditPost>
     ): MediatorResult {
         try {
-            val context = GlobalContextWrapper.context
+            val context = GlobalContextWrapper.context ?:
+                return MediatorResult.Success(false)
 
             val db = RedditDatabase.getDatabase(context)
 

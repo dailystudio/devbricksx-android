@@ -65,7 +65,7 @@ class CaseActivity : BaseCaseActivity() {
         }
     }
 
-    private suspend fun updatePackage(packageName: String) {
+    private fun updatePackage(packageName: String) {
         Logger.debug("update package: $packageName")
         val viewModel = ViewModelProvider(this).get(TestPackageViewModel::class.java)
 
@@ -80,7 +80,7 @@ class CaseActivity : BaseCaseActivity() {
                 Logger.debug("update resolved icon for [$pkg]: ${pkg.icon}")
             }
 
-            viewModel.updateTestPackage(pkg).join()
+            viewModel.updateTestPackage(pkg)
         }
     }
 
@@ -92,7 +92,7 @@ class CaseActivity : BaseCaseActivity() {
             pkg.installed = AppUtils.isApplicationInstalled(this, pkg.packageName)
             Logger.debug("app [$pkg] installed: ${pkg.installed}")
 
-            viewModel.updateTestPackage(pkg).join()
+            viewModel.updateTestPackage(pkg)
 
             delay(STEP_DELAY)
         }
@@ -109,19 +109,19 @@ class CaseActivity : BaseCaseActivity() {
                 Logger.debug("resolved icon for [$pkg]: ${pkg.icon}")
             }
 
-            viewModel.updateTestPackage(pkg).join()
+            viewModel.updateTestPackage(pkg)
 
             delay(STEP_DELAY)
         }
     }
 
-    private suspend fun generateTestPackages() {
+    private fun generateTestPackages() {
         val viewModel = ViewModelProvider(this).get(TestPackageViewModel::class.java)
 
         for ((label, pkg) in TEST_APPLICATIONS_PACKAGES) {
             val tp = TestPackage(pkg, label)
 
-            viewModel.insertTestPackage(tp).join()
+            viewModel.insertTestPackage(tp)
         }
     }
 

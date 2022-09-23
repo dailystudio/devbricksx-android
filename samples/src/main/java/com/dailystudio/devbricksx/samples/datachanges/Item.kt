@@ -2,7 +2,12 @@ package com.dailystudio.devbricksx.samples.datachanges
 
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.ViewType
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 
@@ -14,10 +19,8 @@ import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
     columns = 2,
     dataSource = DataSource.Flow
 )
-@DiffUtil
 @ViewModel
-@InMemoryRepository(key = String::class)
-@InMemoryManager(key = String::class)
+@InMemoryCompanion
 data class Item(val label: String,
                 var count: Int = 0): InMemoryObject<String> {
 

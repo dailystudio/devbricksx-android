@@ -1,21 +1,21 @@
 package com.dailystudio.devbricksx.samples.nonrecyclablelistview
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.airbnb.lottie.LottieAnimationView
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
+import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.ViewType
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
-import com.nostra13.universalimageloader.core.DisplayImageOptions
 import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.assist.FailReason
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
 
 @NonRecyclableListFragment(dataSource = DataSource.Flow)
 @ViewModel
@@ -24,9 +24,7 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener
         viewHolder = PiaxbayImageViewHolder::class,
         paged = true,
         notifyAfterListChanged = true)
-@InMemoryManager(key = Int::class)
-@InMemoryRepository(key = Int::class)
-@DiffUtil
+@InMemoryCompanion
 class PixabayImage(val id: Int,
                    val name: String,
                    val imageUri: String,

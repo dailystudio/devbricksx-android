@@ -60,14 +60,14 @@ class CaseActivity : BaseCaseActivity() {
         }
     }
 
-    private suspend fun sendMessage(text: String) {
+    private fun sendMessage(text: String) {
         val viewModel = ViewModelProvider(this).get(ChatRecordViewModel::class.java)
 
         val record = ChatRecord(System.currentTimeMillis(),
                 text,
                 MessageType.Send)
 
-        viewModel.insertChatRecord(record).join()
+        viewModel.insertChatRecord(record)
     }
 
     private suspend fun receiveReply(text: String) {
@@ -78,7 +78,7 @@ class CaseActivity : BaseCaseActivity() {
                 "$text",
                 MessageType.Receive)
 
-        viewModel.insertChatRecord(record).join()
+        viewModel.insertChatRecord(record)
     }
 
 }
