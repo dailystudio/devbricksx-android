@@ -1,11 +1,9 @@
 package com.dailystudio.devbricksx.notebook.db
 
-import androidx.lifecycle.LiveData
-import androidx.paging.PagedList
 import androidx.paging.PagingSource
 import androidx.room.Query
-import com.dailystudio.devbricksx.annotations.DaoExtension
-import com.dailystudio.devbricksx.annotations.Page
+import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.Page
 import kotlinx.coroutines.flow.Flow
 
 @DaoExtension(entity = Notebook::class)

@@ -2,15 +2,18 @@ package com.dailystudio.devbricksx.notebook.db
 
 import androidx.room.ForeignKey
 import androidx.room.Ignore
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.ViewType
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
-import com.dailystudio.devbricksx.database.Record
 import com.dailystudio.devbricksx.database.SelectableRecord
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.fragment.AbsMultiSelectionListFragment
 import com.dailystudio.devbricksx.notebook.ui.NoteViewHolder
 import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
-import com.dailystudio.devbricksx.ui.SelectableListItem
 import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],
