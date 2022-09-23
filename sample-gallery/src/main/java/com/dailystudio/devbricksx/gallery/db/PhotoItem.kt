@@ -7,7 +7,13 @@ import android.widget.ImageView
 import androidx.paging.PagingSource
 import androidx.room.Query
 import coil.load
-import com.dailystudio.devbricksx.annotations.*
+import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.RoomCompanion
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.ViewType
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.StringIdRecord
 import com.dailystudio.devbricksx.development.Logger
@@ -39,7 +45,7 @@ import java.util.*
     converters = [DateConverter::class],
     database = "unsplash"
 )
-data class PhotoItem(@OverrideProperty override val id: String,
+data class PhotoItem(override val id: String,
     var cachedIndex: String,
     val author: String,
     val description: String?,

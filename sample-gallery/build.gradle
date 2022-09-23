@@ -1,8 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-kapt'
+//    id 'kotlin-kapt'
     id 'androidx.navigation.safeargs'
+
+    id("com.google.devtools.ksp") version "$ksp_version"
 }
 
 android {
@@ -35,10 +37,12 @@ android {
         }
     }
 
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas".toString())
-        }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
+
+    sourceSets.configureEach {
+        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
     }
 
     compileOptions {
@@ -69,8 +73,8 @@ dependencies {
 
     implementation project(":devbricksx")
 
-    kapt project(':devbricksx-kotlin-compiler')
-    kapt project(':devbricksx-java-compiler')
+    ksp project(':devbricksx-compiler')
+    ksp "androidx.room:room-compiler:${ROOM_VERSION}"
 
-    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
+//    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
 }
