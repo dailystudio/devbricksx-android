@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.annotations
 
 import kotlin.reflect.KClass
 
+@Deprecated("ViewPagerFragment is deprecated by ViewPagerFragment in package com.dailystudio.devbricksx.annotations.fragment")
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 annotation class ViewPagerFragment(

@@ -4,16 +4,25 @@ pluginManagement {
     }
 }
 
-include ':devbricksx-audio'
+// Core library
 include ':devbricksx'
+
+// Annotation and Compiler
+include ':devbricksx-annotations'
+include ':devbricksx-compiler'
+include ':devbricksx-compiler-samples'
+
+// Media supports
+include ':devbricksx-audio'
+include ':devbricksx-camera'
+
+// Samples and applications
+include ':samples'
+include ':sample-notebook'
+include ':sample-gallery'
+
+// Modules to be deprecated
 include ':devbricksx-kotlin-annotations'
 include ':devbricksx-kotlin-compiler'
 include ':devbricksx-java-compiler'
 include ':devbricksx-java-annotations'
-include ':devbricksx-camera'
-include ':samples'
-include ':sample-notebook'
-include ':sample-gallery'
-include ':devbricksx-annotations'
-include ':devbricksx-compiler'
-include ':devbricksx-compiler-samples'

@@ -2,11 +2,13 @@ package com.dailystudio.devbricksx.annotations
 
 import kotlin.reflect.KClass
 
+@Deprecated("DataSource is deprecated by DataSource in package com.dailystudio.devbricksx.annotations.fragment")
 enum class DataSource {
     Flow,
     LiveData,
 }
 
+@Deprecated("ListFragment is deprecated by ListFragment in package com.dailystudio.devbricksx.annotations.fragment")
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 annotation class ListFragment(
