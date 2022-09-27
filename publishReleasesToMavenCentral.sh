@@ -1,6 +1,8 @@
 #!/bin/sh
 artifactsToPublish=(
   "devbricksx"
+  "devbricksx-annotations"
+  "devbricksx-compiler"
   "devbricksx-java-annotations"
   "devbricksx-java-compiler"
   "devbricksx-kotlin-annotations"
