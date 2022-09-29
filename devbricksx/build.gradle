@@ -65,10 +65,8 @@ dependencies {
     api "androidx.room:room-runtime:${ROOM_VERSION}"
     api "androidx.room:room-ktx:${ROOM_VERSION}"
     api "androidx.room:room-paging:${ROOM_VERSION}"
-//    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
 
     // LifeCycle relatives
-//    api "androidx.lifecycle:lifecycle-extensions:${project.ext.archLifecycleVersion}"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:${project.ext.archLifecycleVersion}"
     api "androidx.lifecycle:lifecycle-runtime-ktx:${project.ext.archLifecycleVersion}"
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
@@ -89,12 +87,8 @@ dependencies {
     api "com.google.code.gson:gson:${project.ext.gsonVersion}"
 
     // Libraries
-//    api project(':devbricksx-java-annotations')
-//    api project(':devbricksx-kotlin-annotations')
     api project(':devbricksx-annotations')
 
-//    kapt project(':devbricksx-kotlin-compiler')
-//    kapt project(':devbricksx-java-compiler')
     ksp "androidx.room:room-compiler:${ROOM_VERSION}"
     ksp project(':devbricksx-compiler')
 

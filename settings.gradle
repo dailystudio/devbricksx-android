@@ -22,7 +22,7 @@ include ':sample-notebook'
 include ':sample-gallery'
 
 // Modules to be deprecated
-include ':devbricksx-kotlin-annotations'
-include ':devbricksx-kotlin-compiler'
-include ':devbricksx-java-compiler'
-include ':devbricksx-java-annotations'
+// include ':devbricksx-kotlin-annotations'
+// include ':devbricksx-kotlin-compiler'
+// include ':devbricksx-java-compiler'
+// include ':devbricksx-java-annotations'

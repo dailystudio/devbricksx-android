@@ -42,8 +42,7 @@ class MainActivity : DevBricksActivity() {
 
         val clearSearchMenuItem = menu.findItem(R.id.action_clear_search)
         clearSearchMenuItem.isVisible = (viewModel.photoQuery.value != Constants.QUERY_ALL)
-        val queryText: TextView? = clearSearchMenuItem.actionView
-            .findViewById(R.id.query_text)
+        val queryText: TextView? = clearSearchMenuItem.actionView?.findViewById(R.id.query_text)
         queryText?.text = query
         queryText?.setOnClickListener {
             queryPhotos(Constants.QUERY_ALL)
@@ -55,7 +54,7 @@ class MainActivity : DevBricksActivity() {
 
         searchMenuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
 
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 clearSearchMenuItem.isVisible = false
 
                 if (Constants.QUERY_ALL != query) {
@@ -67,7 +66,7 @@ class MainActivity : DevBricksActivity() {
                 return true
             }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 clearSearchMenuItem.isVisible = (viewModel.photoQuery.value != Constants.QUERY_ALL)
 
                 return true

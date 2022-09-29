@@ -81,8 +81,5 @@ dependencies {
     ksp "androidx.room:room-compiler:${ROOM_VERSION}"
     ksp project(':devbricksx-compiler')
 
-//    kapt project(':devbricksx-kotlin-compiler')
-//    kapt project(':devbricksx-java-compiler')
-//    kapt "androidx.room:room-compiler:${ROOM_VERSION}"
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 }
