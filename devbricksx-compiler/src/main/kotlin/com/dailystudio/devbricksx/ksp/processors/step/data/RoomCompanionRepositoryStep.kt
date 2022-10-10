@@ -74,6 +74,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             RoomCompanionUtils.primaryKeysToFuncCallParameters(primaryKeys)
 
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
+            .addModifiers(KModifier.OPEN)
 
         val propDaoBuilder = PropertySpec.builder(nameOfPropDao, typeOfDao)
             .addModifiers(KModifier.PROTECTED)
