@@ -1,6 +1,14 @@
 #!/bin/sh
 
-roomVersion="2.4.2"
+DEP_VERSIONS_PROPERTIES=dep_versions.properties
+
+function getProperty {
+   PROP_KEY=$1
+   PROP_VALUE=`cat $DEP_VERSIONS_PROPERTIES | grep "$PROP_KEY" | cut -d'=' -f2`
+   echo $PROP_VALUE
+}
+
+roomVersion=$(getProperty "ROOM")
 
 echo "Updating Room version to [${roomVersion}]"
 

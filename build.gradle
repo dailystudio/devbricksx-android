@@ -1,6 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
-    ext.ksp_version = '1.7.10-1.0.6'
+    apply from: "$rootDir/buildscripts/versions.gradle"
+
+    ext.kotlin_version = depVersions.kotlin()
+    ext.ksp_version = depVersions.ksp()
     ext.nav_version = "2.3.1"
 
     repositories {
@@ -16,6 +18,7 @@ buildscript {
         // in the individual module build.gradle files
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }
+
 }
 
 allprojects {
@@ -32,10 +35,11 @@ allprojects {
         }
     }
 
+    apply from: "$rootDir/buildscripts/versions.gradle"
 }
 
 ext {
-    ROOM_VERSION = "2.4.3"
+    ROOM_VERSION = depVersions.room()
 
     // publish credentials
     if (file("private.properties").exists()) {
@@ -70,8 +74,8 @@ ext {
     COMPILE_SDK = 33
     TARGET_SDK = 33
     BUILD_TOOLS = '33.0.0'
-    VERSION_NAME = version()
-    VERSION_CODE = versionCode().toInteger()
+    VERSION_NAME = versions.devBricksXVersion()
+    VERSION_CODE = versions.devBricksXVersionCode().toInteger()
 
     // Publishing Parameters
     SITE_URL = 'https://github.com/dailystudio/devbricksx-android'
@@ -87,20 +91,7 @@ ext {
     LICENCE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 
     RELEASE_REPOSITORY_URL = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
-}
 
-def String version() {
-    def versionPropsFile = file('version.properties')
-    def Properties versionProps = new Properties()
-    versionProps.load(new FileInputStream(versionPropsFile))
-
-    return versionProps['major'] + "." + versionProps['minor'] + "." + versionProps['patch']
-}
-
-def String versionCode() {
-    def versionPropsFile = file('version.properties')
-    def Properties versionProps = new Properties()
-    versionProps.load(new FileInputStream(versionPropsFile))
-
-    return versionProps['code']
+    versions.dumpVersions()
+    depVersions.dumpVersions()
 }

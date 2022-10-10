@@ -32,7 +32,7 @@ dependencies {
     implementation "cn.dailystudio:devbricksx-java-annotations:$devbricksx_version"
     kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
     // (Optional) If you use the feature above, DO NOT forget this line 
-    kapt "androidx.room:room-compiler:2.4.2"
+    kapt "androidx.room:room-compiler:2.4.3"
 
     // (Optional) Annotations and processors to generate high-level utils, such ViewModel, Fragment, etc.
     implementation "cn.dailystudio:devbricksx-kotlin-annotations:$devbricksx_version"

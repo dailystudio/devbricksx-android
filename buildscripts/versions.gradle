@@ -1,0 +1,50 @@
+ext.versions = [
+    devBricksXVersion: { versionFile = "$rootDir/version.properties" ->
+        def versionPropsFile = file(versionFile)
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+        return versionProps['major'] + "." + versionProps['minor'] + "." + versionProps['patch']
+    },
+
+    devBricksXVersionCode: { versionFile = "$rootDir/version.properties" ->
+        def versionPropsFile = file(versionFile)
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+        return versionProps['code']
+    },
+
+    dumpVersions: {
+        println("building DevBricksX: ${ext.versions.devBricksXVersion()} [code: ${ext.versions.devBricksXVersionCode()}]")
+    }
+
+]
+
+ext.depVersions = [
+    all : { versionsFile = "$rootDir/dep_versions.properties" ->
+        def versionPropsFile = file(versionsFile)
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+        return versionProps
+    },
+
+    kotlin: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['KOTLIN']
+    },
+
+    ksp: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['KSP']
+    },
+
+    room: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['ROOM']
+    },
+
+    dumpVersions: {
+        println("using Kotlin: ${ext.depVersions.kotlin()}")
+        println("using KSP: ${ext.depVersions.ksp()}")
+        println("using ROOM: ${ext.depVersions.room()}")
+    }
+]
