@@ -46,7 +46,7 @@ dependencies {
 The latest version of dependencies above are:
 
 ```groovy
-ksp_version="1.7.10-1.0.6"
+ksp_version = "1.7.10-1.0.6"
 devbricksx_version = "1.6.7"
 ```
 
