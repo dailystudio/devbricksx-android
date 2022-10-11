@@ -156,7 +156,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             val methodBuilder: FunSpec.Builder =
                 FunSpec.builder(method.nameOfFunc())
                     .addModifiers(KModifier.PUBLIC)
-                    .addParameter(nameOfObject, typeOfObject)
+                    .addParameter(nameOfObject, typeOfObject.copy(true))
                     .returns(typesOfReturn)
 
             methodBuilder.addStatement(
@@ -180,7 +180,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             val methodBuilder: FunSpec.Builder =
                 FunSpec.builder(method.nameOfFunc())
                     .addModifiers(KModifier.PUBLIC)
-                    .addParameter(nameOfObjects, typeOfListOfObjects)
+                    .addParameter(nameOfObjects, typeOfListOfObjects.copy(true))
                     .returns(typesOfReturn)
 
             methodBuilder.addStatement(

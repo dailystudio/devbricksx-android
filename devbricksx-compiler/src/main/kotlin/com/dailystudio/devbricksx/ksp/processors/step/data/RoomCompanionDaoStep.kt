@@ -340,8 +340,17 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             val methodWrapperOfActionOnOneBuilder = FunSpec.builder(
                 methodName.nameOfFunc())
                 .addModifiers(KModifier.PUBLIC)
-                .addParameter(nameOfObject, typeOfObject)
+                .addParameter(nameOfObject, typeOfObject.copy(true))
                 .returns(returnType)
+                .addStatement(
+                    "if (%N == null) return %L".trimIndent(),
+                    nameOfObject,
+                    when (returnType) {
+                        LONG -> 0L
+                        else -> ""
+                    }
+
+                )
                 .addStatement(
                     "return %N(%T.fromObject(%N))",
                     methodName.nameOfFuncForCompanion(), typeOfCompanion, nameOfObject
@@ -361,8 +370,16 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             val methodWrapperOfActionOnAllBuilder = FunSpec.builder(
                 methodName.nameOfFunc())
                 .addModifiers(KModifier.PUBLIC)
-                .addParameter(nameOfObjects, typeOfListOfObjects)
+                .addParameter(nameOfObjects, typeOfListOfObjects.copy(true))
                 .returns(returnType)
+                .addStatement(
+                    "if (%N.isNullOrEmpty()) return %L",
+                    nameOfObjects,
+                    when (returnType) {
+                        typeOfListOfLong -> "emptyList()"
+                        else -> ""
+                    }
+                )
                 .addStatement(
                     """
                         return %N(%N.map({

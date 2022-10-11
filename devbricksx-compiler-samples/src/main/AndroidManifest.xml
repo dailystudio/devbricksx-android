@@ -3,11 +3,17 @@
     package="com.dailystudio.devbricksx.annotations.samples">
 
     <application
+        android:name=".SampleApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Devbricksxandroid" />
+        android:theme="@style/Theme.Devbricksxandroid">
 
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"/>
+
+    </application>
 </manifest>

@@ -252,7 +252,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             val methodBuilder: FunSpec.Builder =
                 FunSpec.builder(method.nameOfFuncForType(typeName))
                     .addModifiers(KModifier.PUBLIC)
-                    .addParameter(nameOfObject, typeOfObject)
+                    .addParameter(nameOfObject, typeOfObject.copy(!isInMemoryRepo))
 
             if (isInMemoryRepo) {
                 methodBuilder.addStatement(
@@ -284,7 +284,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             val methodBuilder: FunSpec.Builder =
                 FunSpec.builder(method.nameOfFuncForType(typeName, true))
                     .addModifiers(KModifier.PUBLIC)
-                    .addParameter(nameOfObjects, typeOfListOfObjects)
+                    .addParameter(nameOfObjects, typeOfListOfObjects.copy(!isInMemoryRepo))
 
             if (isInMemoryRepo) {
                 methodBuilder.addStatement(
