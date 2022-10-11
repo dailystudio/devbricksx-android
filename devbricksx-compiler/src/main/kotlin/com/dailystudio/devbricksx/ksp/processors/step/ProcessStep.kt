@@ -55,7 +55,7 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
         return listOf(GeneratedResult(sourceSymbols, packageName, classBuilder))
     }
 
-    protected fun warn(message: String) {
+    public fun warn(message: String) {
         processor.warn(message, logTagOfStep)
     }
 

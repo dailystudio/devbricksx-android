@@ -1,6 +1,9 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
 import android.view.View
+import androidx.room.Insert
+import androidx.room.Query
+import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
@@ -23,7 +26,9 @@ import com.dailystudio.devbricksx.ui.AbsViewHolder
     paged = true
 )
 @ViewModel
-@RoomCompanion
+@RoomCompanion(
+    extension = UserDaoExtension::class
+)
 open class User(open val uid: Int,
                 open val firstName: String? = null,
                 open val lastName: String?,
@@ -32,6 +37,18 @@ open class User(open val uid: Int,
     var portrait: String? = null
 }
 
+
+@DaoExtension(entity = User::class)
+interface UserDaoExtension {
+    @Query("SELECT * FROM user WHERE uid IN (:userIds)")
+    fun loadAllByIds(userIds: IntArray): List<User>
+
+    @Insert
+    fun insertAll(vararg users: User?)
+
+    @Insert
+    fun insertAllUsers(users: List<User?>)
+}
 
 @ViewPagerFragment(
     offscreenPageLimit = 2

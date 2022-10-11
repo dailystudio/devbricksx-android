@@ -256,6 +256,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             methodWrapperOfGetOneBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToObject(methodWrapperOfGetOneBuilder,
+            typeOfObject,
             FunctionNames.GET_ONE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneBuilder.build())
@@ -269,6 +270,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             methodWrapperOfGetOneLiveBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(methodWrapperOfGetOneLiveBuilder,
+            typeOfLiveDataOfObject,
             FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneLiveBuilder.build())
@@ -279,6 +281,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             .returns(typeOfListOfObjects)
 
         FuncSpecStatementsGenerator.mapOutputToObjects(methodWrapperOfGetAllBuilder,
+            typeOfListOfObjects,
             FunctionNames.GET_ALL.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllBuilder.build())
@@ -290,6 +293,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(methodWrapperOfGetAllLiveBuilder,
             typeOfObject,
+            typeOfLiveDataOfListOfObjects,
             FunctionNames.GET_ALL_LIVE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllLiveBuilder.build())
@@ -301,6 +305,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(methodWrapperOfGetAllFlowBuilder,
             typeOfObject,
+            typeOfFlowOfListOfObjects,
             FunctionNames.GET_ALL_FLOW.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllFlowBuilder.build())
@@ -312,6 +317,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
             methodWrapperOfGetAllLivePagedBuilder,
+            typeOfLiveDataOfPagedListOfObjects,
             pageSize,
             FunctionNames.GET_ALL_DATA_SOURCE.nameOfFuncForCompanion())
 
@@ -324,6 +330,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
 
         FuncSpecStatementsGenerator.mapOutputToPagingSource(
             methodWrapperOfGetAllPagingSourceBuilder,
+            typeOfPagingSourceOfObject,
             FunctionNames.GET_ALL_DATA_SOURCE.nameOfFuncForCompanion())
 
         classBuilder.addFunction(methodWrapperOfGetAllPagingSourceBuilder.build())

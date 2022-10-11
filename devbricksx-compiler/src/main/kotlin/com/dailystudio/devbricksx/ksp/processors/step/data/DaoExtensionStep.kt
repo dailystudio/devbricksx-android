@@ -104,7 +104,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
                                   classBuilder: TypeSpec.Builder) {
         val nameOfFunc = func.simpleName.getShortName()
         val returnType = func.returnType?.toTypeName() ?: UNIT
-
+        val normReturnType = returnType.copy(false)
 
         var pageSize: Int = Page.DEFAULT_PAGE_SIZE
         val pageAnnotation = func.getKSAnnotation(Page::class, resolver)
@@ -140,7 +140,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             .addAnnotation(queryAnnotation.toAnnotationSpec())
 
         methodWrappedBuilder.returns(
-            when (returnType) {
+            when (normReturnType) {
                 typeOfObject -> typeOfCompanion
                 typeOfListOfObjects -> typeOfListOfCompanions
                 typeOfLiveDataOfObject -> typeOfLiveDataOfCompanion
@@ -149,7 +149,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
                 typeOfLiveDataOfPagedListOfObjects, typeOfPagingSourceOfObject -> typeOfDataSourceFactoryOfCompanion
                 typeOfFlowOfListOfObjects -> typeOfFlowOfListOfCompanions
                 else -> returnType
-            }
+            }.copy(returnType.isNullable)
         )
 
         val methodOverrideBuilder = FunSpec.builder(nameOfFunc)
@@ -171,47 +171,49 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             }
         }
 
-        when (returnType) {
+        when (normReturnType) {
             typeOfObject -> FuncSpecStatementsGenerator.mapOutputToObject(
                 methodOverrideBuilder,
+                returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToObjects(
                 methodOverrideBuilder,
+                returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfObject -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(
                 methodOverrideBuilder,
+                returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(
                 methodOverrideBuilder,
                 typeOfObject,
-                FunctionNames.toWrappedFunc(nameOfFunc),
-                strOfFunCallBuilder.toString()
-            )
-            typeOfLiveDataOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToObjects(
-                methodOverrideBuilder,
+                returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfFlowOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(
                 methodOverrideBuilder,
                 typeOfObject,
+                returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfLiveDataOfPagedListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
                 methodOverrideBuilder,
+                returnType,
                 pageSize,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
             typeOfPagingSourceOfObject -> FuncSpecStatementsGenerator.mapOutputToPagingSource(
                 methodOverrideBuilder,
+                returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
@@ -241,11 +243,17 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         val collectingResults = (returnType is ParameterizedTypeName
                 && returnType.rawType == TypeNameUtils.typeOfList())
 
+        val typeOfNullableObject = typeOfObject.copy(true)
         val typeOfCompanion = TypeNameUtils.typeOfCompanion(typeOfObject)
+        val typeOfNullableCompanion = TypeNameUtils.typeOfCompanion(typeOfObject).copy(true)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
+        val typeOfListOfNullableObjects = TypeNameUtils.typeOfListOf(typeOfObject.copy(true))
         val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
+        val typeOfListOfNullableCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion.copy(true))
         val typeOfArrayOfObjects = TypeNameUtils.typeOfArrayOf(typeOfObject)
+        val typeOfArrayOfNullableObjects = TypeNameUtils.typeOfArrayOf(typeOfObject.copy(true))
         val typeOfArrayOfCompanions = TypeNameUtils.typeOfArrayOf(typeOfCompanion)
+        val typeOfArrayOfNullableCompanions = TypeNameUtils.typeOfArrayOf(typeOfCompanion.copy(true))
 
         val methodWrappedBuilder = FunSpec.builder(
             FunctionNames.toWrappedFunc(nameOfFunc))
@@ -271,8 +279,11 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
 
             val mappedTypeOfParam = when (typeOfParam) {
                 typeOfObject -> typeOfCompanion
+                typeOfNullableObject -> typeOfNullableCompanion
                 typeOfListOfObjects -> typeOfListOfCompanions
+                typeOfListOfNullableObjects -> typeOfListOfNullableCompanions
                 typeOfArrayOfObjects -> typeOfArrayOfCompanions
+                typeOfArrayOfNullableObjects -> typeOfArrayOfNullableCompanions
                 else -> typeOfParam
             }
 
@@ -318,7 +329,7 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             paramsToMap,
             hasReturn,
             FunctionNames.toWrappedFunc(nameOfFunc),
-            strOfFunCallBuilder.toString()
+            strOfFunCallBuilder.toString(),
         )
 
         classBuilder.addFunction(methodWrappedBuilder.build())
