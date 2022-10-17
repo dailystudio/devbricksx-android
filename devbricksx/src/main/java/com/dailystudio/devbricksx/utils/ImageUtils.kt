@@ -247,8 +247,7 @@ object ImageUtils {
         success = try {
             val out = FileOutputStream(file)
             val format = if (quailty >= 100) CompressFormat.PNG else CompressFormat.JPEG
-            Logger.debug("save bitmap: %s, [quality: %d, format: %s]",
-                    file, quailty, format)
+            Logger.debug("save bitmap: ${file}, [quality: ${quailty}, format: ${format}]")
             val ret = bitmap.compress(format, quailty, out)
             out.flush()
             out.close()
