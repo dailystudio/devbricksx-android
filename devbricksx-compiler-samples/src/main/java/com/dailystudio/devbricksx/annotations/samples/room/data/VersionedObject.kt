@@ -1,11 +1,9 @@
-package com.dailystudio.devbricksx.annotations.samples.room
+package com.dailystudio.devbricksx.annotations.samples.room.data
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dailystudio.devbricksx.annotations.data.FieldAlias
-import com.dailystudio.devbricksx.annotations.data.IntegerField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
-import com.dailystudio.devbricksx.annotations.data.StringField
 import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel

@@ -1,8 +1,6 @@
 package com.dailystudio.devbricksx.ksp.helper
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
 import java.util.*
-import javax.lang.model.element.VariableElement
 
 object GeneratedNames {
 
@@ -13,7 +11,11 @@ object GeneratedNames {
     private const val DIFF_UTIL_SUFFIX = "DiffUtil"
     private const val REPOSITORY_SUFFIX = "Repository"
     private const val MANAGER_SUFFIX = "Manager"
-    private const val DATABASE_PACKAGE_SUFFIX = ".db"
+    private val DATABASE_PACKAGE_SUFFIXES = arrayOf(
+        ".db",
+        ".database",
+        ".data"
+    )
     private const val REPOSITORY_PACKAGE_SUFFIX = ".repository"
     private const val VIEW_MODEL_SUFFIX = "ViewModel"
     private const val VIEW_MODEL_PACKAGE_SUFFIX = ".model"
@@ -26,22 +28,6 @@ object GeneratedNames {
     private const val FRAGMENT_ADAPTER_SUFFIX = "FragmentAdapter"
     private const val SHARED_PREFS_SUFFIX = "Prefs"
     private const val PREF_KEY_PREFIX = "PREF_"
-
-    const val KOTLIN_COMPANION_OBJECT_FIELD = "Companion"
-
-    fun nameOfFuncForCompanion(nameOfFunc: String): String {
-        return buildString {
-            append("_")
-            append(nameOfFunc)
-        }
-    }
-
-    fun nameOfParamInFuncForCompanion(nameOfParam: String): String {
-        return buildString {
-            append("_")
-            append(nameOfParam)
-        }
-    }
 
     fun getTableName(className: String): String {
         return className.lowercase(Locale.getDefault())
@@ -77,24 +63,6 @@ object GeneratedNames {
         return builder.toString()
     }
 
-    fun getRoomCompanionRepositoryPackageName(packageName: String): String {
-        var packageName = packageName
-        if (packageName.isEmpty()) {
-            return packageName
-        }
-
-        if (packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
-            packageName = packageName.substring(
-                0,
-                packageName.length - DATABASE_PACKAGE_SUFFIX.length
-            )
-        }
-
-        val builder = StringBuilder(packageName)
-        builder.append(REPOSITORY_PACKAGE_SUFFIX)
-        return builder.toString()
-    }
-
     fun getRoomCompanionDatabaseName(className: String?): String {
         val builder = StringBuilder(className)
         builder.append(DATABASE_SUFFIX)
@@ -127,11 +95,15 @@ object GeneratedNames {
         }
     }
 
-    private fun getPackageName(packageName: String, suffix: String) : String {
-        var basePackage = if (packageName.endsWith(DATABASE_PACKAGE_SUFFIX)) {
-            packageName.removeSuffix(DATABASE_PACKAGE_SUFFIX)
-        } else {
-            packageName
+    private fun getPackageName(packageName: String,
+                               suffix: String,
+    ) : String {
+        var basePackage = packageName
+
+        for (packageSuffix in DATABASE_PACKAGE_SUFFIXES) {
+            if (basePackage.endsWith(packageSuffix)) {
+                basePackage = basePackage.removeSuffix(packageSuffix)
+            }
         }
 
         return buildString {
@@ -197,7 +169,7 @@ object GeneratedNames {
 
     fun getFragmentAdapterName(className: String) : String {
         return buildString {
-            this.append(className.capitalize())
+            this.append(className.capitalizeName())
             this.append('s')
             this.append(FRAGMENT_ADAPTER_SUFFIX)
         }
@@ -213,7 +185,7 @@ object GeneratedNames {
     fun getPreferenceKeyName(filedName: String): String {
         return buildString {
             append(PREF_KEY_PREFIX)
-            append(filedName.underlineCaseName().toUpperCase())
+            append(filedName.underlineCaseName().uppercase())
         }
     }
 
