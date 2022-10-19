@@ -19,7 +19,8 @@ annotation class Adapter(
         val layout: Int = -1,
         val layoutByName: String = "",
         val paged: Boolean = false,
-        val notifyAfterListChanged: Boolean = false
+        val notifyAfterListChanged: Boolean = false,
+        val diffUtil: KClass<*> = Unit::class,
 )
 
 @Retention(AnnotationRetention.SOURCE)

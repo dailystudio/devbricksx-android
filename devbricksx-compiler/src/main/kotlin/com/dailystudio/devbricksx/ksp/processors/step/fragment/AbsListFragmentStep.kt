@@ -23,7 +23,8 @@ open class BuildOptions(val layout: Int,
                         val fillParent: Boolean = false,
                         val dataSource: DataSource,
                         val paged: Boolean = false,
-                        val pageSize: Int = 20
+                        val pageSize: Int = 20,
+                        val adapter: ClassName
 )
 
 typealias BuilderOfMethod = (resolver: Resolver,
@@ -56,7 +57,15 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         val typeOfObject = ClassName(packageName, typeName)
 
         val options = genBuildOptions(resolver, symbol) ?: return emptyResult
-        val classBuilder = genClassBuilder(resolver, symbol, typeOfObject, options) ?: return emptyResult
+
+        val classBuilder = genClassBuilder(resolver, symbol, typeOfObject, options)
+            ?: return emptyResult
+
+        val viewModelAnnotation = symbol.getAnnotation(ViewModel::class)
+        if (viewModelAnnotation == null) {
+            warn("ViewModel annotation is missing on element: $symbol, generate abstract class")
+            classBuilder.addModifiers(KModifier.ABSTRACT)
+        }
 
         val methodBuilders = genMethodBuilders()
 
@@ -77,6 +86,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                            typeOfObject: TypeName,
                                            options: BuildOptions
     ): TypeSpec.Builder?
+
     protected abstract fun genBuildOptions(resolver: Resolver,
                                            symbol: KSClassDeclaration): BuildOptions?
 
@@ -96,7 +106,10 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                           classBuilder: TypeSpec.Builder,
                                           options: BuildOptions
     ): FunSpec.Builder? {
-        val adapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        var adapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        if (options.adapter != UNIT) {
+            adapter = options.adapter
+        }
 
         return FunSpec.builder(METHOD_ON_CREATE_ADAPTER)
             .addModifiers(KModifier.PUBLIC)
@@ -113,7 +126,11 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     ): FunSpec.Builder? {
         val paged = options.paged
 
-        val typeOfAdapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        var typeOfAdapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        if (options.adapter != UNIT) {
+            typeOfAdapter = options.adapter
+        }
+
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
 
@@ -223,23 +240,6 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         val paged = options.paged
         val dataSource = options.dataSource
 
-        val viewModelAnnotation = symbol.getAnnotation(ViewModel::class)
-        if (viewModelAnnotation == null) {
-            warn("ViewModel annotation is missing on element: $symbol")
-            return null
-        }
-
-        val viewModelName = if (viewModelAnnotation.group.isNotBlank()) {
-            GeneratedNames.getViewModelName(viewModelAnnotation.group)
-        } else {
-            GeneratedNames.getViewModelName(typeName)
-        }
-
-        val viewModelPackage = GeneratedNames.getViewModelPackageName(packageName)
-        warn("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
-
-        val viewModel = ClassName(viewModelPackage, viewModelName)
-
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
         val viewModelProvider = TypeNameUtils.typeOfViewModelProvider()
@@ -253,18 +253,37 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
             DataSource.Flow -> TypeNameUtils.typeOfFlowOf(dataType)
         }
 
-        val methodGetLiveDataBuilder = FunSpec.builder(METHOD_GET_DATA_SOURCE)
+        val methodGetDataSourceBuilder = FunSpec.builder(METHOD_GET_DATA_SOURCE)
             .addModifiers(KModifier.PUBLIC)
             .addModifiers(KModifier.OVERRIDE)
-            .addStatement("val viewModel = %T(requireActivity()).get(%T::class.java)",
+            .returns(dataSourceType)
+
+        val viewModelAnnotation = symbol.getAnnotation(ViewModel::class)
+        if (viewModelAnnotation == null) {
+            warn("ViewModel annotation is missing on element: $symbol, generate abstract impl")
+            methodGetDataSourceBuilder.addModifiers(KModifier.ABSTRACT)
+            return methodGetDataSourceBuilder
+        }
+
+        val viewModelName = if (viewModelAnnotation.group.isNotBlank()) {
+            GeneratedNames.getViewModelName(viewModelAnnotation.group)
+        } else {
+            GeneratedNames.getViewModelName(typeName)
+        }
+
+        val viewModelPackage = GeneratedNames.getViewModelPackageName(packageName)
+        warn("viewModelName = $viewModelName, viewModelPackage = $viewModelPackage")
+
+        val viewModel = ClassName(viewModelPackage, viewModelName)
+
+        methodGetDataSourceBuilder.addStatement("val viewModel = %T(requireActivity()).get(%T::class.java)",
                 viewModelProvider, viewModel)
 //                .addStatement("%T.debug(\"viewModel: \$viewModel\")", TypeNamesUtils.getLoggerTypeName())
-            .returns(dataSourceType)
 
         if (paged) {
             when (dataSource) {
                 DataSource.LiveData -> {
-                    methodGetLiveDataBuilder.addStatement(
+                    methodGetDataSourceBuilder.addStatement(
                         """
                         return %T(
                            %T(%L)) {
@@ -277,7 +296,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                     )
                 }
                 DataSource.Flow -> {
-                    methodGetLiveDataBuilder.addStatement(
+                    methodGetDataSourceBuilder.addStatement(
                         """
                         return %T(
                            %T(%L)) {
@@ -292,17 +311,17 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         } else {
             when (dataSource) {
                 DataSource.LiveData -> {
-                    methodGetLiveDataBuilder.addStatement("return viewModel.%N",
+                    methodGetDataSourceBuilder.addStatement("return viewModel.%N",
                         FunctionNames.GET_ALL_LIVE.nameOfPropFuncForType(typeName))
                 }
                 DataSource.Flow -> {
-                    methodGetLiveDataBuilder.addStatement("return viewModel.%N",
+                    methodGetDataSourceBuilder.addStatement("return viewModel.%N",
                         FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(typeName))
                 }
             }
         }
 
-        return methodGetLiveDataBuilder
+        return methodGetDataSourceBuilder
     }
 
     protected open fun genOnCreateView(resolver: Resolver,

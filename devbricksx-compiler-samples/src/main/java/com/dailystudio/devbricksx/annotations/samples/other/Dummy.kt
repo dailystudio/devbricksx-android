@@ -1,7 +1,9 @@
 package com.dailystudio.devbricksx.annotations.samples.other
 
-import com.dailystudio.devbricksx.annotations.view.DiffUtil
+import com.dailystudio.devbricksx.annotations.view.Adapter
 
-@DiffUtil
+@Adapter(
+    viewHolder = DummyViewHolder::class
+)
 class Dummy {
 }

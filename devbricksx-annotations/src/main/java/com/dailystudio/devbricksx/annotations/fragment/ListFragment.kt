@@ -13,4 +13,5 @@ annotation class ListFragment(
         val pageSize: Int = 20,
         val gridLayout: Boolean = false,
         val columns: Int = 2,
+        val adapter: KClass<*> = Unit::class,
 )

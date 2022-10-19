@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
 import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
@@ -19,10 +20,11 @@ class ViewPagerFragmentBuildOptions(layout: Int,
                                     defaultLayoutCompat: String = defaultLayout,
                                     fillParent: Boolean,
                                     dataSource: DataSource,
+                                    adapter: ClassName,
                                     val useFragment: Boolean,
                                     val offscreenPageLimit: Int)
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
-    fillParent, dataSource, false)
+    fillParent, dataSource, false, adapter = adapter)
 
 class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
     : AbsListFragmentStep(ViewPagerFragment::class, processor) {
@@ -74,10 +76,13 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         val typeOfPagedListOfObjects =
             TypeNameUtils.typeOfPagedListOf(typeOfObject)
 
-        val adapter =  if ((options as ViewPagerFragmentBuildOptions).useFragment) {
+        var adapter = if ((options as ViewPagerFragmentBuildOptions).useFragment) {
             TypeNameUtils.typeOfFragmentAdapterOf(typeName, packageName)
         } else {
             TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        }
+        if (options.adapter != UNIT) {
+            adapter = options.adapter
         }
 
         val superFragment = typeOfSuperFragment.parameterizedBy(
@@ -107,6 +112,8 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
 
         val fragmentAnnotation =
             symbol.getAnnotation(ViewPagerFragment::class) ?: return null
+        val fragmentKSAnnotation =
+            symbol.getKSAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
 
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
@@ -114,12 +121,14 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         val dataSource = fragmentAnnotation.dataSource
         val useFragment = fragmentAnnotation.useFragment
         val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
+        val adapter = fragmentKSAnnotation
+            .findArgument<KSType>("adapter").toClassName()
 
         return ViewPagerFragmentBuildOptions(
             layout, layoutByName,
             "fragment_view_pager", "fragment_view_pager_compact",
             fillParent,
-            dataSource, useFragment, offscreenPageLimit)
+            dataSource, adapter, useFragment, offscreenPageLimit)
     }
 
     override fun genMethodBuilders(): MutableList<BuilderOfMethod> {
@@ -154,10 +163,13 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
                                     classBuilder: TypeSpec.Builder,
                                     options: BuildOptions): FunSpec.Builder? {
         val useFragment = (options as ViewPagerFragmentBuildOptions).useFragment
-        val adapter = if (useFragment) {
+        var adapter = if (useFragment) {
             TypeNameUtils.typeOfFragmentAdapterOf(typeOfObject)
         } else {
             TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        }
+        if (options.adapter != UNIT) {
+            adapter = options.adapter
         }
 
         val methodOnCreateAdapterBuilder = FunSpec.builder(METHOD_ON_CREATE_ADAPTER)
@@ -180,10 +192,13 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
                                classBuilder: TypeSpec.Builder,
                                options: BuildOptions): FunSpec.Builder? {
         val useFragment = (options as ViewPagerFragmentBuildOptions).useFragment
-        val adapter = if (useFragment) {
+        var adapter = if (useFragment) {
             TypeNameUtils.typeOfFragmentAdapterOf(typeOfObject)
         } else {
             TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        }
+        if (options.adapter != UNIT) {
+            adapter = options.adapter
         }
 
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)

@@ -8,7 +8,9 @@ import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.Page
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
 import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
+import com.dailystudio.devbricksx.annotations.samples.room.ui.NotebookAdvsAdapter
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.database.DateConverter
 import kotlinx.coroutines.flow.Flow
@@ -51,6 +53,40 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
         }
     }
 }
+
+@ListFragment(
+    adapter = NotebookAdvsAdapterExt::class
+)
+@Adapter(
+    viewHolder = DummyViewHolder::class,
+    diffUtil = NotebookAdvCustomizedDiffUtil::class
+)
+//@DiffUtil
+class NotebookAdv(
+    id: Int,
+    val noteIds: String?
+): Notebook(id) {
+
+    override fun toString(): String {
+        return buildString {
+            append("Notebook Adv [$id]: $name, ids = $noteIds")
+        }
+    }
+}
+
+class NotebookAdvsAdapterExt: NotebookAdvsAdapter()
+
+class NotebookAdvCustomizedDiffUtil: androidx.recyclerview.widget.DiffUtil.ItemCallback<NotebookAdv> () {
+    override fun areItemsTheSame(oldItem: NotebookAdv, newItem: NotebookAdv): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: NotebookAdv, newItem: NotebookAdv): Boolean {
+        return oldItem == newItem
+    }
+
+}
+
 
 @Adapter(
     viewHolder = DummyViewHolder::class,
@@ -114,6 +150,9 @@ abstract class NotebookDaoExtension {
 
 @DaoExtension(entity = Note::class)
 abstract class NoteDaoExtension {
+
+    @Query("SELECT notebook_id as id, GROUP_CONCAT(id, ',') as noteIds FROM note GROUP BY notebook_id")
+    abstract fun getAllNoteIdsGroupByNotebookId(): Flow<List<NotebookAdv>>
 
     @Query("SELECT * FROM note WHERE notebook_id = :notebookId ORDER BY last_modified DESC ")
     @Page(pageSize = 50)

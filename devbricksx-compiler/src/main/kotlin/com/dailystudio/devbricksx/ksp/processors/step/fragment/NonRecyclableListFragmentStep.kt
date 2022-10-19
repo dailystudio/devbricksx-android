@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.ListFragment
 import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
@@ -54,7 +55,10 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
             DataSource.Flow -> TypeNameUtils.typeOfFlowOf(dataType)
         }
 
-        val adapter = TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        var adapter = TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        if (options.adapter != UNIT) {
+            adapter = options.adapter
+        }
 
         val superFragment = typeOfSuperFragment.parameterizedBy(
             typeOfObject,
@@ -74,17 +78,21 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
 
         val fragmentAnnotation =
             symbol.getAnnotation(NonRecyclableListFragment::class) ?: return null
+        val fragmentKSAnnotation =
+            symbol.getKSAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
 
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
         val dataSource = fragmentAnnotation.dataSource
+        val adapter = fragmentKSAnnotation
+            .findArgument<KSType>("adapter").toClassName()
 
         return BuildOptions(
             layout, layoutByName,
             "fragment_non_recyclable_list_view", "fragment_non_recyclable_list_view_compact",
             fillParent,
             dataSource,
-            paged)
+            paged, adapter = adapter)
     }
 }

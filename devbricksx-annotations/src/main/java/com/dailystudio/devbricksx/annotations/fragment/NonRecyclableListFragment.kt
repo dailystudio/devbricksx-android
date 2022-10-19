@@ -10,4 +10,5 @@ annotation class NonRecyclableListFragment(
         val fillParent: Boolean = true,
         val dataSource: DataSource = DataSource.LiveData,
         val superClass: KClass<*> = Unit::class,
+        val adapter: KClass<*> = Unit::class,
 )

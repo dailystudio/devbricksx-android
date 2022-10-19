@@ -45,6 +45,8 @@ class AdapterStep (processor: BaseSymbolProcessor)
 
         val typeOfViewHolder = adapterKSAnnotation
             .findArgument<KSType>("viewHolder").toTypeName()
+        val typeOfDiffUtil = adapterKSAnnotation
+            .findArgument<KSType>("diffUtil").toTypeName()
 
         val typeNameToGenerate =
             GeneratedNames.getAdapterName(typeName)
@@ -80,7 +82,8 @@ class AdapterStep (processor: BaseSymbolProcessor)
 
         classCompanionBuilder.addProperty(
             PropertySpec.builder(DEFAULT_PROP_OF_DIFF_UTIL, itemCallback)
-                .initializer("%T()", diffUtils)
+                .initializer("%T()",
+                if (typeOfDiffUtil == UNIT) diffUtils else typeOfDiffUtil)
                 .build())
 
         classBuilder.addType(classCompanionBuilder.build())

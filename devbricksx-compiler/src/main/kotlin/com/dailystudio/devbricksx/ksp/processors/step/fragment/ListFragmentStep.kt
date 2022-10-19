@@ -22,10 +22,11 @@ class ListFragmentMethodBuilderOptions(layout: Int,
                                        dataSource: DataSource,
                                        paged: Boolean,
                                        pageSize: Int,
+                                       adapter: ClassName,
                                        val isGradLayout: Boolean = false,
                                        val columns: Int)
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
-    fillParent, dataSource, paged, pageSize)
+    fillParent, dataSource, paged, pageSize, adapter)
 
 class ListFragmentStep(processor: BaseSymbolProcessor)
     : AbsListFragmentStep(ListFragment::class, processor) {
@@ -71,7 +72,10 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
             DataSource.Flow -> TypeNameUtils.typeOfFlowOf(dataType)
         }
 
-        val adapter = TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        var adapter = TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        if (options.adapter != UNIT) {
+            adapter = options.adapter
+        }
 
         val superFragment = typeOfSuperFragment.parameterizedBy(
             typeOfObject,
@@ -89,6 +93,7 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
         val paged = adapterAnnotation?.paged ?: true
 
         val fragmentAnnotation = symbol.getAnnotation(ListFragment::class) ?: return null
+        val fragmentKSAnnotation = symbol.getKSAnnotation(ListFragment::class, resolver) ?: return null
 
         val dataSource = fragmentAnnotation.dataSource
         val isGradLayout = fragmentAnnotation.gridLayout
@@ -97,12 +102,15 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
         val pageSize = fragmentAnnotation.pageSize
+        val adapter = fragmentKSAnnotation
+            .findArgument<KSType>("adapter").toClassName()
 
         return ListFragmentMethodBuilderOptions(
             layout, layoutByName,
             "fragment_recycler_view", "fragment_recycler_view_compact",
             fillParent,
             dataSource, paged, pageSize,
+            adapter,
             isGradLayout, columns)
     }
 

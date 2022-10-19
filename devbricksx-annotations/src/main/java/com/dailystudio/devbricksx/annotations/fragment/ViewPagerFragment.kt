@@ -10,6 +10,7 @@ annotation class ViewPagerFragment(
         val fillParent: Boolean = true,
         val dataSource: DataSource = DataSource.LiveData,
         val superClass: KClass<*> = Unit::class,
+        val adapter: KClass<*> = Unit::class,
         val useFragment: Boolean = false,
         val offscreenPageLimit: Int = 1,
 )
