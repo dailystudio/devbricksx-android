@@ -1,6 +1,10 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+  //        google()
+        maven {
+            url uri("$rootDir/gradle-plugin/.local-plugin-repository")
+        }
     }
 }
 

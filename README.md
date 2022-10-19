@@ -47,7 +47,7 @@ The latest version of dependencies above are:
 
 ```groovy
 ksp_version = "1.7.10-1.0.6"
-devbricksx_version = "1.7.0"
+devbricksx_version = "1.7.1"
 ```
 
 Then, if you are using annotations through [KSP (Kotlin Symbol Processing)](https://kotlinlang.org/docs/ksp-overview.html), DO NOT forget to add plug-ins repo in **settings.gradle**:
