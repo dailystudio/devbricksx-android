@@ -113,7 +113,7 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         val fragmentAnnotation =
             symbol.getAnnotation(ViewPagerFragment::class) ?: return null
         val fragmentKSAnnotation =
-            symbol.getKSAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
+            symbol.getKSAnnotation(ViewPagerFragment::class, resolver) ?: return null
 
         val layout = fragmentAnnotation.layout
         val layoutByName = fragmentAnnotation.layoutByName
