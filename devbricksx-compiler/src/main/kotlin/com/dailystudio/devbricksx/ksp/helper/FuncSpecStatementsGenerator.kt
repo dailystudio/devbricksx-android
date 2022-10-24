@@ -99,6 +99,23 @@ object FuncSpecStatementsGenerator {
         )
     }
 
+    fun mapOutputToFlowOfObject(funcSpecBuilder: FunSpec.Builder,
+                                returnType: TypeName,
+                                nameOfWrappedFunc: String,
+                                strOfParamsOfWrappedFunc: String? = null) {
+        funcSpecBuilder.addStatement(
+            """
+                return this.%N(%L)%L%T({
+                  it.toObject()
+                })
+            """.trimIndent(),
+            nameOfWrappedFunc,
+            strOfParamsOfWrappedFunc ?: "",
+            if (returnType.isNullable) "?." else ".",
+            TypeNameUtils.typeOfFlowMapFunction(),
+        )
+    }
+
     fun mapOutputToFlowOfObjects(funcSpecBuilder: FunSpec.Builder,
                                  typeOfObject: TypeName,
                                  returnType: TypeName,

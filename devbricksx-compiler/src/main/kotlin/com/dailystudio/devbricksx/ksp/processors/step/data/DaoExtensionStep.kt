@@ -123,6 +123,8 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
         val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
         val typeOfLiveDataOfCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion)
+        val typeOfFlowOfObject = TypeNameUtils.typeOfFlowOf(typeOfObject)
+        val typeOfFlowOfCompanion = TypeNameUtils.typeOfFlowOf(typeOfCompanion)
         val typeOfLiveDataOfListOfCompanions =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfCompanions)
         val typeOfLiveDataOfListOfObjects =
@@ -145,9 +147,10 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
                 typeOfListOfObjects -> typeOfListOfCompanions
                 typeOfLiveDataOfObject -> typeOfLiveDataOfCompanion
                 typeOfLiveDataOfListOfObjects -> typeOfLiveDataOfListOfCompanions
+                typeOfFlowOfObject -> typeOfFlowOfCompanion
+                typeOfFlowOfListOfObjects -> typeOfFlowOfListOfCompanions
                 typeOfDataSourceFactoryOfObject -> typeOfDataSourceFactoryOfCompanion
                 typeOfLiveDataOfPagedListOfObjects, typeOfPagingSourceOfObject -> typeOfDataSourceFactoryOfCompanion
-                typeOfFlowOfListOfObjects -> typeOfFlowOfListOfCompanions
                 else -> returnType
             }.copy(returnType.isNullable)
         )
@@ -193,6 +196,12 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
             typeOfLiveDataOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(
                 methodOverrideBuilder,
                 typeOfObject,
+                returnType,
+                FunctionNames.toWrappedFunc(nameOfFunc),
+                strOfFunCallBuilder.toString()
+            )
+            typeOfFlowOfObject -> FuncSpecStatementsGenerator.mapOutputToFlowOfObject(
+                methodOverrideBuilder,
                 returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()

@@ -4,17 +4,13 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.utils.ArrayUtils
 
-abstract class AbsPermissionsFragment : Fragment() {
+abstract class AbsPermissionsFragment : DevBricksFragment() {
 
     companion object {
-
-        private const val REQUEST_PERMISSIONS = 553
 
         fun hasPermissions(context: Context,
                            permissions: Array<String>): Boolean {
@@ -32,6 +28,39 @@ abstract class AbsPermissionsFragment : Fragment() {
             }
 
             return true
+        }
+    }
+
+    private val singlePermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            val permissions = getRequiredPermissions()
+            if (permissions.isEmpty()) {
+                return@registerForActivityResult
+            }
+
+            checkResults(mapOf(permissions[0] to it))
+
+            return@registerForActivityResult
+        }
+
+    private val multiplePermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            checkResults(it)
+        }
+
+    private fun checkResults(results: Map<String, Boolean>) {
+        Logger.debug("results = $results")
+
+        if (isAllPermissionsGranted(results)) {
+            Logger.warn("All of required permissions are granted")
+            mPromptView?.visibility = View.GONE
+
+            onPermissionsGranted(true)
+        } else {
+            mPromptView?.visibility = View.VISIBLE
+
+            Logger.warn("Permissions request denied")
+            onPermissionsDenied()
         }
     }
 
@@ -57,6 +86,7 @@ abstract class AbsPermissionsFragment : Fragment() {
 
         mPromptView?.setOnClickListener { requestPermissions() }
     }
+/*
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -78,6 +108,7 @@ abstract class AbsPermissionsFragment : Fragment() {
             }
         }
     }
+*/
 
     private fun isAllPermissionsGranted(grantResults: IntArray): Boolean {
         if (grantResults.isEmpty()) {
@@ -93,10 +124,33 @@ abstract class AbsPermissionsFragment : Fragment() {
         return true
     }
 
-    private fun requestPermissions() {
-        Logger.debug("request required permissions")
+    private fun isAllPermissionsGranted(grantResults: Map<String, Boolean>): Boolean {
+        if (grantResults.isEmpty()) {
+            return false
+        }
 
-        requestPermissions(getRequiredPermissions(), REQUEST_PERMISSIONS)
+        for (gr in grantResults.values) {
+            if (!gr) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    private fun requestPermissions() {
+        val permissions = getRequiredPermissions()
+        Logger.debug("request required permissions: $permissions")
+
+        if (permissions.isEmpty()) {
+            return
+        }
+
+        if (permissions.size == 1) {
+            singlePermissionLauncher.launch(permissions[0])
+        } else {
+            multiplePermissionsLauncher.launch(permissions)
+        }
     }
 
     protected fun isPermissionsGranted(): Boolean {

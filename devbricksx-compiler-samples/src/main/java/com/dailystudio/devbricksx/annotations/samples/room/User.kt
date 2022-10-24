@@ -14,6 +14,7 @@ import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ui.AbsViewHolder
+import kotlinx.coroutines.flow.Flow
 
 @ListFragment(
     dataSource = DataSource.Flow,
@@ -41,7 +42,10 @@ open class User(open val uid: Int,
 @DaoExtension(entity = User::class)
 interface UserDaoExtension {
     @Query("SELECT * FROM user WHERE uid IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<User>
+    fun loadAllByIds(userIds: IntArray): List<User>?
+
+    @Query("SELECT * FROM user WHERE uid == :userId")
+    fun getUserById(userId: Int): Flow<User>?
 
     @Insert
     fun insertAll(vararg users: User?)
