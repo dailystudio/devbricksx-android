@@ -10,15 +10,16 @@ open class DevKitExtension @Inject constructor(
     objects: ObjectFactory
 ) {
     var useAnnotations = objects.property<Boolean>().convention(false)
-    var devKitComp: ListProperty<String> = objects.listProperty<String>().convention(
-        listOf(
-        "a", "b")
+    var compileType = objects.property<String>().convention(CompileType.Library.toString())
+    var devKitComps: ListProperty<String> = objects.listProperty<String>().convention(
+        listOf()
     )
 
     override fun toString(): String {
         return buildString {
             append("useAnnotations = ${useAnnotations.get()}")
-            append(devKitComp.get().joinToString(","))
+            append("compileType = ${compileType.get()}")
+            append("components = ${devKitComps.get().joinToString(",")}")
         }
     }
 

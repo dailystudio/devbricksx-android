@@ -63,6 +63,11 @@ android {
 
 devKit {
     useAnnotations = true
+    compileType = "Project"
+    devKitComps = [
+            "Audio",
+            "Camera"
+    ]
 }
 
 dependencies {
@@ -79,9 +84,9 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:${project.ext.retrofitVersion}"
     implementation "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
 
-    implementation project(":devbricksx")
-    implementation project(":devbricksx-camera")
-    implementation project(":devbricksx-audio")
+//    implementation project(":devbricksx")
+//    implementation project(":devbricksx-camera")
+//    implementation project(":devbricksx-audio")
 
 //    ksp "androidx.room:room-compiler:${ROOM_VERSION}"
 //    ksp project(':devbricksx-compiler')

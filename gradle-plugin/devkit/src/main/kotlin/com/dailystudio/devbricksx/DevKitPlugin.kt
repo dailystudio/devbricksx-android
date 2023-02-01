@@ -24,16 +24,67 @@ class DevKitPlugin: Plugin<Project> {
 
         project.afterEvaluate {
             val useAnnotation = config.useAnnotations.get()
+            val compileType = try {
+                CompileType.valueOf(config.compileType.get())
+            } catch (e: Exception) {
+                println("failed to parse compile type [error: $e], use default [${CompileType.Library}]")
+                CompileType.Library
+            }
+            val devKitComps = config.devKitComps.get().mapNotNull {
+                try {
+                    Components.valueOf(it)
+                } catch (e: Exception) {
+                    println("failed to parse component from [$it, error: $e], skip")
 
-            println("after use annotation: $useAnnotation")
-            if (useAnnotation) {
-                project.dependencies.apply {
-                    add("ksp", project(":devbricksx-compiler"))
-                    add("ksp", "androidx.room:room-compiler:2.4.3")
+                    null
+                }
+            }
+            val roomVersion = Dependencies.versionOf("ROOM")
+            val devBricksXVersion = Dependencies.devBricksXVersion
+
+            println("---------------------------------")
+            println("DevKit configuration:")
+            println("---------------------------------")
+            println("|- Use annotation: [$useAnnotation]")
+            println("|- Compile type: [$compileType]")
+            println("|- Components: $devKitComps")
+            println("`- Dependencies:")
+            println("   |- Room: [$roomVersion]")
+            println("   `- DevBricksX: [$devBricksXVersion]")
+            println()
+
+            project.dependencies.apply {
+                if (compileType == CompileType.Project) {
+                    add("implementation", project(":devbricksx"))
+                } else {
+                    add("implementation","cn.dailystudio:devbricksx:${devBricksXVersion}")
                 }
             }
 
+            for (comp in devKitComps) {
+                val artifactName = comp.toString().toLowerCase()
+                project.dependencies.apply {
+                    if (compileType == CompileType.Project) {
+                        add("implementation", project(":devbricksx-${artifactName}"))
+                    } else {
+                        add("implementation","cn.dailystudio:devbricksx-${artifactName}:${devBricksXVersion}")
+                    }
+                }
+            }
+
+            if (useAnnotation) {
+                project.dependencies.apply {
+                    if (compileType == CompileType.Project) {
+                        add("ksp", project(":devbricksx-compiler"))
+                    } else {
+                        add("ksp","cn.dailystudio:devbricksx-compiler:${devBricksXVersion}")
+                    }
+                    add("ksp", "androidx.room:room-compiler:${roomVersion}")
+                }
+            }
         }
     }
+
+
 
 }

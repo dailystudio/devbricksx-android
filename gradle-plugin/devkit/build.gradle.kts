@@ -1,5 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val depFile = rootProject.file("dep_versions.properties")
+(depFile.exists()).let {
+    depFile.forEachLine {
+        val segments = it.split("=")
+        if (segments.size < 2) {
+            return@forEachLine
+        }
+
+        project.extra[segments[0]] = segments[1]
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.7.10"
     `java-gradle-plugin`
@@ -18,7 +30,7 @@ repositories {
 
 dependencies {
     compileOnly("com.android.tools.build:gradle:7.2.2")
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.7.10-1.0.6")
+    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${project.extra["KSP"]}")
     testImplementation(kotlin("test"))
 }
 
