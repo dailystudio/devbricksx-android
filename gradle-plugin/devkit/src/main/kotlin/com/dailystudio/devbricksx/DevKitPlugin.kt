@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 
 class DevKitPlugin: Plugin<Project> {
@@ -39,8 +40,8 @@ class DevKitPlugin: Plugin<Project> {
                     null
                 }
             }
-            val roomVersion = Dependencies.versionOf("ROOM")
-            val devBricksXVersion = Dependencies.devBricksXVersion
+            val roomVersion = Dependencies.ROOM_VERSION
+            val devBricksXVersion = Dependencies.DEV_BRICKS_X_VERSION
 
             println("---------------------------------")
             println("DevKit configuration:")
