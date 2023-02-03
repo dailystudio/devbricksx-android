@@ -1,8 +1,9 @@
 package com.dailystudio.devbricksx
 
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 
 class DevKitPlugin: Plugin<Project> {
@@ -74,6 +75,20 @@ class DevKitPlugin: Plugin<Project> {
             }
 
             if (useAnnotation) {
+                val androidComponentsExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
+                println("Android extension: $androidComponentsExtension")
+
+                val kspExtension = project.extensions.getByType(KspExtension::class.java)
+                println("KSP extension: $kspExtension")
+
+                kspExtension.arg("room.schemaLocation", "$projectDir/schemas")
+
+                androidComponentsExtension.finalizeDsl {
+                    it.sourceSets.configureEach {
+                        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
+                    }
+                }
+
                 project.dependencies.apply {
                     if (compileType == CompileType.Project) {
                         add("ksp", project(":devbricksx-compiler"))
