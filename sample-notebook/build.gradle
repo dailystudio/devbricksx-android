@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'androidx.navigation.safeargs'
 
-    id("com.google.devtools.ksp") version "$ksp_version"
+    id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
 }
 
 android {
@@ -32,14 +32,6 @@ android {
         }
     }
 
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas".toString())
-    }
-
-    sourceSets.configureEach {
-        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -50,6 +42,11 @@ android {
     }
 }
 
+devKit {
+    useAnnotations = true
+    compileType = "Project"
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -58,13 +55,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation project(":devbricksx")
-
     implementation "androidx.navigation:navigation-fragment-ktx:${project.ext.navigationVersion}"
     implementation "androidx.navigation:navigation-ui-ktx:${project.ext.navigationVersion}"
 
     implementation "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
-
-    ksp project(':devbricksx-compiler')
-    ksp "androidx.room:room-compiler:${ROOM_VERSION}"
 }

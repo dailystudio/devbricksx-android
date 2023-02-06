@@ -4,7 +4,6 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs'
 
-//    id("com.google.devtools.ksp") version "$ksp_version"
     id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
 }
 
@@ -33,12 +32,6 @@ android {
         }
     }
 
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas".toString())
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -50,14 +43,6 @@ android {
 
     buildFeatures {
         viewBinding true
-    }
-
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas".toString())
-    }
-
-    sourceSets.configureEach {
-        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
     }
 }
 
@@ -83,13 +68,6 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${project.ext.retrofitVersion}"
     implementation "com.squareup.retrofit2:converter-gson:${project.ext.retrofitVersion}"
     implementation "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
-
-//    implementation project(":devbricksx")
-//    implementation project(":devbricksx-camera")
-//    implementation project(":devbricksx-audio")
-
-//    ksp "androidx.room:room-compiler:${ROOM_VERSION}"
-//    ksp project(':devbricksx-compiler')
 
     kapt "androidx.lifecycle:lifecycle-compiler:${project.ext.archLifecycleVersion}"
 }
