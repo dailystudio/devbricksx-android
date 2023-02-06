@@ -1,10 +1,13 @@
 package com.dailystudio.devbricksx
 
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.google.devtools.ksp.gradle.KspExtension
-import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.*
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.project
+import kotlin.reflect.KClass
 
 class DevKitPlugin: Plugin<Project> {
 
@@ -13,7 +16,6 @@ class DevKitPlugin: Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        println("applying DevBricksX devkit for project [${project.name}]")
         val config = project.extensions.create<DevKitExtension>(EXTENSION_NAME)
         val kspPluginApplied = project.plugins.hasPlugin("com.google.devtools.ksp")
 
@@ -24,7 +26,10 @@ class DevKitPlugin: Plugin<Project> {
             }
         }
 
-        project.afterEvaluate {
+        val androidComponentsExtension = project.extensionByType(
+            AndroidComponentsExtension::class) ?: return
+
+        androidComponentsExtension.onVariants { variant ->
             val useAnnotation = config.useAnnotations.get()
             val compileType = try {
                 CompileType.valueOf(config.compileType.get())
@@ -32,6 +37,7 @@ class DevKitPlugin: Plugin<Project> {
                 println("failed to parse compile type [error: $e], use default [${CompileType.Library}]")
                 CompileType.Library
             }
+
             val devKitComps = config.devKitComps.get().mapNotNull {
                 try {
                     Components.valueOf(it)
@@ -45,7 +51,7 @@ class DevKitPlugin: Plugin<Project> {
             val devBricksXVersion = Dependencies.DEV_BRICKS_X_VERSION
 
             println("---------------------------------")
-            println("DevKit configuration:")
+            println("DevKit configuration: [${project.name}.${variant.name}]")
             println("---------------------------------")
             println("|- Use annotation: [$useAnnotation]")
             println("|- Compile type: [$compileType]")
@@ -75,19 +81,13 @@ class DevKitPlugin: Plugin<Project> {
             }
 
             if (useAnnotation) {
-                val androidComponentsExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
-                println("Android extension: $androidComponentsExtension")
-
-                val kspExtension = project.extensions.getByType(KspExtension::class.java)
-                println("KSP extension: $kspExtension")
-
-                kspExtension.arg("room.schemaLocation", "$projectDir/schemas")
-
-                androidComponentsExtension.finalizeDsl {
-                    it.sourceSets.configureEach {
-                        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
-                    }
+                val commonExtension = project.extensionByType(CommonExtension::class)
+                commonExtension?.sourceSets?.configureEach {
+                    kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin/")
                 }
+
+                val kspExtension = project.extensionByType(KspExtension::class)
+                kspExtension?.arg("room.schemaLocation", "${project.projectDir}/schemas")
 
                 project.dependencies.apply {
                     if (compileType == CompileType.Project) {
@@ -101,6 +101,15 @@ class DevKitPlugin: Plugin<Project> {
         }
     }
 
+}
 
+fun <T : Any> Project.extensionByType(
+    klass: KClass<T>): T? {
+    return try {
+        extensions.getByType(klass)
+    } catch (e: UnknownDomainObjectException) {
+        println("unable to get extension for type [$klass]: ${e}")
 
+        null
+    }
 }
