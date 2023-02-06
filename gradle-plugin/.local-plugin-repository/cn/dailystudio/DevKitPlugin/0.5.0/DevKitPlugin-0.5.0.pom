@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.google.devtools.ksp</groupId>
       <artifactId>symbol-processing-gradle-plugin</artifactId>
-      <version>1.7.10-1.0.6</version>
+      <version>1.7.22-1.0.8</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

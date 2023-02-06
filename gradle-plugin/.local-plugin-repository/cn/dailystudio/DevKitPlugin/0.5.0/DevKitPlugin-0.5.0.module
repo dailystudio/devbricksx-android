@@ -29,11 +29,11 @@
         {
           "name": "DevKitPlugin-0.5.0.jar",
           "url": "DevKitPlugin-0.5.0.jar",
-          "size": 16731,
-          "sha512": "ea3075933cc9a464e6a154cb975a74050ed3dd46d7c0e1ccecf86224ec5b5350096d06bb8143db4078f075db959c8463e35322cd0a37a45ebb30d75eff27e600",
-          "sha256": "5be081c28d5268a0c0c82b35aa9b438e012feb8ab42a13626efff6c1e3d79df8",
-          "sha1": "10708f90d8fdb7273beaf9cd20d775075163d40b",
-          "md5": "ce8d71deb1cbb6863a82ab21b470c715"
+          "size": 16733,
+          "sha512": "8eadcc7fb12876d278e8a38e953a8e8f9221e7c50dabbbeb3430a8a2c930cd898910c6d8c8b32d87e33e6979e9532963f13fd5c0f2b7581551ae5b389211bcc1",
+          "sha256": "6895a4d4e75108eb152d3809b1165124fc7d60efa0b6b3fad67aa1164be761cd",
+          "sha1": "94495dec68fa579185adfbfceb58adf9df48d4cd",
+          "md5": "253670ed3726d78d396879fd07145fd0"
         }
       ]
     },
@@ -53,7 +53,7 @@
           "group": "com.google.devtools.ksp",
           "module": "com.google.devtools.ksp.gradle.plugin",
           "version": {
-            "requires": "1.7.10-1.0.6"
+            "requires": "1.7.22-1.0.8"
           }
         }
       ],
@@ -61,11 +61,11 @@
         {
           "name": "DevKitPlugin-0.5.0.jar",
           "url": "DevKitPlugin-0.5.0.jar",
-          "size": 16731,
-          "sha512": "ea3075933cc9a464e6a154cb975a74050ed3dd46d7c0e1ccecf86224ec5b5350096d06bb8143db4078f075db959c8463e35322cd0a37a45ebb30d75eff27e600",
-          "sha256": "5be081c28d5268a0c0c82b35aa9b438e012feb8ab42a13626efff6c1e3d79df8",
-          "sha1": "10708f90d8fdb7273beaf9cd20d775075163d40b",
-          "md5": "ce8d71deb1cbb6863a82ab21b470c715"
+          "size": 16733,
+          "sha512": "8eadcc7fb12876d278e8a38e953a8e8f9221e7c50dabbbeb3430a8a2c930cd898910c6d8c8b32d87e33e6979e9532963f13fd5c0f2b7581551ae5b389211bcc1",
+          "sha256": "6895a4d4e75108eb152d3809b1165124fc7d60efa0b6b3fad67aa1164be761cd",
+          "sha1": "94495dec68fa579185adfbfceb58adf9df48d4cd",
+          "md5": "253670ed3726d78d396879fd07145fd0"
         }
       ]
     },
@@ -101,11 +101,11 @@
         {
           "name": "DevKitPlugin-0.5.0-sources.jar",
           "url": "DevKitPlugin-0.5.0-sources.jar",
-          "size": 3077,
-          "sha512": "19f2ac42d9424b30eed1434b0d032507005ba5cbe1f39dd751954e62a4265b7eff54175e526a4ebce768d09da2c1d7e343d8bdfbb15f29ffe140750445cacae4",
-          "sha256": "107a1d39ded2e979bd3142718871bd46be9cc78b8d9b9c1c6561be6e34e75312",
-          "sha1": "37c4fea63b43d8efaa28511e2dc0a25fe8225de7",
-          "md5": "7b54499be9e78be1c61a6ae3c58c685e"
+          "size": 3076,
+          "sha512": "023a2dcce58c17ae5c4bf775aff7870afe2e1373735d67eadc5ad57580b5ecf5802f20dfdf2d85375894a213cdafc1b1e84dc5fe5a68ca15b840e5a0b3f62d7e",
+          "sha256": "122e8166a88f0bf27405f70e380253627ef63fd5280b3cda16d80c2c5c79f8a5",
+          "sha1": "80efe0dabc564d57aa9c751ac08a060ad3ce0e95",
+          "md5": "ed891943530edd62133400dd46173518"
         }
       ]
     }

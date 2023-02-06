@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.22"
     `java-gradle-plugin`
     `kotlin-dsl`
     id("maven-publish")
@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     compileOnly("com.android.tools.build:gradle:7.2.2")
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.7.10-1.0.6")
+    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.7.22-1.0.8")
     testImplementation(kotlin("test"))
 }
 
