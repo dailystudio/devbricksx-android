@@ -50,9 +50,11 @@ class DevKitPlugin: Plugin<Project> {
             val roomVersion = Dependencies.ROOM_VERSION
             val devBricksXVersion = Dependencies.DEV_BRICKS_X_VERSION
 
-            println("---------------------------------")
-            println("DevKit configuration: [${project.name}.${variant.name}]")
-            println("---------------------------------")
+            val artifactName = "${project.name}.${variant.name}"
+
+            println(separatorLine(artifactName))
+            println("DevKit configuration: [${artifactName}]")
+            println(separatorLine(artifactName))
             println("|- Use annotation: [$useAnnotation]")
             println("|- Compile type: [$compileType]")
             println("|- Components: $devKitComps")
@@ -101,6 +103,15 @@ class DevKitPlugin: Plugin<Project> {
         }
     }
 
+}
+
+fun separatorLine(artifactName: String): String {
+    return buildString {
+        for (i in 0 until artifactName.length + 25) {
+            append('-')
+        }
+
+    }
 }
 
 fun <T : Any> Project.extensionByType(
