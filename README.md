@@ -39,15 +39,15 @@ dependencies {
     implementation "cn.dailystudio:devbricksx-annotations:$devbricksx_version"
     ksp "cn.dailystudio:devbricksx-compiler:$devbricksx_version"
     // (Optional) If you use the feature above, DO NOT forget this line 
-    ksp "androidx.room:room-compiler:2.4.3"
+    ksp "androidx.room:room-compiler:2.5.0"
 }
 ```
 
 The latest version of dependencies above are:
 
 ```groovy
-ksp_version = "1.7.10-1.0.6"
-devbricksx_version = "1.7.2"
+ksp_version = "1.7.22-1.0.8"
+devbricksx_version = "1.7.3"
 ```
 
 Then, if you are using annotations through [KSP (Kotlin Symbol Processing)](https://kotlinlang.org/docs/ksp-overview.html), DO NOT forget to add plug-ins repo in **settings.gradle**:
