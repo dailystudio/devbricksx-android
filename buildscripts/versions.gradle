@@ -50,7 +50,12 @@ ext.depVersions = [
         ext.depVersions.all(versionsFile)['NAVIGATION']
     },
 
+    devKit: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['DEVKIT']
+    },
+
     dumpVersions: {
+        println("using DevKit: ${ext.depVersions.devKit()}")
         println("using Android Gradle Plugin: ${ext.depVersions.agp()}")
         println("using Kotlin: ${ext.depVersions.kotlin()}")
         println("using KSP: ${ext.depVersions.ksp()}")

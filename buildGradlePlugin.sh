@@ -21,6 +21,7 @@ version="${major}.${minor}.${patch}"
 agp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "AGP")
 ksp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KSP")
 kotlin_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KOTLIN")
+plugin_version="${version}-$(getProperty $DEP_VERSIONS_PROPERTIES "DEVKIT")"
 
 echo "Retrieving version from $VERSION_PROPERTIES: [${version}]"
 echo "Retrieving Android Gradle Plugin versions from $DEP_VERSIONS_PROPERTIES: [${agp_version}]"
@@ -37,7 +38,7 @@ for f in ${files}; do
   fi
 
   echo "updating version in file [${f}]..."
-  sed -i "" "s/^version\ =\ \".*\"/version\ =\ \"${version}\"/g" ${f}
+  sed -i "" "s/^version\ =\ \".*\"/version\ =\ \"${plugin_version}\"/g" ${f}
 
   echo "updating dependencies version in file [${f}]..."
   sed -i "" "s/\"com.android.tools.build:gradle:.*\"/\"com.android.tools.build:gradle:${agp_version}\"/g" ${f}

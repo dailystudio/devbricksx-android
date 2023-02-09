@@ -45,7 +45,6 @@ android {
 }
 
 devKit {
-    useAnnotations = true
     compileType = "Project"
 }
 

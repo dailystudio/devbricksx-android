@@ -47,12 +47,8 @@ android {
 }
 
 devKit {
-    useAnnotations = true
     compileType = "Project"
-    devKitComps = [
-            "Audio",
-            "Camera"
-    ]
+    devKitComps = [ "Audio", "Camera"]
 }
 
 dependencies {

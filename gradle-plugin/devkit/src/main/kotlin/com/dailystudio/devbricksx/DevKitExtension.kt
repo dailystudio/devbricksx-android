@@ -9,7 +9,7 @@ import javax.inject.Inject
 open class DevKitExtension @Inject constructor(
     objects: ObjectFactory
 ) {
-    var useAnnotations = objects.property<Boolean>().convention(false)
+    var useAnnotations = objects.property<Boolean>().convention(true)
     var compileType = objects.property<String>().convention(CompileType.Library.toString())
     var devKitComps: ListProperty<String> = objects.listProperty<String>().convention(
         listOf()

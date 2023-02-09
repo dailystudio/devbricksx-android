@@ -5,7 +5,7 @@ buildscript {
     ext.kotlin_version = depVersions.kotlin()
     ext.ksp_version = depVersions.ksp()
     ext.nav_version = depVersions.navigation()
-    ext.devkit_version = versions.devBricksXVersion()
+    ext.devkit_version = "${versions.devBricksXVersion()}-${depVersions.devKit()}"
 
     repositories {
         google()

@@ -18,6 +18,7 @@ class DevKitPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         val config = project.extensions.create<DevKitExtension>(EXTENSION_NAME)
         val kspPluginApplied = project.plugins.hasPlugin("com.google.devtools.ksp")
+        val isApplication = project.plugins.hasPlugin("com.android.application")
 
         if (!kspPluginApplied) {
             println("applying KSP(Kotlin Symbol Processing) plug-in")
@@ -50,24 +51,30 @@ class DevKitPlugin: Plugin<Project> {
             val roomVersion = Dependencies.ROOM_VERSION
             val devBricksXVersion = Dependencies.DEV_BRICKS_X_VERSION
 
-            val artifactName = "${project.name}.${variant.name}"
+            val targetName = "${project.name}.${variant.name}"
 
-            println(separatorLine(artifactName))
-            println("DevKit configuration: [${artifactName}]")
-            println(separatorLine(artifactName))
-            println("|- Use annotation: [$useAnnotation]")
+            println(separatorLineToWrap(targetName))
+            println("DevKit configuration: [${targetName}]")
+            println(separatorLineToWrap(targetName))
+            println("|- Project type: [${if (isApplication) "Application" else "Library"}]")
             println("|- Compile type: [$compileType]")
+            println("|- Use annotation: [$useAnnotation]")
             println("|- Components: $devKitComps")
             println("`- Dependencies:")
             println("   |- Room: [$roomVersion]")
             println("   `- DevBricksX: [$devBricksXVersion]")
             println()
 
+            val nameOfConfig = if (isApplication) {
+                "implementation"
+            } else {
+                "api"
+            }
             project.dependencies.apply {
                 if (compileType == CompileType.Project) {
-                    add("implementation", project(":devbricksx"))
+                    add(nameOfConfig, project(":devbricksx"))
                 } else {
-                    add("implementation","cn.dailystudio:devbricksx:${devBricksXVersion}")
+                    add(nameOfConfig,"cn.dailystudio:devbricksx:${devBricksXVersion}")
                 }
             }
 
@@ -75,9 +82,9 @@ class DevKitPlugin: Plugin<Project> {
                 val artifactName = comp.toString().toLowerCase()
                 project.dependencies.apply {
                     if (compileType == CompileType.Project) {
-                        add("implementation", project(":devbricksx-${artifactName}"))
+                        add(nameOfConfig, project(":devbricksx-${artifactName}"))
                     } else {
-                        add("implementation","cn.dailystudio:devbricksx-${artifactName}:${devBricksXVersion}")
+                        add(nameOfConfig,"cn.dailystudio:devbricksx-${artifactName}:${devBricksXVersion}")
                     }
                 }
             }
@@ -105,7 +112,7 @@ class DevKitPlugin: Plugin<Project> {
 
 }
 
-fun separatorLine(artifactName: String): String {
+fun separatorLineToWrap(artifactName: String): String {
     return buildString {
         for (i in 0 until artifactName.length + 25) {
             append('-')
