@@ -19,17 +19,20 @@ patch=$(getProperty $VERSION_PROPERTIES "patch")
 version="${major}.${minor}.${patch}"
 
 agp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "AGP")
+plugin_version="${version}-$(getProperty $DEP_VERSIONS_PROPERTIES "DEVKIT")"
 ksp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KSP")
 kotlin_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KOTLIN")
-plugin_version="${version}-$(getProperty $DEP_VERSIONS_PROPERTIES "DEVKIT")"
+room_version=$(getProperty $DEP_VERSIONS_PROPERTIES "ROOM")
 
 echo "Retrieving version from $VERSION_PROPERTIES: [${version}]"
 echo "Retrieving Android Gradle Plugin versions from $DEP_VERSIONS_PROPERTIES: [${agp_version}]"
 echo "Retrieving Kotlin versions from $DEP_VERSIONS_PROPERTIES: [${kotlin_version}]"
 echo "Retrieving KSP versions from $DEP_VERSIONS_PROPERTIES: [${ksp_version}]"
+echo "Retrieving Room versions from $DEP_VERSIONS_PROPERTIES: [${room_version}]"
 
 files="
   ${PLUGIN_DIR}/build.gradle.kts
+  ${PLUGIN_DIR}/src/main/kotlin/com/dailystudio/devbricksx/Dependencies.kt
 "
 
 for f in ${files}; do
@@ -39,11 +42,13 @@ for f in ${files}; do
 
   echo "updating version in file [${f}]..."
   sed -i "" "s/^version\ =\ \".*\"/version\ =\ \"${plugin_version}\"/g" ${f}
+  sed -i "" "s/DEV_BRICKS_X_VERSION\ =\ \".*\"/DEV_BRICKS_X_VERSION\ =\ \"${version}\"/g" ${f}
 
   echo "updating dependencies version in file [${f}]..."
   sed -i "" "s/\"com.android.tools.build:gradle:.*\"/\"com.android.tools.build:gradle:${agp_version}\"/g" ${f}
   sed -i "" "s/\"com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:.*\"/\"com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${ksp_version}\"/g" ${f}
   sed -i "" "s/kotlin(\"jvm\") version \".*\"/kotlin(\"jvm\") version \"${kotlin_version}\"/g" ${f}
+  sed -i "" "s/ROOM_VERSION\ =\ \".*\"/ROOM_VERSION\ =\ \"${room_version}\"/g" ${f}
 
 done
 
