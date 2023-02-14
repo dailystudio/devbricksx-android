@@ -20,6 +20,9 @@ include ':devbricksx-compiler-samples'
 include ':devbricksx-audio'
 include ':devbricksx-camera'
 
+// Network supports
+include ':devbricksx-network'
+
 // Samples and applications
 include ':samples'
 include ':sample-notebook'

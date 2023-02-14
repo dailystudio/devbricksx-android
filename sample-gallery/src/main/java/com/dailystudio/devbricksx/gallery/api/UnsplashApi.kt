@@ -7,6 +7,8 @@ import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import com.dailystudio.devbricksx.gallery.api.data.Photo
+import com.dailystudio.devbricksx.network.HeaderInterceptor
+import com.dailystudio.devbricksx.network.NetworkApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.GET
@@ -83,7 +85,7 @@ interface UnsplashApiInterface {
 }
 
 
-class UnsplashApi: BaseApi<UnsplashApiInterface>() {
+class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
 
     companion object {
         private var sApiInterface: UnsplashApiInterface? = null
