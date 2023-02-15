@@ -2,13 +2,11 @@ package com.dailystudio.devbricksx
 
 enum class Components {
     Audio,
-    Camera
+    Camera,
+    Network,
 }
 
 enum class CompileType {
     Project,
     Library
-}
-
-object Constants {
 }
