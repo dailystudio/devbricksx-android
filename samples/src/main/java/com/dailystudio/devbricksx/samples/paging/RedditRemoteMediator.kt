@@ -49,9 +49,7 @@ class RedditRemoteMediator(
                 }
             }
 
-            val redditApi = RedditApi.create()
-
-            val data = redditApi.getTop(
+            val data = RedditApi.getTop(
                     subreddit = subredditName,
                     after = loadKey,
                     before = null,

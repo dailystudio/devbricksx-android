@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.network
 
-import android.text.TextUtils
 import com.dailystudio.devbricksx.development.Logger
 import com.google.gson.GsonBuilder
 import okhttp3.*
@@ -162,7 +161,7 @@ abstract class ProgressInterceptor: Interceptor {
             return originalResponse.newBuilder().body(
                 ResponseBody.create(
                     responseBody!!.contentType(),
-                    responseBody!!.bytes()
+                    responseBody.bytes()
                 )
             ).build()
         }
@@ -172,9 +171,49 @@ abstract class ProgressInterceptor: Interceptor {
 }
 
 
-open class NetworkApi<Interface> {
+abstract class NetworkApi<Interface> {
 
-    internal class RawResponseDebugInterceptor: Interceptor {
+    protected enum class ResponseType {
+        JSON,
+        Raw,
+    }
+
+    protected class ApiOptions(
+        val respType: ResponseType = ResponseType.JSON,
+
+        val debugOutputBufferLen: Int = 1204,
+
+        val connectionTimeout: Long? = null,
+        val readTimeout: Long? = null,
+        val writeTimeout: Long? = null,
+
+        val interceptors: List<Interceptor>? = null,
+        val networkInterceptors: List<Interceptor>? = null
+    )
+
+    internal class DebugRequestInterceptor(private val bufferLen: Int = 1024): Interceptor {
+
+        @Throws(IOException::class)
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            Logger.debug("request [headers]: ${request.headers()}", )
+            Logger.debug("request [url]: ${request.url()}", )
+            val buffer = Buffer()
+            request.body()?.writeTo(buffer)
+
+            val bufferInUtf8 = buffer.readUtf8()
+            val maxLength =
+                min(bufferInUtf8.length, bufferLen)
+            if (maxLength > 0) {
+                Logger.debug("request [body]: ${bufferInUtf8.substring(0, maxLength)}",)
+            }
+
+            return chain.proceed(request)
+        }
+
+    }
+
+    internal class DebugRawResponseInterceptor: Interceptor {
 
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain): Response {
@@ -195,92 +234,23 @@ open class NetworkApi<Interface> {
     }
 
 
-
     companion object {
 
+
         const val HEADER_PROGRESS_IDENTIFIER = "progress-identifier"
-        const val EVENT_RESPONSE_PROGRESS = "event-response-progress"
-
-        var networkInterceptorOutputMaxLength = 1024
-
-        fun debugApi(format: String, vararg args: Any?) {
-            if (DEBUG_API) {
-                val builder = StringBuilder("[RESTFul API] ")
-
-                builder.append(format)
-
-                Logger.debug(builder.toString(), *args)
-            }
-        }
-
-        fun warnApi(format: String, vararg args: Any?) {
-            val builder = StringBuilder("[RESTFul API] ")
-
-            builder.append(format)
-
-            Logger.warn(builder.toString(), *args)
-        }
-
-        fun errorApi(format: String, vararg args: Any?) {
-            val builder = StringBuilder("[RESTFul API] ")
-
-            builder.append(format)
-
-            Logger.error(builder.toString(), *args)
-        }
 
     }
 
-    private val mConnTimeout = DEFAULT_TIMEOUT
-
     protected fun createInterface(
-        baseUrl: String,
-        classOfInterface: Class<Interface>,
-        rawResponse: Boolean = false,
-        interceptors: List<Interceptor>? = null
-    ): Interface? {
-        if (TextUtils.isEmpty(baseUrl)) {
-            return null
-        }
-
-        val clientBuilder = OkHttpClient.Builder()
-            .hostnameVerifier { _, _ -> true }
-            .connectTimeout(mConnTimeout, TimeUnit.MILLISECONDS)
-            .readTimeout(mConnTimeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(mConnTimeout, TimeUnit.MILLISECONDS)
-            .addNetworkInterceptor { chain ->
-                val request = chain.request()
-                debugApi("request [headers]: ${request.headers()}", )
-                debugApi("request [url]: ${request.url()}", )
-                val buffer = Buffer()
-                request.body()?.writeTo(buffer)
-
-                val bufferInUtf8 = buffer.readUtf8()
-                val maxLength =
-                    min(bufferInUtf8.length, networkInterceptorOutputMaxLength)
-                debugApi("request [body]: ${bufferInUtf8.substring(0 ,maxLength)}", )
-
-                chain.proceed(request)
-            }
-//            .addNetworkInterceptor(ProgressInterceptor())
-
-        if (!rawResponse) {
-            clientBuilder.addInterceptor(RawResponseDebugInterceptor())
-        }
-
-        if (interceptors != null && interceptors.isNotEmpty()) {
-            interceptors.forEach {
-                clientBuilder.addInterceptor(it)
-            }
-        }
-
-        val client = clientBuilder.build()
+        options: ApiOptions,
+    ): Interface {
+        val client = buildOkhttpClient(options)
 
         val builder = Retrofit.Builder()
             .client(client)
             .baseUrl(baseUrl)
 
-        if (!rawResponse) {
+        if (options.respType == ResponseType.JSON) {
             val gson = GsonBuilder()
                 .setLenient()
                 .create()
@@ -291,14 +261,88 @@ open class NetworkApi<Interface> {
         return builder.build().create(classOfInterface)
     }
 
-    protected open fun createRawInterface(
-        baseUrl: String,
-        classOfInterface: Class<Interface>,
-        interceptors: List<Interceptor>? = null
-    ): Interface? {
-        return createInterface(baseUrl, classOfInterface,
-        true, interceptors)
+    protected open fun buildOkhttpClient(options: ApiOptions): OkHttpClient {
+        val clientBuilder = OkHttpClient.Builder()
+            .hostnameVerifier { _, _ -> true }
+//            .addNetworkInterceptor(ProgressInterceptor())
+
+        if (debugEnabled) {
+            clientBuilder.addNetworkInterceptor(
+                DebugRequestInterceptor(options.debugOutputBufferLen)
+            )
+
+            if (options.respType == ResponseType.Raw) {
+                clientBuilder.addInterceptor(DebugRawResponseInterceptor())
+            }
+        }
+
+        options.connectionTimeout?.let {
+            clientBuilder.connectTimeout(it, TimeUnit.MILLISECONDS)
+        }
+
+        options.readTimeout?.let {
+            clientBuilder.readTimeout(it, TimeUnit.MILLISECONDS)
+        }
+
+        options.writeTimeout?.let {
+            clientBuilder.writeTimeout(it, TimeUnit.MILLISECONDS)
+        }
+
+
+        options.interceptors?.forEach {
+            clientBuilder.addInterceptor(it)
+        }
+
+        options.networkInterceptors?.forEach {
+            clientBuilder.addNetworkInterceptor(it)
+        }
+
+        return clientBuilder.build()
     }
 
+    protected open fun getInterface(type: ResponseType = ResponseType.JSON): Interface {
+        return mapOfInterfaces[type]
+            ?: createInterface(getApiOptions(type)).also {
+                mapOfInterfaces[type] = it
+            }
+    }
+
+    protected open fun getApiOptions(type: ResponseType): ApiOptions {
+        return ApiOptions(type)
+    }
+
+    fun debugApi(format: String, vararg args: Any?) {
+        if (debugEnabled) {
+            val builder = StringBuilder("[RESTFul API] ")
+
+            builder.append(format)
+
+            Logger.debug(builder.toString(), *args)
+        }
+    }
+
+    fun warnApi(format: String, vararg args: Any?) {
+        val builder = StringBuilder("[RESTFul API] ")
+
+        builder.append(format)
+
+        Logger.warn(builder.toString(), *args)
+    }
+
+    fun errorApi(format: String, vararg args: Any?) {
+        val builder = StringBuilder("[RESTFul API] ")
+
+        builder.append(format)
+
+        Logger.error(builder.toString(), *args)
+    }
+
+    private val mapOfInterfaces: MutableMap<ResponseType, Interface> =
+        mutableMapOf()
+
+    protected open val debugEnabled: Boolean = true
+
+    protected abstract val baseUrl: String
+    protected abstract val classOfInterface: Class<Interface>
 
 }

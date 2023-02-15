@@ -48,6 +48,8 @@ android {
 
 devKit {
     compileType = "Project"
+    devKitComps = [ "Network"]
+
 }
 
 dependencies {
@@ -57,11 +59,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-//    implementation "com.squareup.retrofit2:retrofit:${project.ext.retrofitVersion}"
-//    implementation "com.squareup.retrofit2:converter-gson:${project.ext.retrofitVersion}"
     implementation("io.coil-kt:coil:${project.ext.coilVersion}")
-
-    implementation project(":devbricksx-network")
 
     implementation "androidx.navigation:navigation-fragment-ktx:${project.ext.navigationVersion}"
     implementation "androidx.navigation:navigation-ui-ktx:${project.ext.navigationVersion}"

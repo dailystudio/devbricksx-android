@@ -72,16 +72,15 @@ class PhotoItemMediator(
                 LoadType.REFRESH -> state.config.initialLoadSize
                 else -> state.config.pageSize
             }
-            val unsplashApi = UnsplashApi()
 
             val pagedPhotos = withContext(Dispatchers.IO) {
                 if (query == Constants.QUERY_ALL) {
-                    unsplashApi.listPhotos(
+                    UnsplashApi.listPhotos(
                         page = page,
                         perPage = perPage,
                     ) ?: PageResults()
                 } else {
-                    unsplashApi.searchPhotos(
+                    UnsplashApi.searchPhotos(
                         query = query,
                         page = page,
                         perPage = perPage,

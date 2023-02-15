@@ -48,7 +48,7 @@ android {
 
 devKit {
     compileType = "Project"
-    devKitComps = [ "Audio", "Camera"]
+    devKitComps = [ "Audio", "Camera", "Network"]
 }
 
 dependencies {

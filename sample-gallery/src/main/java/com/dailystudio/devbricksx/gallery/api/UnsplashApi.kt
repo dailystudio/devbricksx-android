@@ -84,18 +84,7 @@ interface UnsplashApiInterface {
 
 }
 
-
-class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
-
-    companion object {
-        private var sApiInterface: UnsplashApiInterface? = null
-
-        @Synchronized
-        fun resetApiInterface() {
-            sApiInterface = null
-        }
-
-    }
+object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
 
     fun searchPhotos(query: String,
                      page: Int = 1,
@@ -104,16 +93,15 @@ class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
     ): PageResults? {
         val uniAppInterface = getInterface()
 
-        val call = uniAppInterface?.searchPhotos(query, page, perPage)
+        val call = uniAppInterface.searchPhotos(query, page, perPage)
         if (callback == null) {
             var ret: PageResults? = null
             var links: Links? = null
             try {
-                val response = call?.execute()
-                if (response != null) {
-                    ret = response.body()
-                    links = Links.fromString(response.headers()["Link"])
-                }
+                val response = call.execute()
+
+                ret = response.body()
+                links = Links.fromString(response.headers()["Link"])
             } catch (e: IOException) {
                 Logger.error(
                     "list photos failed: %s",
@@ -129,7 +117,7 @@ class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
             }
         }
 
-        call?.enqueue(callback)
+        call.enqueue(callback)
 
         return null
     }
@@ -140,16 +128,15 @@ class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
     ): PageResults? {
         val uniAppInterface = getInterface()
 
-        val call = uniAppInterface?.listPhotos(page, perPage)
+        val call = uniAppInterface.listPhotos(page, perPage)
         if (callback == null) {
             var ret: Array<Photo>? = null
             var links: Links? = null
             try {
-                val response = call?.execute()
-                if (response != null) {
-                    ret = response.body()
-                    links = Links.fromString(response.headers()["Link"])
-                }
+                val response = call.execute()
+
+                ret = response.body()
+                links = Links.fromString(response.headers()["Link"])
             } catch (e: IOException) {
                 Logger.error(
                     "list photos failed: %s",
@@ -167,23 +154,9 @@ class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
                 links)
         }
 
-        call?.enqueue(callback)
+        call.enqueue(callback)
 
         return null
-    }
-
-    @Synchronized
-    private fun getInterface(): UnsplashApiInterface? {
-        if (sApiInterface == null) {
-            sApiInterface = createInterface(
-                UnsplashApiInterface.BASE_URL,
-                UnsplashApiInterface::class.java,
-                false,
-                listOf(mHeaderInterceptor)
-            )
-        }
-
-        return sApiInterface
     }
 
     private var mHeaderInterceptor = object : HeaderInterceptor() {
@@ -199,5 +172,16 @@ class UnsplashApi: NetworkApi<UnsplashApiInterface>() {
         }
 
     }
+
+    override fun getApiOptions(type: ResponseType): ApiOptions {
+        return ApiOptions(type,
+            interceptors = listOf(mHeaderInterceptor)
+        )
+    }
+
+    override val baseUrl: String
+        get() = UnsplashApiInterface.BASE_URL
+    override val classOfInterface: Class<UnsplashApiInterface>
+        get() = UnsplashApiInterface::class.java
 
 }
