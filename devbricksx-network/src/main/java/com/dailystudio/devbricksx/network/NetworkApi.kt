@@ -10,8 +10,6 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
-private const val DEBUG_API = true
-
 internal interface ProgressListener {
     fun update(
         identifier: String,
@@ -186,15 +184,14 @@ abstract class NetworkApi<Interface> {
 
     protected class ApiOptions(
         val respType: ResponseType = ResponseType.JSON,
+        var debugOutputBufferLen: Int = 1204,
 
-        val debugOutputBufferLen: Int = 1204,
+        var connectionTimeout: Long? = DEFAULT_TIMEOUT,
+        var readTimeout: Long? = DEFAULT_TIMEOUT,
+        var writeTimeout: Long? = DEFAULT_TIMEOUT,
 
-        val connectionTimeout: Long? = DEFAULT_TIMEOUT,
-        val readTimeout: Long? = DEFAULT_TIMEOUT,
-        val writeTimeout: Long? = DEFAULT_TIMEOUT,
-
-        val interceptors: List<Interceptor>? = null,
-        val networkInterceptors: List<Interceptor>? = null
+        var interceptors: List<Interceptor>? = null,
+        var networkInterceptors: List<Interceptor>? = null,
     )
 
     internal class DebugRequestInterceptor(private val bufferLen: Int = 1024): Interceptor {
@@ -304,6 +301,14 @@ abstract class NetworkApi<Interface> {
             ?: createInterface(getApiOptions(type)).also {
                 mapOfInterfaces[type] = it
             }
+    }
+
+    protected open fun resetInterface(type: ResponseType? = ResponseType.JSON) {
+        mapOfInterfaces.remove(type)
+    }
+
+    protected fun resetInterfaces() {
+        mapOfInterfaces.clear()
     }
 
     protected open fun getApiOptions(type: ResponseType): ApiOptions {

@@ -174,9 +174,9 @@ object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
     }
 
     override fun getApiOptions(type: ResponseType): ApiOptions {
-        return ApiOptions(type,
+        return super.getApiOptions(type).apply {
             interceptors = listOf(mHeaderInterceptor)
-        )
+        }
     }
 
     override val baseUrl: String
