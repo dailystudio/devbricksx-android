@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
 private const val DEBUG_API = true
-private const val DEFAULT_TIMEOUT: Long = 10000
 
 internal interface ProgressListener {
     fun update(
@@ -24,10 +23,9 @@ internal interface ProgressListener {
 
 private class ProgressResponseBody(val identifier: String,
                                    private val responseBody: ResponseBody,
-                                   progressListener: ProgressListener
+                                   private val progressListener: ProgressListener
 ) : ResponseBody() {
 
-    private val progressListener: ProgressListener = progressListener
     private var bufferedSource: BufferedSource? = null
 
     override fun contentType(): MediaType? {
@@ -70,15 +68,16 @@ private class ProgressResponseBody(val identifier: String,
 
 }
 
-open class BaseApiRet (var code: Int? = null,
-                       var message: String? = null) {
+open class ApiReturn (var code: Int? = null,
+                      var message: String? = null) {
 
     override fun toString(): String {
-        return String.format("%s(0x%08x): %d(%s)",
-            javaClass,
-            hashCode(),
-            code,
-            message)
+        return buildString {
+            append(this::class.java.simpleName)
+            append("(${hashCode()}): ")
+            append("code: $code, ")
+            append("code: $message, ")
+        }
     }
 
 }
@@ -170,8 +169,15 @@ abstract class ProgressInterceptor: Interceptor {
     abstract fun onResponseProgress(rp: ResponseProgress)
 }
 
-
 abstract class NetworkApi<Interface> {
+
+    companion object {
+
+        const val HEADER_PROGRESS_IDENTIFIER = "progress-identifier"
+
+        const val DEFAULT_TIMEOUT: Long = 10000
+
+    }
 
     protected enum class ResponseType {
         JSON,
@@ -183,9 +189,9 @@ abstract class NetworkApi<Interface> {
 
         val debugOutputBufferLen: Int = 1204,
 
-        val connectionTimeout: Long? = null,
-        val readTimeout: Long? = null,
-        val writeTimeout: Long? = null,
+        val connectionTimeout: Long? = DEFAULT_TIMEOUT,
+        val readTimeout: Long? = DEFAULT_TIMEOUT,
+        val writeTimeout: Long? = DEFAULT_TIMEOUT,
 
         val interceptors: List<Interceptor>? = null,
         val networkInterceptors: List<Interceptor>? = null
@@ -234,14 +240,7 @@ abstract class NetworkApi<Interface> {
     }
 
 
-    companion object {
-
-
-        const val HEADER_PROGRESS_IDENTIFIER = "progress-identifier"
-
-    }
-
-    protected fun createInterface(
+    protected open fun createInterface(
         options: ApiOptions,
     ): Interface {
         val client = buildOkhttpClient(options)
