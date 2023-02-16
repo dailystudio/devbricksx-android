@@ -3,12 +3,9 @@ artifactsToPublish=(
   "devbricksx"
   "devbricksx-annotations"
   "devbricksx-compiler"
-#  "devbricksx-java-annotations"
-#  "devbricksx-java-compiler"
-#  "devbricksx-kotlin-annotations"
-#  "devbricksx-kotlin-compiler"
   "devbricksx-audio"
   "devbricksx-camera"
+  "devbricksx-network"
 )
 
 echo "--------- [STEP 1: Building artifacts] ---------"
