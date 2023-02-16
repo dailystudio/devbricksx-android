@@ -20,13 +20,6 @@ class DevKitPlugin: Plugin<Project> {
         val kspPluginApplied = project.plugins.hasPlugin("com.google.devtools.ksp")
         val isApplication = project.plugins.hasPlugin("com.android.application")
 
-        if (!kspPluginApplied) {
-            println("applying KSP(Kotlin Symbol Processing) plug-in")
-            with(project) {
-                plugins.apply("com.google.devtools.ksp")
-            }
-        }
-
         val androidComponentsExtension = project.extensionByType(
             AndroidComponentsExtension::class) ?: return
 
@@ -48,6 +41,7 @@ class DevKitPlugin: Plugin<Project> {
                     null
                 }
             }
+
             val roomVersion = Dependencies.ROOM_VERSION
             val devBricksXVersion = Dependencies.DEV_BRICKS_X_VERSION
 
@@ -65,11 +59,19 @@ class DevKitPlugin: Plugin<Project> {
             println("   `- DevBricksX: [$devBricksXVersion]")
             println()
 
+            if (useAnnotation && !kspPluginApplied) {
+                println("applying KSP(Kotlin Symbol Processing) plug-in")
+                with(project) {
+                    plugins.apply("com.google.devtools.ksp")
+                }
+            }
+
             val nameOfConfig = if (isApplication) {
                 "implementation"
             } else {
                 "api"
             }
+
             project.dependencies.apply {
                 if (compileType == CompileType.Project) {
                     add(nameOfConfig, project(":devbricksx"))
@@ -126,7 +128,7 @@ fun <T : Any> Project.extensionByType(
     return try {
         extensions.getByType(klass)
     } catch (e: UnknownDomainObjectException) {
-        println("unable to get extension for type [$klass]: ${e}")
+        println("unable to get extension for type [$klass]: $e")
 
         null
     }
