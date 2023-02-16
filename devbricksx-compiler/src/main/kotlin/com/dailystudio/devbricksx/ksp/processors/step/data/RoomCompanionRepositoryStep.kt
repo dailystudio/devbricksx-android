@@ -90,8 +90,8 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
         classBuilder.primaryConstructor(constructorBuilder.build())
 
         arrayOf(
-            Pair(FunctionNames.GET_ONE, typeOfObject),
-            Pair(FunctionNames.GET_ONE_LIVE, typeOfLiveDataOfObject)
+            Pair(FunctionNames.GET_ONE, typeOfObject.copy(nullable = true)),
+            Pair(FunctionNames.GET_ONE_LIVE, typeOfLiveDataOfObject.copy(nullable = true))
         ).forEach {
             val method = it.first
             val typesOfReturn = it.second

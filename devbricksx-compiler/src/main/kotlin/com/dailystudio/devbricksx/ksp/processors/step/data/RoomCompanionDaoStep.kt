@@ -87,7 +87,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val methodGetOneBuilder: FunSpec.Builder =
             FunSpec.builder(FunctionNames.GET_ONE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
-                .returns(typeOfCompanion)
+                .returns(typeOfCompanion.copy(nullable = true))
         RoomCompanionUtils.attachPrimaryKeysToMethodParameters(methodGetOneBuilder, primaryKeys)
 
         methodGetOneBuilder.addAnnotation(
@@ -101,7 +101,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val methodGetOneLiveBuilder: FunSpec.Builder =
             FunSpec.builder(FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
-                .returns(typeOfLiveDataOfCompanion)
+                .returns(typeOfLiveDataOfCompanion.copy(nullable = true))
         RoomCompanionUtils.attachPrimaryKeysToMethodParameters(methodGetOneLiveBuilder, primaryKeys)
 
         methodGetOneLiveBuilder.addAnnotation(
@@ -250,13 +250,14 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val methodWrapperOfGetOneBuilder = FunSpec.builder(
             FunctionNames.GET_ONE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
-            .returns(typeOfObject)
+            .returns(typeOfObject.copy(nullable = true))
 
         RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
             methodWrapperOfGetOneBuilder, primaryKeys)
 
-        FuncSpecStatementsGenerator.mapOutputToObject(methodWrapperOfGetOneBuilder,
-            typeOfObject,
+        FuncSpecStatementsGenerator.mapOutputToObject(
+            methodWrapperOfGetOneBuilder,
+            typeOfObject.copy(nullable = true),
             FunctionNames.GET_ONE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneBuilder.build())
@@ -264,13 +265,14 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val methodWrapperOfGetOneLiveBuilder = FunSpec.builder(
             FunctionNames.GET_ONE_LIVE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
-            .returns(typeOfLiveDataOfObject)
+            .returns(typeOfLiveDataOfObject.copy(nullable = true))
 
         RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
             methodWrapperOfGetOneLiveBuilder, primaryKeys)
 
-        FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(methodWrapperOfGetOneLiveBuilder,
-            typeOfLiveDataOfObject,
+        FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(
+            methodWrapperOfGetOneLiveBuilder,
+            typeOfLiveDataOfObject.copy(nullable = true),
             FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneLiveBuilder.build())
