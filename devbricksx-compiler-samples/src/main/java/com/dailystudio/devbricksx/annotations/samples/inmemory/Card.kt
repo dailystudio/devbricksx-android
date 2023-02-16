@@ -12,7 +12,7 @@ import java.util.*
 @Adapter(viewHolder = DummyViewHolder::class)
 @ViewModel
 @InMemoryCompanion(ordering = Ordering.Descending)
-data class Card(val id: Int,
+open class Card(val id: Int,
                 val title: String,
                 val desc: String? = null) : IntKeyInMemoryObject() {
 
@@ -30,6 +30,14 @@ data class Card(val id: Int,
     }
 
 }
+
+@Adapter(viewHolder = DummyViewHolder::class)
+@ViewModel
+@InMemoryCompanion
+class EmptyCardWrapper(id: Int,
+                       title: String,
+                       desc: String? = null
+): Card(id, title, desc)
 
 @InMemoryCompanion(ordering = Ordering.Descending)
 abstract class IntKeyInMemoryObject: InMemoryObject<Int>

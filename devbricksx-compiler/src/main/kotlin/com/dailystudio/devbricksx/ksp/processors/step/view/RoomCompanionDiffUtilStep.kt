@@ -47,15 +47,29 @@ class RoomCompanionDiffUtilStep(processor: BaseSymbolProcessor)
         val equalsStatementOfFields = fieldsToEquals(propsAll - propsInSuperType)
 
         if (typeOfSuperDiffUtil != null) {
-            methodItemsSameBuilder.addStatement(
-                "return %T().areItemsTheSame(oldObject, newObject) && %L",
-                typeOfSuperDiffUtil,
-                equalsStatementOfPrimaryKeys)
 
-            methodContentsSameBuilder.addStatement(
-                "return %T().areContentsTheSame(oldObject, newObject) && %L",
-                typeOfSuperDiffUtil,
-                equalsStatementOfFields)
+            if (equalsStatementOfPrimaryKeys.isBlank()) {
+                methodItemsSameBuilder.addStatement(
+                    "return %T().areItemsTheSame(oldObject, newObject)",
+                    typeOfSuperDiffUtil)
+            } else {
+                methodItemsSameBuilder.addStatement(
+                    "return %T().areItemsTheSame(oldObject, newObject) && %L",
+                    typeOfSuperDiffUtil,
+                    equalsStatementOfPrimaryKeys)
+            }
+
+            if (equalsStatementOfFields.isBlank()) {
+                methodContentsSameBuilder.addStatement(
+                    "return %T().areContentsTheSame(oldObject, newObject)",
+                    typeOfSuperDiffUtil)
+            } else {
+                methodContentsSameBuilder.addStatement(
+                    "return %T().areContentsTheSame(oldObject, newObject) && %L",
+                    typeOfSuperDiffUtil,
+                    equalsStatementOfFields)
+            }
+
         } else {
             methodItemsSameBuilder.addStatement("return %L", equalsStatementOfPrimaryKeys)
             methodContentsSameBuilder.addStatement("return %L", equalsStatementOfFields)

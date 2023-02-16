@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
     primaryKeys = ["id"],
     extension = AllTypesInOneDaoExtension::class
 )
-class AllTypesInOne {
+open class AllTypesInOne {
     @IntegerField(12)
     var id: Int = 0
     var intType: Int = 0
@@ -31,6 +31,11 @@ class AllTypesInOne {
     var stringType: String = ""
     var booleanType: Boolean = false
 }
+
+@Adapter(viewHolder = DummyViewHolder::class)
+@RoomCompanion (
+)
+class EmptyAllTypesInOneWrapper: AllTypesInOne()
 
 @DaoExtension(entity = AllTypesInOne::class)
 abstract class AllTypesInOneDaoExtension {
