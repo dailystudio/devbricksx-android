@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/photoItemsListFragmentExt">
+
+    <fragment
+        android:id="@+id/photoItemsListFragmentExt"
+        android:name="com.dailystudio.devbricksx.gallery.fragment.PhotoItemsListFragmentExt"
+        android:label="PhotoItemsListFragmentExt" >
+        <action
+            android:id="@+id/action_photoItemsListFragmentExt_to_photoViewFragment"
+            app:destination="@id/photoViewFragment" />
+        <action
+            android:id="@+id/action_photoItemsListFragmentExt_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoViewFragment"
+        android:name="com.dailystudio.devbricksx.gallery.fragment.PhotoViewFragment"
+        android:label="PhotoViewFragment" >
+        <argument
+            android:name="thumbUrl"
+            app:argType="string" />
+        <argument
+            android:name="downloadUrl"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/aboutFragment"
+        android:name="com.dailystudio.devbricksx.gallery.fragment.AboutFragment"
+        android:label="AboutFragment" />
+</navigation>
