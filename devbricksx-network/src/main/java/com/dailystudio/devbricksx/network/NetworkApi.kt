@@ -2,6 +2,9 @@ package com.dailystudio.devbricksx.network
 
 import com.dailystudio.devbricksx.development.Logger
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import okio.*
 import retrofit2.Retrofit
@@ -94,6 +97,9 @@ data class ResponseProgress(val identifier: String,
 
 }
 
+typealias ApiProgressCallback =
+    (rp: ResponseProgress) -> Unit
+
 abstract class HeaderInterceptor : Interceptor {
 
     @Throws(IOException::class)
@@ -116,55 +122,6 @@ abstract class HeaderInterceptor : Interceptor {
 
     abstract fun getHeaders(): Map<String, String>?
 
-}
-
-abstract class ProgressInterceptor: Interceptor {
-
-    private val progressListener: ProgressListener =
-        object : ProgressListener {
-            override fun update(
-                identifier: String,
-                bytesRead: Long,
-                contentLength: Long,
-                done: Boolean) {
-                val rp = ResponseProgress(identifier,
-                    bytesRead, contentLength, done)
-
-                Logger.debug("notify: rp = $rp")
-                onResponseProgress(rp)
-            }
-        }
-
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val originalResponse = chain.proceed(request)
-
-        val identifier = request.header(
-            NetworkApi.HEADER_PROGRESS_IDENTIFIER
-        )
-
-        return if (identifier != null && identifier.isNotBlank()) {
-            originalResponse.newBuilder()
-                .body(
-                    ProgressResponseBody(
-                        identifier,
-                        originalResponse.body()!!,
-                        progressListener)
-                )
-                .build()
-        } else  {
-            val responseBody = originalResponse.body()
-
-            return originalResponse.newBuilder().body(
-                ResponseBody.create(
-                    responseBody!!.contentType(),
-                    responseBody.bytes()
-                )
-            ).build()
-        }
-    }
-
-    abstract fun onResponseProgress(rp: ResponseProgress)
 }
 
 abstract class NetworkApi<Interface> {
@@ -216,7 +173,7 @@ abstract class NetworkApi<Interface> {
 
     }
 
-    internal class DebugRawResponseInterceptor: Interceptor {
+    internal class DebugRawResponseInterceptor(private val bufferLen: Int = 1024): Interceptor {
 
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain): Response {
@@ -225,7 +182,10 @@ abstract class NetworkApi<Interface> {
 
                 val responseBody = response.body()
                 val responseBodyString = response.body()!!.string()
-                Logger.debug("response [raw]: $responseBodyString")
+                val maxLength =
+                    min(responseBodyString.length, bufferLen)
+
+                Logger.debug("response [raw]: ${responseBodyString.substring(0, maxLength)}")
 
                 return response.newBuilder().body(
                     ResponseBody.create(
@@ -236,6 +196,38 @@ abstract class NetworkApi<Interface> {
             }
     }
 
+    internal class ProgressInterceptor(
+        private val listener: ProgressListener): Interceptor {
+
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            val originalResponse = chain.proceed(request)
+
+            val identifier = request.header(
+                HEADER_PROGRESS_IDENTIFIER
+            )
+
+            return if (identifier != null && identifier.isNotBlank()) {
+                originalResponse.newBuilder()
+                    .body(
+                        ProgressResponseBody(
+                            identifier,
+                            originalResponse.body()!!,
+                            listener)
+                    )
+                    .build()
+            } else  {
+                val responseBody = originalResponse.body()
+
+                return originalResponse.newBuilder().body(
+                    ResponseBody.create(
+                        responseBody!!.contentType(),
+                        responseBody.bytes()
+                    )
+                ).build()
+            }
+        }
+    }
 
     protected open fun createInterface(
         options: ApiOptions,
@@ -260,7 +252,7 @@ abstract class NetworkApi<Interface> {
     protected open fun buildOkhttpClient(options: ApiOptions): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder()
             .hostnameVerifier { _, _ -> true }
-//            .addNetworkInterceptor(ProgressInterceptor())
+            .addNetworkInterceptor(ProgressInterceptor(progressListener))
 
         if (debugEnabled) {
             clientBuilder.addNetworkInterceptor(
@@ -268,7 +260,7 @@ abstract class NetworkApi<Interface> {
             )
 
             if (options.respType == ResponseType.Raw) {
-                clientBuilder.addInterceptor(DebugRawResponseInterceptor())
+                clientBuilder.addInterceptor(DebugRawResponseInterceptor(options.debugOutputBufferLen))
             }
         }
 
@@ -283,7 +275,6 @@ abstract class NetworkApi<Interface> {
         options.writeTimeout?.let {
             clientBuilder.writeTimeout(it, TimeUnit.MILLISECONDS)
         }
-
 
         options.interceptors?.forEach {
             clientBuilder.addInterceptor(it)
@@ -349,4 +340,48 @@ abstract class NetworkApi<Interface> {
     protected abstract val baseUrl: String
     protected abstract val classOfInterface: Class<Interface>
 
+    private val progressCallbacks =
+        mutableListOf<ApiProgressCallback>()
+
+    private val progressListener = object : ProgressListener {
+
+        override fun update(
+            identifier: String,
+            bytesRead: Long,
+            contentLength: Long,
+            done: Boolean) {
+            val rp = ResponseProgress(identifier,
+                bytesRead, contentLength, done)
+
+//            Logger.debug("notify: rp = $rp")
+
+            progressCallbacks.forEach {
+                it.invoke(rp)
+            }
+        }
+
+    }
+
+    suspend fun <T> progressApiCall(
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        apiCall: suspend () -> T,
+        callback: ApiProgressCallback? = null
+    ): T? {
+        return withContext(dispatcher) {
+            if (callback != null) {
+                progressCallbacks.add(callback)
+            }
+
+            try {
+                apiCall.invoke()
+            } catch (throwable: Throwable) {
+                Logger.error("failed to call api [${apiCall.javaClass.enclosingMethod?.name}]: $throwable")
+                null
+            } finally {
+                if (callback != null) {
+                    progressCallbacks.remove(callback)
+                }
+            }
+        }
+    }
 }

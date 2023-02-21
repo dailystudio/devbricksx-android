@@ -73,9 +73,12 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
         super.onItemClick(recyclerView, itemView, position, item, id)
         Logger.debug("item: $item")
 
-        findNavController().navigate(
-            R.id.action_photoItemsListFragmentExt_to_photoViewFragment
-        )
+        val action = PhotoItemsListFragmentExtDirections
+            .actionPhotoItemsListFragmentExtToPhotoViewFragment(
+                item.thumbnailUrl,
+                item.downloadUrl
+            )
+        findNavController().navigate(action)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

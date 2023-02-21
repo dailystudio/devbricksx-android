@@ -7,13 +7,71 @@ import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import com.dailystudio.devbricksx.gallery.api.data.Photo
-import com.dailystudio.devbricksx.network.HeaderInterceptor
-import com.dailystudio.devbricksx.network.NetworkApi
+import com.dailystudio.devbricksx.network.*
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.IOException
+import java.net.URLDecoder
+
+interface ImageApiInterface {
+    companion object {
+        const val BASE_URL = "https://images.unsplash.com/"
+    }
+
+    @GET("/{downloadPath}")
+    suspend fun download(
+        @Path("downloadPath")path: String,
+        @Header(NetworkApi.HEADER_PROGRESS_IDENTIFIER) id: Long
+    ): ResponseBody
+}
+
+object ImageApi: NetworkApi<ImageApiInterface>() {
+
+    override val baseUrl: String
+        get() = ImageApiInterface.BASE_URL
+    override val classOfInterface: Class<ImageApiInterface>
+        get() = ImageApiInterface::class.java
+
+    private fun extractDownloadPath(downloadUrl: String): String? {
+        return Uri.parse(downloadUrl).lastPathSegment
+    }
+
+    suspend fun download(
+        downloadUrl: String,
+        downloadId: Long = System.currentTimeMillis(),
+        callback: ApiProgressCallback? = null
+    ): ByteArray? {
+        return try {
+            val downloadPath = extractDownloadPath(downloadUrl)
+            Logger.debug("download path: $downloadPath")
+
+            if (downloadPath.isNullOrEmpty()) {
+                return null
+            }
+
+            val body = progressApiCall(
+                apiCall = { getInterface(ResponseType.Raw).download(downloadPath, downloadId) },
+                callback = callback)
+
+            debugApi("content-length: ${body?.contentLength()}")
+            debugApi("content-type: ${body?.contentType()}")
+
+            val bytes = body?.bytes()
+            debugApi("bytes: ${bytes?.size?: 0}B")
+
+            bytes
+        } catch (e: IOException) {
+            Logger.error("read bytes from response failed: $e")
+
+            null
+        }
+    }
+}
 
 interface UnsplashApiInterface {
 
@@ -67,7 +125,6 @@ interface UnsplashApiInterface {
         }
 
     }
-
 
     @GET("$SEARCH_PATH/$PHOTOS_PATH")
     fun searchPhotos(
@@ -185,3 +242,4 @@ object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
         get() = UnsplashApiInterface::class.java
 
 }
+
