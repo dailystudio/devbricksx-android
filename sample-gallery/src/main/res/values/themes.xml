@@ -66,4 +66,15 @@
         <item name="android:paddingBottom">0dp</item>
     </style>
 
+    <style name="ToolbarChip" parent="Widget.Material3.Chip.Input">
+        <item name="chipBackgroundColor">@color/white</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>
