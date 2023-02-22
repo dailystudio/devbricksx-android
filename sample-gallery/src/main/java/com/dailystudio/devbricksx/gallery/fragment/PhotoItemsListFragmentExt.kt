@@ -2,7 +2,6 @@ package com.dailystudio.devbricksx.gallery.fragment
 
 import android.app.SearchManager
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
@@ -129,6 +128,9 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
         val searchMenuItem = menu.findItem(R.id.action_search);
         val searchView: SearchView =
             searchMenuItem.actionView as SearchView
+
+        val v: View = searchView.findViewById(androidx.appcompat.R.id.search_plate)
+        v.setBackgroundColor(Color.TRANSPARENT)
 
         searchMenuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
 
