@@ -1,10 +1,19 @@
 package com.dailystudio.devbricksx.gallery.fragment
 
+import android.app.Activity
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -12,6 +21,8 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.DevBricksFragment
 import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.ImageApi
+import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -23,7 +34,6 @@ class PhotoViewFragment: DevBricksFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         Logger.debug("thumb: ${args.thumbUrl}")
         Logger.debug("download: ${args.downloadUrl}")
 
@@ -49,6 +59,11 @@ class PhotoViewFragment: DevBricksFragment() {
         photoView = view.findViewById(R.id.photo)
         photoView?.load(
             args.thumbUrl
+        )
+
+        SystemBarsUtils.statusBarColor(
+            requireActivity(),
+            Color.TRANSPARENT
         )
     }
 

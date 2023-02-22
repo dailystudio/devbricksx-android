@@ -1,11 +1,10 @@
 package com.dailystudio.devbricksx.gallery.fragment
 
 import android.app.SearchManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -19,13 +18,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.R
-import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
+import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
+import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
+import com.dailystudio.devbricksx.utils.SystemBarsUtils
+import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.flow.Flow
 
+
 class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
+
+    private var topBar: MaterialToolbar? = null
 
     lateinit var viewModel: PhotoItemViewModelExt
     private var lastQuery: String? = null
@@ -44,7 +49,19 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
     override fun setupViews(fragmentView: View) {
         super.setupViews(fragmentView)
 
+        val activity = requireActivity()
+        if (activity is AppCompatActivity) {
+            activity.setSupportActionBar(fragmentView.findViewById(R.id.topAppBar))
+        }
+
         setHasOptionsMenu(true)
+        SystemBarsUtils.statusBarColor(
+            requireActivity(),
+            ResourcesCompatUtils.getColor(requireContext(), R.color.primaryColor)
+        )
+
+        topBar = fragmentView.findViewById(R.id.topAppBar)
+        topBar?.setTitle(R.string.app_name)
 
         disableItemChangeDuration()
     }

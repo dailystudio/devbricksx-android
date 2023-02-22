@@ -30,7 +30,8 @@ import java.util.*
 @ListFragment(
     gridLayout = true,
     columns = 2,
-    dataSource = DataSource.Flow
+    dataSource = DataSource.Flow,
+    layoutByName = "fragment_photos"
 )
 @ViewModel
 @Adapter(
