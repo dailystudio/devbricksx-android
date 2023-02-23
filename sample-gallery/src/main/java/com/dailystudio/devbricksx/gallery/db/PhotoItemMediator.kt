@@ -23,7 +23,7 @@ class PhotoItemMediator(
     private val query: String = Constants.QUERY_ALL
 ) : RemoteMediator<Int, PhotoItem>() {
 
-    var cacheTimeout = Constants.IMAGES_CACHE_TIMEOUT
+    private var cacheTimeout = Constants.IMAGES_CACHE_TIMEOUT
 
     override suspend fun initialize(): InitializeAction {
         val context = GlobalContextWrapper.context!!
@@ -79,28 +79,24 @@ class PhotoItemMediator(
                 else -> state.config.pageSize
             }
 
-            val pagedPhotos = withContext(Dispatchers.IO) {
-                if (query == Constants.QUERY_ALL) {
-                    UnsplashApi.listPhotos(
-                        page = page,
-                        perPage = perPage,
-                    ) ?: PageResults()
-                } else {
-                    UnsplashApi.searchPhotos(
-                        query = query,
-                        page = page,
-                        perPage = perPage,
-                    ) ?: PageResults()
-                }
+            val pagedPhotos = if (query == Constants.QUERY_ALL) {
+                UnsplashApi.listPhotos(
+                    page = page,
+                    perPage = perPage,
+                ) ?: PageResults()
+            } else {
+                UnsplashApi.searchPhotos(
+                    query = query,
+                    page = page,
+                    perPage = perPage,
+                ) ?: PageResults()
             }
 
-            val items = withContext(Dispatchers.IO) {
-                pagedPhotos.results?.mapIndexed { index, photo ->
-                    PhotoItem.fromUnsplashPhoto(photo).apply {
-                        cachedIndex = "$page.${index.toString().padStart(3, '0')}"
-                    }
-                } ?: arrayListOf()
-            }
+            val items = pagedPhotos.results?.mapIndexed { index, photo ->
+                PhotoItem.fromUnsplashPhoto(photo).apply {
+                    cachedIndex = "$page.${index.toString().padStart(3, '0')}"
+                }
+            } ?: arrayListOf()
 
             Logger.debug("[MED] page = $page, perPage = $perPage, new ${pagedPhotos.results?.size} photo(s) downloaded.")
 
