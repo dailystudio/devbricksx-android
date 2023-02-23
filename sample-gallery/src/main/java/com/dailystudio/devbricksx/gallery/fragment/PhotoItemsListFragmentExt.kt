@@ -8,11 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
@@ -24,7 +22,9 @@ import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import com.google.android.material.appbar.MaterialToolbar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
 
 class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
@@ -76,7 +76,7 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
             viewModel.listPhotos()
         }.also {
             Logger.debug("[MED] request paging: query = $query, pager = $it")
-        }.flow
+        }.flow.flowOn(Dispatchers.IO)
     }
 
     override fun onItemClick(

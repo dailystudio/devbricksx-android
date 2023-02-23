@@ -10,7 +10,11 @@
         android:label="PhotoItemsListFragmentExt" >
         <action
             android:id="@+id/action_photoItemsListFragmentExt_to_photoViewFragment"
-            app:destination="@id/photoViewFragment" />
+            app:destination="@id/photoViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_photoItemsListFragmentExt_to_aboutFragment"
             app:destination="@id/aboutFragment" />

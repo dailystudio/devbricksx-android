@@ -171,3 +171,23 @@ interface UnsplashPageLinksDaoExtension {
     fun deleteLinksForKeyword(keyword: String)
 
 }
+
+
+@RoomCompanion(
+    primaryKeys = [ "query" ],
+    extension = RefreshKeyDaoExtension::class,
+    database = "unsplash"
+)
+data class RefreshKey(val query: String,
+                      val lastRefreshed: Date?)
+
+@DaoExtension(entity = RefreshKey::class)
+interface RefreshKeyDaoExtension {
+
+    @Query("SELECT * FROM refreshkey WHERE query = :query")
+    fun refreshKeyByQuery(query: String): RefreshKey?
+
+    @Query("DELETE FROM refreshkey WHERE query = :query")
+    fun deleteByQuery(query: String)
+
+}

@@ -11,33 +11,39 @@ import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
+import com.dailystudio.devbricksx.utils.CalendarUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.*
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
     private val query: String = Constants.QUERY_ALL
 ) : RemoteMediator<Int, PhotoItem>() {
 
-    private var initialized = false
+    var cacheTimeout = Constants.IMAGES_CACHE_TIMEOUT
 
     override suspend fun initialize(): InitializeAction {
-        /*
-         * always return LAUNCH_INITIAL_REFRESH will cause
-         * pager not update after resume
-         */
-        val ret = if (!initialized) {
-            initialized = true
-            InitializeAction.LAUNCH_INITIAL_REFRESH
-        } else {
+        val context = GlobalContextWrapper.context!!
+
+        val unsplashDb = UnsplashDatabase.getDatabase(context)
+
+        val now = Date(System.currentTimeMillis())
+        val lastUpdated = unsplashDb.refreshKeyDao().refreshKeyByQuery(query)?.lastRefreshed ?: Date(0)
+        val timeout = now.time - lastUpdated.time
+        Logger.debug("now: $now")
+        Logger.debug("last updated: $lastUpdated")
+        Logger.debug("timeout: $timeout [${CalendarUtils.durationToReadableString(timeout)}]")
+
+        return if (timeout < cacheTimeout) {
+            Logger.debug("cache is fresh, skip refresh fully")
             InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            Logger.debug("cache is out of date, do a full refresh")
+            InitializeAction.LAUNCH_INITIAL_REFRESH
         }
-
-        Logger.debug("[MED] mediator initialized: $ret")
-
-        return ret
     }
 
     override suspend fun load(
@@ -102,6 +108,13 @@ class PhotoItemMediator(
                 if (loadType == LoadType.REFRESH) {
                     db.unsplashPageLinksDao().deleteLinksForKeyword(query)
                     db.photoItemDao().deletePhotos()
+
+                    val lastRefreshed = Date(System.currentTimeMillis())
+                    Logger.debug("reset refreshKey to: $lastRefreshed")
+
+                    db.refreshKeyDao().insertOrUpdate(
+                        RefreshKey(query, lastRefreshed)
+                    )
                 }
 
                 db.unsplashPageLinksDao().insertOrUpdate(

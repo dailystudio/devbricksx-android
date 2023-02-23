@@ -14,7 +14,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.withStarted
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.dailystudio.devbricksx.development.Logger
@@ -24,6 +27,7 @@ import com.dailystudio.devbricksx.gallery.api.ImageApi
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PhotoViewFragment: DevBricksFragment() {
@@ -37,11 +41,25 @@ class PhotoViewFragment: DevBricksFragment() {
         Logger.debug("thumb: ${args.thumbUrl}")
         Logger.debug("download: ${args.downloadUrl}")
 
+/*
         lifecycleScope.launch(Dispatchers.IO) {
             val bytes = ImageApi.download(args.downloadUrl) {
                 Logger.debug("progress: $it")
             }
             Logger.debug("${bytes?.size ?: 0} bytes downloaded")
+        }
+*/
+
+        /*
+         * Improve Status Bar transformation during navigation animation
+         */
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                delay(resources.getInteger(R.integer.animLength)/ 2L)
+                SystemBarsUtils.statusBarColor(requireActivity(),
+                    Color.TRANSPARENT
+                )
+            }
         }
     }
 
@@ -59,11 +77,6 @@ class PhotoViewFragment: DevBricksFragment() {
         photoView = view.findViewById(R.id.photo)
         photoView?.load(
             args.thumbUrl
-        )
-
-        SystemBarsUtils.statusBarColor(
-            requireActivity(),
-            Color.TRANSPARENT
         )
     }
 
