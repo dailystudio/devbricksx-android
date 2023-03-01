@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.dailystudio.devbricksx.gallery"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion TARGET_SDK
         versionCode VERSION_CODE
         versionName VERSION_NAME
