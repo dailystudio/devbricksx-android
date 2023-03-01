@@ -86,7 +86,7 @@ data class PhotoItem(override val id: String,
                 "0.0",
                 photo.user.name,
                 photo.description,
-                photo.urls.regular,
+                photo.urls.thumb,
                 photo.urls.full
             ).apply {
                 this.created = created

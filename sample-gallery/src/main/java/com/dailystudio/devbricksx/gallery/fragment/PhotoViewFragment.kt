@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.gallery.fragment
 
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +20,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
 import androidx.navigation.fragment.navArgs
+import coil.imageLoader
 import coil.load
+import coil.request.ImageRequest
+import coil.target.ImageViewTarget
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.DevBricksFragment
 import com.dailystudio.devbricksx.gallery.R
@@ -29,6 +33,7 @@ import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PhotoViewFragment: DevBricksFragment() {
 
@@ -53,12 +58,14 @@ class PhotoViewFragment: DevBricksFragment() {
         /*
          * Improve Status Bar transformation during navigation animation
          */
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 delay(resources.getInteger(R.integer.animLength)/ 2L)
-                SystemBarsUtils.statusBarColor(requireActivity(),
-                    Color.TRANSPARENT
-                )
+                withContext(Dispatchers.Main) {
+                    SystemBarsUtils.statusBarColor(requireActivity(),
+                        Color.TRANSPARENT
+                    )
+                }
             }
         }
     }
@@ -75,9 +82,27 @@ class PhotoViewFragment: DevBricksFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         photoView = view.findViewById(R.id.photo)
-        photoView?.load(
-            args.thumbUrl
+        photoView?.loadWithQuality(
+            args.downloadUrl,
+            args.thumbUrl,
         )
     }
 
+}
+
+fun ImageView.loadWithQuality(
+    highQuality: String,
+    lowQuality: String,
+    placeholderRes: Int? = null,
+    errorRes: Int? = null
+) {
+    load(lowQuality) {
+        placeholderRes?.let { placeholder(placeholderRes) }
+        listener(onSuccess = { _, _ ->
+            load(highQuality) {
+                placeholder(drawable) // If there was a way to not clear existing image before loading, this would not be required
+                errorRes?.let { error(errorRes) }
+            }
+        })
+    }
 }
