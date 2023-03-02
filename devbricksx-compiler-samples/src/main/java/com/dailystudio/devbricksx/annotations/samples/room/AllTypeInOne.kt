@@ -44,16 +44,16 @@ abstract class AllTypesInOneDaoExtension {
     abstract fun selectOneByValOfIntType(arrayOfInt: Array<Int>): AllTypesInOne
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
-    abstract fun selectAllByValOfIntType(arrayOfInt: Array<Int>): List<AllTypesInOne>
+    abstract fun selectAllByValOfIntType(arrayOfInt: Array<Int>): List<AllTypesInOne?>
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
-    abstract fun selectOneByValOfIntTypeLive(arrayOfInt: Array<Int>): LiveData<AllTypesInOne>
+    abstract fun selectOneByValOfIntTypeLive(arrayOfInt: Array<Int>): LiveData<AllTypesInOne?>
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
-    abstract fun selectAllByValOfIntTypeLive(arrayOfInt: Array<Int>): LiveData<List<AllTypesInOne>>
+    abstract fun selectAllByValOfIntTypeLive(arrayOfInt: Array<Int>): LiveData<List<AllTypesInOne?>>
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
-    abstract fun selectAllByValOfIntTypeFlow(arrayOfInt: Array<Int>): Flow<List<AllTypesInOne>>
+    abstract fun selectAllByValOfIntTypeFlow(arrayOfInt: Array<Int>): Flow<List<AllTypesInOne?>>
 
     @Query("SELECT * FROM alltypesinone WHERE int_type = :arrayOfInt")
     abstract fun selectAllByValOfIntTypePagedList(arrayOfInt: Array<Int>): LiveData<PagedList<AllTypesInOne>>

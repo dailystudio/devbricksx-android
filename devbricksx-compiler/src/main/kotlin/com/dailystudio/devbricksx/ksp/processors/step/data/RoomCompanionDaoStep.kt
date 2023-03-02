@@ -50,7 +50,9 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val typeOfPagingSourceOfObject =
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
         val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
+        val typeOfLiveDataOfNullableObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion)
+        val typeOfLiveDataOfNullableCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion.copy(nullable = true))
         val typeOfLiveDataOfListOfCompanions =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfCompanions)
         val typeOfLiveDataOfListOfObjects =
@@ -101,7 +103,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val methodGetOneLiveBuilder: FunSpec.Builder =
             FunSpec.builder(FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion())
                 .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
-                .returns(typeOfLiveDataOfCompanion.copy(nullable = true))
+                .returns(typeOfLiveDataOfNullableCompanion)
         RoomCompanionUtils.attachPrimaryKeysToMethodParameters(methodGetOneLiveBuilder, primaryKeys)
 
         methodGetOneLiveBuilder.addAnnotation(
@@ -265,14 +267,15 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         val methodWrapperOfGetOneLiveBuilder = FunSpec.builder(
             FunctionNames.GET_ONE_LIVE.nameOfFunc())
             .addModifiers(KModifier.PUBLIC)
-            .returns(typeOfLiveDataOfObject.copy(nullable = true))
+            .returns(typeOfLiveDataOfNullableObject)
 
         RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
             methodWrapperOfGetOneLiveBuilder, primaryKeys)
 
         FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(
             methodWrapperOfGetOneLiveBuilder,
-            typeOfLiveDataOfObject.copy(nullable = true),
+            typeOfObject,
+            typeOfLiveDataOfNullableObject,
             FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneLiveBuilder.build())
@@ -283,6 +286,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             .returns(typeOfListOfObjects)
 
         FuncSpecStatementsGenerator.mapOutputToObjects(methodWrapperOfGetAllBuilder,
+            typeOfObject,
             typeOfListOfObjects,
             FunctionNames.GET_ALL.nameOfFuncForCompanion())
 

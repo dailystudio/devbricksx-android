@@ -106,51 +106,88 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         val returnType = func.returnType?.toTypeName() ?: UNIT
         val normReturnType = returnType.copy(false)
 
+
         var pageSize: Int = Page.DEFAULT_PAGE_SIZE
         val pageAnnotation = func.getKSAnnotation(Page::class, resolver)
         if (pageAnnotation != null) {
             pageSize = pageAnnotation.findArgument("pageSize")
         }
 
+        val typeOfNullableObject = typeOfObject.copy(nullable = true)
         val typeOfCompanion = TypeNameUtils.typeOfCompanion(typeOfObject)
+        val typeOfNullableCompanion = typeOfCompanion.copy(nullable = true)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
+        val typeOfListOfNullableObjects = TypeNameUtils.typeOfListOf(typeOfObject.copy(nullable = true))
         val typeOfListOfCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion)
+        val typeOfListOfNullableCompanions = TypeNameUtils.typeOfListOf(typeOfCompanion.copy(nullable = true))
         val typeOfDataSourceFactoryOfObject =
             TypeNameUtils.typeOfDataSourceFactoryOf(typeOfObject)
+        val typeOfDataSourceFactoryOfNullableObject =
+            TypeNameUtils.typeOfDataSourceFactoryOf(typeOfObject.copy(nullable = true))
         val typeOfDataSourceFactoryOfCompanion =
             TypeNameUtils.typeOfDataSourceFactoryOf(typeOfCompanion)
+        val typeOfDataSourceFactoryOfNullableCompanion =
+            TypeNameUtils.typeOfDataSourceFactoryOf(typeOfCompanion.copy(nullable = true))
         val typeOfPagingSourceOfObject =
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
+        val typeOfPagingSourceOfNullableObject =
+            TypeNameUtils.typeOfPagingSourceOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
+        val typeOfLiveDataOfNullableObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion)
+        val typeOfLiveDataOfNullableCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion.copy(nullable = true))
         val typeOfFlowOfObject = TypeNameUtils.typeOfFlowOf(typeOfObject)
+        val typeOfFlowOfNullableObject = TypeNameUtils.typeOfFlowOf(typeOfObject.copy(nullable = true))
         val typeOfFlowOfCompanion = TypeNameUtils.typeOfFlowOf(typeOfCompanion)
+        val typeOfFlowOfNullableCompanion = TypeNameUtils.typeOfFlowOf(typeOfCompanion.copy(nullable = true))
         val typeOfLiveDataOfListOfCompanions =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfCompanions)
+        val typeOfLiveDataOfListOfNullableCompanions =
+            TypeNameUtils.typeOfLiveDataOf(typeOfListOfNullableCompanions)
         val typeOfLiveDataOfListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfObjects)
+        val typeOfLiveDataOfListOfNullableObjects =
+            TypeNameUtils.typeOfLiveDataOf(typeOfListOfNullableObjects)
         val typeOfFlowOfListOfCompanions =
             TypeNameUtils.typeOfFlowOf(typeOfListOfCompanions)
+        val typeOfFlowOfListOfNullableCompanions =
+            TypeNameUtils.typeOfFlowOf(typeOfListOfNullableCompanions)
         val typeOfFlowOfListOfObjects =
             TypeNameUtils.typeOfFlowOf(typeOfListOfObjects)
+        val typeOfFlowOfListOfNullableObjects =
+            TypeNameUtils.typeOfFlowOf(typeOfListOfNullableObjects)
         val typeOfLiveDataOfPagedListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(TypeNameUtils.typeOfPagedListOf(typeOfObject))
+        val typeOfLiveDataOfPagedListOfNullableObjects =
+            TypeNameUtils.typeOfLiveDataOf(TypeNameUtils.typeOfPagedListOf(typeOfObject.copy(nullable = true)))
 
         val methodWrappedBuilder = FunSpec.builder(
             FunctionNames.toWrappedFunc(nameOfFunc))
             .addModifiers(KModifier.ABSTRACT, KModifier.PUBLIC)
             .addAnnotation(queryAnnotation.toAnnotationSpec())
 
+        warn("returnType: ${returnType}, is param: ${returnType is ParameterizedTypeName}")
+        warn("normReturnType: ${normReturnType}, typeOfDataSourceFactoryOfObject: ${normReturnType == typeOfDataSourceFactoryOfObject}")
+        warn("normReturnType: ${normReturnType}, typeOfDataSourceFactoryOfNullableObject: ${normReturnType == typeOfDataSourceFactoryOfObject}")
+
         methodWrappedBuilder.returns(
             when (normReturnType) {
                 typeOfObject -> typeOfCompanion
+                typeOfNullableObject -> typeOfNullableCompanion
                 typeOfListOfObjects -> typeOfListOfCompanions
+                typeOfListOfNullableObjects -> typeOfListOfNullableCompanions
                 typeOfLiveDataOfObject -> typeOfLiveDataOfCompanion
+                typeOfLiveDataOfNullableObject -> typeOfLiveDataOfNullableCompanion
                 typeOfLiveDataOfListOfObjects -> typeOfLiveDataOfListOfCompanions
+                typeOfLiveDataOfListOfNullableObjects -> typeOfLiveDataOfListOfNullableCompanions
                 typeOfFlowOfObject -> typeOfFlowOfCompanion
+                typeOfFlowOfNullableObject -> typeOfFlowOfNullableCompanion
                 typeOfFlowOfListOfObjects -> typeOfFlowOfListOfCompanions
+                typeOfFlowOfListOfNullableObjects -> typeOfFlowOfListOfNullableCompanions
                 typeOfDataSourceFactoryOfObject -> typeOfDataSourceFactoryOfCompanion
+                typeOfDataSourceFactoryOfNullableObject -> typeOfDataSourceFactoryOfNullableCompanion
                 typeOfLiveDataOfPagedListOfObjects, typeOfPagingSourceOfObject -> typeOfDataSourceFactoryOfCompanion
+                typeOfLiveDataOfPagedListOfNullableObjects, typeOfPagingSourceOfNullableObject -> typeOfDataSourceFactoryOfNullableCompanion
                 else -> returnType
             }.copy(returnType.isNullable)
         )
@@ -175,52 +212,55 @@ class DaoExtensionStep (processor: BaseSymbolProcessor)
         }
 
         when (normReturnType) {
-            typeOfObject -> FuncSpecStatementsGenerator.mapOutputToObject(
+            typeOfObject, typeOfNullableObject -> FuncSpecStatementsGenerator.mapOutputToObject(
                 methodOverrideBuilder,
                 returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
-            typeOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToObjects(
-                methodOverrideBuilder,
-                returnType,
-                FunctionNames.toWrappedFunc(nameOfFunc),
-                strOfFunCallBuilder.toString()
-            )
-            typeOfLiveDataOfObject -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(
-                methodOverrideBuilder,
-                returnType,
-                FunctionNames.toWrappedFunc(nameOfFunc),
-                strOfFunCallBuilder.toString()
-            )
-            typeOfLiveDataOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(
+            typeOfListOfObjects, typeOfListOfNullableObjects -> FuncSpecStatementsGenerator.mapOutputToObjects(
                 methodOverrideBuilder,
                 typeOfObject,
                 returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
-            typeOfFlowOfObject -> FuncSpecStatementsGenerator.mapOutputToFlowOfObject(
-                methodOverrideBuilder,
-                returnType,
-                FunctionNames.toWrappedFunc(nameOfFunc),
-                strOfFunCallBuilder.toString()
-            )
-            typeOfFlowOfListOfObjects -> FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(
+            typeOfLiveDataOfObject, typeOfLiveDataOfNullableObject -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObject(
                 methodOverrideBuilder,
                 typeOfObject,
                 returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
-            typeOfLiveDataOfPagedListOfObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
+            typeOfLiveDataOfListOfObjects, typeOfLiveDataOfListOfNullableObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfObjects(
+                methodOverrideBuilder,
+                typeOfObject,
+                returnType,
+                FunctionNames.toWrappedFunc(nameOfFunc),
+                strOfFunCallBuilder.toString()
+            )
+            typeOfFlowOfObject, typeOfFlowOfNullableObject -> FuncSpecStatementsGenerator.mapOutputToFlowOfObject(
+                methodOverrideBuilder,
+                typeOfObject,
+                returnType,
+                FunctionNames.toWrappedFunc(nameOfFunc),
+                strOfFunCallBuilder.toString()
+            )
+            typeOfFlowOfListOfObjects, typeOfFlowOfListOfNullableObjects -> FuncSpecStatementsGenerator.mapOutputToFlowOfObjects(
+                methodOverrideBuilder,
+                typeOfObject,
+                returnType,
+                FunctionNames.toWrappedFunc(nameOfFunc),
+                strOfFunCallBuilder.toString()
+            )
+            typeOfLiveDataOfPagedListOfObjects, typeOfLiveDataOfPagedListOfNullableObjects -> FuncSpecStatementsGenerator.mapOutputToLiveDataOfPagedListObjects(
                 methodOverrideBuilder,
                 returnType,
                 pageSize,
                 FunctionNames.toWrappedFunc(nameOfFunc),
                 strOfFunCallBuilder.toString()
             )
-            typeOfPagingSourceOfObject -> FuncSpecStatementsGenerator.mapOutputToPagingSource(
+            typeOfPagingSourceOfObject, typeOfPagingSourceOfNullableObject -> FuncSpecStatementsGenerator.mapOutputToPagingSource(
                 methodOverrideBuilder,
                 returnType,
                 FunctionNames.toWrappedFunc(nameOfFunc),

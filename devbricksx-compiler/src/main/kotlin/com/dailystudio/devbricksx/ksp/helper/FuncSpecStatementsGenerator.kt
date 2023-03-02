@@ -1,11 +1,10 @@
 package com.dailystudio.devbricksx.ksp.helper
 
-import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
-import com.dailystudio.devbricksx.ksp.processors.step.ProcessStep
 import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
@@ -38,32 +37,57 @@ object FuncSpecStatementsGenerator {
         )
     }
 
+    private fun isReturnNullableObject(typeOfObject: TypeName,
+                                       returnType: TypeName): Boolean {
+        var returnNullable = false
+        if (returnType is ParameterizedTypeName) {
+            returnType.typeArguments.forEach {
+                if (it is ParameterizedTypeName) {
+                    returnNullable = isReturnNullableObject(typeOfObject, it)
+                } else {
+                    if (it.copy(nullable = false) == typeOfObject) {
+                        returnNullable = it.isNullable
+                    }
+                }
+            }
+        }
+
+        return returnNullable
+    }
+
     fun mapOutputToObjects(funcSpecBuilder: FunSpec.Builder,
+                           typeOfObject: TypeName,
                            returnType: TypeName,
                            nameOfWrappedFunc: String,
                            strOfParamsOfWrappedFunc: String? = null) {
+        val returnNullable = isReturnNullableObject(typeOfObject, returnType)
+
         funcSpecBuilder
             .addStatement("""
                 return this.%N(%L)%Lmap({ 
-                    it.toObject() 
+                    it%LtoObject() 
                 })
             """.trimIndent(),
                 nameOfWrappedFunc,
                 strOfParamsOfWrappedFunc ?: "",
                 if (returnType.isNullable) "?." else ".",
+                if (returnNullable) "?." else ".",
             )
     }
 
     fun mapOutputToLiveDataOfObject(funcSpecBuilder: FunSpec.Builder,
+                                    typeOfObject: TypeName,
                                     returnType: TypeName,
                                     nameOfWrappedFunc: String,
                                     strOfParamsOfWrappedFunc: String? = null) {
+        val returnNullable = isReturnNullableObject(typeOfObject, returnType)
+
         funcSpecBuilder
             .addStatement(
                 """
                     return this.%N(%L)%Llet({ livedata ->
                         %T.map(livedata, { 
-                            it.toObject() 
+                            it%LtoObject() 
                         })
                     })
                 """.trimIndent(),
@@ -71,6 +95,7 @@ object FuncSpecStatementsGenerator {
                 strOfParamsOfWrappedFunc ?: "",
                 if (returnType.isNullable) "?." else ".",
                 TypeNameUtils.typeOfTransformations(),
+                if (returnNullable) "?." else ".",
         )
     }
 
@@ -79,13 +104,15 @@ object FuncSpecStatementsGenerator {
                                      returnType: TypeName,
                                      nameOfWrappedFunc: String,
                                      strOfParamsOfWrappedFunc: String? = null) {
+        val returnNullable = isReturnNullableObject(typeOfObject, returnType)
+
         funcSpecBuilder.addStatement(
             """
                 return this.%N(%L)%Llet({ livedata ->
                     %T.map(livedata, {
                       mutableListOf<%T>().apply {
                         it.forEach {
-                          add(it.toObject())
+                          add(it%LtoObject())
                         }
                       }
                     })
@@ -95,24 +122,29 @@ object FuncSpecStatementsGenerator {
             strOfParamsOfWrappedFunc ?: "",
             if (returnType.isNullable) "?." else ".",
             TypeNameUtils.typeOfTransformations(),
-            typeOfObject
+            typeOfObject.copy(returnNullable),
+            if (returnNullable) "?." else ".",
         )
     }
 
     fun mapOutputToFlowOfObject(funcSpecBuilder: FunSpec.Builder,
+                                typeOfObject: TypeName,
                                 returnType: TypeName,
                                 nameOfWrappedFunc: String,
                                 strOfParamsOfWrappedFunc: String? = null) {
+        val returnNullable = isReturnNullableObject(typeOfObject, returnType)
+
         funcSpecBuilder.addStatement(
             """
                 return this.%N(%L)%L%T({
-                  it.toObject()
+                  it%LtoObject()
                 })
             """.trimIndent(),
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
             if (returnType.isNullable) "?." else ".",
             TypeNameUtils.typeOfFlowMapFunction(),
+            if (returnNullable) "?." else ".",
         )
     }
 
@@ -121,12 +153,14 @@ object FuncSpecStatementsGenerator {
                                  returnType: TypeName,
                                  nameOfWrappedFunc: String,
                                  strOfParamsOfWrappedFunc: String? = null) {
+        val returnNullable = isReturnNullableObject(typeOfObject, returnType)
+
         funcSpecBuilder.addStatement(
             """
                 return this.%N(%L)%L%T({
                   mutableListOf<%T>().apply {
                     it.forEach {
-                      add(it.toObject())
+                      add(it%LtoObject())
                     }
                   }
                 })
@@ -135,7 +169,8 @@ object FuncSpecStatementsGenerator {
             strOfParamsOfWrappedFunc ?: "",
             if (returnType.isNullable) "?." else ".",
             TypeNameUtils.typeOfFlowMapFunction(),
-            typeOfObject
+            typeOfObject.copy(returnNullable),
+            if (returnNullable) "?." else ".",
         )
     }
 
