@@ -10,10 +10,11 @@ data class Photo(
     val description: String?,
     val user: User,
     val urls: Urls,
+    val exif: Exif?,
 ) {
     override fun toString(): String {
         return buildString {
-            "[$id]: ${width}x$height, color: $color, user: $user, desc: $description, urls: $urls"
+            "[$id]: ${width}x$height, color: $color, exif: $exif, user: $user, desc: $description, urls: $urls"
         }
     }
 }

@@ -47,11 +47,14 @@ import java.util.*
     database = "unsplash"
 )
 data class PhotoItem(override val id: String,
-    var cachedIndex: String,
-    val author: String,
-    val description: String?,
-    val thumbnailUrl: String,
-    val downloadUrl: String
+                     var cachedIndex: String,
+                     val uid: String,
+                     val userName: String,
+                     val description: String?,
+                     val color: String,
+                     val exif: String,
+                     val thumbnailUrl: String,
+                     val downloadUrl: String
 ): StringIdRecord(id) {
 
     companion object {
@@ -84,9 +87,12 @@ data class PhotoItem(override val id: String,
             return PhotoItem(
                 photo.id,
                 "0.0",
+                photo.user.username,
                 photo.user.name,
                 photo.description,
-                photo.urls.thumb,
+                photo.color,
+                photo.exif?.name ?: "",
+                photo.urls.small,
                 photo.urls.full
             ).apply {
                 this.created = created
@@ -123,7 +129,7 @@ class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView
         val context = itemView.context
 
         return context.getString(
-            R.string.label_author, item.author)
+            R.string.label_author, item.userName)
     }
 
 }

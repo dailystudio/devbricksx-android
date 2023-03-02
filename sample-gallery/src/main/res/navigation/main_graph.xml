@@ -29,6 +29,15 @@
         <argument
             android:name="downloadUrl"
             app:argType="string" />
+        <argument
+            android:name="username"
+            app:argType="string" />[
+        <argument
+            android:name="color"
+            app:argType="string" />
+        <argument
+            android:name="exif"
+            app:argType="string" />
     </fragment>
     <dialog
         android:id="@+id/aboutFragment"

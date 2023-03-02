@@ -9,4 +9,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_layout"
+        style="?attr/materialCardViewElevatedStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:padding="@dimen/default_padding"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/user_photo"
+                    android:layout_centerVertical="true"
+                    android:layout_width="@dimen/default_action_icon_size"
+                    android:layout_height="@dimen/default_action_icon_size"/>
+                <LinearLayout
+                    android:layout_toEndOf="@id/user_photo"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

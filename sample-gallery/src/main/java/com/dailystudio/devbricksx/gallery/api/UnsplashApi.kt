@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import com.dailystudio.devbricksx.gallery.api.data.Photo
+import com.dailystudio.devbricksx.gallery.api.data.User
 import com.dailystudio.devbricksx.network.*
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -25,7 +26,7 @@ interface ImageApiInterface {
 
     @GET("/{downloadPath}")
     suspend fun download(
-        @Path("downloadPath")path: String,
+        @Path("downloadPath") path: String,
         @Header(NetworkApi.HEADER_PROGRESS_IDENTIFIER) id: Long
     ): ResponseBody
 }
@@ -79,6 +80,7 @@ interface UnsplashApiInterface {
         const val BASE_URL = "https://api.unsplash.com"
         const val PHOTOS_PATH = "photos"
         const val SEARCH_PATH = "search"
+        const val USER_PATH = "user"
 
         const val PARAM_CLIENT_ID = "client_id"
         const val PARAM_PAGE = "page"
@@ -127,11 +129,11 @@ interface UnsplashApiInterface {
     }
 
     @GET("$SEARCH_PATH/$PHOTOS_PATH")
-    fun searchPhotos(
+    suspend fun searchPhotos(
         @Query(PARAM_QUERY)query: String,
         @Query(PARAM_PAGE)page: Int = 1,
         @Query(PARAM_PER_PAGE)perPage: Int = 10
-    ): Call<PageResults>
+    ): PageResults
 
     @GET("/$PHOTOS_PATH")
     fun listPhotos(
@@ -139,81 +141,62 @@ interface UnsplashApiInterface {
         @Query(PARAM_PER_PAGE)perPage: Int = 10
     ): Call<Array<Photo>>
 
+    @GET("/$USER_PATH/{userName}")
+    suspend fun getUser(
+        @Path("userName") userName: String,
+    ): User
+
 }
 
 object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
 
-    fun searchPhotos(query: String,
+    suspend fun searchPhotos(query: String,
                      page: Int = 1,
                      perPage: Int = 10,
-                     callback: Callback<PageResults>? = null
     ): PageResults? {
         val uniAppInterface = getInterface()
 
-        val call = uniAppInterface.searchPhotos(query, page, perPage)
-        if (callback == null) {
-            var ret: PageResults? = null
-            var links: Links? = null
-            try {
-                val response = call.execute()
-
-                ret = response.body()
-                links = Links.fromString(response.headers()["Link"])
-            } catch (e: IOException) {
-                Logger.error(
-                    "list photos failed: %s",
-                    e.toString()
-                )
-
-                ret = null
-                links = null
-            }
-
-            return ret?.apply {
-                this.links = links
-            }
+        return catchApiCallOrNull {
+            uniAppInterface.searchPhotos(query, page, perPage)
         }
-
-        call.enqueue(callback)
-
-        return null
     }
 
     fun listPhotos(page: Int = 1,
                    perPage: Int = 10,
-                   callback: Callback<Array<Photo>>? = null
-    ): PageResults? {
+    ): PageResults {
         val uniAppInterface = getInterface()
 
         val call = uniAppInterface.listPhotos(page, perPage)
-        if (callback == null) {
-            var ret: Array<Photo>? = null
-            var links: Links? = null
-            try {
-                val response = call.execute()
+        var ret: Array<Photo>? = null
+        var links: Links? = null
+        try {
+            val response = call.execute()
 
-                ret = response.body()
-                links = Links.fromString(response.headers()["Link"])
-            } catch (e: IOException) {
-                Logger.error(
-                    "list photos failed: %s",
-                    e.toString()
-                )
+            ret = response.body()
+            links = Links.fromString(response.headers()["Link"])
+        } catch (e: IOException) {
+            Logger.error(
+                "list photos failed: %s",
+                e.toString()
+            )
 
-                ret = null
-                links = null
-            }
-
-            return PageResults(
-                ret?.size ?: 0,
-                UnsplashApiInterface.getPageFromLink(links?.last),
-                ret,
-                links)
+            ret = null
+            links = null
         }
 
-        call.enqueue(callback)
+        return PageResults(
+            ret?.size ?: 0,
+            UnsplashApiInterface.getPageFromLink(links?.last),
+            ret,
+            links)
+    }
 
-        return null
+    suspend fun getUser(userName: String): User? {
+        val uniAppInterface = getInterface()
+
+        return catchApiCallOrNull {
+            uniAppInterface.getUser(userName)
+        }
     }
 
     private var mHeaderInterceptor = object : HeaderInterceptor() {

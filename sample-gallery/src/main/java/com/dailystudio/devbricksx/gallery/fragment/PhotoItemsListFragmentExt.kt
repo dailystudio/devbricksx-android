@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.*
 import androidx.recyclerview.widget.RecyclerView
@@ -92,7 +91,10 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
         val action = PhotoItemsListFragmentExtDirections
             .actionPhotoItemsListFragmentExtToPhotoViewFragment(
                 item.thumbnailUrl,
-                item.downloadUrl
+                item.downloadUrl,
+                item.userName,
+                item.color,
+                item.exif
             )
         findNavController().navigate(action)
     }

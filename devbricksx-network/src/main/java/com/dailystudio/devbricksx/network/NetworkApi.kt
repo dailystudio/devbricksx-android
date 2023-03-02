@@ -259,9 +259,9 @@ abstract class NetworkApi<Interface> {
                 DebugRequestInterceptor(options.debugOutputBufferLen)
             )
 
-            if (options.respType == ResponseType.Raw) {
+//            if (options.respType == ResponseType.Raw) {
                 clientBuilder.addInterceptor(DebugRawResponseInterceptor(options.debugOutputBufferLen))
-            }
+//            }
         }
 
         options.connectionTimeout?.let {
@@ -360,6 +360,20 @@ abstract class NetworkApi<Interface> {
             }
         }
 
+    }
+
+    suspend fun <T> catchApiCallOrNull(
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        apiCall: suspend () -> T,
+    ): T? {
+        return withContext(dispatcher) {
+            try {
+                apiCall.invoke()
+            } catch (throwable: Throwable) {
+                Logger.error("failed to call api [${apiCall.javaClass.enclosingMethod?.name}]: $throwable")
+                null
+            }
+        }
     }
 
     suspend fun <T> progressApiCall(
