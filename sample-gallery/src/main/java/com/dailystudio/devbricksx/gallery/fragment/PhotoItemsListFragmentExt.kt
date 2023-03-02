@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.*
 import androidx.recyclerview.widget.RecyclerView
@@ -65,17 +66,20 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getDataSource(): Flow<PagingData<PhotoItem>> {
+    override fun createDataSource(): Flow<PagingData<PhotoItem>> {
         val query = viewModel.photoQuery.value ?: Constants.QUERY_ALL
+        val forceRefresh = (query != lastQuery)
+
         lastQuery = query
 
         return Pager(
-            PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
-            remoteMediator = PhotoItemMediator(query)) {
-            viewModel.listPhotos()
-        }.also {
-            Logger.debug("[MED] request paging: query = $query, pager = $it")
-        }.flow.flowOn(Dispatchers.IO)
+                PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
+                remoteMediator = PhotoItemMediator(query, forceRefresh)
+            ) {
+                viewModel.listPhotos()
+            }.also {
+                Logger.debug("[MED] request paging: query = $query, pager = $it")
+            }.flow.flowOn(Dispatchers.IO).cachedIn(requireActivity().lifecycleScope)
     }
 
     override fun onItemClick(

@@ -20,7 +20,8 @@ import java.util.*
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoItemMediator(
-    private val query: String = Constants.QUERY_ALL
+    private val query: String = Constants.QUERY_ALL,
+    private val forceRefresh: Boolean = false,
 ) : RemoteMediator<Int, PhotoItem>() {
 
     private var cacheTimeout = Constants.IMAGES_CACHE_TIMEOUT
@@ -37,11 +38,11 @@ class PhotoItemMediator(
         Logger.debug("last updated: $lastUpdated")
         Logger.debug("timeout: $timeout [${CalendarUtils.durationToReadableString(timeout)}]")
 
-        return if (timeout < cacheTimeout) {
+        return if (timeout < cacheTimeout && !forceRefresh) {
             Logger.debug("cache is fresh, skip refresh fully")
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {
-            Logger.debug("cache is out of date, do a full refresh")
+            Logger.debug("cache is out of date, do a full refresh.")
             InitializeAction.LAUNCH_INITIAL_REFRESH
         }
     }
