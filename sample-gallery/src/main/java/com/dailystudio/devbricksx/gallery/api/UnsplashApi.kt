@@ -98,13 +98,12 @@ interface UnsplashApiInterface {
 
             val uri = Uri.parse(link)
 
-            val paramPage = uri.getQueryParameter(
-                UnsplashApiInterface.PARAM_PAGE)
-                ?: UnsplashApiInterface.DEFAULT_PAGE.toString()
+            val paramPage =
+                uri.getQueryParameter(PARAM_PAGE) ?: DEFAULT_PAGE.toString()
             return try {
                 paramPage.toInt()
             } catch (e: NumberFormatException) {
-                UnsplashApiInterface.DEFAULT_PAGE
+                DEFAULT_PAGE
             }
         }
 
@@ -115,14 +114,13 @@ interface UnsplashApiInterface {
 
             val uri = Uri.parse(link)
 
-            val paramPage = uri.getQueryParameter(
-                UnsplashApiInterface.PARAM_PER_PAGE)
-                ?: UnsplashApiInterface.DEFAULT_PER_PAGE.toString()
+            val paramPage =
+                uri.getQueryParameter(PARAM_PER_PAGE) ?: DEFAULT_PER_PAGE.toString()
 
             return try {
                 paramPage.toInt()
             } catch (e: NumberFormatException) {
-                UnsplashApiInterface.DEFAULT_PER_PAGE
+                DEFAULT_PER_PAGE
             }
         }
 
@@ -148,7 +146,7 @@ interface UnsplashApiInterface {
 
 }
 
-object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
+object UnsplashApi: AuthenticatedNetworkApi<UnsplashApiInterface>() {
 
     suspend fun searchPhotos(query: String,
                      page: Int = 1,
@@ -199,9 +197,8 @@ object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
         }
     }
 
-    private var mHeaderInterceptor = object : HeaderInterceptor() {
-
-        override fun getHeaders(): Map<String, String> {
+    override val defaultAuthInfo: Map<String, String>
+        get() {
             val apiKey = GlobalContextWrapper.context?.let {
                 it.getString(R.string.api_key)
             }
@@ -210,14 +207,6 @@ object UnsplashApi: NetworkApi<UnsplashApiInterface>() {
                 "Authorization" to "Client-ID $apiKey"
             )
         }
-
-    }
-
-    override fun getApiOptions(type: ResponseType): ApiOptions {
-        return super.getApiOptions(type).apply {
-            interceptors = listOf(mHeaderInterceptor)
-        }
-    }
 
     override val baseUrl: String
         get() = UnsplashApiInterface.BASE_URL
