@@ -1,0 +1,11 @@
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="@dimen/default_action_icon_size"
+        android:height="@dimen/default_action_icon_size">
+        <shape
+            android:shape="oval">
+            <solid android:color="@color/light_black"/>
+
+        </shape>
+    </item>
+</layer-list>

@@ -11,13 +11,11 @@ import com.dailystudio.devbricksx.gallery.api.data.User
 import com.dailystudio.devbricksx.network.*
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.io.IOException
-import java.net.URLDecoder
 
 interface ImageApiInterface {
     companion object {
@@ -80,7 +78,7 @@ interface UnsplashApiInterface {
         const val BASE_URL = "https://api.unsplash.com"
         const val PHOTOS_PATH = "photos"
         const val SEARCH_PATH = "search"
-        const val USER_PATH = "user"
+        const val USERS_PATH = "users"
 
         const val PARAM_CLIENT_ID = "client_id"
         const val PARAM_PAGE = "page"
@@ -139,7 +137,7 @@ interface UnsplashApiInterface {
         @Query(PARAM_PER_PAGE)perPage: Int = 10
     ): Call<Array<Photo>>
 
-    @GET("/$USER_PATH/{userName}")
+    @GET("/$USERS_PATH/{userName}")
     suspend fun getUser(
         @Path("userName") userName: String,
     ): User

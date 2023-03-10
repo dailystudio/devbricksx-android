@@ -96,7 +96,7 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
             .actionPhotoItemsListFragmentExtToPhotoViewFragment(
                 item.thumbnailUrl,
                 item.downloadUrl,
-                item.userName,
+                item.uid,
                 item.color,
                 item.exif
             )

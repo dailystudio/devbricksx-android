@@ -25,10 +25,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
+                    android:background="@drawable/photo_badge"
+                    android:padding="2dp"
                     android:id="@+id/user_photo"
                     android:layout_centerVertical="true"
+                    android:layout_margin="@dimen/default_padding"
                     android:layout_width="@dimen/default_action_icon_size"
                     android:layout_height="@dimen/default_action_icon_size"/>
+
                 <LinearLayout
                     android:layout_toEndOf="@id/user_photo"
                     android:layout_alignParentEnd="true"

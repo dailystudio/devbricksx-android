@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.gallery.fragment
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import coil.load
+import coil.transform.CircleCropTransformation
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.DevBricksFragment
 import com.dailystudio.devbricksx.gallery.R
@@ -64,10 +66,13 @@ class PhotoViewFragment: DevBricksFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userModel.userByName(args.username).collect {
                     nameView?.text = it?.displayName
-                    iconView?.load(it?.photoUrl)
+                    iconView?.load(it?.photoUrl) {
+                        transformations(CircleCropTransformation())
+                    }
                 }
             }
         }
+
         lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userModel.pullUser(args.username)
@@ -108,10 +113,7 @@ class PhotoViewFragment: DevBricksFragment() {
         nameView?.text = args.username
 
         iconView = view.findViewById(R.id.user_photo)
-        iconView?.let {
-            val d = ColorDrawable(Color.parseColor(args.color))
-            it.setImageDrawable(d)
-        }
+        iconView?.backgroundTintList = (ColorStateList.valueOf(Color.parseColor(args.color)))
     }
 
     private fun alignBottomLayout(layout: View) {

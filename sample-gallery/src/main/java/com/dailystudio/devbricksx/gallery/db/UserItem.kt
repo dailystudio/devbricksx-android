@@ -25,7 +25,7 @@ class UserItem(
             return UserItem(
                 user.username,
                 user.name,
-                user.profile_image.medium
+                user.profile_image.large
             )
         }
     }
