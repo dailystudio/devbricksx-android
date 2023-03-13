@@ -2,7 +2,6 @@ package com.dailystudio.devbricksx.gallery.fragment
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +36,7 @@ class PhotoViewFragment: DevBricksFragment() {
     private var bottomLayout: View? = null
     private var nameView: TextView? = null
     private var iconView: ImageView? = null
+    private var sourceView: TextView? = null
 
     private lateinit var userModel: UserItemViewModelExt
 
@@ -114,6 +114,9 @@ class PhotoViewFragment: DevBricksFragment() {
 
         iconView = view.findViewById(R.id.user_photo)
         iconView?.backgroundTintList = (ColorStateList.valueOf(Color.parseColor(args.color)))
+
+        sourceView = view.findViewById(R.id.image_source)
+        sourceView?.text = getString(R.string.source_unsplash)
     }
 
     private fun alignBottomLayout(layout: View) {

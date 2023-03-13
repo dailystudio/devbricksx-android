@@ -66,6 +66,23 @@
         <item name="android:paddingBottom">0dp</item>
     </style>
 
+    <style name="UserName">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:textSize">@dimen/photo_user_name_font_size</item>
+        <item name="android:paddingStart">@dimen/default_label_padding</item>
+        <item name="android:paddingEnd">@dimen/default_label_padding</item>
+    </style>
+
+    <style name="ImageSource">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:textSize">@dimen/default_font_size</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:paddingStart">@dimen/default_label_padding</item>
+        <item name="android:paddingEnd">@dimen/default_label_padding</item>
+    </style>
+
     <style name="ToolbarChip" parent="Widget.Material3.Chip.Input">
         <item name="chipBackgroundColor">@color/white</item>
         <item name="chipStrokeWidth">0dp</item>

@@ -9,5 +9,7 @@
     <string name="menu_clear_search">Clear search</string>
     <string name="menu_about">About</string>
 
+    <string name="source_unsplash">Unsplash.com</string>
+
 
 </resources>
