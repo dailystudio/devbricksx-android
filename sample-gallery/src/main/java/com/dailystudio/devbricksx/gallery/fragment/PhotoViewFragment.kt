@@ -1,12 +1,17 @@
 package com.dailystudio.devbricksx.gallery.fragment
 
+import android.Manifest
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,16 +24,22 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
 import com.dailystudio.devbricksx.fragment.DevBricksFragment
 import com.dailystudio.devbricksx.gallery.R
+import com.dailystudio.devbricksx.gallery.api.ImageApi
 import com.dailystudio.devbricksx.gallery.model.UserItemViewModelExt
 import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
-class PhotoViewFragment: DevBricksFragment() {
+class PhotoViewFragment: AbsPermissionsFragment() {
+
+    override val autoCheckPermissions: Boolean
+        get() = false
 
     private val args: PhotoViewFragmentArgs by navArgs()
 
@@ -37,8 +48,12 @@ class PhotoViewFragment: DevBricksFragment() {
     private var nameView: TextView? = null
     private var iconView: ImageView? = null
     private var sourceView: TextView? = null
+    private var saveButton: Button? = null
+    private var downloadProgress: ProgressBar? = null
 
     private lateinit var userModel: UserItemViewModelExt
+
+    private var hasDownloadRequest: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,19 +63,6 @@ class PhotoViewFragment: DevBricksFragment() {
         Logger.debug("username: ${args.username}")
         Logger.debug("thumb: ${args.thumbUrl}")
         Logger.debug("download: ${args.downloadUrl}")
-
-/*
-        lifecycleScope.launch(Dispatchers.IO) {
-            val bytes = ImageApi.download(args.downloadUrl) {
-                Logger.debug("progress: $it")
-            }
-            Logger.debug("${bytes?.size ?: 0} bytes downloaded")
-        }
-*/
-
-        /*
-         * Improve Status Bar transformation during navigation animation
-         */
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -77,6 +79,9 @@ class PhotoViewFragment: DevBricksFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userModel.pullUser(args.username)
 
+                /*
+                 * Improve Status Bar transformation during navigation animation
+                 */
                 delay(resources.getInteger(R.integer.animLength)/ 2L)
                 withContext(Dispatchers.Main) {
                     SystemBarsUtils.statusBarColor(requireActivity(),
@@ -117,6 +122,14 @@ class PhotoViewFragment: DevBricksFragment() {
 
         sourceView = view.findViewById(R.id.image_source)
         sourceView?.text = getString(R.string.source_unsplash)
+
+        saveButton = view.findViewById(R.id.download)
+        saveButton?.setOnClickListener {
+            hasDownloadRequest = true
+            checkOrGrantPermissions()
+        }
+
+        downloadProgress = view.findViewById(R.id.progress)
     }
 
     private fun alignBottomLayout(layout: View) {
@@ -139,6 +152,53 @@ class PhotoViewFragment: DevBricksFragment() {
             // passed down to descendant views.
             WindowInsetsCompat.CONSUMED
         }
+    }
+
+    override fun getPermissionsPromptViewId(): Int {
+        return -1;
+    }
+
+    override fun getRequiredPermissions(): Array<String> {
+        return arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+    }
+
+    override fun onPermissionsGranted(newlyGranted: Boolean) {
+        if (!hasDownloadRequest) {
+            return
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+
+            withContext(Dispatchers.Main) {
+                downloadProgress?.visibility = View.VISIBLE
+                downloadProgress?.progress = 0
+
+                saveButton?.visibility = View.INVISIBLE
+            }
+
+            val bytes = ImageApi.download(args.downloadUrl) {
+                Logger.debug("progress: $it")
+
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val progress = (it.bytesRead * 100 / it.contentLength).toInt()
+
+                    if (progress >= 100) {
+                        downloadProgress?.visibility = View.GONE
+                        saveButton?.visibility = View.VISIBLE
+
+                        hasDownloadRequest = false
+                    } else {
+                        downloadProgress?.progress = progress
+                    }
+                }
+            }
+            Logger.debug("${bytes?.size ?: 0} bytes downloaded")
+        }
+    }
+
+    override fun onPermissionsDenied() {
     }
 
 }

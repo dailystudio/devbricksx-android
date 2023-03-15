@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/photo"
@@ -16,14 +17,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <RelativeLayout
             android:padding="@dimen/default_padding"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:background="@drawable/photo_badge"
                     android:padding="2dp"
@@ -33,10 +36,31 @@
                     android:layout_width="@dimen/default_action_icon_size"
                     android:layout_height="@dimen/default_action_icon_size"/>
 
+                <Button
+                    style="?attr/materialIconButtonStyle"
+                    android:id="@+id/download"
+                    app:icon="@drawable/ic_action_download"
+                    app:iconSize="@dimen/photo_download_icon_size"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    style="?attr/materialIconButtonStyle"
+                    android:id="@+id/progress"
+                    android:visibility="gone"
+                    android:layout_alignStart="@id/download"
+                    android:layout_alignEnd="@id/download"
+                    android:layout_alignTop="@id/download"
+                    android:layout_alignBottom="@id/download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_toEndOf="@id/user_photo"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toStartOf="@id/download"
                     android:layout_centerVertical="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -56,6 +80,6 @@
                 </LinearLayout>
 
             </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

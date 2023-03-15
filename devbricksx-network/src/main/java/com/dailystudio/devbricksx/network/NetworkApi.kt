@@ -16,6 +16,7 @@ import kotlin.math.min
 internal interface ProgressListener {
     fun update(
         identifier: String,
+        buffer: Buffer,
         bytesRead: Long,
         contentLength: Long,
         done: Boolean
@@ -56,6 +57,7 @@ private class ProgressResponseBody(val identifier: String,
                 totalBytesRead += if (bytesRead != -1L) bytesRead else 0
                 progressListener.update(
                     identifier,
+                    sink,
                     totalBytesRead,
                     responseBody.contentLength(),
                     bytesRead == -1L
@@ -84,6 +86,7 @@ open class ApiReturn (var code: Int? = null,
 }
 
 data class ResponseProgress(val identifier: String,
+                            val buffer: Buffer,
                             val bytesRead: Long,
                             val contentLength: Long,
                             val done: Boolean) {
@@ -347,11 +350,12 @@ abstract class NetworkApi<Interface> {
 
         override fun update(
             identifier: String,
+            buffer: Buffer,
             bytesRead: Long,
             contentLength: Long,
             done: Boolean) {
             val rp = ResponseProgress(identifier,
-                bytesRead, contentLength, done)
+                buffer, bytesRead, contentLength, done)
 
 //            Logger.debug("notify: rp = $rp")
 

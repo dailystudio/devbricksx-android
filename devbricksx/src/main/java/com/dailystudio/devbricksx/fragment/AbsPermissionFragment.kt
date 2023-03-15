@@ -66,9 +66,17 @@ abstract class AbsPermissionsFragment : DevBricksFragment() {
 
     private var mPromptView: View? = null
 
+    protected open val autoCheckPermissions: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (autoCheckPermissions) {
+            checkOrGrantPermissions()
+        }
+    }
+
+    fun checkOrGrantPermissions() {
         if (!hasPermissions(requireContext(), getRequiredPermissions())) {
             requestPermissions()
         } else {
@@ -86,29 +94,6 @@ abstract class AbsPermissionsFragment : DevBricksFragment() {
 
         mPromptView?.setOnClickListener { requestPermissions() }
     }
-/*
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == REQUEST_PERMISSIONS) {
-            Logger.debug("permissions = [%s], grantResults = [%s]",
-                    ArrayUtils.stringArrayToString(permissions),
-                    ArrayUtils.intArrayToString(grantResults))
-            if (isAllPermissionsGranted(grantResults)) {
-                Logger.warn("All of required permissions are granted")
-                mPromptView?.visibility = View.GONE
-
-                onPermissionsGranted(true)
-            } else {
-                mPromptView?.visibility = View.VISIBLE
-
-                Logger.warn("Permissions request denied")
-                onPermissionsDenied()
-            }
-        }
-    }
-*/
 
     private fun isAllPermissionsGranted(grantResults: IntArray): Boolean {
         if (grantResults.isEmpty()) {
