@@ -1,8 +1,6 @@
 package com.dailystudio.devbricksx.gallery.fragment
 
 import android.Manifest
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -25,16 +23,16 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
-import com.dailystudio.devbricksx.fragment.DevBricksFragment
+import com.dailystudio.devbricksx.gallery.Directories
 import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.ImageApi
 import com.dailystudio.devbricksx.gallery.model.UserItemViewModelExt
+import com.dailystudio.devbricksx.utils.FileUtils
 import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.roundToInt
 
 class PhotoViewFragment: AbsPermissionsFragment() {
 
@@ -179,10 +177,10 @@ class PhotoViewFragment: AbsPermissionsFragment() {
             }
 
             val bytes = ImageApi.download(args.downloadUrl) {
-                Logger.debug("progress: $it")
+//                Logger.debug("progress: $it")
+                val progress = (it.bytesRead * 100 / it.contentLength).toInt()
 
                 lifecycleScope.launch(Dispatchers.Main) {
-                    val progress = (it.bytesRead * 100 / it.contentLength).toInt()
 
                     if (progress >= 100) {
                         downloadProgress?.visibility = View.GONE
@@ -193,12 +191,25 @@ class PhotoViewFragment: AbsPermissionsFragment() {
                         downloadProgress?.progress = progress
                     }
                 }
+
             }
             Logger.debug("${bytes?.size ?: 0} bytes downloaded")
+
+            bytes?.let {
+                val ret = saveImage(args.id, it)
+                Logger.debug("save image [${args.id}: ret = $ret")
+            }
         }
     }
 
     override fun onPermissionsDenied() {
+    }
+
+    private fun saveImage(imageId: String, bytes: ByteArray): Boolean {
+        val saveFilePath = Directories.getImageDownloadPath(imageId)
+        Logger.debug("save image to: $saveFilePath")
+
+        return FileUtils.saveToFile(bytes, saveFilePath)
     }
 
 }

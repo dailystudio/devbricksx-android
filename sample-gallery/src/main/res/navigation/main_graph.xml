@@ -24,6 +24,9 @@
         android:name="com.dailystudio.devbricksx.gallery.fragment.PhotoViewFragment"
         android:label="PhotoViewFragment" >
         <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
             android:name="thumbUrl"
             app:argType="string" />
         <argument

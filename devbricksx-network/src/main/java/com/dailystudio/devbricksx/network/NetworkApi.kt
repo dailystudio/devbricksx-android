@@ -13,6 +13,17 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 
+
+private fun ResponseBody.copy(limit: Long = Long.MAX_VALUE): ResponseBody {
+    val source = source()
+    source.request(limit)
+
+    val bufferedCopy = source.buffer.clone()
+    return ResponseBody.create(
+        contentType(),
+        contentLength(), bufferedCopy)
+}
+
 internal interface ProgressListener {
     fun update(
         identifier: String,
@@ -176,27 +187,29 @@ abstract class NetworkApi<Interface> {
 
     }
 
-    internal class DebugRawResponseInterceptor(private val bufferLen: Int = 1024): Interceptor {
+    internal class DebugResponseInterceptor(private val bufferLen: Int = 1024): Interceptor {
 
-            @Throws(IOException::class)
-            override fun intercept(chain: Interceptor.Chain): Response {
-                val request = chain.request()
-                val response = chain.proceed(request)
+        @Throws(IOException::class)
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
+            val response = chain.proceed(request)
 
-                val responseBody = response.body()
-                val responseBodyString = response.body()!!.string()
-                val maxLength =
-                    min(responseBodyString.length, bufferLen)
+            val responseBody = response.body()
+            val bodyCopied = responseBody?.copy(bufferLen.toLong())
 
-                Logger.debug("response [raw]: ${responseBodyString.substring(0, maxLength)}")
-
-                return response.newBuilder().body(
-                    ResponseBody.create(
-                        responseBody!!.contentType(),
-                        responseBodyString.toByteArray()
-                    )
-                ).build()
+            val responseBodyString = try {
+                bodyCopied?.string()
+            } catch (e: Exception) {
+                Logger.debug("failed to convert body to string: $e")
+                null
             }
+
+            Logger.debug("response [body]: $responseBodyString")
+
+            return response.newBuilder().body(
+                responseBody
+            ).build()
+        }
     }
 
     internal class ProgressInterceptor(
@@ -262,9 +275,7 @@ abstract class NetworkApi<Interface> {
                 DebugRequestInterceptor(options.debugOutputBufferLen)
             )
 
-//            if (options.respType == ResponseType.Raw) {
-                clientBuilder.addInterceptor(DebugRawResponseInterceptor(options.debugOutputBufferLen))
-//            }
+            clientBuilder.addInterceptor(DebugResponseInterceptor(options.debugOutputBufferLen))
         }
 
         options.connectionTimeout?.let {

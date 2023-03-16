@@ -94,6 +94,7 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
 
         val action = PhotoItemsListFragmentExtDirections
             .actionPhotoItemsListFragmentExtToPhotoViewFragment(
+                item.id,
                 item.thumbnailUrl,
                 item.downloadUrl,
                 item.uid,
