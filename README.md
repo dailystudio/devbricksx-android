@@ -11,10 +11,44 @@ With only a few lines, you can save in memory **User** objects into database and
 
 ![](docs/assets/samples.png)
 
+
 ## Quick Setup
 To use **DevBricks X** Libraries in your application, follow the steps below.
 
-### Step 1: Installation
+### Step 1: One-step installation (Recommended)
+
+Starting from version **1.7.3**, you can simply use **DevBricks X** Libraries in your application by using the related Gradle plugin. Only apply plugin in **build.gradle** of your module:
+
+```Groovy
+plugins {
+    id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
+}
+```
+
+The latest version of the Gradle plugin is:
+
+```Groovy
+devbricksx_version = "1.7.5-1.0.2"
+```
+
+That's it. Everything is done. You can use anything provided by **DevBricks X**. 
+
+> The primary version (number ahead of minus) of the plugin indicates the corresponding DevBricksX libraries that the plugin uses. For example, plugin "1.7.5-1.0.2" uses DevBricksX 1.7.5, whereas plugin "1.7.3-1.0.1" uses DevBricksX 1.7.3.
+
+Compared to the manual installation below, the plugin helps you do the following things:
+
+- add libraries dependencies of DevBricksX. If the module is a library, dependencies are imported by using the keyword "api". If the module is an app, dependencies are imported by using the keyword "implementation".
+- apply the KSP plugin. (Only if you use annotation features)
+- add KSP processors dependencies of DevBricksX. (Only if you use annotation features)
+- add KSP processors dependencies of Room. (Only if you use annotation features)
+- specify Room schemas directory. (Only if you use annotation features)
+- add generated source directories of KSP to source sets. (Only if you use annotation features)
+
+Check them carefully to avoid duplicated configurations in your build scripts. 
+
+### Step 1: Manual installation (Legacy)
+Instead, you can set up DevBricksX manually, especially for using those versions before **1.7.3**. 
+
 Add the following dependencies in build.gradle of your application.
 
 #### Dependencies
