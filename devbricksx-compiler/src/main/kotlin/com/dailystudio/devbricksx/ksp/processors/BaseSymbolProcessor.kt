@@ -92,12 +92,13 @@ abstract class BaseSymbolProcessor(
 
             val sourceFiles = mutableSetOf<KSFile>()
             for (sourceSymbol in result.sourceSymbols) {
-                val file = sourceSymbol.containingFile ?: continue
-                warn("add source file: $file")
-                sourceFiles.add(file)
+                val depFile = sourceSymbol.containingFile ?: continue
+                sourceFiles.add(depFile)
             }
             val dependencies = Dependencies(aggregating = true,
                 *sourceFiles.toTypedArray())
+
+            warn("writing to file: ${file.packageName}.${file.name}.kt [dependencies: ${sourceFiles}]")
 
             file.writeTo(environment.codeGenerator, dependencies)
         }

@@ -16,8 +16,6 @@ abstract class StepsSymbolProcessor (environment: SymbolProcessorEnvironment)
                 for (r in it) {
                     writeToFile(r)
                 }
-            }.also {
-                warn("results = $it")
             }
         }
 
