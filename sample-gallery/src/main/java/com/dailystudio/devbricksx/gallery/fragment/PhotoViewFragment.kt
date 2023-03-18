@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.gallery.fragment
 import android.Manifest
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -157,9 +158,11 @@ class PhotoViewFragment: AbsPermissionsFragment() {
     }
 
     override fun getRequiredPermissions(): Array<String> {
-        return arrayOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        return if (Build.VERSION.SDK_INT < 33) {
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else {
+            emptyArray()
+        }
     }
 
     override fun onPermissionsGranted(newlyGranted: Boolean) {
