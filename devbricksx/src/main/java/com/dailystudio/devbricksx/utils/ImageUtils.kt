@@ -8,7 +8,6 @@ import android.media.Image
 import android.os.Build
 import android.text.TextUtils
 import android.util.Base64
-import android.util.Size
 import android.view.View
 import android.view.View.MeasureSpec
 import androidx.annotation.ColorInt
@@ -242,22 +241,19 @@ object ImageUtils {
         return saveBitmap(bitmap, file, 100)
     }
 
-    fun saveBitmap(bitmap: Bitmap, file: File, quailty: Int): Boolean {
-        var success = false
-        success = try {
+    fun saveBitmap(bitmap: Bitmap, file: File, quality: Int): Boolean {
+        return try {
             val out = FileOutputStream(file)
-            val format = if (quailty >= 100) CompressFormat.PNG else CompressFormat.JPEG
-            Logger.debug("save bitmap: ${file}, [quality: ${quailty}, format: ${format}]")
-            val ret = bitmap.compress(format, quailty, out)
+            val format = if (quality >= 100) CompressFormat.PNG else CompressFormat.JPEG
+            Logger.debug("save bitmap: ${file}, [quality: ${quality}, format: ${format}]")
+            val ret = bitmap.compress(format, quality, out)
             out.flush()
             out.close()
             ret
         } catch (e: IOException) {
-            Logger.debug("save bitmap failure: %s", e.toString())
+            Logger.debug("save bitmap failure: $e")
             false
         }
-
-        return success
     }
 
     fun createColorFilteredBitmap(origBitmap: Bitmap,
