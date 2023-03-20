@@ -48,9 +48,6 @@ ext {
         Properties props = new Properties()
         props.load(new FileInputStream(file("private.properties")))
 
-        BINTRAY_KEY = props.getProperty('BINTRAY_KEY')
-        BINTRAY_USER = props.getProperty('BINTRAY_USER')
-
         NEXUS_USER = props.getProperty('NEXUS_USER')
         NEXUS_PASS = props.getProperty('NEXUS_PASS')
 
@@ -58,8 +55,12 @@ ext {
         GPG_KEY_PASS = props.getProperty('GPG_KEY_PASS')
         GPG_KEY_FILE = props.getProperty('GPG_KEY_FILE')
     } else {
-        BINTRAY_KEY = ""
-        BINTRAY_USER = ""
+        NEXUS_USER = System.getenv('NEXUS_USER')
+        NEXUS_PASS = System.getenv('NEXUS_PASS')
+
+        GPG_KEY_ID = System.getenv('GPG_KEY_ID')
+        GPG_KEY_PASS = System.getenv('GPG_KEY_PASS')
+        GPG_KEY_FILE = System.getenv('GPG_KEY_FILE')
     }
 
     // Unsplash.com API

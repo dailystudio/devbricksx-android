@@ -9,13 +9,8 @@ import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import com.dailystudio.devbricksx.gallery.api.data.Photo
 import com.dailystudio.devbricksx.gallery.api.data.User
 import com.dailystudio.devbricksx.network.*
-import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.ResponseBody
-import okio.Buffer
-import okio.GzipSource
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.*
 import java.io.IOException
 
@@ -38,45 +33,6 @@ object ImageApi: NetworkApi<ImageApiInterface>() {
         get() = ImageApiInterface.BASE_URL
     override val classOfInterface: Class<ImageApiInterface>
         get() = ImageApiInterface::class.java
-
-    override fun getApiOptions(type: ResponseType): ApiOptions {
-        return super.getApiOptions(type).apply {
-            interceptors = listOf(
-                gzipInterceptor
-            )
-        }
-    }
-
-    private val gzipInterceptor = Interceptor() { chain ->
-        val request: Request = chain.request()
-        var response: okhttp3.Response = chain.proceed(request)
-
-        // Check if the response is compressed with gzip
-
-        val encodingHeader = response.header("Content-Encoding")
-        debugApi("encodingHeader: $encodingHeader")
-        // Check if the response is compressed with gzip
-        if (encodingHeader != null
-            && encodingHeader.contains("gzip")
-        ) {
-            // Manually decompress the response body
-            val source = GzipSource(response.body()!!.source())
-            val decompressed = Buffer()
-            decompressed.writeAll(source)
-
-            // Build a new response with the decompressed body
-            response = response.newBuilder()
-                .body(
-                    ResponseBody.create(
-                        response.body()!!.contentType(),
-                        decompressed.readByteArray()
-                    )
-                )
-                .build()
-        }
-
-        response
-    }
 
     private fun extractDownloadPath(downloadUrl: String): String? {
         return Uri.parse(downloadUrl).lastPathSegment
