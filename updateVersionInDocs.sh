@@ -17,6 +17,7 @@ patch=$(getProperty $VERSION_PROPERTIES "patch")
 version="${major}.${minor}.${patch}"
 
 ksp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KSP")
+devkit_version="${version}-$(getProperty $DEP_VERSIONS_PROPERTIES "DEVKIT")"
 
 echo "Retrieving version from $VERSION_PROPERTIES: [${version}]"
 echo "Retrieving KSP versions from $DEP_VERSIONS_PROPERTIES: [${ksp_version}]"
@@ -40,6 +41,7 @@ for f in ${files}; do
 
   echo "updating dependencies version in file [${f}]..."
   sed -i "" "s/ksp_version\ =\ \".*\"/ksp_version\ =\ \"${ksp_version}\"/g" ${f}
+  sed -i "" "s/devkit_version\ =\ \".*\"/devkit_version\ =\ \"${devkit_version}\"/g" ${f}
 
 done
 
