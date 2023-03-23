@@ -1,7 +1,5 @@
 package com.dailystudio.devbricksx.samples.customadapter
 
-import androidx.paging.PagedList
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.samples.customadapter.fragment.ChatRecordsListFragment
 import com.dailystudio.devbricksx.samples.customadapter.ui.ChatRecordsAdapter

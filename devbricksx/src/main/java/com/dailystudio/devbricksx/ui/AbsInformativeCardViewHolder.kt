@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.TextView
 import com.dailystudio.devbricksx.R
 
-open abstract class AbsInformativeCardViewHolder<Item>(itemView: View) : AbsCardViewHolder<Item>(itemView) {
+abstract class AbsInformativeCardViewHolder<in Item>(itemView: View) : AbsCardViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
         super.bind(item)

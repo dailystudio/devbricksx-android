@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.ui
 
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView

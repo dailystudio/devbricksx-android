@@ -5,9 +5,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.dailystudio.devbricksx.R
-import com.dailystudio.devbricksx.development.Logger
 
-open abstract class AbsCardViewHolder<Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
+open abstract class AbsCardViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
         val iconView: ImageView? = itemView.findViewById(R.id.card_media)

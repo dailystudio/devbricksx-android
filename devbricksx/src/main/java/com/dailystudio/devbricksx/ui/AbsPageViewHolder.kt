@@ -8,7 +8,7 @@ import androidx.core.widget.TextViewCompat
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
 
-abstract class AbsPageViewHolder<Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
+abstract class AbsPageViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
         val iconView: ImageView = itemView.findViewById(R.id.page_media)

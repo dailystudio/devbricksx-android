@@ -6,7 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.dailystudio.devbricksx.R
 
-open abstract class AbsSingleLineViewHolder<Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
+abstract class AbsSingleLineViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
         val iconView : ImageView = itemView.findViewById(R.id.list_item_icon)

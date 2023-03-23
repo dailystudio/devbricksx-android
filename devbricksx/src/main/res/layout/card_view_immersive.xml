@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:paddingStart="@dimen/lv_item_space_h"
 	android:paddingEnd="@dimen/lv_item_space_h"
 	android:paddingTop="@dimen/lv_item_space_v"
@@ -35,5 +35,4 @@
 
 	</androidx.cardview.widget.CardView>
 
-
-</FrameLayout>
+</RelativeLayout>
