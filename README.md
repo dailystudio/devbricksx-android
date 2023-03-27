@@ -151,7 +151,117 @@ Then declare it in your **`AndroidMenifest.xml`**:
 ```
 
 ## Usage
-Now you can enjoy this library in your way. The facilities provided in this library include different topics, please read the instructions carefully in each topic for details.
+
+Powered by **DevBricksX** and corresponding **KSP** processors, you can get a **Fragment** with a list of **User** in less than 5 minutes.
+
+```kotlin
+package com.dailystudio.devbricksx.samples.quickstart
+
+@RoomCompanion
+@ViewModel
+@Adapter(viewHolder = UserViewHolder::class)
+@ListFragment
+data class User(
+	val uid: Int,
+	val firstName: String?,
+	val lastName: String?
+)
+
+class UserViewHolder(itemView: View): AbsSingleLineViewHolder<User>(itemView) {
+
+    override fun getIcon(item: User): Drawable? {
+        return ResourcesCompatUtils.getDrawable(itemView.context,
+                R.mipmap.ic_user)
+    }
+
+    override fun getText(item: User): CharSequence? {
+        return buildString {
+            append(item.firstName)
+            append(' ')
+            append(item.lastName?.uppercase())
+        }
+    }
+
+}
+
+```
+
+### Simple usage
+Simplly, you can direct embed a list Fragment of Users in your application, like this:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".quickstart.CaseActivity">
+
+    <fragment
+        android:name="com.dailystudio.devbricksx.samples.quickstart.fragment.UsersListFragment"
+        android:id="@+id/fragment_users"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+Then, you get the result like the screenshot shown above. 
+
+### Generate data
+In this case, the **User** data is stored persistatnly in SQLite database. You manipulates these data by using auto-generated companion classes in different levels of [Recommendations for Android architecture](https://developer.android.com/topic/architecture/recommendations):
+
+Using ViewModel,
+
+```kotlin
+val viewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+for (i in 0 until NAMES_COUNT) {
+    val fIndex = RANDOM.nextInt(FIRST_NAMES.size)
+    val lIndex = RANDOM.nextInt(LAST_NAMES.size)
+
+    val user = User(0, FIRST_NAMES[fIndex], LAST_NAMES[lIndex])
+
+    viewModel.insertUser(user)
+}
+```
+
+Using Room interfaces,
+
+```kotlin
+val database = UserDatabase.getDatabase(this)
+
+for (i in 0 until NAMES_COUNT) {
+    val fIndex = RANDOM.nextInt(FIRST_NAMES.size)
+    val lIndex = RANDOM.nextInt(LAST_NAMES.size)
+
+    val user = User(0, FIRST_NAMES[fIndex], LAST_NAMES[lIndex])
+
+    database.userDao().insert(user)
+}
+```
+
+### Read data
+By default, auto-generated **ViewModel** class of **User** provides the following shortcut properties for you to access data:
+
+``` kotlin
+public val allUsers: List<User>
+public val allUsersLive: LiveData<List<User>>
+public val allUsersLivePaged: LiveData<PagedList<User>>
+public val allUsersFlow: Flow<List<User>>
+public val allUsersPagingSource: PagingSource<Int, User>
+```
+
+It almost covers all of the most popular ways of reading data. But, it also provides flexibility to extends interfaces of the ViewModel. For more details, please refer to specific document.
+
+### Others
+
+Besides, **DevBricksX** also provided sufficient facilities to accelerate your everyday development. For different topics, please read the instructions carefully in each topic for details.
 
 - [**Logging**](./docs/logging.md)
 
