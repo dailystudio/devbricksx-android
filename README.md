@@ -13,9 +13,9 @@ With only a few lines, you can save in memory **User** objects into database and
 
 
 ## Quick Setup
-To use **DevBricks X** Libraries in your application, follow the steps below.
+To use **DevBricks X** Libraries in your application, follow the steps below. There are two options for you.
 
-### Step 1: One-step installation (Recommended)
+### Option 1: One-step installation (Recommended)
 
 Starting from version **1.7.3**, you can simply use **DevBricks X** Libraries in your application by using the related Gradle plugin. Only apply plugin in **build.gradle** of your module:
 
@@ -46,7 +46,7 @@ Compared to the manual installation below, the plugin helps you do the following
 
 Check them carefully to avoid duplicated configurations in your build scripts. 
 
-### Step 1: Manual installation (Legacy)
+### Option 2: Manual installation (Legacy)
 Instead, you can set up DevBricksX manually, especially for using those versions before **1.7.3**. 
 
 Add the following dependencies in build.gradle of your application.
@@ -121,18 +121,6 @@ sourceSets.configureEach {
 
 ```
 
-> IMPORTANT:
->
-> Now, DevBricksX is using KSP instead of Kapt to improve compilation performance and code quality. After version **1.6.6**, the following components are deprecated:
-> 
-> - devbricksx-java-annotation
-> - devbricksx-kotlin-annotation
-> - devbricksx-java-compiler
-> - devbricksx-kotlin-compiler
-> 
-> After version **1.5.9**, you MUST add these compile options in your build script to use Java 1.8 binary code. And, REMOVE all the **@JvmField** in your codes.
->
-
 ### Step 2: Application initialization (Optional)
 This step helps you to integrate parts of utilities automatically, such as Logging facilities. 
 
@@ -182,7 +170,26 @@ Now you can enjoy this library in your way. The facilities provided in this libr
     Plenty of classes to simplify high-level development. Combine with [**Database**](./docs/database.md) facilities, you can save an object in database and then represent it in a list view with less than 20 lines of code.
 
 
-## Jcenter deprecation
+## Known issues
+
+If you have encountered issues when you set up or use DevBricksX, you can firstly check the known issues below.
+
+### 1. Using KSP 
+
+Now, **DevBricksX** is using **KSP (Kotlin Symbol Processing)** instead of **Kapt (the Kotlin Annotation Processing Tool)** to improve compilation performance and code quality. After version **1.6.6**, the following components are deprecated:
+ 
+- devbricksx-java-annotation
+- devbricksx-kotlin-annotation
+- devbricksx-java-compiler
+- devbricksx-kotlin-compiler
+
+### 2. @JvmField deprecation
+After version **1.5.9**, if you add compile options in your build script to use **Java 1.8** binary code, you have to remove all the **@JvmField** in your codes. 
+
+Thanks to new features of Kotlin, there is no need to use this annotation anymore. It simplifes the usage of our annotation processor. You can refer to the issue [KT-46329](https://youtrack.jetbrains.com/issue/KT-46329?_gl=1*vz64qk*_ga*MjA4MzI5NTM0My4xNjc5NTYwNzcz*_ga_9J976DJZ68*MTY3OTkwNjQ4NC42LjAuMTY3OTkwNjQ4NC42MC4wLjA.&_ga=2.56121960.2116670156.1679844726-2083295343.1679560773) for more details.
+
+
+### 3. Jcenter deprecation
 Since [JFrog to Shut down JCenter and Bintray](https://www.infoq.com/news/2021/02/jfrog-jcenter-bintray-closure/), starting from version **1.4.1**, all the artifacts will be maintained under the groupdId **cn.dailystudio**. The versions before that will still available under the groupId **com.dailystudio**.
 
 For example, if you want to refer to version **1.3.0**, you should add the following lines in your build.gradle
