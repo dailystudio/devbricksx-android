@@ -58,7 +58,7 @@ class NotebooksFragmentExt : NotebooksListFragment() {
     override fun onResume() {
         super.onResume()
 
-        activity?.title = getString(R.string.app_name)
+        changeTitle(getString(R.string.app_name))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
