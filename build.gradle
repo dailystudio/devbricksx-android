@@ -98,3 +98,5 @@ ext {
     versions.dumpVersions()
     depVersions.dumpVersions()
 }
+
+apply from: './buildscripts/timepertask.gradle'

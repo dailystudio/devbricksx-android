@@ -1,0 +1,47 @@
+
+import java.util.concurrent.TimeUnit
+
+// Log timings per task.
+class TimingsListener implements TaskExecutionListener, BuildListener {
+    private long startTime
+    private timings = []
+
+    @Override
+    void beforeExecute(Task task) {
+        startTime = System.nanoTime()
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState taskState) {
+        def ms = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS)
+        timings.add(new Tuple2<Integer, String>(ms, task.path))
+        task.project.logger.warn "${task.path} took ${ms}ms"
+    }
+
+    @Override
+    void buildFinished(BuildResult result) {
+        println "Task timings:"
+        def tmp = timings.toSorted(new Comparator<Tuple2<Integer, String>>() {
+            @Override
+            int compare(Tuple2<Integer, String> o, Tuple2<Integer, String> t1) {
+                return o.first - t1.first
+            }
+        })
+        for (timing in tmp) {
+            if (timing.first >= 1000) {
+                printf "%ss  %s\n", timing.first / 1000, timing.second
+            }
+        }
+    }
+
+    @Override
+    void projectsEvaluated(Gradle gradle) {}
+
+    @Override
+    void projectsLoaded(Gradle gradle) {}
+
+    @Override
+    void settingsEvaluated(Settings settings) {}
+}
+
+gradle.addListener new TimingsListener()
