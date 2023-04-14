@@ -64,9 +64,9 @@ object FuncSpecStatementsGenerator {
 
         funcSpecBuilder
             .addStatement("""
-                return this.%N(%L)%Lmap({ 
+                return this.%N(%L)%Lmap·{ 
                     it%LtoObject() 
-                })
+                }
             """.trimIndent(),
                 nameOfWrappedFunc,
                 strOfParamsOfWrappedFunc ?: "",
@@ -85,11 +85,11 @@ object FuncSpecStatementsGenerator {
         funcSpecBuilder
             .addStatement(
                 """
-                    return this.%N(%L)%Llet({ livedata ->
-                        %T.map(livedata, { 
+                    return this.%N(%L)%Llet·{ livedata ->
+                        %T.map(livedata)·{ 
                             it%LtoObject() 
-                        })
-                    })
+                        }
+                    }
                 """.trimIndent(),
                 nameOfWrappedFunc,
                 strOfParamsOfWrappedFunc ?: "",
@@ -108,15 +108,15 @@ object FuncSpecStatementsGenerator {
 
         funcSpecBuilder.addStatement(
             """
-                return this.%N(%L)%Llet({ livedata ->
-                    %T.map(livedata, {
-                      mutableListOf<%T>().apply {
+                return this.%N(%L)%Llet·{ livedata ->
+                    %T.map(livedata)·{
+                      mutableListOf<%T>().apply·{
                         it.forEach {
                           add(it%LtoObject())
                         }
                       }
-                    })
-                })
+                    }
+                }·
             """.trimIndent(),
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
@@ -136,9 +136,9 @@ object FuncSpecStatementsGenerator {
 
         funcSpecBuilder.addStatement(
             """
-                return this.%N(%L)%L%T({
+                return this.%N(%L)%L%T·{
                   it%LtoObject()
-                })
+                }
             """.trimIndent(),
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
@@ -157,13 +157,13 @@ object FuncSpecStatementsGenerator {
 
         funcSpecBuilder.addStatement(
             """
-                return this.%N(%L)%L%T({
-                  mutableListOf<%T>().apply {
+                return this.%N(%L)%L%T·{
+                  mutableListOf<%T>().apply·{
                     it.forEach {
                       add(it%LtoObject())
                     }
                   }
-                })
+                }
             """.trimIndent(),
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
@@ -181,11 +181,11 @@ object FuncSpecStatementsGenerator {
                                               strOfParamsOfWrappedFunc: String? = null) {
         funcSpecBuilder.addStatement(
             """
-                return this.%N(%L)%Llet({ livedata ->
-                    %T(livedata.map({
+                return this.%N(%L)%Llet·{ livedata ->
+                    %T(livedata.map·{
                         it.toObject()
-                    }), %L).build()
-                })
+                    }, %L).build()
+                }
             """.trimIndent(),
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
@@ -201,9 +201,9 @@ object FuncSpecStatementsGenerator {
                                 strOfParamsOfWrappedFunc: String? = null) {
         funcSpecBuilder.addStatement(
             """
-                return this.%N(%L)%Lmap({
+                return this.%N(%L)%Lmap·{
                     it.toObject()
-                })%LasPagingSourceFactory()%Linvoke();
+                }%LasPagingSourceFactory()%Linvoke();
             """.trimIndent(),
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
@@ -243,11 +243,11 @@ object FuncSpecStatementsGenerator {
                     } else {
                         funcSpecBuilder.addStatement(
                             """
-                                val %N = %N.map({
-                                    it%Llet({
+                                val %N = %N.map·{
+                                    it%Llet·{
                                         %T.fromObject(it)
-                                    })
-                                }).toTypedArray()
+                                    }
+                                }.toTypedArray()
                             """.trimIndent(),
                             mappedNameOfParam,
                             nameOfParam,
@@ -260,11 +260,11 @@ object FuncSpecStatementsGenerator {
                 typeOfListOfObjects, typeOfListOfNullableObjects -> {
                     funcSpecBuilder.addStatement(
                         """
-                            val %N = %N.map({ 
-                                it%Llet({
+                            val %N = %N.map·{ 
+                                it%Llet·{
                                     %T.fromObject(it)
-                                 })
-                            })
+                                }
+                            }
                         """.trimIndent(),
                         mappedNameOfParam,
                         nameOfParam,
