@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
 import com.dailystudio.devbricksx.annotations.samples.inmemory.fragment.ImagesListFragment
 import com.dailystudio.devbricksx.annotations.samples.inmemory.fragment.ItemsListFragment
 import com.dailystudio.devbricksx.annotations.samples.inmemory.model.ItemViewModel
@@ -22,6 +23,9 @@ import kotlinx.coroutines.flow.map
 
 @ViewModel
 @InMemoryCompanion
+@ViewPagerFragment(
+    dataSource = DataSource.Flow
+)
 @ListFragment(
     dataSource = DataSource.Flow
 )

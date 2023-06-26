@@ -35,9 +35,9 @@ class AdapterStep (processor: BaseSymbolProcessor)
             symbol.getKSAnnotation(Adapter::class, resolver) ?: return emptyResult
 
         val paged = adapterAnnotation.paged
-        warn("adapter paged: $paged")
+        warn("[$symbol] adapter paged: $paged")
         val viewType = adapterAnnotation.viewType
-        warn("viewType: $viewType")
+        warn("[$symbol] viewType: $viewType")
 
         val layout = adapterAnnotation.layout
         val layoutByName = adapterAnnotation.layoutByName
