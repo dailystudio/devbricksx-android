@@ -221,7 +221,7 @@ open class CameraFragment: AbsPermissionsFragment() {
     }
 
     override fun getPermissionsPromptViewId(): Int {
-        return R.id.permission_prompt
+        return com.dailystudio.devbricksx.R.id.permission_prompt
     }
 
     override fun getRequiredPermissions(): Array<String> {

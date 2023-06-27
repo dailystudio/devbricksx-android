@@ -24,7 +24,6 @@ enum class MessageType {
 @ListFragment(dataSource = DataSource.Flow)
 @ViewModel
 @Adapter(
-    layout = R.layout.layout_chat_record,
     layoutByName = "layout_chat_record",
     viewType = ViewType.Customized,
     viewHolder = ChatRecordViewHolder::class)

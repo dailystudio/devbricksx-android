@@ -51,7 +51,8 @@ class RawAudioDataVisualizer @JvmOverloads constructor(
                 R.styleable.RawAudioDataVisualizer, defStyleAttr, 0)
 
         val color = a.getColor(R.styleable.RawAudioDataVisualizer_barColor,
-                ResourcesCompatUtils.getColor(context, R.color.colorPrimary))
+                ResourcesCompatUtils.getColor(context,
+                    com.dailystudio.devbricksx.R.color.colorPrimary))
         setBarColor(color)
 
         val width = a.getDimensionPixelSize(R.styleable.RawAudioDataVisualizer_barWidth,

@@ -37,7 +37,7 @@ import java.util.*
 @Adapter(
     viewHolder = PhotoItemViewHolder::class,
     viewType = ViewType.Customized,
-    layout = R.layout.layout_photo_item,
+    layoutByName = "layout_photo_item",
     paged = true
 )
 @RoomCompanion(

@@ -29,7 +29,7 @@ import java.lang.reflect.Type
 @Adapter(viewHolder = UseCaseViewHolder::class)
 @ViewModel
 @ListFragment(
-    layout = R.layout.fragment_use_case,
+    layoutByName = "fragment_use_case",
     dataSource = DataSource.Flow
 )
 data class UseCase(val name: String,

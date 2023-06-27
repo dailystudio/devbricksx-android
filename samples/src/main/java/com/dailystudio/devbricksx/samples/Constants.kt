@@ -7,9 +7,9 @@ object Constants {
     val DEFAULT_IMAGE_LOADER_OPTIONS_BUILDER: DisplayImageOptions.Builder = DisplayImageOptions.Builder()
         .cacheInMemory(true)
         .cacheOnDisk(true)
-        .showImageOnLoading(R.color.transparent)
-        .showImageOnFail(R.color.transparent)
-        .showImageForEmptyUri(R.color.transparent)
+        .showImageOnLoading(com.dailystudio.devbricksx.R.color.transparent)
+        .showImageOnFail(com.dailystudio.devbricksx.R.color.transparent)
+        .showImageForEmptyUri(com.dailystudio.devbricksx.R.color.transparent)
         .resetViewBeforeLoading(true)
 
     val DEFAULT_IMAGE_LOADER_OPTIONS: DisplayImageOptions =

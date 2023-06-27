@@ -24,9 +24,9 @@ import java.util.*
 )
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
-        layout = R.layout.layout_notebook,
+        layoutByName = "layout_notebook",
         viewHolder = NotebookViewHolder::class)
-@ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
+@ListFragment(layoutByName = "fragment_recycler_view_with_new_button",
         dataSource = DataSource.Flow,
         superClass = AbsMultiSelectionListFragment::class)
 open class Notebook(id: Int = 0) : SelectableRecord(id) {
@@ -67,10 +67,10 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
 )
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
-        layout = R.layout.layout_note,
+        layoutByName = "layout_note",
         paged = true,
         viewHolder = NoteViewHolder::class)
-@ListFragment(layout = R.layout.fragment_recycler_view_with_new_button,
+@ListFragment(layoutByName = "fragment_recycler_view_with_new_button",
         gridLayout = true,
         superClass = AbsMultiSelectionListFragment::class)
 class Note(id: Int = 0) : SelectableRecord(id) {

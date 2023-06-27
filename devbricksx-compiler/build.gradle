@@ -3,8 +3,13 @@ plugins {
     id 'kotlin'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+    // Or shorter:
+    jvmToolchain(17)
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

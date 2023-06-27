@@ -20,7 +20,7 @@ import com.nostra13.universalimageloader.core.ImageLoader
 @NonRecyclableListFragment(dataSource = DataSource.Flow)
 @ViewModel
 @Adapter(viewType = ViewType.Customized,
-        layout = R.layout.layout_pixabay_image,
+        layoutByName = "layout_pixabay_image",
         viewHolder = PiaxbayImageViewHolder::class,
         paged = true,
         notifyAfterListChanged = true)
@@ -66,7 +66,8 @@ class PiaxbayImageViewHolder(itemView: View): AbsCardViewHolder<PixabayImage>(it
         val res = context.resources
 
         val paddingH = res.getDimensionPixelSize(R.dimen.pixabay_image_title_padding)
-        val paddingV = res.getDimensionPixelSize(R.dimen.card_content_outer_padding)
+        val paddingV = res.getDimensionPixelSize(
+            com.dailystudio.devbricksx.R.dimen.card_content_outer_padding)
 
         titleView?.setPadding(paddingH, paddingV, paddingH, paddingV)
     }

@@ -134,7 +134,8 @@ class PhotoViewFragment: AbsPermissionsFragment() {
     private fun alignBottomLayout(layout: View) {
 
         ViewCompat.setOnApplyWindowInsetsListener(layout) { view, windowInsets ->
-            val margin = resources.getDimensionPixelSize(R.dimen.default_content_padding)
+            val margin = resources.getDimensionPixelSize(
+                com.dailystudio.devbricksx.R.dimen.default_content_padding)
 
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             // Apply the insets as a margin to the view. Here the system is setting

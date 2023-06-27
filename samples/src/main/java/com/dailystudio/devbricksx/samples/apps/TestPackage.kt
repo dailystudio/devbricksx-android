@@ -37,7 +37,7 @@ class TestPackageViewHolder(itemView: View): AbsSingleLineViewHolder<TestPackage
     override fun getIcon(item: TestPackage): Drawable? {
         val context = itemView.context
         return item.icon ?: ResourcesCompatUtils.getDrawable(context,
-                R.mipmap.ic_default_app_icon)
+               com.dailystudio.devbricksx.R.mipmap.ic_default_app_icon)
     }
 
     override fun bindText(item: TestPackage, titleView: TextView?) {
@@ -48,7 +48,8 @@ class TestPackageViewHolder(itemView: View): AbsSingleLineViewHolder<TestPackage
         val labelColor = if (item.installed) {
             ResourcesCompatUtils.getColor(context, R.color.colorPrimary)
         } else {
-            ResourcesCompatUtils.getColor(context, R.color.light_gray)
+            ResourcesCompatUtils.getColor(context,
+                com.dailystudio.devbricksx.R.color.light_gray)
         }
 
         titleView.setTextColor(labelColor)

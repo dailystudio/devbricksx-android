@@ -100,7 +100,7 @@ open class DevBricksActivity : AppCompatActivity() {
                         @ColorInt backgroundColor: Int? = null,
                         anchorView: View? = null) {
         val contextView: View = anchorView
-            ?: findViewById(R.id.content)
+            ?: findViewById(android.R.id.content)
             ?: window.decorView
 
         if (snackBar != null) {
