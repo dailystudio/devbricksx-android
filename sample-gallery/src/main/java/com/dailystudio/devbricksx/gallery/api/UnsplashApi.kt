@@ -123,11 +123,11 @@ interface UnsplashApiInterface {
     }
 
     @GET("$SEARCH_PATH/$PHOTOS_PATH")
-    suspend fun searchPhotos(
+    fun searchPhotos(
         @Query(PARAM_QUERY)query: String,
         @Query(PARAM_PAGE)page: Int = 1,
         @Query(PARAM_PER_PAGE)perPage: Int = 10
-    ): PageResults
+    ): Call<PageResults>
 
     @GET("/$PHOTOS_PATH")
     fun listPhotos(
@@ -144,16 +144,36 @@ interface UnsplashApiInterface {
 
 object UnsplashApi: AuthenticatedNetworkApi<UnsplashApiInterface>() {
 
-    suspend fun searchPhotos(
+    fun searchPhotos(
         query: String,
         page: Int = 1,
         perPage: Int = 10,
-    ): PageResults? {
+    ): PageResults {
         val uniAppInterface = getInterface()
 
-        return catchApiCallOrNull {
-            uniAppInterface.searchPhotos(query, page, perPage)
+        val call = uniAppInterface.searchPhotos(query, page, perPage)
+        var ret: PageResults? = null
+        var links: Links? = null
+        try {
+            val response = call.execute()
+
+            ret = response.body()
+            links = Links.fromString(response.headers()["Link"])
+        } catch (e: IOException) {
+            Logger.error(
+                "search photos failed: %s",
+                e.toString()
+            )
+
+            ret = null
+            links = null
         }
+
+        return PageResults(
+            ret?.total ?: 0,
+            ret?.total_pages ?: 0,
+            ret?.results,
+            links)
     }
 
     fun listPhotos(
