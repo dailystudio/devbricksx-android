@@ -57,7 +57,8 @@ class InMemoryCompanionStep (processor: BaseSymbolProcessor)
         val sortListMethod = FunSpec.builder("sortList")
             .addParameter("objects", typeOfListObjects)
             .addModifiers(KModifier.OVERRIDE)
-            .addCode("return objects.%N {\n" +
+            .returns(typeOfListObjects)
+            .addCode("return objects.%N·{\n" +
                     "   it.getKey()\n" +
                     "}", sortFuncName)
 

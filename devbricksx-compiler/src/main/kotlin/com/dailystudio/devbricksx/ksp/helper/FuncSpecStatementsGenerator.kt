@@ -86,7 +86,7 @@ object FuncSpecStatementsGenerator {
             .addStatement(
                 """
                     return this.%N(%L)%Llet·{ livedata ->
-                        %T.map(livedata)·{ 
+                        livedata.%T·{ 
                             it%LtoObject() 
                         }
                     }
@@ -94,7 +94,7 @@ object FuncSpecStatementsGenerator {
                 nameOfWrappedFunc,
                 strOfParamsOfWrappedFunc ?: "",
                 if (returnType.isNullable) "?." else ".",
-                TypeNameUtils.typeOfTransformations(),
+                TypeNameUtils.typeOfLifecycleMapFunction(),
                 if (returnNullable) "?." else ".",
         )
     }
@@ -109,7 +109,7 @@ object FuncSpecStatementsGenerator {
         funcSpecBuilder.addStatement(
             """
                 return this.%N(%L)%Llet·{ livedata ->
-                    %T.map(livedata)·{
+                    livedata.%T·{
                       mutableListOf<%T>().apply·{
                         it.forEach {
                           add(it%LtoObject())
@@ -121,7 +121,7 @@ object FuncSpecStatementsGenerator {
             nameOfWrappedFunc,
             strOfParamsOfWrappedFunc ?: "",
             if (returnType.isNullable) "?." else ".",
-            TypeNameUtils.typeOfTransformations(),
+            TypeNameUtils.typeOfLifecycleMapFunction(),
             typeOfObject.copy(returnNullable),
             if (returnNullable) "?." else ".",
         )

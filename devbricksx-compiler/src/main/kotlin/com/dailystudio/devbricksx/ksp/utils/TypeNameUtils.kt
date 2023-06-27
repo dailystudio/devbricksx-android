@@ -160,7 +160,7 @@ object TypeNameUtils {
             typeName1, typeName2)
     }
 
-    fun typeOfLiveDataMapFunction(): ClassName {
+    fun typeOfLifecycleMapFunction(): ClassName {
         return ClassName("androidx.lifecycle", "map")
     }
 
