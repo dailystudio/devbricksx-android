@@ -81,9 +81,9 @@ ext {
     VERSION_CODE = versions.devBricksXVersionCode().toInteger()
 
     // Java Compiler
-    JAVA_VERSION = JavaVersion.VERSION_17
-    JVM_TARGET = "17"
-    JVM_TARGET_INT = 17
+    JAVA_VERSION = JavaVersion.toVersion(depVersions.java().toInteger())
+    JVM_TARGET = depVersions.java()
+    JVM_TARGET_INT = depVersions.java().toInteger()
 
     // Publishing Parameters
     SITE_URL = 'https://github.com/dailystudio/devbricksx-android'

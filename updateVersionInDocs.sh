@@ -18,9 +18,12 @@ version="${major}.${minor}.${patch}"
 
 ksp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KSP")
 devkit_version="${version}-$(getProperty $DEP_VERSIONS_PROPERTIES "DEVKIT")"
+java_version=$(getProperty $DEP_VERSIONS_PROPERTIES "JAVA")
+java_version_=$(echo "${java_version}" | sed 's/\./_/g')
 
 echo "Retrieving version from $VERSION_PROPERTIES: [${version}]"
 echo "Retrieving KSP versions from $DEP_VERSIONS_PROPERTIES: [${ksp_version}]"
+echo "Retrieving Java versions from $DEP_VERSIONS_PROPERTIES: [${java_version}, jvm: ${jvm_target}]"
 
 files="
   README.md
@@ -42,6 +45,8 @@ for f in ${files}; do
   echo "updating dependencies version in file [${f}]..."
   sed -i "" "s/ksp_version\ =\ \".*\"/ksp_version\ =\ \"${ksp_version}\"/g" ${f}
   sed -i "" "s/devkit_version\ =\ \".*\"/devkit_version\ =\ \"${devkit_version}\"/g" ${f}
+  sed -i "" "s/JavaVersion.VERSION_.*/JavaVersion.VERSION_${java_version_}/g" ${f}
+  sed -i "" "s/jvmTarget\ =\ \".*\"/jvmTarget\ =\ \"${java_version}\"/g" ${f}
 
 done
 
