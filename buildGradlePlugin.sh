@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PLUGIN_DIR="gradle-plugin/devkit"
 
