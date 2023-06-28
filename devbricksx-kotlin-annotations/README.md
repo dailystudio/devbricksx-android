@@ -21,14 +21,14 @@ dependencies {
     implementation "cn.dailystudio:devbricksx-java-annotations:$devbricksx_version"
     kapt "cn.dailystudio:devbricksx-java-compiler:$devbricksx_version"
 
-    kapt "androidx.room:room-compiler:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.2"
 }
 ```
 
 #### Latest version
 
 ```groovy
-devbricksx_version = "1.7.6"
+devbricksx_version = "1.8.0"
 ```
 
 If you want to auto-generate low-level facilities of an object class, such as **Dao**, **Database**, etc., DO NOT forget to include devbricksx-java-anntations and related compiler. See [devbricksx-java-annotations](../devbricksx-java-annotations/README.md) for more information.

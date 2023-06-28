@@ -4,11 +4,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-    // Or shorter:
-    jvmToolchain(17)
+    jvmToolchain(JVM_TARGET_INT)
 }
 
 dependencies {

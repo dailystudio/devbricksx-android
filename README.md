@@ -28,7 +28,7 @@ plugins {
 The latest version of the Gradle plugin is:
 
 ```Groovy
-devkit_version = "1.7.6-1.0.2"
+devkit_version = "1.8.0-1.0.3"
 ```
 
 That's it. Everything is done. You can use anything provided by **DevBricks X**. 
@@ -73,15 +73,15 @@ dependencies {
     implementation "cn.dailystudio:devbricksx-annotations:$devbricksx_version"
     ksp "cn.dailystudio:devbricksx-compiler:$devbricksx_version"
     // (Optional) If you use the feature above, DO NOT forget this line 
-    ksp "androidx.room:room-compiler:2.5.0"
+    ksp "androidx.room:room-compiler:2.5.2"
 }
 ```
 
 The latest version of the dependencies above are:
 
 ```groovy
-ksp_version = "1.7.22-1.0.8"
-devbricksx_version = "1.7.6"
+ksp_version = "1.8.22-1.0.11"
+devbricksx_version = "1.8.0"
 ```
 
 Then, if you are using annotations through [KSP (Kotlin Symbol Processing)](https://kotlinlang.org/docs/ksp-overview.html), DO NOT forget to add plug-ins repo in **settings.gradle**:
@@ -281,6 +281,17 @@ Besides, **DevBricksX** also provided sufficient facilities to accelerate your e
     Plenty of classes to simplify high-level development. Combine with [**Database**](./docs/database.md) facilities, you can save an object in the database and then represent it in a list view with less than 20 lines of code.
 
 
+## Changelogs
+
+### 1.8.0
+
+- Compatible with Gradle 8.0, AGP (Android Gradle Plugin) 8.0.0, Kotlin 1.8.22
+- Fix issues after upgrade to AGP 8.0, including BuildConfig generation, R classes cascade
+- Adapt to Room 2.5.2 and Navigation 2.6.0
+- Fix the space wrap issue with KotlinPoet by using the symbol "·".
+- Fix different classes imports issue when using KotlinPoet.
+- Completely remove dependencies of Kapt modules.
+
 ## Known issues
 
 If you have encountered issues when you set up or use **DevBricksX**, you can first check the known issues below.
@@ -294,13 +305,20 @@ Now, **DevBricksX** is using **KSP (Kotlin Symbol Processing)** instead of **Kap
 - devbricksx-java-compiler
 - devbricksx-kotlin-compiler
 
-### 2. @JvmField deprecation
+### 2. Compatible Kotlin Gradle plug-in
+Starting from version **1.7.3**, DevBricks X Libraries can use its Gradle plugin to help you set up projects. It applies the **KSP (Kotlin Symbol Processing)** plugin automatically. But if this KSP plugin version is not compatible with the **Kolitn Gradle Plugin** that you are using in your project. It might lead to a compiling issue.
+
+>
+ksp-1.8.22-1.0.11 is too new for kotlin-1.8.20. Please upgrade kotlin-gradle-plugin to 1.8.22.
+
+So, if you get an issue and see a similar build output above, please change your Kotlin Gradle Plugin version, better to be the same as the one used by DevBricksX.
+
+### 3. @JvmField deprecation
 After version **1.5.9**, if you add compile options in your build script to use **Java 1.8** binary code, you have to remove all the **@JvmField** in your codes. 
 
 Thanks to the new features of Kotlin, there is no need to use this annotation anymore. It simplifies the usage of our annotation processor. You can refer to the issue [KT-46329](https://youtrack.jetbrains.com/issue/KT-46329?_gl=1*vz64qk*_ga*MjA4MzI5NTM0My4xNjc5NTYwNzcz*_ga_9J976DJZ68*MTY3OTkwNjQ4NC42LjAuMTY3OTkwNjQ4NC42MC4wLjA.&_ga=2.56121960.2116670156.1679844726-2083295343.1679560773) for more details.
 
-
-### 3. Jcenter deprecation
+### 4. Jcenter deprecation
 Since [JFrog to Shut down JCenter and Bintray](https://www.infoq.com/news/2021/02/jfrog-jcenter-bintray-closure/), starting from version **1.4.1**, all the artifacts will be maintained under the groupdId **cn.dailystudio**. The versions before that will still be available under the groupId **com.dailystudio**.
 
 For example, if you want to refer to version **1.3.0**, you should add the following lines in your build.gradle

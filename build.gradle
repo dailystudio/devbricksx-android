@@ -80,6 +80,11 @@ ext {
     VERSION_NAME = versions.devBricksXVersion()
     VERSION_CODE = versions.devBricksXVersionCode().toInteger()
 
+    // Java Compiler
+    JAVA_VERSION = JavaVersion.VERSION_17
+    JVM_TARGET = "17"
+    JVM_TARGET_INT = 17
+
     // Publishing Parameters
     SITE_URL = 'https://github.com/dailystudio/devbricksx-android'
     SCM_URL = 'https://github.com/dailystudio/devbricksx-android.git'
