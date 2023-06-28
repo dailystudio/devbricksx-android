@@ -16,7 +16,6 @@ With only a few lines, you can save in memory **User** objects into the database
 To use **DevBricks X** Libraries in your application, follow the steps below. There are two options for you.
 
 ### Option 1: One-step installation (Recommended)
-
 Starting from version **1.7.3**, you can simply use **DevBricks X** Libraries in your application by using the related Gradle plugin. Only apply plugin in **build.gradle** of your module:
 
 ```Groovy
@@ -45,6 +44,9 @@ Compared to the manual installation below, the plugin helps you do the following
 - add generated source directories of KSP to source sets. (Only if you use annotation features)
 
 Check them carefully to avoid duplicated configurations in your build scripts. 
+
+And, make sure you use the compatible Kotlin version. If you meet any problem with during the compilation, please refer to [Compatible Kotlin Gradle Plug-in](#2-compatible-kotlin-gradle-plug-in) for more information.
+
 
 ### Option 2: Manual installation (Legacy)
 Instead, you can set up DevBricksX manually, especially for using those versions before **1.7.3**. 
@@ -305,11 +307,10 @@ Now, **DevBricksX** is using **KSP (Kotlin Symbol Processing)** instead of **Kap
 - devbricksx-java-compiler
 - devbricksx-kotlin-compiler
 
-### 2. Compatible Kotlin Gradle plug-in
+### 2. Compatible Kotlin Gradle Plug-in
 Starting from version **1.7.3**, DevBricks X Libraries can use its Gradle plugin to help you set up projects. It applies the **KSP (Kotlin Symbol Processing)** plugin automatically. But if this KSP plugin version is not compatible with the **Kolitn Gradle Plugin** that you are using in your project. It might lead to a compiling issue.
 
->
-ksp-1.8.22-1.0.11 is too new for kotlin-1.8.20. Please upgrade kotlin-gradle-plugin to 1.8.22.
+>ksp-1.8.22-1.0.11 is too new for kotlin-1.8.20. Please upgrade kotlin-gradle-plugin to 1.8.22.
 
 So, if you get an issue and see a similar build output above, please change your Kotlin Gradle Plugin version, better to be the same as the one used by DevBricksX.
 
