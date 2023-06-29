@@ -27,7 +27,7 @@ plugins {
 The latest version of the Gradle plugin is:
 
 ```Groovy
-devkit_version = "1.8.0-1.0.3"
+devkit_version = "1.8.0-1.0.4"
 ```
 
 That's it. Everything is done. You can use anything provided by **DevBricks X**. 

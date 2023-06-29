@@ -6,11 +6,11 @@ plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
     id("maven-publish")
-    id("com.gradle.plugin-publish") version "1.0.0"
+    id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 group = "cn.dailystudio"
-version = "1.8.0-1.0.3"
+version = "1.8.0-1.0.4"
 
 repositories {
     mavenCentral()
@@ -28,22 +28,22 @@ tasks.test {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 
-pluginBundle {
-    website = "https://github.com/dailystudio/devbricksx-android"
-    vcsUrl = "https://github.com/dailystudio/devbricksx-android"
-    tags = listOf("Android", "KSP", "Annotation")
-}
 
 gradlePlugin {
+    website.set("https://github.com/dailystudio/devbricksx-android")
+    vcsUrl.set("https://github.com/dailystudio/devbricksx-android")
+
     plugins {
         create("DevKitPlugin") {
             id = "cn.dailystudio.devbricksx.devkit"
             implementationClass = "com.dailystudio.devbricksx.DevKitPlugin"
             displayName = "DevKit for DevBricksX on Android"
             description = "A plugin to enable an Android project to use DevBricksX facilities"
+
+            tags.set(listOf("Android", "KSP", "Annotation"))
         }
     }
 }
