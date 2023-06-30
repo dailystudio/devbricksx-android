@@ -40,14 +40,6 @@ android {
     kotlinOptions {
         jvmTarget = JVM_TARGET
     }
-
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas".toString())
-    }
-
-    sourceSets.configureEach {
-        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
-    }
 }
 
 dependencies {

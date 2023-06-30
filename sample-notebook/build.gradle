@@ -40,7 +40,6 @@ android {
         buildConfig true
     }
 
-
     compileOptions {
         sourceCompatibility JAVA_VERSION
         targetCompatibility JAVA_VERSION

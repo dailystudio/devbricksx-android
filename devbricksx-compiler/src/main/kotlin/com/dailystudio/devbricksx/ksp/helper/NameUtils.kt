@@ -70,14 +70,14 @@ fun String.kebabCaseName(): String {
     for (i in this.indices) {
         val c = this[i]
 
-        if (Character.isAlphabetic(c.toInt())
+        if (Character.isAlphabetic(c.code)
                 && Character.isUpperCase(c)
                 && i != 0) {
 
             builder.append("-")
         }
 
-        builder.append(c.toLowerCase())
+        builder.append(c.lowercase())
     }
 
     return builder.toString()
