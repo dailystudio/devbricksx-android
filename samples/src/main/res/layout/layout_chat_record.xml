@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="@dimen/default_padding"
     android:paddingBottom="@dimen/default_padding"
     android:layout_width="match_parent"
@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/portrait_receive"
         android:src="@drawable/ic_robot"
-        android:tint="@color/colorAccent"
+        app:tint="@color/colorAccent"
         android:layout_alignParentStart="true"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/default_padding"
@@ -19,7 +19,7 @@
     <ImageView
         android:id="@+id/portrait_send"
         android:src="@drawable/ic_human"
-        android:tint="@color/colorPrimary"
+        app:tint="@color/colorPrimary"
         android:layout_alignParentEnd="true"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/default_padding"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/setting_root"
     android:clickable="true"
     android:background="?attr/selectableItemBackground"
@@ -15,7 +16,7 @@
 
         <ImageView
             android:id="@+id/setting_icon"
-            android:tint="@color/colorAccent"
+            app:tint="@color/colorAccent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"

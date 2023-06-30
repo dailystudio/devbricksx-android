@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/camera_len_selector"
     android:src="@drawable/ic_front_camera"
-    android:tint="@color/action_icon_tint"
+    app:tint="@color/action_icon_tint"
     android:layout_alignParentBottom="true"
     android:layout_alignParentStart="true"
     android:layout_marginBottom="@dimen/camera_len_selector_margin_v"
     android:layout_marginStart="@dimen/camera_len_selector_margin_h"
     android:layout_width="@dimen/default_action_icon_size"
-    android:layout_height="@dimen/default_action_icon_size"/>
+    android:layout_height="@dimen/default_action_icon_size" />

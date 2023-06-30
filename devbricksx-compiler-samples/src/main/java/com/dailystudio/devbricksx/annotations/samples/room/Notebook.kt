@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.annotations.samples.room
 
+import android.annotation.SuppressLint
 import androidx.paging.PagingSource
 import androidx.room.ForeignKey
 import androidx.room.Ignore
@@ -81,6 +82,7 @@ class NotebookAdvCustomizedDiffUtil: androidx.recyclerview.widget.DiffUtil.ItemC
         return oldItem.id == newItem.id
     }
 
+    @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: NotebookAdv, newItem: NotebookAdv): Boolean {
         return oldItem == newItem
     }

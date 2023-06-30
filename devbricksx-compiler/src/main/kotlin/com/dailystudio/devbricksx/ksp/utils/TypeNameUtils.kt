@@ -404,6 +404,10 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.preference", "AbsPrefs")
     }
 
+    fun typeOfSuppressLintAnnotation(): ClassName {
+        return ClassName("android.annotation", "SuppressLint")
+    }
+
     fun defaultValOfType(typeName: TypeName): String {
         return if (typeName.isNullable) {
             return "null"

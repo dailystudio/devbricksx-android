@@ -10,6 +10,7 @@ import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -39,6 +40,10 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         val itemCallbackTypeName = TypeNameUtils
             .typeOfItemCallbackOf(typeOfObject)
 
+        val annotationSpec = AnnotationSpec.builder(
+            TypeNameUtils.typeOfSuppressLintAnnotation()
+        ).addMember("\"DiffUtilEquals\"").build()
+
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
             .superclass(itemCallbackTypeName)
             .addModifiers(KModifier.OPEN)
@@ -51,6 +56,7 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
             .returns(Boolean::class)
 
         val methodContentsSameBuilder: FunSpec.Builder = FunSpec.builder("areContentsTheSame")
+            .addAnnotation(annotationSpec)
             .addModifiers(KModifier.PUBLIC)
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("oldObject", typeOfObject)

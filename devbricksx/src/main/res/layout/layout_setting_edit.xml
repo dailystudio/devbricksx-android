@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingStart="@dimen/default_padding"
     android:paddingEnd="@dimen/default_padding"
     android:layout_width="match_parent"
@@ -12,7 +13,6 @@
 
         <ImageView
             android:id="@+id/setting_icon"
-            android:tint="@color/colorAccent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
@@ -21,7 +21,8 @@
             android:layout_marginEnd="@dimen/settings_icon_margin"
             android:layout_marginBottom="0dp"
             android:layout_width="@dimen/settings_icon_size"
-            android:layout_height="@dimen/settings_icon_size" />
+            android:layout_height="@dimen/settings_icon_size"
+            app:tint="@color/colorAccent" />
 
         <TextView
             android:id="@+id/setting_label"
@@ -45,7 +46,7 @@
             android:id="@+id/setting_edit_image_button"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:tint="@color/action_icon_tint_light"
+            app:tint="@color/action_icon_tint_light"
             android:layout_margin="@dimen/settings_edit_button_margin"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"

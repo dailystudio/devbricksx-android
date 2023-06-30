@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.annotation.samples
+package com.dailystudio.devbricksx.annotations.samples
 
 import org.junit.Test
 

@@ -37,7 +37,7 @@ class ImageAnalysisFragment : CameraFragment() {
                     "frame.png")
         }
 
-        @SuppressLint("UnsafeExperimentalUsageError")
+        @SuppressLint("UnsafeExperimentalUsageError", "UnsafeOptInUsageError")
         override fun analyze(image: ImageProxy) {
             Logger.debug("image dimen: ${image.width} x ${image.height}")
             Logger.debug("rotation: image = ${image.imageInfo.rotationDegrees}, screen = $rotation")

@@ -1,5 +1,7 @@
 package com.dailystudio.devbricksx.audio
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -8,6 +10,7 @@ import android.os.Process
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.async.ManagedThread
 import com.dailystudio.devbricksx.audio.visualizer.RawAudioDataVisualizer
@@ -119,6 +122,11 @@ abstract class AudioProcessFragment : AbsAudioFragment() {
     private var recordingThread = object : ManagedThread() {
 
         override fun runInBackground() {
+            if (ActivityCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
+
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
 
             val audioConfig = getAudioConfig()
