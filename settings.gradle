@@ -23,6 +23,9 @@ include ':devbricksx-camera'
 // Network supports
 include ':devbricksx-network'
 
+// Compose supports
+include ':devbricksx-compose'
+
 // Samples and applications
 include ':samples'
 include ':sample-notebook'
