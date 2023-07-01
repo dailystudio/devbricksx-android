@@ -31,8 +31,3 @@ jobs:
         ls $GITHUB_WORKSPACE/devbricksx/
     - name: Build with Gradle
       run: ./gradlew build
-    - name: View Workspace Files [After Build]
-      run: |
-        ls -R $GITHUB_WORKSPACE/devbricksx/
-        cat $GITHUB_WORKSPACE/devbricksx/schemas/com.dailystudio.devbricksx.database.RecordDatabase/1.json
-      if: always()
