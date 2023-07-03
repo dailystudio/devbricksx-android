@@ -1,0 +1,51 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="PhotoItemText">
+        <item name="android:textStyle">italic</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">marquee</item>
+    </style>
+
+    <style name="PhotoItemTitle" parent="PhotoItemText">
+        <item name="android:textSize">@dimen/photo_item_title_font_size</item>
+        <item name="android:textColor">@color/light_white</item>
+        <item name="android:gravity">end|bottom</item>
+        <item name="android:background">@drawable/photo_item_title_background</item>
+        <item name="android:paddingStart">@dimen/photo_item_title_padding_h</item>
+        <item name="android:paddingEnd">@dimen/photo_item_title_padding_h</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">@dimen/photo_item_title_padding_v</item>
+    </style>
+
+    <style name="PhotoItemSupportingText" parent="PhotoItemText">
+        <item name="android:textStyle">italic|bold</item>
+        <item name="android:textSize">@dimen/photo_item_supporting_font_size</item>
+        <item name="android:textColor">@color/primaryColor</item>
+        <item name="android:gravity">start|top</item>
+        <item name="android:background">@drawable/photo_item_supporting_background</item>
+        <item name="android:paddingStart">@dimen/photo_item_title_padding_h</item>
+        <item name="android:paddingEnd">@dimen/photo_item_title_padding_h</item>
+        <item name="android:paddingTop">@dimen/photo_item_title_padding_v</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="UserName">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">@color/light_black</item>
+        <item name="android:textSize">@dimen/photo_user_name_font_size</item>
+        <item name="android:paddingStart">@dimen/default_label_padding</item>
+        <item name="android:paddingEnd">@dimen/default_label_padding</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="ImageSource">
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:textSize">@dimen/photo_source_font_size</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:paddingStart">@dimen/default_label_padding</item>
+        <item name="android:paddingEnd">@dimen/default_label_padding</item>
+    </style>
+
+</resources>

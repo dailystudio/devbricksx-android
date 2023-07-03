@@ -6,6 +6,7 @@ import coil.Coil
 import coil.ImageLoader
 import com.dailystudio.devbricksx.app.DevBricksMultiDexApplication
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.gallery.core.BuildConfig
 
 class CustomizedLogger: coil.util.Logger {
 

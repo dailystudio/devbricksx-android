@@ -25,7 +25,8 @@ import coil.transform.CircleCropTransformation
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
 import com.dailystudio.devbricksx.gallery.Directories
-import com.dailystudio.devbricksx.gallery.R
+import com.dailystudio.devbricksx.gallery.R as R
+import com.dailystudio.devbricksx.gallery.core.R as coreR
 import com.dailystudio.devbricksx.gallery.api.ImageApi
 import com.dailystudio.devbricksx.gallery.model.UserItemViewModelExt
 import com.dailystudio.devbricksx.utils.FileUtils
@@ -81,7 +82,7 @@ class PhotoViewFragment: AbsPermissionsFragment() {
                 /*
                  * Improve Status Bar transformation during navigation animation
                  */
-                delay(resources.getInteger(R.integer.animLength)/ 2L)
+                delay(resources.getInteger(coreR.integer.animLength)/ 2L)
                 withContext(Dispatchers.Main) {
                     SystemBarsUtils.statusBarColor(requireActivity(),
                         Color.TRANSPARENT
@@ -120,7 +121,7 @@ class PhotoViewFragment: AbsPermissionsFragment() {
         iconView?.backgroundTintList = (ColorStateList.valueOf(Color.parseColor(args.color)))
 
         sourceView = view.findViewById(R.id.image_source)
-        sourceView?.text = getString(R.string.source_unsplash)
+        sourceView?.text = getString(coreR.string.source_unsplash)
 
         saveButton = view.findViewById(R.id.download)
         saveButton?.setOnClickListener {

@@ -1,7 +1,7 @@
 package com.dailystudio.devbricksx.gallery.fragment
 
 import com.dailystudio.devbricksx.fragment.AbsAboutFragment
-import com.dailystudio.devbricksx.gallery.R
+import com.dailystudio.devbricksx.gallery.core.R
 
 class AboutFragment: AbsAboutFragment() {
     override val appName: CharSequence?

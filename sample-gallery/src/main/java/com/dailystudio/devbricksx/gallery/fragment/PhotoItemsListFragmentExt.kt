@@ -14,7 +14,6 @@ import androidx.paging.*
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
-import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
@@ -25,6 +24,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
+import com.dailystudio.devbricksx.gallery.R as R
+import com.dailystudio.devbricksx.gallery.core.R as coreR
 
 
 class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
@@ -56,11 +57,11 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
         setHasOptionsMenu(true)
         SystemBarsUtils.statusBarColor(
             requireActivity(),
-            ResourcesCompatUtils.getColor(requireContext(), R.color.primaryColor)
+            ResourcesCompatUtils.getColor(requireContext(), coreR.color.primaryColor)
         )
 
         topBar = fragmentView.findViewById(R.id.topAppBar)
-        topBar?.setTitle(R.string.app_name)
+        topBar?.setTitle(coreR.string.app_name)
 
         disableItemChangeDuration()
     }

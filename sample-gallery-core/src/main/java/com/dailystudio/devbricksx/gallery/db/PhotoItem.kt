@@ -17,9 +17,9 @@ import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.StringIdRecord
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
+import com.dailystudio.devbricksx.gallery.core.R
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import java.lang.IllegalArgumentException
 import java.text.DateFormat

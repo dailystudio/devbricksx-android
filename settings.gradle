@@ -29,6 +29,7 @@ include ':devbricksx-compose'
 // Samples and applications
 include ':samples'
 include ':sample-notebook'
+include ':sample-gallery-core'
 include ':sample-gallery'
 
 // Modules to be deprecated

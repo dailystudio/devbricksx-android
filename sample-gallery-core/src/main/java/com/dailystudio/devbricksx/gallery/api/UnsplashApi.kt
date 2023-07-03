@@ -3,7 +3,6 @@ package com.dailystudio.devbricksx.gallery.api
 import android.net.Uri
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.gallery.R
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.PageResults
 import com.dailystudio.devbricksx.gallery.api.data.Photo
@@ -218,7 +217,7 @@ object UnsplashApi: AuthenticatedNetworkApi<UnsplashApiInterface>() {
     override val defaultAuthInfo: Map<String, String>
         get() {
             val apiKey = GlobalContextWrapper.context?.let {
-                it.getString(R.string.api_key)
+                it.getString(com.dailystudio.devbricksx.gallery.core.R.string.api_key)
             }
 
             return mutableMapOf(

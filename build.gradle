@@ -64,9 +64,9 @@ ext {
     }
 
     // Unsplash.com API
-    if (file("sample-gallery/apikey.unsplash").exists()) {
+    if (file("sample-gallery-core/apikey.unsplash").exists()) {
         Properties props = new Properties()
-        props.load(new FileInputStream(file("sample-gallery/apikey.unsplash")))
+        props.load(new FileInputStream(file("sample-gallery-core/apikey.unsplash")))
 
         UNSPLASH_API_KEY = props.getProperty('API_KEY')
     } else {

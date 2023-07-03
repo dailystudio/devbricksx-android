@@ -1,7 +1,6 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
-    id 'androidx.navigation.safeargs'
 
     id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
 }
@@ -11,8 +10,7 @@ android {
     buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
-        applicationId "com.dailystudio.devbricksx.gallery"
-        namespace "com.dailystudio.devbricksx.gallery"
+        namespace "com.dailystudio.devbricksx.gallery.core"
 
         minSdkVersion 21
         targetSdkVersion TARGET_SDK
@@ -25,13 +23,14 @@ android {
             useSupportLibrary = true
         }
 
+        resValue "string", "api_key", "${project.UNSPLASH_API_KEY}"
+
         multiDexEnabled true
     }
 
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -53,7 +52,6 @@ android {
 devKit {
     compileType = "Project"
     devKitComps = [ "Network"]
-
 }
 
 dependencies {
@@ -63,8 +61,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    implementation(project(":sample-gallery-core"))
-
-    implementation "androidx.navigation:navigation-fragment-ktx:${project.ext.navigationVersion}"
-    implementation "androidx.navigation:navigation-ui-ktx:${project.ext.navigationVersion}"
+    api("io.coil-kt:coil:${project.ext.coilVersion}")
+    api "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
 }
