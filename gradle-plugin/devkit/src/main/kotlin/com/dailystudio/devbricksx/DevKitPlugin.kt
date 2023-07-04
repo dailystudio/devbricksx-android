@@ -81,7 +81,7 @@ class DevKitPlugin: Plugin<Project> {
             }
 
             for (comp in devKitComps) {
-                val artifactName = comp.toString().toLowerCase()
+                val artifactName = comp.toString().lowercase()
                 project.dependencies.apply {
                     if (compileType == CompileType.Project) {
                         add(nameOfConfig, project(":devbricksx-${artifactName}"))
@@ -89,6 +89,16 @@ class DevKitPlugin: Plugin<Project> {
                         add(nameOfConfig,"cn.dailystudio:devbricksx-${artifactName}:${devBricksXVersion}")
                     }
                 }
+            }
+
+            var useCompose = devKitComps.contains(Components.Compose)
+            if (useCompose) {
+                println("applying Jetpack Compose features")
+                val commonExtension = project.extensionByType(CommonExtension::class)
+                commonExtension?.buildFeatures?.compose = true
+                commonExtension?.composeOptions?.kotlinCompilerExtensionVersion = Dependencies.KOTLIN_COMPILER_EXT_VERSION
+                println("applying Kotlin Compiler Extension to ${Dependencies.KOTLIN_COMPILER_EXT_VERSION}")
+
             }
 
             if (useAnnotation) {

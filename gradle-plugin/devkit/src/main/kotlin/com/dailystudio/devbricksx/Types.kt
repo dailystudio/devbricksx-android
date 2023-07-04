@@ -4,6 +4,7 @@ enum class Components {
     Audio,
     Camera,
     Network,
+    Compose,
 }
 
 enum class CompileType {
