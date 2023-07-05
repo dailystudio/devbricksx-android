@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +31,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
-import com.dailystudio.devbricksx.compose.PagedGridScreenComposable
+import com.dailystudio.devbricksx.compose.BasePagingGridScreen
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
@@ -69,11 +66,15 @@ fun PhotoItemListScreen(
         pager.collectAsLazyPagingItems()
     }
 
-    PagedGridScreenComposable(dataSource, itemContent)
+    BasePagingGridScreen(
+        cells = GridCells.Fixed(2),
+        dataSource = dataSource,
+        itemContent = itemContent)
 }
 
 @Composable
 fun PhotoItemContent(item: PhotoItem?) {
+    Logger.debug("item: $item")
     Card(modifier = Modifier
         .height(250.dp)
         .padding(8.dp),
@@ -83,14 +84,16 @@ fun PhotoItemContent(item: PhotoItem?) {
         )
     ) {
         Surface(color = Color.Black) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = rememberAsyncImagePainter(item?.thumbnailUrl),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
             Box(modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(item?.thumbnailUrl),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                )
+
                 Text(
                     text = "by ${item?.userName}",
                     style = MaterialTheme.typography.bodyMedium.copy(
