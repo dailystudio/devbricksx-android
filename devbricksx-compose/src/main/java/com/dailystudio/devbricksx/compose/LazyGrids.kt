@@ -1,7 +1,9 @@
 package com.dailystudio.devbricksx.compose
 
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,9 +18,13 @@ fun <T : Any> BaseGridScreen(
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     dataSource: @Composable () -> List<T>,
+    key: ((item: T) -> Any)? = null,
+    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    contentType: (item: T) -> Any? = { null },
     itemContent: @Composable (item: T?) -> Unit
 ) {
-    BaseLazyGrid(orientation, cells, listOfItems = dataSource(), itemContent)
+    BaseLazyGrid(orientation, cells, listOfItems = dataSource(),
+        key, span, contentType, itemContent)
 }
 
 @Composable
@@ -26,9 +32,13 @@ fun <T : Any> BasePagingGridScreen(
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     dataSource: @Composable () -> LazyPagingItems<T>,
+    key: ((item: T) -> Any)? = null,
+    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    contentType: (item: T) -> Any? = { null },
     itemContent: @Composable (item: T?) -> Unit
 ) {
-    BaseLazyPagingGrid(orientation, cells, listOfItems = dataSource(), itemContent)
+    BaseLazyPagingGrid(orientation, cells, listOfItems = dataSource(),
+        key, span, contentType, itemContent)
 }
 
 @Composable
@@ -36,6 +46,9 @@ fun <T: Any> BaseLazyPagingGrid(
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     listOfItems: LazyPagingItems<T>,
+    key: ((item: T) -> Any)? = null,
+    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    contentType: (item: T) -> Any? = { null },
     itemContent: @Composable (item: T?) -> Unit
 ) {
     val gridState = rememberLazyGridState()
@@ -46,7 +59,7 @@ fun <T: Any> BaseLazyPagingGrid(
                 columns = cells,
                 state = gridState
             ) {
-                items(listOfItems) { item ->
+                items(listOfItems, key, span, contentType) { item ->
                     itemContent(item)
                 }
             }
@@ -57,7 +70,7 @@ fun <T: Any> BaseLazyPagingGrid(
                 rows = cells,
                 state = gridState
             ) {
-                items(listOfItems) { item ->
+                items(listOfItems, key, span, contentType) { item ->
                     itemContent(item)
                 }
             }
@@ -70,6 +83,9 @@ fun <T> BaseLazyGrid(
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     listOfItems: List<T>,
+    key: ((item: T) -> Any)? = null,
+    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    contentType: (item: T) -> Any? = { null },
     itemContent: @Composable (item: T?) -> Unit
 ) {
     val gridState = rememberLazyGridState()
@@ -80,7 +96,7 @@ fun <T> BaseLazyGrid(
                 columns = cells,
                 state = gridState
             ) {
-                items(listOfItems) { item ->
+                items(listOfItems, key, span, contentType) { item ->
                     itemContent(item)
                 }
             }
@@ -91,7 +107,7 @@ fun <T> BaseLazyGrid(
                 rows = cells,
                 state = gridState
             ) {
-                items(listOfItems) { item ->
+                items(listOfItems, key, span, contentType) { item ->
                     itemContent(item)
                 }
             }
@@ -102,6 +118,8 @@ fun <T> BaseLazyGrid(
 fun <T : Any> LazyGridScope.items(
     items: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
+    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
+    contentType: (item: T) -> Any? = { null },
     itemContent: @Composable LazyGridItemScope.(item: T?) -> Unit
 ) {
     items(
@@ -113,7 +131,16 @@ fun <T : Any> LazyGridScope.items(
             } else {
                 key(item)
             }
-        }
+        },
+        span = if (span == null) null else { index ->
+            val item = items.peek(index)
+            if (item == null) {
+                GridItemSpan(0)
+            } else {
+                span(item)
+            }
+        },
+        contentType = { contentType }
     ) { index ->
         itemContent(items[index])
     }
