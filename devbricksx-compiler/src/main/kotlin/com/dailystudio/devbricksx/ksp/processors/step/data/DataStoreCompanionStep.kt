@@ -4,6 +4,7 @@ import com.dailystudio.devbricksx.annotations.data.DataStoreCompanion
 import com.dailystudio.devbricksx.annotations.data.StoreType
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -151,7 +152,7 @@ class DataStoreCompanionStep (processor: BaseSymbolProcessor)
         classBuilder.addType(compObjBuilder.build())
         classBuilder.addProperty(prefNameFieldBuilder.build())
 
-        return singleResult(symbol,
+        return singleClassResult(symbol,
             packageName,
             classBuilder
         )

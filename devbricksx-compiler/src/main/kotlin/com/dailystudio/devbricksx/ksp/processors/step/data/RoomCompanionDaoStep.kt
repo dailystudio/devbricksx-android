@@ -5,6 +5,7 @@ import com.dailystudio.devbricksx.annotations.data.Page
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -404,7 +405,7 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodWrapperOfActionOnAllBuilder.build())
         }
 
-        return singleResult(symbol,
+        return singleClassResult(symbol,
             packageName, classBuilder)
     }
 

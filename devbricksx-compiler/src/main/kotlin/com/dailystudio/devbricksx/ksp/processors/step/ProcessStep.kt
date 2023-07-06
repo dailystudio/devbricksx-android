@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step
 
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -43,16 +44,16 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
         return results
     }
 
-    protected fun singleResult(sourceSymbol: KSClassDeclaration,
-                               packageName: String,
-                               classBuilder: TypeSpec.Builder): List<GeneratedResult> {
-        return listOf(GeneratedResult(setOf(sourceSymbol), packageName, classBuilder))
+    protected fun singleClassResult(sourceSymbol: KSClassDeclaration,
+                                    packageName: String,
+                                    classBuilder: TypeSpec.Builder): List<GeneratedClassResult> {
+        return listOf(GeneratedClassResult(setOf(sourceSymbol), packageName, classBuilder))
     }
 
-    protected fun singleResult(sourceSymbols: Collection<KSClassDeclaration>,
-                               packageName: String,
-                               classBuilder: TypeSpec.Builder): List<GeneratedResult> {
-        return listOf(GeneratedResult(sourceSymbols, packageName, classBuilder))
+    protected fun singleClassResult(sourceSymbols: Collection<KSClassDeclaration>,
+                                    packageName: String,
+                                    classBuilder: TypeSpec.Builder): List<GeneratedClassResult> {
+        return listOf(GeneratedClassResult(sourceSymbols, packageName, classBuilder))
     }
 
     public fun warn(message: String) {

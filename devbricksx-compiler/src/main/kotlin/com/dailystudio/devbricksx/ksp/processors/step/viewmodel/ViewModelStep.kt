@@ -6,6 +6,7 @@ import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -82,7 +83,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             generateFacilitiesOfSymbol(resolver, typeOfViewModel, symbol, classBuilder)
         }
 
-        return singleResult(symbols, viewModelPackageName, classBuilder)
+        return singleClassResult(symbols, viewModelPackageName, classBuilder)
     }
 
     private fun generateFacilitiesOfSymbol(resolver: Resolver,

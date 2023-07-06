@@ -16,7 +16,6 @@ fun <T : Any> BaseListScreen(
     orientation: ListOrientation = ListOrientation.Vertical,
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
-    span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
     itemContent: @Composable (item: T?) -> Unit
 ) {

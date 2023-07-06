@@ -5,6 +5,7 @@ import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ksp.helper.FunctionNames
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
@@ -76,7 +77,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
             }
         }
 
-        return singleResult(symbol,
+        return singleClassResult(symbol,
             GeneratedNames.getFragmentPackageName(packageName),
             classBuilder)
     }

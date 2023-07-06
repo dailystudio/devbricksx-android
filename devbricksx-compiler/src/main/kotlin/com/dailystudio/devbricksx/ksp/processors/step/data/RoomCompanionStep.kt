@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -399,7 +400,7 @@ class RoomCompanionStep (processor: BaseSymbolProcessor)
 
         classBuilder.addType(classCompanionBuilder.build())
 
-        return singleResult(symbol, packageName, classBuilder)
+        return singleClassResult(symbol, packageName, classBuilder)
     }
 
     private fun buildPrimaryKeysString(primaryKeys: Set<String>): String {

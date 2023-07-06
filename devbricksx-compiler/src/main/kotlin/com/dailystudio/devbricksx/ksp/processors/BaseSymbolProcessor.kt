@@ -81,15 +81,35 @@ abstract class BaseSymbolProcessor(
     }
 
     fun writeToFile(result: GeneratedResult) {
-        val typeSpec = result.classBuilder.build()
+        val fileBuilder = when (result) {
+            is GeneratedClassResult -> {
+                val typeSpec = result.classBuilder.build()
 
-        typeSpec.name?.let { name ->
-            val fileBuilder = FileSpec.builder(
-                result.packageName,
-                name)
+                typeSpec.name?.let { name ->
+                    FileSpec.builder(
+                        result.packageName,
+                        name
+                    ).apply {
+                            addType(typeSpec)
+                    }
+                }
+            }
 
-            val file = fileBuilder.addType(typeSpec).build()
+            is GeneratedFunctionsResult -> {
+                FileSpec.builder(
+                    result.packageName,
+                    result.typeName
+                ).apply {
+                    result.funcBuilders.forEach {
+                        addFunction(it.build())
+                    }
+                }
+            }
 
+            else -> null
+        }
+
+        fileBuilder?.let {
             val sourceFiles = mutableSetOf<KSFile>()
             for (sourceSymbol in result.sourceSymbols) {
                 val depFile = sourceSymbol.containingFile ?: continue
@@ -98,9 +118,9 @@ abstract class BaseSymbolProcessor(
             val dependencies = Dependencies(aggregating = true,
                 *sourceFiles.toTypedArray())
 
-            warn("writing to file: ${file.packageName}.${file.name}.kt [dependencies: ${sourceFiles}]")
+            warn("writing to file: ${it.packageName}.${it.name}.kt [dependencies: ${sourceFiles}]")
 
-            file.writeTo(environment.codeGenerator, dependencies)
+            it.build().writeTo(environment.codeGenerator, dependencies)
         }
     }
 

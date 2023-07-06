@@ -4,6 +4,7 @@ import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -166,7 +167,7 @@ class AdapterStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodOnCurrentListChanged.build())
         }
 
-        return singleResult(symbol,
+        return singleClassResult(symbol,
             GeneratedNames.getAdapterPackageName(packageName),
             classBuilder)
     }

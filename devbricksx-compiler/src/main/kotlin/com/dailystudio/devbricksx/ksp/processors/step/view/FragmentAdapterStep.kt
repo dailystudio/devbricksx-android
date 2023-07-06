@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.ksp.processors.step.view
 import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -73,7 +74,7 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())
 
-        return singleResult(symbol,
+        return singleClassResult(symbol,
             GeneratedNames.getAdapterPackageName(packageName),
             classBuilder)
     }

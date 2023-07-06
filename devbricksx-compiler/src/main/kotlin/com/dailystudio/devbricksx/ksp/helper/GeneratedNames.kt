@@ -28,6 +28,7 @@ object GeneratedNames {
     private const val FRAGMENT_ADAPTER_SUFFIX = "FragmentAdapter"
     private const val SHARED_PREFS_SUFFIX = "Prefs"
     private const val PREF_KEY_PREFIX = "PREF_"
+    private const val SCREEN_SUFFIX = "Screen"
 
     fun getTableName(className: String): String {
         return className.lowercase(Locale.getDefault())
@@ -206,6 +207,13 @@ object GeneratedNames {
         return buildString {
             this.append(className.lowerCamelCaseName())
             this.append('s')
+        }
+    }
+
+    fun getScreenName(className: String) : String {
+        return buildString {
+            this.append(className)
+            this.append(SCREEN_SUFFIX)
         }
     }
 

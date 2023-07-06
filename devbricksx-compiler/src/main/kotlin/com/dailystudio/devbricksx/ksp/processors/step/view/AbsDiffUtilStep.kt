@@ -4,6 +4,7 @@ import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
+import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -68,7 +69,7 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         classBuilder.addFunction(methodItemsSameBuilder.build())
         classBuilder.addFunction(methodContentsSameBuilder.build())
 
-        return singleResult(symbol, packageName, classBuilder)
+        return singleClassResult(symbol, packageName, classBuilder)
     }
 
     protected open fun needToDiffUtil(symbol: KSClassDeclaration): Boolean {
