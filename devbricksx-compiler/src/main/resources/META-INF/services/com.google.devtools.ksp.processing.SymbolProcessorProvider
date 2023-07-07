@@ -4,3 +4,4 @@ com.dailystudio.devbricksx.ksp.DataStoreCompanionProcessorProvider
 com.dailystudio.devbricksx.ksp.ViewModelProcessorProvider
 com.dailystudio.devbricksx.ksp.ViewProcessorProvider
 com.dailystudio.devbricksx.ksp.FragmentProcessorProvider
+com.dailystudio.devbricksx.ksp.ComposeProcessorProvider

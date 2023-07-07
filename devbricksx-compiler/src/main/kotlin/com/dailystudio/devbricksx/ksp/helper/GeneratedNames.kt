@@ -29,6 +29,7 @@ object GeneratedNames {
     private const val SHARED_PREFS_SUFFIX = "Prefs"
     private const val PREF_KEY_PREFIX = "PREF_"
     private const val SCREEN_SUFFIX = "Screen"
+    private const val COMPOSE_PACKAGE_SUFFIX = ".compose"
 
     fun getTableName(className: String): String {
         return className.lowercase(Locale.getDefault())
@@ -126,6 +127,10 @@ object GeneratedNames {
 
     fun getViewModelPackageName(packageName: String) : String {
         return getPackageName(packageName, VIEW_MODEL_PACKAGE_SUFFIX)
+    }
+
+    fun getComposePackageName(packageName: String) : String {
+        return getPackageName(packageName, COMPOSE_PACKAGE_SUFFIX)
     }
 
     fun getAdapterName(className: String) : String {

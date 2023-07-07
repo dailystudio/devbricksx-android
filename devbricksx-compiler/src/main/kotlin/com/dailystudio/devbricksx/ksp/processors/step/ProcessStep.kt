@@ -30,6 +30,8 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
 
     fun runStep(resolver: Resolver): List<GeneratedResult>? {
         val nameOfAnnotation = classOfAnnotation.qualifiedName
+        warn("filtering symbols with: $nameOfAnnotation")
+
         val symbols = nameOfAnnotation?.let {
             resolver.getSymbolsWithAnnotation(nameOfAnnotation)
                 .filterIsInstance<KSClassDeclaration>()

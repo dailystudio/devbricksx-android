@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
 
-    id("com.google.devtools.ksp") version "$ksp_version"
+    id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
 }
 
 android {
@@ -47,13 +47,11 @@ android {
         buildConfig = true
     }
 
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas".toString())
-    }
+}
 
-    sourceSets.configureEach {
-        kotlin.srcDir("$buildDir/generated/ksp/$name/kotlin/")
-    }
+devKit {
+    compileType = "Project"
+    devKitComps = [ "Network", "Compose"]
 }
 
 dependencies {
@@ -63,11 +61,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    implementation project(":devbricksx")
-    implementation project(':devbricksx-annotations')
-
-    ksp "androidx.room:room-compiler:${ROOM_VERSION}"
-    ksp project(':devbricksx-compiler')
-
 }

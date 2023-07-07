@@ -404,6 +404,16 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.preference", "AbsPrefs")
     }
 
+    fun typeOfComposable(): ClassName {
+        return ClassName("androidx.compose.runtime", "Composable")
+
+    }
+
+    fun typeOfNoLiveLiterals(): ClassName {
+        return ClassName("androidx.compose.runtime", "NoLiveLiterals")
+
+    }
+
     fun typeOfSuppressLintAnnotation(): ClassName {
         return ClassName("android.annotation", "SuppressLint")
     }

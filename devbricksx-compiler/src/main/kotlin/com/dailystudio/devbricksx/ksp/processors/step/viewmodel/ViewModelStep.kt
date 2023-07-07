@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.ksp.processors.step.viewmodel
 
+import com.dailystudio.devbricksx.annotations.compose.Compose
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
@@ -54,6 +55,12 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             return emptyResult
         }
 
+        var hasCompose = false
+        symbols.forEach {
+            hasCompose = it.hasAnnotation(Compose::class)
+        }
+        warn("has compose annotation: $hasCompose")
+
         val typeName = if (nameOfGroup.contains(".")) {
             nameOfGroup.split(".").last()
         } else {
@@ -77,6 +84,10 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                 FunSpec.constructorBuilder()
                 .addParameter("application", TypeNameUtils.typeOfApplication())
                 .build())
+
+        if (hasCompose) {
+            classBuilder.addAnnotation(TypeNameUtils.typeOfNoLiveLiterals())
+        }
 
         for (symbol in symbols) {
             warn("processing view model [$symbol] in group [$nameOfGroup]")
