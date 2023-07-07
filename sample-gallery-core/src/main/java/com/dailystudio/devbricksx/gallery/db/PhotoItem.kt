@@ -29,10 +29,6 @@ import com.dailystudio.devbricksx.annotations.compose.Compose
 import com.dailystudio.devbricksx.annotations.compose.ItemContent
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
-import com.dailystudio.devbricksx.annotations.fragment.DataSource
-import com.dailystudio.devbricksx.annotations.fragment.ListFragment
-import com.dailystudio.devbricksx.annotations.view.Adapter
-import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.StringIdRecord
@@ -85,34 +81,22 @@ fun PhotoItemContent(item: PhotoItem?) {
 }
 
 @Compose
-@ListFragment(
-    gridLayout = true,
-    columns = 2,
-    dataSource = DataSource.Flow,
-    layoutByName = "fragment_photos"
-)
 @ViewModel
-@Adapter(
-    viewHolder = PhotoItemViewHolder::class,
-    viewType = ViewType.Customized,
-    layoutByName = "layout_photo_item",
-    paged = true
-)
 @RoomCompanion(
     primaryKeys = ["id"],
     extension = PhotoItemDaoExtension::class,
     converters = [DateConverter::class],
     database = "unsplash"
 )
-data class PhotoItem(override val id: String,
-                     var cachedIndex: String,
-                     val uid: String,
-                     val userName: String,
-                     val description: String?,
-                     val color: String,
-                     val exif: String,
-                     val thumbnailUrl: String,
-                     val downloadUrl: String
+open class PhotoItem(override val id: String,
+                var cachedIndex: String,
+                val uid: String,
+                val userName: String,
+                val description: String?,
+                val color: String,
+                val exif: String,
+                val thumbnailUrl: String,
+                val downloadUrl: String
 ): StringIdRecord(id) {
 
     companion object {

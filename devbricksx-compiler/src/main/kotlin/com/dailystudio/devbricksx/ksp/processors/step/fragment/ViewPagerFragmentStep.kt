@@ -103,7 +103,7 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
 
     override fun genBuildOptions(resolver: Resolver,
                                  symbol: KSClassDeclaration): BuildOptions? {
-        val adapterAnnotation = symbol.getAnnotation(Adapter::class)
+        val adapterAnnotation = symbol.getAnnotation(Adapter::class, resolver)
         val paged = adapterAnnotation?.paged ?: false
         if (paged) {
             error("@ViewPagerFragment does not support @Adapter with paged = true.")
@@ -111,7 +111,7 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         }
 
         val fragmentAnnotation =
-            symbol.getAnnotation(ViewPagerFragment::class) ?: return null
+            symbol.getAnnotation(ViewPagerFragment::class, resolver) ?: return null
         val fragmentKSAnnotation =
             symbol.getKSAnnotation(ViewPagerFragment::class, resolver) ?: return null
 

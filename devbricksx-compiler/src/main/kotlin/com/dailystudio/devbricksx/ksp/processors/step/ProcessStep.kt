@@ -17,6 +17,11 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
     abstract fun processSymbols(resolver: Resolver,
                                 symbols: Sequence<KSClassDeclaration>): List<GeneratedResult>?
 
+    protected open fun filterSymbols(resolver: Resolver,
+                                     symbols: Sequence<KSClassDeclaration>): Sequence<KSClassDeclaration> {
+        return symbols
+    }
+
     protected open fun preProcessSymbols(resolver: Resolver,
                                          symbols: Sequence<KSClassDeclaration>) {
         warn("pre-processing symbols: ${symbols.toList()}")
@@ -37,11 +42,13 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
                 .filterIsInstance<KSClassDeclaration>()
         }?: emptySequence()
 
-        preProcessSymbols(resolver, symbols)
+        val filteredSymbols = filterSymbols(resolver, symbols)
 
-        val results = processSymbols(resolver, symbols)
+        preProcessSymbols(resolver, filteredSymbols)
 
-        postProcessSymbols(resolver, symbols, results)
+        val results = processSymbols(resolver, filteredSymbols)
+
+        postProcessSymbols(resolver, filteredSymbols, results)
 
         return results
     }

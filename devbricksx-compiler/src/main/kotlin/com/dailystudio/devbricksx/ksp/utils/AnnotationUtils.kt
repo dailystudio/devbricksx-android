@@ -2,17 +2,39 @@ package com.dailystudio.devbricksx.ksp.utils
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
+import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import kotlin.reflect.KClass
 
-fun <T: Annotation> KSDeclaration.hasAnnotation(annotationClass: KClass<T>): Boolean =
-    (getAnnotation(annotationClass) != null)
+fun <T: Annotation> KSDeclaration.hasAnnotation(
+    annotationClass: KClass<T>,
+    resolver: Resolver? = null,
+): Boolean = (getAnnotation(annotationClass, resolver) != null)
 
 @OptIn(KspExperimental::class)
 fun <T: Annotation> KSDeclaration.getAnnotation(
-    annotationClass: KClass<T>): T? = getAnnotationsByType(annotationClass).firstOrNull()
+    annotationClass: KClass<T>,
+    resolver: Resolver? = null,
+): T? {
+    if (resolver == null) {
+        return getAnnotationsByType(annotationClass).firstOrNull()
+    } else {
+        val annotation = getAnnotationsByType(annotationClass).firstOrNull()
+        if (annotation != null) {
+            return annotation
+        }
+
+        val packageName = packageName.asString()
+        val name = simpleName.asString()
+        val shadowSymbolName = "${packageName}.__${name}"
+
+        return resolver.getClassDeclarationByName(
+            shadowSymbolName
+        )?.getAnnotation(annotationClass)
+    }
+}
 
 fun <T: Annotation> KSDeclaration.getKSAnnotation(
     annotationClass: KClass<T>,
@@ -26,7 +48,17 @@ fun <T: Annotation> KSDeclaration.getKSAnnotation(
         }
     }
 
-    return found
+    if (found != null) {
+        return found
+    }
+
+    val packageName = packageName.asString()
+    val name = simpleName.asString()
+    val shadowSymbolName = "${packageName}.__${name}"
+
+    return resolver.getClassDeclarationByName(
+        shadowSymbolName
+    )?.getKSAnnotation(annotationClass, resolver)
 }
 
 inline fun <reified R> KSAnnotation.findArgument(argName: String): R {

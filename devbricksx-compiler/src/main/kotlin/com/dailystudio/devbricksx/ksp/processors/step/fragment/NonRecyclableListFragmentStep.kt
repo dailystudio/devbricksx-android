@@ -73,11 +73,11 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
 
     override fun genBuildOptions(resolver: Resolver,
                                  symbol: KSClassDeclaration): BuildOptions? {
-        val adapterAnnotation = symbol.getAnnotation(Adapter::class)
+        val adapterAnnotation = symbol.getAnnotation(Adapter::class, resolver)
         val paged = adapterAnnotation?.paged ?: false
 
         val fragmentAnnotation =
-            symbol.getAnnotation(NonRecyclableListFragment::class) ?: return null
+            symbol.getAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
         val fragmentKSAnnotation =
             symbol.getKSAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
 

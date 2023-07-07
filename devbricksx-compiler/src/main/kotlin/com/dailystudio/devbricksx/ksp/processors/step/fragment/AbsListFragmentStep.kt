@@ -12,6 +12,7 @@ import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
 import com.dailystudio.devbricksx.ksp.utils.getAnnotation
 import com.dailystudio.devbricksx.ksp.utils.packageName
 import com.dailystudio.devbricksx.ksp.utils.typeName
+import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
@@ -48,6 +49,36 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
 
     }
 
+
+    override fun filterSymbols(
+        resolver: Resolver,
+        symbols: Sequence<KSClassDeclaration>
+    ): Sequence<KSClassDeclaration> {
+        return symbols.map {
+            val packageName = it.packageName.asString()
+            val name = it.simpleName.asString()
+            if (name.startsWith("__")) {
+                val shadowName = name.replaceFirst("__", "")
+
+                val shadowClass = resolver.getClassDeclarationByName(
+                    "$packageName.$shadowName"
+                )
+
+                if (shadowClass != null) {
+                    val old = "$packageName.$name"
+                    val new = "$packageName.$shadowName"
+                    warn("switch fragment generation from [${old}] -> [${new}]")
+                    shadowClass
+                } else {
+                    it
+                }
+            } else {
+                it
+            }
+        }
+    }
+
+
     override fun processSymbol(
         resolver: Resolver,
         symbol: KSClassDeclaration
@@ -62,7 +93,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
         val classBuilder = genClassBuilder(resolver, symbol, typeOfObject, options)
             ?: return emptyResult
 
-        val viewModelAnnotation = symbol.getAnnotation(ViewModel::class)
+        val viewModelAnnotation = symbol.getAnnotation(ViewModel::class, resolver)
         if (viewModelAnnotation == null) {
             warn("ViewModel annotation is missing on element: $symbol, generate abstract class")
             classBuilder.addModifiers(KModifier.ABSTRACT)

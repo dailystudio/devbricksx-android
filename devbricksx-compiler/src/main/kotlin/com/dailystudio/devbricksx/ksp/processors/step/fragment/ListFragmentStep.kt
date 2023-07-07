@@ -89,10 +89,10 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
     }
 
     override fun genBuildOptions(resolver: Resolver, symbol: KSClassDeclaration): BuildOptions? {
-        val adapterAnnotation = symbol.getAnnotation(Adapter::class)
+        val adapterAnnotation = symbol.getAnnotation(Adapter::class, resolver)
         val paged = adapterAnnotation?.paged ?: false
 
-        val fragmentAnnotation = symbol.getAnnotation(ListFragment::class) ?: return null
+        val fragmentAnnotation = symbol.getAnnotation(ListFragment::class, resolver) ?: return null
         val fragmentKSAnnotation = symbol.getKSAnnotation(ListFragment::class, resolver) ?: return null
 
         val dataSource = fragmentAnnotation.dataSource

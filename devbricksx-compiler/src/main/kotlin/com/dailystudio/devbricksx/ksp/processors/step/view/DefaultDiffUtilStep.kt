@@ -22,16 +22,16 @@ class DefaultDiffUtilStep(classOfAnnotation: KClass<out Annotation>, processor: 
         methodContentsSameBuilder.addStatement("return (newObject == oldObject)")
     }
 
-    override fun needToDiffUtil(symbol: KSClassDeclaration): Boolean {
-        val matchedBasicRules = super.needToDiffUtil(symbol)
+    override fun needToDiffUtil(symbol: KSClassDeclaration, resolver: Resolver): Boolean {
+        val matchedBasicRules = super.needToDiffUtil(symbol, resolver)
         warn("check necessity: match basic rules = $matchedBasicRules")
 
         if (!matchedBasicRules) {
             return false
         }
 
-        val hasRoomCompanion = symbol.hasAnnotation(RoomCompanion::class)
-        val hasInMemoryCompanion = symbol.hasAnnotation(InMemoryCompanion::class)
+        val hasRoomCompanion = symbol.hasAnnotation(RoomCompanion::class, resolver)
+        val hasInMemoryCompanion = symbol.hasAnnotation(InMemoryCompanion::class, resolver)
         val matched = (!hasRoomCompanion && !hasInMemoryCompanion)
         warn("matched = $matched [hasRoomCompanion = $hasRoomCompanion, hasInMemoryCompanion = $hasInMemoryCompanion]")
 

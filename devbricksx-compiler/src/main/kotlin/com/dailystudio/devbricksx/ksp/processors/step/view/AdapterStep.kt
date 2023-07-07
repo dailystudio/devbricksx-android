@@ -8,6 +8,7 @@ import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
+import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
@@ -22,15 +23,44 @@ class AdapterStep (processor: BaseSymbolProcessor)
         const val DEFAULT_PROP_OF_DIFF_UTIL = "DIFF_CALLBACK"
     }
 
+    override fun filterSymbols(
+        resolver: Resolver,
+        symbols: Sequence<KSClassDeclaration>
+    ): Sequence<KSClassDeclaration> {
+        return symbols.map {
+            val packageName = it.packageName.asString()
+            val name = it.simpleName.asString()
+            if (name.startsWith("__")) {
+                val shadowName = name.replaceFirst("__", "")
+
+                val shadowClass = resolver.getClassDeclarationByName(
+                    "$packageName.$shadowName"
+                )
+
+                if (shadowClass != null) {
+                    val old = "$packageName.$name"
+                    val new = "$packageName.$shadowName"
+                    warn("switch adaptor generation from [${old}] -> [${new}]")
+                    shadowClass
+                } else {
+                    it
+                }
+            } else {
+                it
+            }
+        }
+    }
+
     override fun processSymbol(
         resolver: Resolver,
         symbol: KSClassDeclaration
     ): List<GeneratedResult> {
         val typeName = symbol.typeName()
+
         val packageName = symbol.packageName()
 
         val adapterAnnotation =
-            symbol.getAnnotation(Adapter::class) ?: return emptyResult
+            symbol.getAnnotation(Adapter::class, resolver) ?: return emptyResult
 
         val adapterKSAnnotation =
             symbol.getKSAnnotation(Adapter::class, resolver) ?: return emptyResult

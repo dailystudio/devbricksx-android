@@ -10,7 +10,7 @@ class ViewModelProcessor(
 
     override val steps: Array<ProcessStep>
         get() = arrayOf(
-            ViewModelStep(this)
+            ViewModelStep(this),
         )
 
 }
