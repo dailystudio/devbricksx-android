@@ -22,17 +22,11 @@ fun <T: Annotation> KSDeclaration.getAnnotation(
         return getAnnotationsByType(annotationClass).firstOrNull()
     } else {
         val annotation = getAnnotationsByType(annotationClass).firstOrNull()
-        if (annotation != null) {
+        if (annotation != null || this !is KSClassDeclaration) {
             return annotation
         }
 
-        val packageName = packageName.asString()
-        val name = simpleName.asString()
-        val shadowSymbolName = "${packageName}.__${name}"
-
-        return resolver.getClassDeclarationByName(
-            shadowSymbolName
-        )?.getAnnotation(annotationClass)
+        return toShadowClass(resolver)?.getAnnotation(annotationClass)
     }
 }
 
@@ -48,17 +42,12 @@ fun <T: Annotation> KSDeclaration.getKSAnnotation(
         }
     }
 
-    if (found != null) {
+    if (found != null || this !is KSClassDeclaration) {
         return found
     }
 
-    val packageName = packageName.asString()
-    val name = simpleName.asString()
-    val shadowSymbolName = "${packageName}.__${name}"
-
-    return resolver.getClassDeclarationByName(
-        shadowSymbolName
-    )?.getKSAnnotation(annotationClass, resolver)
+    return toShadowClass(resolver)?.getKSAnnotation(
+        annotationClass, resolver)
 }
 
 inline fun <reified R> KSAnnotation.findArgument(argName: String): R {

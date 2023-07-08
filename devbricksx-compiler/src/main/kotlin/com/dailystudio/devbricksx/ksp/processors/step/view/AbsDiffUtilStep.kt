@@ -27,28 +27,7 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         resolver: Resolver,
         symbols: Sequence<KSClassDeclaration>
     ): Sequence<KSClassDeclaration> {
-        return symbols.map {
-            val packageName = it.packageName.asString()
-            val name = it.simpleName.asString()
-            if (name.startsWith("__")) {
-                val shadowName = name.replaceFirst("__", "")
-
-                val shadowClass = resolver.getClassDeclarationByName(
-                    "$packageName.$shadowName"
-                )
-
-                if (shadowClass != null) {
-                    val old = "$packageName.$name"
-                    val new = "$packageName.$shadowName"
-                    warn("switch diffutil generation from [${old}] -> [${new}]")
-                    shadowClass
-                } else {
-                    it
-                }
-            } else {
-                it
-            }
-        }
+        return symbols.mapToShadowClass(resolver)
     }
 
     override fun processSymbol(

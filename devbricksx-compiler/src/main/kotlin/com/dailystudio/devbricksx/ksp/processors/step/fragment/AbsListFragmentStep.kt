@@ -10,6 +10,7 @@ import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
 import com.dailystudio.devbricksx.ksp.utils.getAnnotation
+import com.dailystudio.devbricksx.ksp.utils.mapToShadowClass
 import com.dailystudio.devbricksx.ksp.utils.packageName
 import com.dailystudio.devbricksx.ksp.utils.typeName
 import com.google.devtools.ksp.getClassDeclarationByName
@@ -49,35 +50,12 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
 
     }
 
-
     override fun filterSymbols(
         resolver: Resolver,
         symbols: Sequence<KSClassDeclaration>
     ): Sequence<KSClassDeclaration> {
-        return symbols.map {
-            val packageName = it.packageName.asString()
-            val name = it.simpleName.asString()
-            if (name.startsWith("__")) {
-                val shadowName = name.replaceFirst("__", "")
-
-                val shadowClass = resolver.getClassDeclarationByName(
-                    "$packageName.$shadowName"
-                )
-
-                if (shadowClass != null) {
-                    val old = "$packageName.$name"
-                    val new = "$packageName.$shadowName"
-                    warn("switch fragment generation from [${old}] -> [${new}]")
-                    shadowClass
-                } else {
-                    it
-                }
-            } else {
-                it
-            }
-        }
+        return symbols.mapToShadowClass(resolver)
     }
-
 
     override fun processSymbol(
         resolver: Resolver,
