@@ -51,7 +51,7 @@ android {
 
 devKit {
     compileType = "Project"
-    devKitComps = [ "Network", "Compose"]
+    devKitComps = [ "Network" ]
 }
 
 dependencies {

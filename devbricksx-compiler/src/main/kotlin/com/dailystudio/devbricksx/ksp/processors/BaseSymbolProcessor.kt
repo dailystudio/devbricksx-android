@@ -1,6 +1,8 @@
 package com.dailystudio.devbricksx.ksp.processors
 
+import com.dailystudio.devbricksx.ksp.utils.fromShadowClass
 import com.google.devtools.ksp.processing.Dependencies
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSFile
@@ -80,7 +82,7 @@ abstract class BaseSymbolProcessor(
         error(message, null, symbol)
     }
 
-    fun writeToFile(result: GeneratedResult) {
+    fun writeToFile(resolver: Resolver, result: GeneratedResult) {
         val fileBuilder = when (result) {
             is GeneratedClassResult -> {
                 val typeSpec = result.classBuilder.build()
@@ -114,6 +116,12 @@ abstract class BaseSymbolProcessor(
             for (sourceSymbol in result.sourceSymbols) {
                 val depFile = sourceSymbol.containingFile ?: continue
                 sourceFiles.add(depFile)
+
+                val originalSymbol = sourceSymbol.fromShadowClass(resolver)
+                if (originalSymbol != null && originalSymbol != sourceSymbol) {
+                    val originalDepFile = originalSymbol.containingFile ?: continue
+                    sourceFiles.add(originalDepFile)
+                }
             }
             val dependencies = Dependencies(aggregating = true,
                 *sourceFiles.toTypedArray())

@@ -33,6 +33,7 @@ fun KSClassDeclaration.toShadowClass(resolver: Resolver): KSClassDeclaration? {
 fun Sequence<KSClassDeclaration>.mapToShadowClass(resolver: Resolver): Sequence<KSClassDeclaration> {
     return map {
         val originalClass = it.fromShadowClass(resolver)
+        println("mapping to shadow class: [${originalClass?.qualifiedName}]")
 
         if (originalClass != null) {
             val old = "${it.qualifiedName}"

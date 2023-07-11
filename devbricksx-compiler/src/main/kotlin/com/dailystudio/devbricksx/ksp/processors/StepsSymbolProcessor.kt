@@ -14,7 +14,7 @@ abstract class StepsSymbolProcessor (environment: SymbolProcessorEnvironment)
         for (step in steps) {
             step.runStep(resolver)?.let {
                 for (r in it) {
-                    writeToFile(r)
+                    writeToFile(resolver, r)
                 }
             }
         }

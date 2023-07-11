@@ -1,32 +1,8 @@
 package com.dailystudio.devbricksx.gallery.db
 
-import android.graphics.drawable.Drawable
 import android.os.Build
-import android.view.View
-import android.widget.ImageView
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.paging.PagingSource
 import androidx.room.Query
-import coil.compose.rememberAsyncImagePainter
-import coil.load
-import com.dailystudio.devbricksx.annotations.compose.Compose
-import com.dailystudio.devbricksx.annotations.compose.ItemContent
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
@@ -35,52 +11,11 @@ import com.dailystudio.devbricksx.database.StringIdRecord
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.api.data.Links
 import com.dailystudio.devbricksx.gallery.api.data.Photo
-import com.dailystudio.devbricksx.gallery.core.R
-import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 import java.lang.IllegalArgumentException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-@ItemContent(PhotoItem::class)
-@Composable
-fun PhotoItemContent(item: PhotoItem?) {
-    Logger.debug("item: $item")
-    Card(modifier = Modifier
-        .height(250.dp)
-        .padding(8.dp),
-//                elevation = 3.dp,
-        shape = MaterialTheme.shapes.medium.copy(
-            CornerSize(5.dp)
-        )
-    ) {
-        Surface(color = Color.Black) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(item?.thumbnailUrl),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-            )
-            Box(modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-
-                Text(
-                    text = "by ${item?.userName}",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = Color.White
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    modifier = Modifier.padding(5.dp)
-                )
-            }
-        }
-    }
-}
-
-@Compose
 @ViewModel
 @RoomCompanion(
     primaryKeys = ["id"],
@@ -153,26 +88,6 @@ interface PhotoItemDaoExtension {
 
     @Query("DELETE FROM photoitem")
     fun deletePhotos()
-
-}
-
-
-class PhotoItemViewHolder(itemView: View): AbsCardViewHolder<PhotoItem>(itemView) {
-
-    override fun bindMedia(item: PhotoItem, iconView: ImageView?) {
-        iconView?.load(item.thumbnailUrl)
-    }
-
-    override fun getMedia(item: PhotoItem): Drawable? {
-        return null
-    }
-
-    override fun getTitle(item: PhotoItem): CharSequence {
-        val context = itemView.context
-
-        return context.getString(
-            R.string.label_author, item.userName)
-    }
 
 }
 

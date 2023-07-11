@@ -22,6 +22,13 @@ class ComposeScreenStep (processor: BaseSymbolProcessor)
     private val symbolsOfItemContent: MutableMap<ClassName, KSFunctionDeclaration> =
         mutableMapOf()
 
+    override fun filterSymbols(
+        resolver: Resolver,
+        symbols: Sequence<KSClassDeclaration>
+    ): Sequence<KSClassDeclaration> {
+        return symbols.mapToShadowClass(resolver)
+    }
+
     override fun preProcessSymbols(resolver: Resolver, symbols: Sequence<KSClassDeclaration>) {
         super.preProcessSymbols(resolver, symbols)
 
@@ -52,7 +59,7 @@ class ComposeScreenStep (processor: BaseSymbolProcessor)
 
         val funcNameOfScreen = GeneratedNames.getScreenName(typeName)
         val composePackageName = GeneratedNames.getComposePackageName(packageName)
-        val annotation = symbol.getAnnotation(Compose::class) ?: return emptyResult
+        val annotation = symbol.getAnnotation(Compose::class, resolver) ?: return emptyResult
 
         val itemContent = symbolsOfItemContent[symbol.toClassName()] ?: return emptyResult
         warn("itemContent of this symbol: [${itemContent.qualifiedName?.toString()}]")
