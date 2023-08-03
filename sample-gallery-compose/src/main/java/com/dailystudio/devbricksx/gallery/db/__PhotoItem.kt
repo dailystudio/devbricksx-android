@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.dailystudio.devbricksx.annotations.compose.ListScreen
 import com.dailystudio.devbricksx.annotations.compose.ItemContent
+import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.development.Logger
 
 
@@ -60,5 +61,5 @@ fun PhotoItemContent(item: PhotoItem?) {
     }
 }
 
-@ListScreen
+@ListScreen(paged = true, dataSource = DataSource.Flow, gridLayout = true, columns = 3)
 class __PhotoItem

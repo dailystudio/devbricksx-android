@@ -126,10 +126,11 @@ class ListScreenStep (processor: BaseSymbolProcessor)
 
         val funcScreenSpecBuilder = FunSpec.builder(funcNameOfScreen)
             .addAnnotation(TypeNameUtils.typeOfComposable())
-            .addParameter(itemContentParam.build())
 
         genCreateDataSource(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         genScreen(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+
+        funcScreenSpecBuilder.addParameter(itemContentParam.build())
 
         return listOf(
             GeneratedFunctionsResult(symbol,
@@ -155,56 +156,47 @@ class ListScreenStep (processor: BaseSymbolProcessor)
                                  typeOfObject: TypeName,
                                  composableBuilder: FunSpec.Builder,
                                  options: BuildOptions) {
-        val typeName = symbol.typeName()
-        val packageName = symbol.packageName()
+        warn("generate screen for [${typeOfObject}]: options = $options")
 
-        warn("generate data source for [${typeOfObject}]: options = $options")
-
+        val gridLayout = options.isGradLayout
+        val columns = options.columns
         val paged = options.paged
-        val dataSource = options.dataSource
 
-        val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
-        val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
-        val viewModelProvider = TypeNameUtils.typeOfViewModelProvider()
-        val pageConfig = TypeNameUtils.typeOfPageConfig()
-        val pager = TypeNameUtils.typeOfPager()
-        val asLiveData = TypeNameUtils.typeOfAsLiveData()
+        val gridCells = TypeNameUtils.typeOfGridCells()
 
-
-        if (paged) {
-            if (options.isGradLayout) {
-                composableBuilder.addStatement(
-                    """
-                        %T()
-                    """.trimIndent(),
-                    TypeNameUtils.typeOfBasePagingGridScreen()
-                )
+        if (gridLayout) {
+            val gridScreen = if (paged) {
+                TypeNameUtils.typeOfBasePagingGridScreen()
             } else {
-                composableBuilder.addStatement(
-                    """
-                        %T()
-                    """.trimIndent(),
-                    TypeNameUtils.typeOfBasePagingGridScreen()
-                )
+                TypeNameUtils.typeOfBaseGridScreen()
             }
+
+            composableBuilder.addStatement(
+                """
+                    val gridCells = %T.Fixed(%L)
+                """.trimIndent(),
+                gridCells, columns
+            )
+            composableBuilder.addStatement(
+                """
+                    %T(dataSource = dataSource, cells = gridCells, itemContent = itemContent)
+                """.trimIndent(),
+                gridScreen
+            )
         } else {
-            if (options.isGradLayout) {
-                composableBuilder.addStatement(
-                    """
-                        %T()
-                    """.trimIndent(),
-                    TypeNameUtils.typeOfBaseGridScreen()
-                )
+            val listScreen = if (paged) {
+                TypeNameUtils.typeOfBasePagingListScreen()
             } else {
-                composableBuilder.addStatement(
-                    """
-                        %T(dataSource = { dataSource ?: emptyList() }, itemContent = itemContent)
-                    """.trimIndent(),
-                    TypeNameUtils.typeOfBaseListScreen(),
-                )
+                TypeNameUtils.typeOfBaseListScreen()
             }
-        }
 
+            composableBuilder.addStatement(
+                """
+                    %T(dataSource = dataSource, itemContent = itemContent)
+                """.trimIndent(),
+                listScreen
+            )
+        }
     }
 
     protected open fun genCreateDataSource(resolver: Resolver,
@@ -221,19 +213,28 @@ class ListScreenStep (processor: BaseSymbolProcessor)
         val dataSource = options.dataSource
 
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
-        val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
+        val typeOfLazyPagingItemOfObjects = TypeNameUtils.typeOfLazyPagingItemsOf(typeOfObject)
         val viewModelProvider = TypeNameUtils.typeOfViewModelProvider()
         val pageConfig = TypeNameUtils.typeOfPageConfig()
         val pager = TypeNameUtils.typeOfPager()
         val asLiveData = TypeNameUtils.typeOfAsLiveData()
         val observeAsState = TypeNameUtils.typeOfObserveAsState()
-        val collectAsState = TypeNameUtils.typeOfAsLiveData()
+        val collectAsState = TypeNameUtils.typeOfCollectAsState()
+        val collectAsLazyPagingItems = TypeNameUtils.typeOfCollectAsLazyPagingItems()
 
-        val dataType = if (paged) typeOfPagingDataOfObjects else typeOfListOfObjects
+        val dataType = if (paged) typeOfLazyPagingItemOfObjects else typeOfListOfObjects
         val dataSourceType = when (dataSource) {
             DataSource.LiveData -> TypeNameUtils.typeOfLiveDataOf(dataType)
             DataSource.Flow -> TypeNameUtils.typeOfFlowOf(dataType)
         }
+
+        val funcTypeOfDataSource = LambdaTypeName.get(
+            returnType = dataType
+        ).copy(
+            annotations = listOf(
+                AnnotationSpec.builder(TypeNameUtils.typeOfComposable()).build()
+            )
+        )
 
         val viewModelAnnotation = symbol.getAnnotation(ViewModel::class, resolver)
         warn("view model annotation for [${typeOfObject}]: $viewModelAnnotation")
@@ -255,52 +256,67 @@ class ListScreenStep (processor: BaseSymbolProcessor)
         val viewModel = ClassName(viewModelPackage, viewModelName)
         val typeOfViewModel = TypeNameUtils.typeOfComposeViewModelOf(viewModel)
 
-        composableBuilder.addStatement("val viewModel = %T()", typeOfViewModel)
+        val dataSourceParamBuilder = ParameterSpec.builder(
+            "dataSource", funcTypeOfDataSource)
+
+        val defaultValueBuilder = CodeBlock.builder()
+        defaultValueBuilder.addStatement("")
+        defaultValueBuilder.indent().indent()
+        defaultValueBuilder.addStatement(
+            """
+                @%T {
+            """.trimIndent(),
+            TypeNameUtils.typeOfComposable())
+        defaultValueBuilder.indent()
+        defaultValueBuilder.addStatement(
+            """
+                   val viewModel = %T()
+            """.trimIndent(),
+            typeOfViewModel)
 
         if (paged) {
             when (dataSource) {
                 DataSource.LiveData -> {
-                    composableBuilder.addStatement(
+                    error("data source [${DataSource.LiveData}] is NOT supported in paged composable generation .")
+                    return
+                }
+                DataSource.Flow -> {
+                    defaultValueBuilder.addStatement(
                         """
-                        val dataSource by %T(
+                        val data = %T(
                            %T(%L)) {
                            viewModel.%N
-                        }.flow.%T().%T()
+                        }.flow.%T()
                         """.trimIndent(),
                         pager, pageConfig, options.pageSize,
                         FunctionNames.GET_ALL_PAGING_SOURCE.nameOfPropFuncForType(typeName),
-                        asLiveData,
-                        observeAsState
-                    )
-                }
-                DataSource.Flow -> {
-                    composableBuilder.addStatement(
-                        """
-                        val dataSource by %T(
-                           %T(%L)) {
-                           viewModel.%N
-                        }.flow
-                        """.trimIndent(),
-                        pager, pageConfig, options.pageSize,
-                        FunctionNames.GET_ALL_PAGING_SOURCE.nameOfPropFuncForType(typeName)
+                        collectAsLazyPagingItems
                     )
                 }
             }
         } else {
             when (dataSource) {
                 DataSource.LiveData -> {
-                    composableBuilder.addStatement(
-                        "val dataSource by viewModel.%N.%T()",
+                    defaultValueBuilder.addStatement(
+                        "val data by viewModel.%N.%T(emptyList())",
                         FunctionNames.GET_ALL_LIVE.nameOfPropFuncForType(typeName),
                         observeAsState
                     )
                 }
                 DataSource.Flow -> {
-                    composableBuilder.addStatement(
-                        "val dataSource by viewModel.%N",
-                        FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(typeName))
+                    defaultValueBuilder.addStatement(
+                        "val data by viewModel.%N.%T(emptyList())",
+                        FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(typeName),
+                        collectAsState
+                    )
                 }
             }
         }
+
+        defaultValueBuilder.addStatement("data")
+        defaultValueBuilder.unindent()
+        defaultValueBuilder.add("}")
+        dataSourceParamBuilder.defaultValue(defaultValueBuilder.build())
+        composableBuilder.addParameter(dataSourceParamBuilder.build())
     }
 }

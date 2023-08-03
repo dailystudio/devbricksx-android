@@ -18,6 +18,7 @@ import com.dailystudio.devbricksx.compose.BasePagingGridScreen
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.api.UnsplashApiInterface
+import com.dailystudio.devbricksx.gallery.compose.PhotoItemScreen
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemContent
 import com.dailystudio.devbricksx.gallery.db.PhotoItemMediator
@@ -50,9 +51,5 @@ fun PhotoItemListScreen(
         pager.collectAsLazyPagingItems()
     }
 
-    BasePagingGridScreen(
-        cells = GridCells.Fixed(2),
-        dataSource = dataSource,
-        itemContent = itemContent)
-
+    PhotoItemScreen(dataSource, itemContent)
 }

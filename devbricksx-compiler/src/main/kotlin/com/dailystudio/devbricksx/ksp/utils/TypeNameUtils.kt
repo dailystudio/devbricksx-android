@@ -418,8 +418,30 @@ object TypeNameUtils {
         return composeViewModel.parameterizedBy(typeName)
     }
 
-    fun typeOfObserveAsState(): TypeName {
+    fun typeOfObserveAsState(): ClassName {
         return ClassName("androidx.compose.runtime.livedata", "observeAsState")
+    }
+
+    fun typeOfCollectAsState(): ClassName {
+        return ClassName("androidx.compose.runtime", "collectAsState")
+    }
+
+    fun typeOfLazyPagingItems(): ClassName {
+        return ClassName("androidx.paging.compose", "LazyPagingItems")
+    }
+
+    fun typeOfLazyPagingItemsOf(typeName: TypeName): TypeName {
+        val lazyPagingItems = typeOfLazyPagingItems()
+
+        return lazyPagingItems.parameterizedBy(typeName)
+    }
+
+    fun typeOfCollectAsLazyPagingItems(): ClassName {
+        return ClassName("androidx.paging.compose", "collectAsLazyPagingItems")
+    }
+
+    fun typeOfGridCells(): ClassName {
+        return ClassName("androidx.compose.foundation.lazy.grid", "GridCells")
     }
 
     fun typeOfBaseGridScreen(): ClassName {
