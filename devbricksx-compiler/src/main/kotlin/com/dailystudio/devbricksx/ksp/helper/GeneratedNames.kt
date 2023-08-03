@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.ksp.helper
 
+import com.dailystudio.devbricksx.ksp.utils.pluralize
 import java.util.*
 
 object GeneratedNames {
@@ -135,8 +136,8 @@ object GeneratedNames {
 
     fun getAdapterName(className: String) : String {
         return buildString {
-            this.append(className.capitalizeName())
-            this.append('s')
+            this.append(className.pluralize().capitalizeName())
+//            this.append('s')
             this.append(ADAPTER_SUFFIX)
         }
     }
@@ -151,32 +152,32 @@ object GeneratedNames {
 
     fun getListFragmentName(className: String) : String {
         return buildString {
-            this.append(className.capitalizeName())
-            this.append('s')
+            this.append(className.pluralize().capitalizeName())
+//            this.append('s')
             this.append(LIST_FRAGMENT_SUFFIX)
         }
     }
 
     fun getNonRecyclableListFragmentName(className: String) : String {
         return buildString {
-            this.append(className.capitalizeName())
-            this.append('s')
+            this.append(className.pluralize().capitalizeName())
+//            this.append('s')
             this.append(NON_RECYCLABLE_LIST_FRAGMENT_SUFFIX)
         }
     }
 
     fun getPagerFragmentName(className: String) : String {
         return buildString {
-            this.append(className.capitalizeName())
-            this.append('s')
+            this.append(className.pluralize().capitalizeName())
+//            this.append('s')
             this.append(PAGER_FRAGMENT_SUFFIX)
         }
     }
 
     fun getFragmentAdapterName(className: String) : String {
         return buildString {
-            this.append(className.capitalizeName())
-            this.append('s')
+            this.append(className.pluralize().capitalizeName())
+//            this.append('s')
             this.append(FRAGMENT_ADAPTER_SUFFIX)
         }
     }
@@ -210,14 +211,14 @@ object GeneratedNames {
 
     fun getObjectsVariableName(className: String): String {
         return buildString {
-            this.append(className.lowerCamelCaseName())
-            this.append('s')
+            this.append(className.pluralize().lowerCamelCaseName())
+//            this.append('s')
         }
     }
 
     fun getScreenName(className: String) : String {
         return buildString {
-            this.append(className)
+            this.append(className.pluralize())
             this.append(SCREEN_SUFFIX)
         }
     }

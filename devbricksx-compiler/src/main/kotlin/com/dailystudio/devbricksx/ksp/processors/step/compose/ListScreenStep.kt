@@ -34,7 +34,7 @@ open class BuildOptions(val dataSource: DataSource,
     }
 }
 
-class ListScreenStep (processor: BaseSymbolProcessor)
+open class ListScreenStep (processor: BaseSymbolProcessor)
     : SingleSymbolProcessStep(ListScreen::class, processor) {
 
     private val symbolsOfItemContent: MutableMap<ClassName, KSFunctionDeclaration> =
@@ -81,56 +81,19 @@ class ListScreenStep (processor: BaseSymbolProcessor)
 
         val funcNameOfScreen = GeneratedNames.getScreenName(typeName)
         val composePackageName = GeneratedNames.getComposePackageName(packageName)
-        val annotation = symbol.getAnnotation(ListScreen::class, resolver) ?: return emptyResult
-
-        val itemContent = symbolsOfItemContent[symbol.toClassName()] ?: return emptyResult
-        warn("itemContent of this symbol: [${itemContent.qualifiedName?.toString()}]")
-        val typeOfItemContent = ClassName.bestGuess(
-            itemContent.qualifiedName?.asString() ?: return emptyResult
-        )
-
-        val itemContentParams = mutableListOf<ParameterSpec>()
-        var itemContentParamsInvoke = ""
-        itemContent.parameters.forEach {
-            val type = it.type.resolve().toTypeName()
-            val name = it.name?.asString() ?: return@forEach
-
-            itemContentParams.add(
-                ParameterSpec.builder(name, type).build()
-            )
-
-            itemContentParamsInvoke += "$name, "
-        }
-
-        itemContentParamsInvoke = itemContentParamsInvoke.removeSuffix(", ")
-
-        val funcTypeOfItemContent = LambdaTypeName.get(
-            parameters = itemContentParams,
-            returnType = itemContent.returnType?.resolve()?.toTypeName() ?: UNIT
-        ).copy(
-            annotations = listOf(
-                AnnotationSpec.builder(TypeNameUtils.typeOfComposable()).build()
-            )
-        )
-
-        val itemContentParam = ParameterSpec.builder(
-            name = "itemContent",
-            funcTypeOfItemContent
-        ).defaultValue(
-            CodeBlock.of("{ %L -> %T(%L) }",
-                itemContentParamsInvoke,
-                typeOfItemContent,
-                itemContentParamsInvoke
-            )
-        )
 
         val funcScreenSpecBuilder = FunSpec.builder(funcNameOfScreen)
             .addAnnotation(TypeNameUtils.typeOfComposable())
 
-        genCreateDataSource(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
-        genScreen(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+        var ret = false
 
-        funcScreenSpecBuilder.addParameter(itemContentParam.build())
+        ret = addDataSourceParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+        if (!ret)  return emptyResult
+
+        ret = addItemContentParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+        if (!ret)  return emptyResult
+
+        genScreenComposable(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
 
         return listOf(
             GeneratedFunctionsResult(symbol,
@@ -151,12 +114,12 @@ class ListScreenStep (processor: BaseSymbolProcessor)
         return BuildOptions(dataSource, paged, pageSize, gridLayout, columns)
     }
 
-    protected open fun genScreen(resolver: Resolver,
-                                 symbol: KSClassDeclaration,
-                                 typeOfObject: TypeName,
-                                 composableBuilder: FunSpec.Builder,
-                                 options: BuildOptions) {
-        warn("generate screen for [${typeOfObject}]: options = $options")
+    protected open fun genScreenComposable(resolver: Resolver,
+                                           symbol: KSClassDeclaration,
+                                           typeOfObject: TypeName,
+                                           composableBuilder: FunSpec.Builder,
+                                           options: BuildOptions) {
+        warn("generate screen composable for [${typeOfObject}]: options = $options")
 
         val gridLayout = options.isGradLayout
         val columns = options.columns
@@ -199,15 +162,66 @@ class ListScreenStep (processor: BaseSymbolProcessor)
         }
     }
 
-    protected open fun genCreateDataSource(resolver: Resolver,
-                                           symbol: KSClassDeclaration,
-                                           typeOfObject: TypeName,
-                                           composableBuilder: FunSpec.Builder,
-                                           options: BuildOptions) {
+    protected open fun addItemContentParameter(resolver: Resolver,
+                                               symbol: KSClassDeclaration,
+                                               typeOfObject: TypeName,
+                                               composableBuilder: FunSpec.Builder,
+                                               options: BuildOptions): Boolean {
+        val itemContent = symbolsOfItemContent[symbol.toClassName()] ?: return false
+        warn("itemContent of this symbol: [${itemContent.qualifiedName?.toString()}]")
+        val typeOfItemContent = ClassName.bestGuess(
+            itemContent.qualifiedName?.asString() ?: return false
+        )
+
+        val itemContentParams = mutableListOf<ParameterSpec>()
+        var itemContentParamsInvoke = ""
+        itemContent.parameters.forEach {
+            val type = it.type.resolve().toTypeName()
+            val name = it.name?.asString() ?: return@forEach
+
+            itemContentParams.add(
+                ParameterSpec.builder(name, type).build()
+            )
+
+            itemContentParamsInvoke += "$name, "
+        }
+
+        itemContentParamsInvoke = itemContentParamsInvoke.removeSuffix(", ")
+
+        val funcTypeOfItemContent = LambdaTypeName.get(
+            parameters = itemContentParams,
+            returnType = itemContent.returnType?.resolve()?.toTypeName() ?: UNIT
+        ).copy(
+            annotations = listOf(
+                AnnotationSpec.builder(TypeNameUtils.typeOfComposable()).build()
+            )
+        )
+
+        val itemContentParam = ParameterSpec.builder(
+            name = "itemContent",
+            funcTypeOfItemContent
+        ).defaultValue(
+            CodeBlock.of("{ %L -> %T(%L) }",
+                itemContentParamsInvoke,
+                typeOfItemContent,
+                itemContentParamsInvoke
+            )
+        )
+
+        composableBuilder.addParameter(itemContentParam.build())
+
+        return true
+    }
+
+    protected open fun addDataSourceParameter(resolver: Resolver,
+                                              symbol: KSClassDeclaration,
+                                              typeOfObject: TypeName,
+                                              composableBuilder: FunSpec.Builder,
+                                              options: BuildOptions): Boolean {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
-        warn("generate data source for [${typeOfObject}]: options = $options")
+        warn("add data source parameter for [${typeOfObject}]: options = $options")
 
         val paged = options.paged
         val dataSource = options.dataSource
@@ -241,7 +255,7 @@ class ListScreenStep (processor: BaseSymbolProcessor)
 
         if (viewModelAnnotation == null) {
             warn("ViewModel annotation is missing on element: $symbol, skip impl")
-            return
+            return false
         }
 
         val viewModelName = if (viewModelAnnotation.group.isNotBlank()) {
@@ -277,8 +291,8 @@ class ListScreenStep (processor: BaseSymbolProcessor)
         if (paged) {
             when (dataSource) {
                 DataSource.LiveData -> {
-                    error("data source [${DataSource.LiveData}] is NOT supported in paged composable generation .")
-                    return
+                    warn("data source [${DataSource.LiveData}] is NOT supported in paged composable generation .")
+                    return false
                 }
                 DataSource.Flow -> {
                     defaultValueBuilder.addStatement(
@@ -317,6 +331,9 @@ class ListScreenStep (processor: BaseSymbolProcessor)
         defaultValueBuilder.unindent()
         defaultValueBuilder.add("}")
         dataSourceParamBuilder.defaultValue(defaultValueBuilder.build())
+
         composableBuilder.addParameter(dataSourceParamBuilder.build())
+
+        return true
     }
 }
