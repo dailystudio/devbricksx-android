@@ -1,13 +1,12 @@
 package com.dailystudio.devbricksx.ksp.processors.step.viewmodel
 
-import com.dailystudio.devbricksx.annotations.compose.Compose
+import com.dailystudio.devbricksx.annotations.compose.ListScreen
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ksp.helper.*
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
-import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
@@ -57,7 +56,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
 
         var hasCompose = false
         symbols.forEach {
-            hasCompose = it.hasAnnotation(Compose::class)
+            hasCompose = it.hasAnnotation(ListScreen::class)
         }
         warn("has compose annotation: $hasCompose")
 

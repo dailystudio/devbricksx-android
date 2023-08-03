@@ -8,6 +8,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSNode
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.Import
 import com.squareup.kotlinpoet.ksp.writeTo
 
 abstract class BaseSymbolProcessor(
@@ -112,6 +113,7 @@ abstract class BaseSymbolProcessor(
         }
 
         fileBuilder?.let {
+            postProcessOnFileBuilder(it)
             val sourceFiles = mutableSetOf<KSFile>()
             for (sourceSymbol in result.sourceSymbols) {
                 val depFile = sourceSymbol.containingFile ?: continue
@@ -130,6 +132,10 @@ abstract class BaseSymbolProcessor(
 
             it.build().writeTo(environment.codeGenerator, dependencies)
         }
+    }
+
+    protected open fun postProcessOnFileBuilder(fileBuilder: FileSpec.Builder) {
+
     }
 
 

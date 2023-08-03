@@ -409,6 +409,39 @@ object TypeNameUtils {
 
     }
 
+    fun typeOfComposeViewModel(): ClassName {
+        return ClassName("androidx.lifecycle.viewmodel.compose", "viewModel")
+    }
+
+    fun typeOfComposeViewModelOf(typeName: TypeName): TypeName {
+        val composeViewModel = typeOfComposeViewModel()
+        return composeViewModel.parameterizedBy(typeName)
+    }
+
+    fun typeOfObserveAsState(): TypeName {
+        return ClassName("androidx.compose.runtime.livedata", "observeAsState")
+    }
+
+    fun typeOfBaseGridScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BaseGridScreen")
+    }
+
+    fun typeOfBasePagingGridScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BasePagingGridScreen")
+    }
+
+    fun typeOfBaseListScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BaseListScreen")
+    }
+
+    fun typeOfBasePagingListScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BasePagingListScreen")
+    }
+
     fun typeOfNoLiveLiterals(): ClassName {
         return ClassName("androidx.compose.runtime", "NoLiveLiterals")
 

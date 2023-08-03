@@ -18,12 +18,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.dailystudio.devbricksx.annotations.compose.Compose
+import com.dailystudio.devbricksx.annotations.compose.ListScreen
 import com.dailystudio.devbricksx.annotations.compose.ItemContent
-import com.dailystudio.devbricksx.annotations.fragment.DataSource
-import com.dailystudio.devbricksx.annotations.fragment.ListFragment
-import com.dailystudio.devbricksx.annotations.view.Adapter
-import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.development.Logger
 
 
@@ -64,5 +60,5 @@ fun PhotoItemContent(item: PhotoItem?) {
     }
 }
 
-@Compose
+@ListScreen
 class __PhotoItem
