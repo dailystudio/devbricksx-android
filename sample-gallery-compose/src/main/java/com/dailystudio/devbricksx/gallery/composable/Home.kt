@@ -28,13 +28,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -122,9 +118,10 @@ fun Home() {
                                 ),
                             )
                         },
-                        colors = TextFieldDefaults.textFieldColors(
+                        colors = TextFieldDefaults.colors(
                             cursorColor = MaterialTheme.colorScheme.secondaryContainer,
-//                            backgroundColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
                         ),
                         textStyle = MaterialTheme.typography.headlineMedium,
                         keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
@@ -240,7 +237,7 @@ fun Home() {
         ) {
             PhotoItemsScreenExt()
 
-            AboutDialog(showDialog = showAboutDialog) {
+            AppAbout(showDialog = showAboutDialog) {
                 showAboutDialog = false
             }
         }
