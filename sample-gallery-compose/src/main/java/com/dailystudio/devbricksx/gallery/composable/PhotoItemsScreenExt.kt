@@ -1,6 +1,7 @@
+@file:OptIn(ExperimentalPagingApi::class)
+
 package com.dailystudio.devbricksx.gallery.composable
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -25,8 +26,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 
-@OptIn(ExperimentalPagingApi::class)
-@ExperimentalFoundationApi
 @Composable
 fun PhotoItemsScreenExt(
     coroutineScope: CoroutineScope = LocalLifecycleOwner.current.lifecycleScope,
