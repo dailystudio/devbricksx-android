@@ -96,7 +96,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         genScreenComposable(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
 
         return listOf(
-            GeneratedFunctionsResult(symbol,
+            GeneratedFunctionsResult(
+                GeneratedResult.setWithShadowClass(symbol, resolver),
                 composePackageName,
                 funcNameOfScreen,
                 listOf(funcScreenSpecBuilder)),

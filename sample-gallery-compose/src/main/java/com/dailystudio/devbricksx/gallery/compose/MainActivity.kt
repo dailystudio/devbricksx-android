@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.lifecycle.lifecycleScope
-import com.dailystudio.devbricksx.gallery.composable.PhotoItemListScreen
+import com.dailystudio.devbricksx.gallery.composable.PhotoItemsScreenExt
 
 class MainActivity : ComponentActivity() {
 
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PhotoItemListScreen(this.lifecycleScope)
+            PhotoItemsScreenExt(this.lifecycleScope)
         }
     }
 }

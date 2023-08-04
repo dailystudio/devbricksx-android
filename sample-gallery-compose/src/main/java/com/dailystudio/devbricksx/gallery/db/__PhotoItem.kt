@@ -61,5 +61,5 @@ fun PhotoItemContent(item: PhotoItem?) {
     }
 }
 
-@ListScreen(paged = true, dataSource = DataSource.Flow, gridLayout = true, columns = 2)
+@ListScreen(paged = true, dataSource = DataSource.Flow, gridLayout = true, columns = 3)
 class __PhotoItem
