@@ -1,16 +1,12 @@
 package com.dailystudio.devbricksx.gallery.composable
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +37,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.dailystudio.devbricksx.compose.app.OptionMenuItem
+import com.dailystudio.devbricksx.compose.app.OptionMenus
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
@@ -159,7 +157,7 @@ fun Home() {
                         (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
                     }
 
-                    OptionMenus(modifier = Modifier.onGloballyPositioned {
+                    MainMenus(modifier = Modifier.onGloballyPositioned {
                             marginToEndOfScreenInPx -= it.size.width
                         },
                         menuOffset = DpOffset(
@@ -214,7 +212,7 @@ fun Home() {
                         (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
                     }
 
-                    OptionMenus(modifier = Modifier.onGloballyPositioned {
+                    MainMenus(modifier = Modifier.onGloballyPositioned {
                         marginToEndOfScreenInPx -= it.size.width
                     },
                         menuOffset = DpOffset(
@@ -245,33 +243,22 @@ fun Home() {
 }
 
 @Composable
-fun OptionMenus(modifier: Modifier = Modifier,
-                showMenu: Boolean,
-                menuOffset: DpOffset = DpOffset.Zero,
-                onMenuDismissed: () -> Unit,
-                onMenuItemClick: (Int) -> Unit
+fun MainMenus(
+    showMenu: Boolean,
+    modifier: Modifier = Modifier,
+    menuOffset: DpOffset = DpOffset.Zero,
+    onMenuDismissed: () -> Unit,
+    onMenuItemClick: (Int) -> Unit
 ) {
-    DropdownMenu(
-        modifier = modifier,
-        offset = menuOffset,
-        expanded = showMenu,
-        onDismissRequest = onMenuDismissed,
-    ) {
-        DropdownMenuItem(onClick = {
-            onMenuItemClick(MENU_ITEM_ID_ABOUT)
-            onMenuDismissed()
-        }, text = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.widthIn(min = 100.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Info,
-                    contentDescription = null,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(stringResource(id = coreR.string.menu_about))
-            }
-        })
-    }
+    val items = setOf(
+        OptionMenuItem(
+            MENU_ITEM_ID_ABOUT,
+            stringResource(coreR.string.menu_about),
+            Icons.Filled.Info
+        )
+    )
+
+    OptionMenus(
+        showMenu, items, modifier, menuOffset, onMenuDismissed, onMenuItemClick
+    )
 }
