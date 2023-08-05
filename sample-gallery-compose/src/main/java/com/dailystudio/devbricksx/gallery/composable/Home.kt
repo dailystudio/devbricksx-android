@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
@@ -254,11 +255,14 @@ fun MainMenus(
         OptionMenuItem(
             MENU_ITEM_ID_ABOUT,
             stringResource(coreR.string.menu_about),
-            Icons.Filled.Info
+            rememberVectorPainter(Icons.Filled.Info)
         )
     )
 
     OptionMenus(
-        showMenu, items, modifier, menuOffset, onMenuDismissed, onMenuItemClick
+        showMenu, items,
+        modifier, menuOffset,
+        onMenuDismissed  = onMenuDismissed,
+        onMenuItemClick = onMenuItemClick
     )
 }

@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import androidx.lifecycle.LiveData
 import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.development.Logger
@@ -129,4 +131,31 @@ object AppUtils {
         ActivityLauncher.launchActivity(context, intent)
     }
 
+    fun getApplicationVersion(context: Context,
+                              packageName: String): String {
+        var verName = context.getString(android.R.string.unknownName)
+
+        val packageManager = context.packageManager
+        val pkgInfo = try {
+            packageManager.getPackageInfoCompat(packageName, 0)
+        } catch (e: PackageManager.NameNotFoundException) {
+            Logger.warn("could not get package info of current app: $e")
+
+            null
+        }
+
+        pkgInfo?.let { info ->
+            verName = info.versionName
+        }
+
+        return verName
+    }
+
 }
+
+fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): PackageInfo =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
+    } else {
+        getPackageInfo(packageName, flags)
+    }

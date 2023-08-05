@@ -10,14 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 data class OptionMenuItem(
     val id: Int,
     val label: String,
-    val icon: ImageVector,
+    val icon: Painter? = null,
 )
 
 @Composable
@@ -26,8 +26,8 @@ fun OptionMenus(
     menuItems: Collection<OptionMenuItem>,
     modifier: Modifier = Modifier,
     menuOffset: DpOffset = DpOffset.Zero,
-    onMenuDismissed: () -> Unit,
-    onMenuItemClick: (Int) -> Unit
+    onMenuDismissed: () -> Unit = {},
+    onMenuItemClick: (Int) -> Unit = {}
 ) {
     DropdownMenu(
         modifier = modifier,
@@ -44,11 +44,13 @@ fun OptionMenus(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.widthIn(min = 100.dp)
                 ) {
-                    Icon(
-                        item.icon,
-                        contentDescription = null,
-                        modifier = Modifier.padding(8.dp)
-                    )
+                    item.icon?.let {
+                        Icon(
+                            item.icon,
+                            contentDescription = null,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                     Text(item.label)
                 }
             })

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.utils.AppUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,20 +79,7 @@ abstract class AbsAboutFragment : DevBricksDialogFragment() {
         val context = requireContext()
 
         lifecycleScope.launch(Dispatchers.IO) {
-            var verName = getString(android.R.string.unknownName)
-
-            val packageManager = context.packageManager
-            val pkgInfo = try {
-                packageManager.getPackageInfo(context.packageName, 0)
-            } catch (e: PackageManager.NameNotFoundException) {
-                Logger.warn("could not get package info of current app: $e")
-
-                null
-            }
-
-            pkgInfo?.let { info ->
-                verName = info.versionName
-            }
+            val verName = AppUtils.getApplicationVersion(context, context.packageName)
 
             withContext(Dispatchers.Main) {
                 versionView.text = verName
