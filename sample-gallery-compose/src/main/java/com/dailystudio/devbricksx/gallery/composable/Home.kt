@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.gallery.composable
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -42,6 +44,7 @@ import com.dailystudio.devbricksx.compose.app.OptionMenuItem
 import com.dailystudio.devbricksx.compose.app.OptionMenus
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
+import com.dailystudio.devbricksx.gallery.compose.GalleryTopAppBarColors
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.gallery.core.R as coreR
 
@@ -91,6 +94,7 @@ fun Home() {
                 title = {
 //                    Text(text = stringResource(id = R.string.app_name))
                 },
+                colors = GalleryTopAppBarColors(),
                 navigationIcon = {
                     if (searchActivated) {
                         IconButton(onClick = {
@@ -108,17 +112,15 @@ fun Home() {
                             queryInputState.value = it
                         },
                         placeholder = {
-                            Text(
-                                text = stringResource(id = coreR.string.hint_title),
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    color = Color.White.copy(
-                                        alpha = LocalContentColor.current.alpha
-                                    ),
-                                ),
+                            Icon(Icons.Default.Search, "Search",
+                                Modifier.fillMaxHeight()
                             )
                         },
                         colors = TextFieldDefaults.colors(
-                            cursorColor = MaterialTheme.colorScheme.secondaryContainer,
+                            focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                            cursorColor = MaterialTheme.colorScheme.onPrimary,
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
                         ),
@@ -136,7 +138,7 @@ fun Home() {
                             }
                         ),
                         modifier = Modifier.focusRequester(focusRequester)
-                            .fillMaxWidth(.8f)
+                            .fillMaxWidth(.65f)
                             .onGloballyPositioned {
                                 xOffsetOfSearchInPx = it.positionInRoot().x
                             }
@@ -145,6 +147,12 @@ fun Home() {
                     DisposableEffect(Unit) {
                         focusRequester.requestFocus()
                         onDispose { }
+                    }
+
+                    IconButton(onClick = {
+                        queryInputState.value = TextFieldValue("")
+                    }) {
+                        Icon(Icons.Default.Clear, "clear")
                     }
 
                     IconButton(onClick = {
@@ -179,6 +187,7 @@ fun Home() {
                 title = {
                     Text(text = stringResource(id = coreR.string.app_name))
                 },
+                colors = GalleryTopAppBarColors(),
                 actions = {
                     var xOffsetOfSearchInPx = 0f
                     IconButton(

@@ -1,12 +1,25 @@
 package com.dailystudio.devbricksx.gallery.compose
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val ColorPalette = lightColorScheme(
     primary = primaryColor,
-    secondary = primaryColor
+    onPrimary = Color.White,
+    secondary = primaryColor,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GalleryTopAppBarColors() = TopAppBarDefaults.topAppBarColors(
+    containerColor = MaterialTheme.colorScheme.primary,
+    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+    actionIconContentColor = MaterialTheme.colorScheme.onSecondary
 )
 
 @Composable
