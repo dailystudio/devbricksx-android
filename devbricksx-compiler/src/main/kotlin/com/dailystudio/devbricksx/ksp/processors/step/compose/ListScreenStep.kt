@@ -90,6 +90,9 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         ret = addDataSourceParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
+        ret = addOnItemClickParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+        if (!ret)  return emptyResult
+
         ret = addItemContentParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
@@ -143,7 +146,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             )
             composableBuilder.addStatement(
                 """
-                    %T(dataSource = dataSource, cells = gridCells, itemContent = itemContent)
+                    %T(dataSource = dataSource, cells = gridCells, onItemClick = onItemClick, itemContent = itemContent)
                 """.trimIndent(),
                 gridScreen
             )
@@ -156,11 +159,35 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
             composableBuilder.addStatement(
                 """
-                    %T(dataSource = dataSource, itemContent = itemContent)
+                    %T(dataSource = dataSource, onItemClick = onItemClick, itemContent = itemContent)
                 """.trimIndent(),
                 listScreen
             )
         }
+    }
+
+    protected open fun addOnItemClickParameter(resolver: Resolver,
+                                               symbol: KSClassDeclaration,
+                                               typeOfObject: TypeName,
+                                               composableBuilder: FunSpec.Builder,
+                                               options: BuildOptions): Boolean {
+        warn("add data source parameter for [${typeOfObject}]: options = $options")
+
+        val funcTypeOfItemContent = LambdaTypeName.get(
+            parameters = listOf(
+                ParameterSpec.builder("item", typeOfObject).build()
+            ),
+            returnType = UNIT
+        ).copy(nullable = true)
+
+        val itemContentParam = ParameterSpec.builder(
+            name = "onItemClick",
+            funcTypeOfItemContent
+        ).defaultValue("null")
+
+        composableBuilder.addParameter(itemContentParam.build())
+
+        return true
     }
 
     protected open fun addItemContentParameter(resolver: Resolver,

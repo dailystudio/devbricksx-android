@@ -78,6 +78,14 @@ open class PhotoItem(override val id: String,
         }
 
     }
+
+    override fun toString(): String {
+        return buildString {
+            append(super.toString())
+            append(", thumb: $thumbnailUrl")
+            append(", download: $downloadUrl")
+        }
+    }
 }
 
 @DaoExtension(entity = PhotoItem::class)

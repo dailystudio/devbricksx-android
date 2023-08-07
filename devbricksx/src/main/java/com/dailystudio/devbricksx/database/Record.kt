@@ -47,7 +47,7 @@ open class StringIdRecord(open val id: String) {
 
     override fun toString(): String {
         return buildString {
-            append("[${javaClass.simpleName}: $id]")
+            append("[${this@StringIdRecord.javaClass.simpleName}: $id]")
         }
     }
 }
