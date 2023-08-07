@@ -36,16 +36,18 @@ fun PhotoItemsScreenExt(
 
         val queryOfPhotos by viewModel.photoQuery.observeAsState()
         Logger.debug("home recompose: $queryOfPhotos")
-        val pager = remember (queryOfPhotos) {
+/*
+        val pager =
             Pager (
                 PagingConfig(pageSize = UnsplashApiInterface.DEFAULT_PER_PAGE),
                 remoteMediator = PhotoItemMediator(queryOfPhotos ?: Constants.QUERY_ALL)
             ) {
                 viewModel.listPhotos()
             }.flow.flowOn(Dispatchers.IO).cachedIn(coroutineScope)
-        }
 
-        pager.collectAsLazyPagingItems()
+*/
+
+        viewModel.filterPhotos(coroutineScope).collectAsLazyPagingItems()
     }
 
     PhotoItemsScreen(dataSource, itemContent)

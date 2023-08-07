@@ -176,7 +176,7 @@ class AdapterStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodOnCurrentListChanged.build())
         }
 
-        return singleClassResult(symbol,
+        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
             GeneratedNames.getAdapterPackageName(packageName),
             classBuilder)
     }

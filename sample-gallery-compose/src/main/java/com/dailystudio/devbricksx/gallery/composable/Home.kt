@@ -11,17 +11,14 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -68,9 +65,6 @@ fun Home() {
     }
 
     Scaffold(topBar = {
-        val focusRequester = remember { FocusRequester() }
-        val keyboardController = LocalSoftwareKeyboardController.current
-
         val queryValue = queryOfPhotos ?: Constants.QUERY_ALL
         val querySelectionIndex = queryValue.length
         Logger.debug("queryValue recompose: $queryValue")
@@ -88,108 +82,58 @@ fun Home() {
             )
         }
 
+        val doSearch = {
+            var newQuery = queryInputState.value.text
+            if (newQuery.isBlank()) {
+                newQuery = Constants.QUERY_ALL
+            }
 
-        if (searchActivated) {
-            TopAppBar(
-                title = {
-//                    Text(text = stringResource(id = R.string.app_name))
-                },
-                colors = GalleryTopAppBarColors(),
-                navigationIcon = {
-                    if (searchActivated) {
-                        IconButton(onClick = {
-                            searchActivated = false
-                        }) {
-                            Icon(Icons.Default.ArrowBack, "Close Search")
-                        }
+            Logger.debug("do searching for: $newQuery")
+            viewModel.searchPhotos(newQuery)
+        }
+
+        val clearSearch = {
+            queryInputState.value = TextFieldValue("")
+            doSearch()
+        }
+
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        TopAppBar(
+            title = {
+                if(!searchActivated) {
+                    Text(text = stringResource(id = coreR.string.app_name))
+                }
+            },
+            colors = GalleryTopAppBarColors(),
+            navigationIcon = {
+                if (searchActivated) {
+                    IconButton(onClick = {
+                        searchActivated = false
+                    }) {
+                        Icon(Icons.Default.ArrowBack, "Close Search")
                     }
-                },
-                actions = {
-                    var xOffsetOfSearchInPx = 0f
-                    TextField(
-                        value = queryInputState.value,
-                        onValueChange = {
+                }
+            },
+            actions = {
+                var xOffsetOfSearchInPx = 0f
+
+                if (searchActivated) {
+                    SearchBar(
+                        queryInputState.value,
+                        onInputChange = {
                             queryInputState.value = it
                         },
-                        placeholder = {
-                            Icon(Icons.Default.Search, "Search",
-                                Modifier.fillMaxHeight()
-                            )
+                        onInputClear = {
+                            queryInputState.value = TextFieldValue("")
                         },
-                        colors = TextFieldDefaults.colors(
-                            focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
-                            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
-                            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                            cursorColor = MaterialTheme.colorScheme.onPrimary,
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                        ),
-                        textStyle = MaterialTheme.typography.headlineMedium,
-                        keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
-                        keyboardActions = KeyboardActions(
-                            onSearch = {
-                                var newQuery = queryInputState.value.text
-                                if (newQuery.isBlank()) {
-                                    newQuery = Constants.QUERY_ALL
-                                }
-                                viewModel.searchPhotos(newQuery)
-                                keyboardController?.hide()
-                                searchActivated = false
-                            }
-                        ),
-                        modifier = Modifier.focusRequester(focusRequester)
-                            .fillMaxWidth(.65f)
-                            .onGloballyPositioned {
-                                xOffsetOfSearchInPx = it.positionInRoot().x
-                            }
-                    )
-
-                    DisposableEffect(Unit) {
-                        focusRequester.requestFocus()
-                        onDispose { }
-                    }
-
-                    IconButton(onClick = {
-                        queryInputState.value = TextFieldValue("")
-                    }) {
-                        Icon(Icons.Default.Clear, "clear")
-                    }
-
-                    IconButton(onClick = {
-                        showMenu = true
-                    }) {
-                        Icon(Icons.Default.MoreVert, "More actions")
-                    }
-
-                    val density = LocalDensity.current.density
-                    var marginToEndOfScreenInPx = with(LocalDensity.current) {
-                        (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
-                    }
-
-                    MainMenus(modifier = Modifier.onGloballyPositioned {
-                            marginToEndOfScreenInPx -= it.size.width
-                        },
-                        menuOffset = DpOffset(
-                            (marginToEndOfScreenInPx / density).dp,
-                            0.dp
-                        ),
-                        showMenu = showMenu,
-                        onMenuDismissed = { showMenu = false }) {
-                        when(it) {
-                            MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                        onSearch = {
+                            doSearch()
+                            keyboardController?.hide()
+                            searchActivated = false
                         }
-                    }
-
-                }
-            )
-        } else {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(id = coreR.string.app_name))
-                },
-                colors = GalleryTopAppBarColors(),
-                actions = {
-                    var xOffsetOfSearchInPx = 0f
+                    )
+                } else {
                     IconButton(
                         onClick = {
                             searchActivated = true
@@ -207,37 +151,38 @@ fun Home() {
                             icon = painterResource(id = coreR.drawable.ic_action_search_clear)
                         ) {
                             Logger.debug("clear search")
-                            viewModel.searchPhotos(Constants.QUERY_ALL)
-                        }
-                    }
-
-                    IconButton(onClick = {
-                        showMenu = true
-                    }) {
-                        Icon(Icons.Default.MoreVert, "More actions")
-                    }
-
-                    val density = LocalDensity.current.density
-                    var marginToEndOfScreenInPx = with(LocalDensity.current) {
-                        (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
-                    }
-
-                    MainMenus(modifier = Modifier.onGloballyPositioned {
-                        marginToEndOfScreenInPx -= it.size.width
-                    },
-                        menuOffset = DpOffset(
-                            (marginToEndOfScreenInPx / density).dp,
-                            0.dp
-                        ),
-                        showMenu = showMenu,
-                        onMenuDismissed = { showMenu = false }) {
-                        when(it) {
-                            MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                            clearSearch()
                         }
                     }
                 }
-            )
-        }
+
+                IconButton(onClick = {
+                    showMenu = true
+                }) {
+                    Icon(Icons.Default.MoreVert, "More actions")
+                }
+
+                val density = LocalDensity.current.density
+                var marginToEndOfScreenInPx = with(LocalDensity.current) {
+                    (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
+                }
+
+                MainMenus(modifier = Modifier.onGloballyPositioned {
+                        marginToEndOfScreenInPx -= it.size.width
+                    },
+                    menuOffset = DpOffset(
+                        (marginToEndOfScreenInPx / density).dp,
+                        0.dp
+                    ),
+                    showMenu = showMenu,
+                    onMenuDismissed = { showMenu = false }) {
+                    when(it) {
+                        MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                    }
+                }
+
+            }
+        )
 
     }, content = { padding ->
         Column (
@@ -250,6 +195,56 @@ fun Home() {
             }
         }
     })
+}
+
+@Composable
+fun SearchBar(
+    queryInput: TextFieldValue,
+    onInputChange: (TextFieldValue) -> Unit,
+    onInputClear: () -> Unit,
+    onSearch: (TextFieldValue) -> Unit,
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    TextField(
+        value = queryInput,
+        onValueChange = {
+            onInputChange(it)
+        },
+        placeholder = {
+            Icon(Icons.Default.Search, "Search",
+                Modifier.fillMaxHeight()
+            )
+        },
+        colors = TextFieldDefaults.colors(
+            focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+            cursorColor = MaterialTheme.colorScheme.onPrimary,
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+        ),
+        textStyle = MaterialTheme.typography.headlineSmall,
+        keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Search),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSearch(queryInput)
+            }
+        ),
+        modifier = Modifier.focusRequester(focusRequester)
+            .fillMaxWidth(.65f)
+    )
+
+    DisposableEffect(Unit) {
+        focusRequester.requestFocus()
+        onDispose { }
+    }
+
+    IconButton(onClick = {
+        onInputClear()
+    }) {
+        Icon(Icons.Default.Clear, "clear")
+    }
 }
 
 @Composable

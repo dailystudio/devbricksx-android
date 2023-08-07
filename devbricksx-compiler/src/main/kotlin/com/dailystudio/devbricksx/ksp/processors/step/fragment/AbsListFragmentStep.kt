@@ -86,7 +86,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
             }
         }
 
-        return singleClassResult(symbol,
+        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
             GeneratedNames.getFragmentPackageName(packageName),
             classBuilder)
     }

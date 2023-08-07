@@ -66,21 +66,8 @@ class PhotoItemsListFragmentExt: PhotoItemsListFragment() {
         disableItemChangeDuration()
     }
 
-    @OptIn(ExperimentalPagingApi::class)
     override fun createDataSource(): Flow<PagingData<PhotoItem>> {
-        val query = viewModel.photoQuery.value ?: Constants.QUERY_ALL
-        val forceRefresh = (query != lastQuery)
-
-        lastQuery = query
-
-        return Pager(
-                PagingConfig(/* pageSize = */ UnsplashApiInterface.DEFAULT_PER_PAGE),
-                remoteMediator = PhotoItemMediator(query, forceRefresh)
-            ) {
-                viewModel.listPhotos()
-            }.also {
-                Logger.debug("[MED] request paging: query = $query, pager = $it")
-            }.flow.flowOn(Dispatchers.IO).cachedIn(requireActivity().lifecycleScope)
+        return viewModel.filterPhotos(requireActivity().lifecycleScope)
     }
 
     override fun onItemClick(
