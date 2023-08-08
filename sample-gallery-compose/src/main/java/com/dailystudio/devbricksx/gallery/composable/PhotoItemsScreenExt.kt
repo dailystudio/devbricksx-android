@@ -1,15 +1,16 @@
-@file:OptIn(ExperimentalPagingApi::class)
-
 package com.dailystudio.devbricksx.gallery.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.dailystudio.devbricksx.compose.utils.activityViewModel
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.compose.PhotoItemsScreen
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
@@ -24,12 +25,16 @@ fun PhotoItemsScreenExt(
     itemContent: @Composable (item: PhotoItem?) -> Unit = {PhotoItemContent(it)}
 ) {
     val dataSource = @Composable {
-        val viewModel = viewModel<PhotoItemViewModelExt>()
+        val viewModel = activityViewModel<PhotoItemViewModelExt>()
 
         val queryOfPhotos by viewModel.photoQuery.observeAsState()
         Logger.debug("home recompose: $queryOfPhotos")
 
-        viewModel.filterPhotos(coroutineScope).collectAsLazyPagingItems()
+        val data = remember(queryOfPhotos) {
+            viewModel.filterPhotos(coroutineScope)
+        }
+
+        data.collectAsLazyPagingItems()
     }
 
     PhotoItemsScreen(dataSource, onItemClick, itemContent)

@@ -38,7 +38,7 @@ class PhotoItemViewModelExt(application: Application): PhotoItemViewModel(applic
         val forceRefresh = (query != lastQuery)
 
         lastQuery = query
-        Logger.debug("filtering photos for: $query")
+        Logger.debug("filtering photos for: $query, forceRefresh = $forceRefresh")
         return Pager (
             PagingConfig(pageSize = UnsplashApiInterface.DEFAULT_PER_PAGE),
             remoteMediator = PhotoItemMediator(query, forceRefresh)
@@ -50,6 +50,8 @@ class PhotoItemViewModelExt(application: Application): PhotoItemViewModel(applic
     private val _currentPhotoId = MutableLiveData<String?>(null)
     private val _currentPhoto: MutableLiveData<PhotoItem?> =
         MutableLiveData(null)
+
+    val currentPhoto: LiveData<PhotoItem?> = _currentPhoto
 
     fun viewPhoto(id: String) {
          _currentPhotoId.value = id

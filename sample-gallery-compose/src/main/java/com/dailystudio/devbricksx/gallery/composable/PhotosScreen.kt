@@ -49,16 +49,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dailystudio.devbricksx.compose.app.OptionMenuItem
 import com.dailystudio.devbricksx.compose.app.OptionMenus
+import com.dailystudio.devbricksx.compose.utils.activityViewModel
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.Constants
 import com.dailystudio.devbricksx.gallery.compose.galleryTopAppBarColors
 import com.dailystudio.devbricksx.gallery.core.R
+import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PhotosScreen() {
-    val viewModel = viewModel<PhotoItemViewModelExt>()
+fun PhotosScreen(
+    onItemClick: (item: PhotoItem) -> Unit
+) {
+    val viewModel = activityViewModel<PhotoItemViewModelExt>()
 
     val queryOfPhotos by viewModel.photoQuery.observeAsState()
     Logger.debug("home recompose: $queryOfPhotos")
@@ -196,9 +200,7 @@ fun PhotosScreen() {
         Column (
             modifier = Modifier.padding(padding)
         ) {
-            PhotoItemsScreenExt(onItemClick = {
-                Logger.debug("click on item: $it")
-            })
+            PhotoItemsScreenExt(onItemClick = onItemClick)
 
             AppAbout(showDialog = showAboutDialog) {
                 showAboutDialog = false

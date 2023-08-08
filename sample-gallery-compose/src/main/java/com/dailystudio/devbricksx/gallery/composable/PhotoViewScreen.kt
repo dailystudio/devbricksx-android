@@ -9,11 +9,13 @@ import coil.compose.rememberAsyncImagePainter
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 
 @Composable
-fun PhotoViewScreen(item: PhotoItem) {
-    Image(
-        modifier = Modifier.fillMaxSize(),
-        painter = rememberAsyncImagePainter(item.thumbnailUrl),
-        contentScale = ContentScale.Crop,
-        contentDescription = null,
-    )
+fun PhotoViewScreen(item: PhotoItem?) {
+    if (item != null) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = rememberAsyncImagePainter(item.thumbnailUrl),
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
+    }
 }
