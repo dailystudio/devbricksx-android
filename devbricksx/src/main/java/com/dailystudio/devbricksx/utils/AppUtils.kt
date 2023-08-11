@@ -104,6 +104,15 @@ object AppUtils {
         }
     }
 
+    fun getApplicationInfo(context: Context,
+                           packageName: String): PackageInfo? {
+        return try {
+            context.packageManager.getPackageInfoCompat(packageName, 0)
+        } catch (e: PackageManager.NameNotFoundException) {
+            null
+        }
+    }
+
     fun launchApplication(context: Context,
                           packageName: String) {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
