@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.gallery.composable
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -78,143 +79,141 @@ fun PhotosScreen(
         mutableStateOf(false)
     }
 
-    Scaffold(topBar = {
-        val queryValue = queryOfPhotos ?: Constants.QUERY_ALL
-        val querySelectionIndex = queryValue.length
-        Logger.debug("queryValue recompose: $queryValue")
+    Scaffold(
+        topBar = {
+            val queryValue = queryOfPhotos ?: Constants.QUERY_ALL
+            val querySelectionIndex = queryValue.length
+            Logger.debug("queryValue recompose: $queryValue")
 
-        val queryInputState = remember {
-            mutableStateOf(
-                TextFieldValue(
-                    text = if (queryValue == Constants.QUERY_ALL) {
-                        ""
-                    } else {
-                        queryValue
-                    },
-                    selection = TextRange(querySelectionIndex)
-                )
-            )
-        }
-
-        val doSearch = {
-            var newQuery = queryInputState.value.text
-            if (newQuery.isBlank()) {
-                newQuery = Constants.QUERY_ALL
-            }
-
-            Logger.debug("do searching for: $newQuery")
-            viewModel.searchPhotos(newQuery)
-        }
-
-        val clearSearch = {
-            queryInputState.value = TextFieldValue("")
-            doSearch()
-        }
-
-        val keyboardController = LocalSoftwareKeyboardController.current
-
-        TopAppBar(
-            title = {
-                if(!searchActivated) {
-                    Text(text = stringResource(id = R.string.app_name))
-                }
-            },
-            colors = galleryTopAppBarColors(),
-            navigationIcon = {
-                if (searchActivated) {
-                    IconButton(onClick = {
-                        searchActivated = false
-                    }) {
-                        Icon(Icons.Default.ArrowBack, "Close Search")
-                    }
-                }
-            },
-            actions = {
-                var xOffsetOfSearchInPx = 0f
-
-                if (searchActivated) {
-                    SearchBar(
-                        queryInputState.value,
-                        onInputChange = {
-                            queryInputState.value = it
+            val queryInputState = remember {
+                mutableStateOf(
+                    TextFieldValue(
+                        text = if (queryValue == Constants.QUERY_ALL) {
+                            ""
+                        } else {
+                            queryValue
                         },
-                        onInputClear = {
-                            queryInputState.value = TextFieldValue("")
-                        },
-                        onSearch = {
-                            doSearch()
-                            keyboardController?.hide()
-                            searchActivated = false
-                        }
+                        selection = TextRange(querySelectionIndex)
                     )
-                } else {
-                    IconButton(
-                        onClick = {
-                            searchActivated = true
-                        },
-                        modifier = Modifier.onGloballyPositioned {
-                            xOffsetOfSearchInPx = it.positionInRoot().x
-                        }
-                    ) {
-                        Icon(Icons.Default.Search, "Search")
+                )
+            }
+
+            val doSearch = {
+                var newQuery = queryInputState.value.text
+                if (newQuery.isBlank()) {
+                    newQuery = Constants.QUERY_ALL
+                }
+
+                Logger.debug("do searching for: $newQuery")
+                viewModel.searchPhotos(newQuery)
+            }
+
+            val clearSearch = {
+                queryInputState.value = TextFieldValue("")
+                doSearch()
+            }
+
+            val keyboardController = LocalSoftwareKeyboardController.current
+
+            TopAppBar(
+                title = {
+                    if(!searchActivated) {
+                        Text(text = stringResource(id = R.string.app_name))
                     }
-
-                    if (queryOfPhotos != Constants.QUERY_ALL) {
-                        Chip(
-                            label = queryInputState.value.text,
-                            icon = painterResource(id = R.drawable.ic_action_search_clear)
-                        ) {
-                            Logger.debug("clear search")
-                            clearSearch()
-                        }
-                    }
-                }
-
-                IconButton(onClick = {
-                    showMenu = true
-                }) {
-                    Icon(Icons.Default.MoreVert, "More actions")
-                }
-
-                val density = LocalDensity.current.density
-                var marginToEndOfScreenInPx = with(LocalDensity.current) {
-                    (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
-                }
-
-                MainMenus(/*modifier = Modifier.onGloballyPositioned {
-                    marginToEndOfScreenInPx -= it.size.width
                 },
-                    menuOffset = DpOffset(
-                        (marginToEndOfScreenInPx / density).dp,
-                        0.dp
-                    ),*/
-                    showMenu = showMenu,
-                    onMenuDismissed = { showMenu = false }) {
-                    when(it) {
-                        MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                colors = galleryTopAppBarColors(),
+                navigationIcon = {
+                    if (searchActivated) {
+                        IconButton(onClick = {
+                            searchActivated = false
+                        }) {
+                            Icon(Icons.Default.ArrowBack, "Close Search")
+                        }
                     }
+                },
+                actions = {
+                    var xOffsetOfSearchInPx = 0f
+
+                    if (searchActivated) {
+                        SearchBar(
+                            queryInputState.value,
+                            onInputChange = {
+                                queryInputState.value = it
+                            },
+                            onInputClear = {
+                                queryInputState.value = TextFieldValue("")
+                            },
+                            onSearch = {
+                                doSearch()
+                                keyboardController?.hide()
+                                searchActivated = false
+                            }
+                        )
+                    } else {
+                        IconButton(
+                            onClick = {
+                                searchActivated = true
+                            },
+                            modifier = Modifier.onGloballyPositioned {
+                                xOffsetOfSearchInPx = it.positionInRoot().x
+                            }
+                        ) {
+                            Icon(Icons.Default.Search, "Search")
+                        }
+
+                        if (queryOfPhotos != Constants.QUERY_ALL) {
+                            Chip(
+                                label = queryInputState.value.text,
+                                icon = painterResource(id = R.drawable.ic_action_search_clear)
+                            ) {
+                                Logger.debug("clear search")
+                                clearSearch()
+                            }
+                        }
+                    }
+
+                    IconButton(onClick = {
+                        showMenu = true
+                    }) {
+                        Icon(Icons.Default.MoreVert, "More actions")
+                    }
+
+                    val density = LocalDensity.current.density
+                    var marginToEndOfScreenInPx = with(LocalDensity.current) {
+                        (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
+                    }
+
+                    MainMenus(/*modifier = Modifier.onGloballyPositioned {
+                        marginToEndOfScreenInPx -= it.size.width
+                    },
+                        menuOffset = DpOffset(
+                            (marginToEndOfScreenInPx / density).dp,
+                            0.dp
+                        ),*/
+                        showMenu = showMenu,
+                        onMenuDismissed = { showMenu = false }) {
+                        when(it) {
+                            MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                        }
+                    }
+
                 }
+            )
 
+        },
+        content = { padding ->
+            Logger.debug("padding: $padding")
+            Column (
+                modifier = Modifier.padding(padding)
+            ) {
+                PhotoItemsScreenExt(onItemClick = onItemClick)
+
+                AppAbout(showDialog = showAboutDialog) {
+                    showAboutDialog = false
+                }
             }
-        )
-
-    }, content = { padding ->
-        Logger.debug("padding: $padding")
-        Column (
-//            modifier = Modifier.padding(padding)
-        ) {
-            PhotoItemsScreenExt(onItemClick = onItemClick)
-
-            AppAbout(showDialog = showAboutDialog) {
-                showAboutDialog = false
-            }
-        }
-    },
-        bottomBar = {
-            Surface(Modifier.fillMaxWidth(), color = Color.Cyan){
-
-            }
-        }
+        },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     )
 }
 
