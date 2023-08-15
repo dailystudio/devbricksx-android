@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.gallery.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -179,13 +181,13 @@ fun PhotosScreen(
                     (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
                 }
 
-                MainMenus(modifier = Modifier.onGloballyPositioned {
+                MainMenus(/*modifier = Modifier.onGloballyPositioned {
                     marginToEndOfScreenInPx -= it.size.width
                 },
                     menuOffset = DpOffset(
                         (marginToEndOfScreenInPx / density).dp,
                         0.dp
-                    ),
+                    ),*/
                     showMenu = showMenu,
                     onMenuDismissed = { showMenu = false }) {
                     when(it) {
@@ -197,8 +199,9 @@ fun PhotosScreen(
         )
 
     }, content = { padding ->
+        Logger.debug("padding: $padding")
         Column (
-            modifier = Modifier.padding(padding)
+//            modifier = Modifier.padding(padding)
         ) {
             PhotoItemsScreenExt(onItemClick = onItemClick)
 
@@ -206,7 +209,13 @@ fun PhotosScreen(
                 showAboutDialog = false
             }
         }
-    })
+    },
+        bottomBar = {
+            Surface(Modifier.fillMaxWidth(), color = Color.Cyan){
+
+            }
+        }
+    )
 }
 
 

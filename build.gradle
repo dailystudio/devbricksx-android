@@ -74,9 +74,9 @@ ext {
     }
 
     // Compile Settings
-    COMPILE_SDK = 33
-    TARGET_SDK = 33
-    BUILD_TOOLS = '33.0.0'
+    COMPILE_SDK = 34
+    TARGET_SDK = 34
+    BUILD_TOOLS = '34.0.0'
     VERSION_NAME = versions.devBricksXVersion()
     VERSION_CODE = versions.devBricksXVersionCode().toInteger()
 

@@ -26,12 +26,13 @@ android {
         resValue "string", "api_key", "${project.UNSPLASH_API_KEY}"
 
         multiDexEnabled true
+
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
         }
     }
 

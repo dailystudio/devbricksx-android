@@ -63,6 +63,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation(project(":sample-gallery-core"))
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.1"
 
     implementation "androidx.navigation:navigation-compose:$compose_navigation"
 }
