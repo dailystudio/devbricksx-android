@@ -30,7 +30,7 @@ object DaoExtensionMethodWrapperUtils {
         val hasReturn = (returnType != UNIT)
 
         val methodBuilder = FunSpec.builder(nameOfFunc)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
             .returns(returnType)
 
         val strOfFunCallBuilder = StringBuilder()

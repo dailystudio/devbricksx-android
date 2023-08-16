@@ -172,19 +172,20 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             .getter(FunSpec.getterBuilder()
                 .addStatement("return %N.%N", repoVariableName, repoAllName)
                 .build()
-            )
+            ).addModifiers(KModifier.OPEN)
 
         val propOfPagingSourceBuilder = PropertySpec.builder(allPagingSourceName, typeOfPagingSourceOfObject)
             .getter(FunSpec.getterBuilder()
                 .addStatement("return %N.%N", repoVariableName, repoAllPagingSourceName)
                 .build()
-            )
+            ).addModifiers(KModifier.OPEN)
 
-        classBuilder.addProperty(repoVariableName, typeOfRepo, KModifier.PROTECTED)
+        classBuilder.addProperty(repoVariableName, typeOfRepo,
+            KModifier.PROTECTED, KModifier.OPEN)
         classBuilder.addProperty(propOfAllBuilder.build())
-        classBuilder.addProperty(allLiveName, typeOfLiveDataOfListOfObjects)
-        classBuilder.addProperty(allPagedName, typeOfLiveDataOfPagedListOfObjects)
-        classBuilder.addProperty(allFlowName, typeOfFlowOfListOfObjects)
+        classBuilder.addProperty(allLiveName, typeOfLiveDataOfListOfObjects, KModifier.OPEN)
+        classBuilder.addProperty(allPagedName, typeOfLiveDataOfPagedListOfObjects, KModifier.OPEN)
+        classBuilder.addProperty(allFlowName, typeOfFlowOfListOfObjects, KModifier.OPEN)
         classBuilder.addProperty(propOfPagingSourceBuilder.build())
 
         if (isInMemoryRepo) {
@@ -222,7 +223,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
 
         val methodGetOneBuilder: FunSpec.Builder =
             FunSpec.builder(FunctionNames.GET_ONE.nameOfFuncForType(typeName))
-                .addModifiers(KModifier.PUBLIC)
+                .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
                 .returns(typeOfObject.copy(nullable = true))
 
         if (isInMemoryRepo) {
@@ -262,7 +263,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         ).forEach { method ->
             val methodBuilder: FunSpec.Builder =
                 FunSpec.builder(method.nameOfFuncForType(typeName))
-                    .addModifiers(KModifier.PUBLIC)
+                    .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
                     .addParameter(nameOfObject, typeOfObject.copy(!isInMemoryRepo))
 
             if (isInMemoryRepo) {
@@ -294,7 +295,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         ).forEach { method ->
             val methodBuilder: FunSpec.Builder =
                 FunSpec.builder(method.nameOfFuncForType(typeName, true))
-                    .addModifiers(KModifier.PUBLIC)
+                    .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
                     .addParameter(nameOfObjects, typeOfListOfObjects.copy(!isInMemoryRepo))
 
             if (isInMemoryRepo) {
