@@ -1,25 +1,34 @@
 package com.dailystudio.devbricksx.gallery.model
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import com.dailystudio.devbricksx.gallery.api.UnsplashApi
 import com.dailystudio.devbricksx.gallery.db.UserItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 class UserItemViewModelExt(application: Application): UserItemViewModel(application)  {
 
-    suspend fun pullUser(userName: String): UserItem? {
+    override fun userByName(userName: String): Flow<UserItem?> {
+        return super.userByName(userName).flowOn(Dispatchers.IO)
+    }
+
+    fun pullUser(
+        userName: String,
+        coroutineScope: CoroutineScope = viewModelScope
+    ) = coroutineScope.launch(Dispatchers.IO) {
         var userItem = userItemRepository.getUserItem(userName)
         if (userItem == null) {
             val user = UnsplashApi.getUser(userName)
-
             user?.let {
                 userItem = UserItem.fromUnsplashUser(it)
             }?.also {
                 userItemRepository.insert(userItem)
             }
-
         }
-
-        return userItem
     }
 
 }

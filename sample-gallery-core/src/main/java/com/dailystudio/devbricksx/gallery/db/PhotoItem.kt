@@ -82,6 +82,7 @@ open class PhotoItem(override val id: String,
     override fun toString(): String {
         return buildString {
             append(super.toString())
+            append(", user: [$userName, uid = $uid]")
             append(", thumb: $thumbnailUrl")
             append(", download: $downloadUrl")
         }
