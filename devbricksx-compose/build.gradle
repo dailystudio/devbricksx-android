@@ -79,6 +79,8 @@ dependencies {
     api "androidx.lifecycle:lifecycle-viewmodel-compose:${project.ext.viewmodelComposeVersion}"
     // Optional - Integration with LiveData
     api 'androidx.compose.runtime:runtime-livedata'
+    // Optional - collectAsStateWithLifecycle
+    api "androidx.lifecycle:lifecycle-runtime-compose:${project.ext.lifecycyleComposeVersioin}"
 
     // Coil Compose
     api("io.coil-kt:coil-compose:${project.ext.coilComposeVersion}")

@@ -35,11 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
@@ -47,29 +47,35 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.compose.rememberAsyncImagePainter
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.gallery.api.data.ProfileImages
 import com.dailystudio.devbricksx.gallery.core.R
+import com.dailystudio.devbricksx.gallery.data.Download
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
+import com.dailystudio.devbricksx.gallery.db.UserItem
+import com.dailystudio.devbricksx.gallery.model.DownloadViewModelExt
 import com.dailystudio.devbricksx.gallery.model.UserItemViewModel
 import com.dailystudio.devbricksx.gallery.model.UserItemViewModelExt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 
 @Composable
 fun PhotoViewScreen(item: PhotoItem?) {
     val photo = item ?: return
-    Logger.debug("photo.userName: ${photo.userName}")
+    Logger.debug("photo.userName: ${photo.uid}")
 
     val userItemViewModel = viewModel<UserItemViewModelExt>()
-    val user by
-        userItemViewModel.userByName(photo.uid).flowOn(Dispatchers.IO)
-            .collectAsState(null)
+    val downloadViewModel = viewModel<DownloadViewModelExt>()
 
-    if (user == null) {
-        userItemViewModel.pullUser(photo.uid)
-    }
+    userItemViewModel.pullUser(photo.uid)
 
-    var downloading by remember { mutableStateOf(false) }
+    val user by remember {
+        userItemViewModel.userByName(photo.uid)
+    }.collectAsStateWithLifecycle(UserItem("", "", ""))
+
+    val download by downloadViewModel.imageById(photo.id)
+        .collectAsStateWithLifecycle(Download(photo.id, photo.downloadUrl, 0))
 
     ImageWithThumb(
         photo.thumbnailUrl,
@@ -97,7 +103,7 @@ fun PhotoViewScreen(item: PhotoItem?) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 AsyncImage(
-                    user?.photoUrl,
+                    user.photoUrl,
                     modifier = Modifier
                         .padding(8.dp)
                         .size(48.dp)
@@ -107,7 +113,7 @@ fun PhotoViewScreen(item: PhotoItem?) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = user?.displayName ?: "",
+                        text = user.displayName ?: "",
                         modifier = Modifier.padding(horizontal = 8.dp),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.Black
@@ -120,8 +126,10 @@ fun PhotoViewScreen(item: PhotoItem?) {
                     )
                 }
                 Box {
-                    if (downloading) {
+                    if (download != null) {
+                        val prg = (download?.progress ?:0) / 100f
                         CircularProgressIndicator(
+                            progress = prg,
                             modifier = Modifier
                                 .padding(2.dp)
                                 .size(32.dp)
@@ -134,7 +142,7 @@ fun PhotoViewScreen(item: PhotoItem?) {
                                 .padding(2.dp)
                                 .size(32.dp)
                                 .clickable {
-                                    downloading = true
+                                    downloadViewModel.downloadImage(photo.id, photo.downloadUrl)
                                 }
                         )
                     }
