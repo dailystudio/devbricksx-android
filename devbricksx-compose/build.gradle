@@ -81,6 +81,8 @@ dependencies {
     api 'androidx.compose.runtime:runtime-livedata'
     // Optional - collectAsStateWithLifecycle
     api "androidx.lifecycle:lifecycle-runtime-compose:${project.ext.lifecycyleComposeVersioin}"
+    // Optional - permissions
+    api "com.google.accompanist:accompanist-permissions:${project.ext.permissionsVersioin}"
 
     // Coil Compose
     api("io.coil-kt:coil-compose:${project.ext.coilComposeVersion}")
