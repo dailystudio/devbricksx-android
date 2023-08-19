@@ -3,6 +3,7 @@ package com.dailystudio.devbricksx.gallery.composable
 import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -165,21 +168,29 @@ fun PhotoViewScreen(item: PhotoItem?) {
                             Icon(
                                 painterResource(R.drawable.ic_action_download),
                                 contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .padding(2.dp)
                                     .size(32.dp)
-                                    .clickable {
-                                        if (allGranted) {
-                                            downloadViewModel.downloadImage(
-                                                photo.id,
-                                                photo.downloadUrl
-                                            )
-                                        } else {
-                                            Logger.debug("[PER] launch request")
-                                            state.launchMultiplePermissionRequest()
-                                            pendingDownload = true
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = rememberRipple(
+                                            radius = 16.dp,
+                                            bounded = true
+                                        ),
+                                        onClick = {
+                                            if (allGranted) {
+                                                downloadViewModel.downloadImage(
+                                                    photo.id,
+                                                    photo.downloadUrl
+                                                )
+                                            } else {
+                                                Logger.debug("[PER] launch request")
+                                                state.launchMultiplePermissionRequest()
+                                                pendingDownload = true
+                                            }
                                         }
-                                    }
+                                    )
                             )
                         }
 
