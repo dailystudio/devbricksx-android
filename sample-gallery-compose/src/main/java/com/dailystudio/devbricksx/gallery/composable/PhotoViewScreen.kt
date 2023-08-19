@@ -58,19 +58,25 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun PhotoViewScreen(item: PhotoItem?) {
     val photo = item ?: return
-    Logger.debug("photo.userName: ${photo.uid}")
+    val uid = photo.uid
+    Logger.debug("photo: ${photo.id}")
+    Logger.debug("user: $uid")
 
     val userItemViewModel = viewModel<UserItemViewModelExt>()
     val downloadViewModel = viewModel<DownloadViewModelExt>()
 
-    userItemViewModel.pullUser(photo.uid)
+    val user by remember(uid) {
+        userItemViewModel.userByName(uid)
+    }.collectAsStateWithLifecycle(null)
 
-    val user by remember {
-        userItemViewModel.userByName(photo.uid)
-    }.collectAsStateWithLifecycle(UserItem("", "", ""))
+    userItemViewModel.pullUser(uid)
+
+    Logger.debug("user: $user")
 
     val download by downloadViewModel.imageById(photo.id)
         .collectAsStateWithLifecycle(Download(photo.id, photo.downloadUrl, 0))
+    Logger.debug("download: $user")
+
 
     var pendingDownload by remember { mutableStateOf(false) }
 
@@ -124,7 +130,7 @@ fun PhotoViewScreen(item: PhotoItem?) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     AsyncImage(
-                        user.photoUrl,
+                        user?.photoUrl,
                         modifier = Modifier
                             .padding(8.dp)
                             .size(48.dp)
@@ -134,7 +140,7 @@ fun PhotoViewScreen(item: PhotoItem?) {
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = user.displayName ?: "",
+                            text = user?.displayName ?: "",
                             modifier = Modifier.padding(horizontal = 8.dp),
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.Black
