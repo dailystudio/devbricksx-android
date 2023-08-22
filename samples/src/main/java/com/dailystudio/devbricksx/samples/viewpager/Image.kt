@@ -3,16 +3,14 @@ package com.dailystudio.devbricksx.samples.viewpager
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
-import com.dailystudio.devbricksx.annotations.*
+import coil.load
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
-import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.ui.AbsPageViewHolder
-import com.nostra13.universalimageloader.core.ImageLoader
 
 @ViewPagerFragment(offscreenPageLimit = 2,
         layoutByName = "fragment_images_pager")
@@ -38,8 +36,7 @@ class ImageViewHolder(itemView: View): AbsPageViewHolder<Image>(itemView) {
 
     override fun bindMedia(item: Image, imageView: ImageView?) {
         imageView?.let {
-            ImageLoader.getInstance().displayImage(
-                    item.asset, it, Constants.DEFAULT_IMAGE_LOADER_OPTIONS)
+            it.load(item.asset)
         }
     }
 

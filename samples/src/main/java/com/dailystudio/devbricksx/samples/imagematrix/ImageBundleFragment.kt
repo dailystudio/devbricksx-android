@@ -12,7 +12,7 @@ import com.dailystudio.devbricksx.samples.R
 import com.rasalexman.kdispatcher.*
 
 fun Matrix.mapPointF(p: PointF) {
-    var pts = floatArrayOf(p.x, p.y)
+    val pts = floatArrayOf(p.x, p.y)
     mapPoints(pts)
 
     p.x = pts[0]

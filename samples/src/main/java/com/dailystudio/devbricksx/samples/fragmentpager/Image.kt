@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import coil.load
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
@@ -13,7 +14,6 @@ import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.fragment.AbsPageFragment
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
-import com.nostra13.universalimageloader.core.ImageLoader
 
 @ViewPagerFragment(
     useFragment = true,
@@ -47,8 +47,7 @@ class ImageFragment(private val image: Image): AbsPageFragment<Image>(image) {
 
             scaleType = ImageView.ScaleType.CENTER_CROP
         }.also {
-            ImageLoader.getInstance().displayImage(
-                    image.asset, it, Constants.DEFAULT_IMAGE_LOADER_OPTIONS)
+            it.load(image.asset)
         }
     }
 

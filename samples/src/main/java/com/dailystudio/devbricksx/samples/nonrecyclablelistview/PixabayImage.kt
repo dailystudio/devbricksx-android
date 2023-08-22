@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import coil.load
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
@@ -15,7 +16,6 @@ import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
-import com.nostra13.universalimageloader.core.ImageLoader
 
 @NonRecyclableListFragment(dataSource = DataSource.Flow)
 @ViewModel
@@ -47,13 +47,7 @@ class PixabayImage(val id: Int,
 class PiaxbayImageViewHolder(itemView: View): AbsCardViewHolder<PixabayImage>(itemView) {
 
     override fun bindMedia(item: PixabayImage, iconView: ImageView?) {
-        val builder = Constants.DEFAULT_IMAGE_LOADER_OPTIONS_BUILDER
-//                .cacheInMemory(false)
-//                .cacheOnDisk(false)
-
-        ImageLoader.getInstance().displayImage(item.imageUri,
-                iconView,
-                builder.build())
+        iconView?.load(item.imageUri)
     }
 
     @SuppressLint("NewApi")
