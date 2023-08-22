@@ -63,5 +63,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     api("io.coil-kt:coil:${project.ext.coilVersion}")
-    api "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
+//    api "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
 }

@@ -27,14 +27,15 @@ include ':devbricksx-network'
 include ':devbricksx-compose'
 
 // Samples and applications
+include ':samples-core'
 include ':samples'
 include ':sample-notebook'
 include ':sample-gallery-core'
 include ':sample-gallery'
+include ':sample-gallery-compose'
 
 // Modules to be deprecated
 // include ':devbricksx-kotlin-annotations'
 // include ':devbricksx-kotlin-compiler'
 // include ':devbricksx-java-compiler'
 // include ':devbricksx-java-annotations'
-include ':sample-gallery-compose'
