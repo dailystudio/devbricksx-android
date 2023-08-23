@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.LottieAnimationView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
-import kotlinx.coroutines.flow.collect
+import com.dailystudio.devbricksx.samples.core.R as coreR
 import kotlinx.coroutines.launch
 
 class SettingsDemoFragment : Fragment() {
@@ -132,7 +132,7 @@ class SettingsDemoFragment : Fragment() {
     }
 
     private fun syncText() {
-        val defaultText = getString(R.string.default_demo_text)
+        val defaultText = getString(coreR.string.default_demo_text)
 
         val text = SampleSettingsPrefs.instance.textInput
         demoTextView?.text = text?.let {

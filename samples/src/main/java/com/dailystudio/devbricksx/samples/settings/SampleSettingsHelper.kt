@@ -2,8 +2,7 @@ package com.dailystudio.devbricksx.samples.settings
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.core.R
 import com.dailystudio.devbricksx.settings.*
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import kotlin.math.roundToInt

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.core.R as coreR
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
 import com.dailystudio.devbricksx.samples.fragmentpager.model.ImageViewModel
 import com.dailystudio.devbricksx.utils.JSONUtils
@@ -23,7 +24,7 @@ class CaseActivity : BaseCaseActivity() {
 
     private fun generateImages() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val images = JSONUtils.fromRaw(this@CaseActivity, R.raw.images,
+            val images = JSONUtils.fromRaw(this@CaseActivity, coreR.raw.images,
                     Array<Image>::class.java)
 
             images?.let {

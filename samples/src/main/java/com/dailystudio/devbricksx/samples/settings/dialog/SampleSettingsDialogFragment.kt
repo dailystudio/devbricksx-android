@@ -2,7 +2,7 @@ package com.dailystudio.devbricksx.samples.settings.dialog
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.core.R
 import com.dailystudio.devbricksx.samples.settings.SampleSettingsHelper
 import com.dailystudio.devbricksx.settings.*
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils

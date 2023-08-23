@@ -11,8 +11,7 @@ import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
-import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.quickstart.UserViewHolder
+import com.dailystudio.devbricksx.samples.core.R
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 import kotlinx.coroutines.flow.Flow

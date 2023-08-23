@@ -13,8 +13,8 @@ import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
-import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.core.R as coreR
 import com.dailystudio.devbricksx.ui.AbsCardViewHolder
 
 @NonRecyclableListFragment(dataSource = DataSource.Flow)
@@ -59,7 +59,7 @@ class PiaxbayImageViewHolder(itemView: View): AbsCardViewHolder<PixabayImage>(it
         val context = itemView.context
         val res = context.resources
 
-        val paddingH = res.getDimensionPixelSize(R.dimen.pixabay_image_title_padding)
+        val paddingH = res.getDimensionPixelSize(coreR.dimen.pixabay_image_title_padding)
         val paddingV = res.getDimensionPixelSize(
             com.dailystudio.devbricksx.R.dimen.card_content_outer_padding)
 

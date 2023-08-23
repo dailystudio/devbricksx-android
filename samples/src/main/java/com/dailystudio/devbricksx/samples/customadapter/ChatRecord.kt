@@ -12,6 +12,7 @@ import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.core.R as coreR
 import com.dailystudio.devbricksx.ui.AbsViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
@@ -66,9 +67,9 @@ class ChatRecordViewHolder(itemView: View): AbsViewHolder<ChatRecord>(itemView) 
                     textViewLp?.gravity = Gravity.END
                 }
 
-                textPanel?.setBackgroundResource(R.drawable.chat_right)
+                textPanel?.setBackgroundResource(coreR.drawable.chat_right)
                 textView?.setTextColor(ResourcesCompatUtils.getColor(context,
-                    R.color.colorPrimary))
+                    coreR.color.colorPrimary))
             }
 
             MessageType.Receive -> {
@@ -80,9 +81,9 @@ class ChatRecordViewHolder(itemView: View): AbsViewHolder<ChatRecord>(itemView) 
                     textViewLp?.gravity = Gravity.START
                 }
 
-                textPanel?.setBackgroundResource(R.drawable.chat_left)
+                textPanel?.setBackgroundResource(coreR.drawable.chat_left)
                 textView?.setTextColor(ResourcesCompatUtils.getColor(context,
-                    R.color.colorAccent))
+                    coreR.color.colorAccent))
             }
         }
 
