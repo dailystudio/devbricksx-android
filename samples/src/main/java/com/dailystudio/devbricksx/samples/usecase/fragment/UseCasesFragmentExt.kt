@@ -2,10 +2,13 @@ package com.dailystudio.devbricksx.samples.usecase.fragment
 
 import android.content.Intent
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.samples.Constants
 import com.dailystudio.devbricksx.samples.usecase.UseCase
+import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
+import kotlinx.coroutines.flow.Flow
 
 class UseCasesFragmentExt : UseCasesListFragment() {
 
@@ -28,6 +31,11 @@ class UseCasesFragmentExt : UseCasesListFragment() {
         }
 
         ActivityLauncher.launchActivity(context, intent)
+    }
+
+    override fun createDataSource(): Flow<List<UseCase>> {
+        val viewModel = ViewModelProvider(requireActivity())[UseCaseViewModelExt::class.java]
+        return viewModel.allUseCasesFlow
     }
 
 }

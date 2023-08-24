@@ -26,7 +26,7 @@ import com.dailystudio.devbricksx.development.Logger
 
 @ItemContent(PhotoItem::class)
 @Composable
-fun PhotoItemContent(item: PhotoItem?) {
+fun PhotoItemContent(item: PhotoItem?, modifier: Modifier) {
     Logger.debug("item: $item")
     Card(modifier = Modifier
         .height(250.dp)

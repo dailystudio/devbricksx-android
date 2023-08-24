@@ -77,7 +77,6 @@ abstract class ProcessStep(val classOfAnnotation: KClass<out Annotation>,
         processor.error(message, logTagOfStep)
     }
 
-
     protected fun logging(message: String) {
         processor.logging(message, logTagOfStep)
     }

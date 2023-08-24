@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 
 
@@ -22,7 +23,7 @@ fun <T : Any> BaseGridScreen(
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
     onItemClick: ((item: T) -> Unit)? = null,
-    itemContent: @Composable (item: T?) -> Unit
+    itemContent: ItemContentComposable<T>
 ) {
     BaseLazyGrid(orientation, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClick, itemContent)
@@ -37,7 +38,7 @@ fun <T : Any> BasePagingGridScreen(
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
     onItemClick: ((item: T) -> Unit)? = null,
-    itemContent: @Composable (item: T?) -> Unit
+    itemContent: ItemContentComposable<T>
 ) {
     BaseLazyPagingGrid(orientation, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClick, itemContent)
@@ -52,7 +53,7 @@ fun <T: Any> BaseLazyPagingGrid(
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
     onItemClick: ((item: T) -> Unit)? = null,
-    itemContent: @Composable (item: T?) -> Unit
+    itemContent: @Composable (item: T?, modifier: Modifier) -> Unit
 ) {
     val gridState = rememberLazyGridState()
 
@@ -90,7 +91,7 @@ fun <T> BaseLazyGrid(
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
     onItemClick: ((item: T) -> Unit)? = null,
-    itemContent: @Composable (item: T?) -> Unit
+    itemContent: ItemContentComposable<T>
 ) {
     val gridState = rememberLazyGridState()
 

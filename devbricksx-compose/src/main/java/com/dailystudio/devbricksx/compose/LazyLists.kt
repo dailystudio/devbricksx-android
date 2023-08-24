@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 
 @Composable
@@ -17,10 +18,11 @@ fun <T : Any> BaseListScreen(
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
-    itemContent: @Composable (item: T?) -> Unit
+    onItemClick: ((item: T) -> Unit)? = null,
+    itemContent: ItemContentComposable<T>
 ) {
     BaseLazyList(orientation, listOfItems = dataSource(),
-        key, contentType, itemContent)
+        key, contentType, onItemClick, itemContent)
 }
 
 @Composable
@@ -29,10 +31,11 @@ fun <T : Any> BasePagingListScreen(
     dataSource: @Composable () -> LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
-    itemContent: @Composable (item: T?) -> Unit
+    onItemClick: ((item: T) -> Unit)? = null,
+    itemContent: ItemContentComposable<T>
 ) {
     BaseLazyPagingList(orientation, listOfItems = dataSource(),
-        key, contentType, itemContent)
+        key, contentType, onItemClick, itemContent)
 }
 
 @Composable
@@ -41,7 +44,8 @@ fun <T: Any> BaseLazyPagingList(
     listOfItems: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
-    itemContent: @Composable (item: T?) -> Unit
+    onItemClick: ((item: T) -> Unit)? = null,
+    itemContent: ItemContentComposable<T>
 ) {
     val listState = rememberLazyListState()
 
@@ -51,7 +55,7 @@ fun <T: Any> BaseLazyPagingList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    itemContent(item)
+                    LazyItem(item, onItemClick, itemContent)
                 }
             }
         }
@@ -61,7 +65,7 @@ fun <T: Any> BaseLazyPagingList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    itemContent(item)
+                    LazyItem(item, onItemClick, itemContent)
                 }
             }
         }
@@ -74,7 +78,8 @@ fun <T> BaseLazyList(
     listOfItems: List<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
-    itemContent: @Composable (item: T?) -> Unit
+    onItemClick: ((item: T) -> Unit)? = null,
+    itemContent: ItemContentComposable<T>
 ) {
     val listState = rememberLazyListState()
 
@@ -84,7 +89,7 @@ fun <T> BaseLazyList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    itemContent(item)
+                    LazyItem(item, onItemClick, itemContent)
                 }
             }
         }
@@ -94,7 +99,7 @@ fun <T> BaseLazyList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    itemContent(item)
+                    LazyItem(item, onItemClick, itemContent)
                 }
             }
         }

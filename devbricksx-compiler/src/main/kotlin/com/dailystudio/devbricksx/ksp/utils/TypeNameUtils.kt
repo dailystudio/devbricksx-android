@@ -406,7 +406,10 @@ object TypeNameUtils {
 
     fun typeOfComposable(): ClassName {
         return ClassName("androidx.compose.runtime", "Composable")
+    }
 
+    fun typeOfModifier(): ClassName {
+        return ClassName("androidx.compose.ui", "Modifier")
     }
 
     fun typeOfComposeViewModel(): ClassName {

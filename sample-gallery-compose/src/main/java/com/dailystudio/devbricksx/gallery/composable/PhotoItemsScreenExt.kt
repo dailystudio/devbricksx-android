@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -22,7 +23,9 @@ import kotlinx.coroutines.CoroutineScope
 fun PhotoItemsScreenExt(
     coroutineScope: CoroutineScope = LocalLifecycleOwner.current.lifecycleScope,
     onItemClick: ((item: PhotoItem) -> Unit)? = null,
-    itemContent: @Composable (item: PhotoItem?) -> Unit = {PhotoItemContent(it)}
+    itemContent: @Composable (item: PhotoItem?, modifier: Modifier) -> Unit = { item, modifier ->
+        PhotoItemContent(item, modifier)
+    }
 ) {
     val dataSource = @Composable {
         val viewModel = activityViewModel<PhotoItemViewModelExt>()

@@ -201,24 +201,46 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             itemContent.qualifiedName?.asString() ?: return false
         )
 
+        val typeOfModifier = TypeNameUtils.typeOfModifier()
+
         val itemContentParams = mutableListOf<ParameterSpec>()
         var itemContentParamsInvoke = ""
-        itemContent.parameters.forEach {
-            val type = it.type.resolve().toTypeName()
-            val name = it.name?.asString() ?: return@forEach
 
-            itemContentParams.add(
-                ParameterSpec.builder(name, type).build()
-            )
-
-            itemContentParamsInvoke += "$name, "
+        if (itemContent.parameters.size != 2) {
+            error("@${ItemContent::class.simpleName} annotated function should only has 2 parameters: (item: $typeOfObject?, modifier: Modifier)")
+            return false
         }
+
+        if (itemContent.returnType?.resolve()?.toTypeName() != UNIT) {
+            error("@${ItemContent::class.simpleName} annotated function should return UNIT")
+            return false
+        }
+
+        itemContentParams.add(
+            ParameterSpec.builder("item", typeOfObject.copy(nullable = true))
+                .build()
+        )
+
+        itemContentParams.add(
+            ParameterSpec.builder("modifier", typeOfModifier)
+                .build()
+        )
+//        itemContent.parameters.forEach {
+//            val type = it.type.resolve().toTypeName()
+//            val name = it.name?.asString() ?: return@forEach
+//
+//            itemContentParams.add(
+//                ParameterSpec.builder(name, type).build()
+//            )
+//
+//            itemContentParamsInvoke += "$name, "
+//        }
 
         itemContentParamsInvoke = itemContentParamsInvoke.removeSuffix(", ")
 
         val funcTypeOfItemContent = LambdaTypeName.get(
             parameters = itemContentParams,
-            returnType = itemContent.returnType?.resolve()?.toTypeName() ?: UNIT
+            returnType = UNIT
         ).copy(
             annotations = listOf(
                 AnnotationSpec.builder(TypeNameUtils.typeOfComposable()).build()
@@ -229,10 +251,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             name = "itemContent",
             funcTypeOfItemContent
         ).defaultValue(
-            CodeBlock.of("{ %L -> %T(%L) }",
-                itemContentParamsInvoke,
+            CodeBlock.of("{ item, modifier -> %T(item, modifier) }",
                 typeOfItemContent,
-                itemContentParamsInvoke
             )
         )
 
