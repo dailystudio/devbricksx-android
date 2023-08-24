@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="actionBarStyle">@style/AppActionBarDarkStyle</item>
+        <item name="actionOverflowButtonStyle">@style/AppBarOverflow</item>
+
+        <item name="snackbarTextViewStyle">@style/DefaultPromptText</item>
+    </style>
+
+</resources>

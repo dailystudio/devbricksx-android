@@ -13,7 +13,6 @@ import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.fragment.AbsPageFragment
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
-import com.dailystudio.devbricksx.samples.Constants
 
 @ViewPagerFragment(
     useFragment = true,
