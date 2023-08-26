@@ -110,7 +110,7 @@ object SampleSettingsHelper {
                 val drawable = ResourcesCompatUtils.getDrawable(context,
                         R.drawable.ic_action_clear)
                 val tintColor = ResourcesCompatUtils.getColor(context,
-                        R.color.colorPrimary)
+                        R.color.primaryColor)
 
                 drawable?.setTint(tintColor)
 

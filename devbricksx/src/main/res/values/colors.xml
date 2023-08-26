@@ -40,14 +40,18 @@
     <color name="card_title_bg_color">@color/light_black</color>
     <color name="default_ripple_color">@color/light_white</color>
 
-    <color name="colorPrimary">@color/light_black</color>
-    <color name="colorPrimaryDark">@color/light_black</color>
-    <color name="colorAccent">@color/light_black</color>
+    <color name="track_color_unchecked">#80999999</color>
+    <color name="track_color_checked">@color/primaryLightColor</color>
 
     <color name="card_text_background_color">@color/transparent</color>
     <color name="card_title_text_color">@color/black</color>
     <color name="card_supporting_text_color">@color/light_black</color>
 
     <color name="page_bottom_layout_background">#B0000000</color>
+
+    <color name="primaryColor">@color/light_black</color>
+    <color name="primaryDarkColor">@color/light_black</color>
+    <color name="primaryLightColor">#80262626</color>
+    <color name="accentColor">@color/light_black</color>
 
 </resources>

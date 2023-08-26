@@ -15,7 +15,7 @@
 
 		<View
 			android:id="@+id/selected_handler_start"
-			android:background="@color/colorPrimary"
+			android:background="@color/primaryColor"
 			android:layout_gravity="center_vertical|start"
 			android:layout_width="@dimen/selector_width"
 			android:layout_height="match_parent"/>

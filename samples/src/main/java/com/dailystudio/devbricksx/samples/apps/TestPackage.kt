@@ -45,7 +45,7 @@ class TestPackageViewHolder(itemView: View): AbsSingleLineViewHolder<TestPackage
         val context = titleView?.context ?: return
 
         val labelColor = if (item.installed) {
-            ResourcesCompatUtils.getColor(context, R.color.colorPrimary)
+            ResourcesCompatUtils.getColor(context, R.color.primaryColor)
         } else {
             ResourcesCompatUtils.getColor(context,
                 com.dailystudio.devbricksx.R.color.light_gray)

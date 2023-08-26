@@ -69,7 +69,7 @@ class ChatRecordViewHolder(itemView: View): AbsViewHolder<ChatRecord>(itemView) 
 
                 textPanel?.setBackgroundResource(coreR.drawable.chat_right)
                 textView?.setTextColor(ResourcesCompatUtils.getColor(context,
-                    coreR.color.colorPrimary))
+                    coreR.color.primaryColor))
             }
 
             MessageType.Receive -> {
@@ -83,7 +83,7 @@ class ChatRecordViewHolder(itemView: View): AbsViewHolder<ChatRecord>(itemView) 
 
                 textPanel?.setBackgroundResource(coreR.drawable.chat_left)
                 textView?.setTextColor(ResourcesCompatUtils.getColor(context,
-                    coreR.color.colorAccent))
+                    coreR.color.primaryColor))
             }
         }
 

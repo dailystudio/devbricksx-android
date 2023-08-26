@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/portrait_receive"
         android:src="@drawable/ic_robot"
-        app:tint="@color/colorAccent"
+        app:tint="@color/accentColor"
         android:layout_alignParentStart="true"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/default_padding"
@@ -19,7 +19,7 @@
     <ImageView
         android:id="@+id/portrait_send"
         android:src="@drawable/ic_human"
-        app:tint="@color/colorPrimary"
+        app:tint="@color/primaryColor"
         android:layout_alignParentEnd="true"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/default_padding"

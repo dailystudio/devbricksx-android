@@ -22,7 +22,7 @@
             android:layout_marginBottom="0dp"
             android:layout_width="@dimen/settings_icon_size"
             android:layout_height="@dimen/settings_icon_size"
-            app:tint="@color/colorAccent" />
+            app:tint="@color/accentColor" />
 
         <TextView
             android:id="@+id/setting_label"

@@ -13,7 +13,7 @@
 
         <ImageView
             android:id="@+id/setting_icon"
-            app:tint="@color/colorAccent"
+            app:tint="@color/accentColor"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
@@ -61,9 +61,9 @@
 
         <SeekBar
             android:id="@+id/setting_seek_bar"
-            android:thumbTint="@color/colorAccent"
-            android:progressTint="@color/colorAccent"
-            android:indeterminateTint="@color/colorAccent"
+            android:thumbTint="@color/accentColor"
+            android:progressTint="@color/accentColor"
+            android:indeterminateTint="@color/accentColor"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_toRightOf="@id/setting_icon_stub"

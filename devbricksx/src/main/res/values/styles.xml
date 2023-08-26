@@ -6,7 +6,7 @@
 
 	<style name="DefaultText">
 		<item name="android:gravity">center</item>
-		<item name="android:textColor">@color/colorAccent</item>
+		<item name="android:textColor">@color/accentColor</item>
 		<item name="android:textSize">@dimen/default_font_size</item>
 	</style>
 
@@ -184,7 +184,7 @@
 	<style name="SettingsText" parent="DefaultLabel">
 		<item name="android:gravity">left|center_vertical</item>
 		<item name="android:textStyle">normal</item>
-		<item name="android:textColor">@color/colorAccent</item>
+		<item name="android:textColor">@color/accentColor</item>
 		<item name="android:textSize">@dimen/settings_font_size</item>
 	</style>
 
@@ -210,14 +210,14 @@
 	<style name="AppNameLabel">
 		<item name="android:gravity">start|center_vertical</item>
 		<item name="android:textStyle">bold</item>
-		<item name="android:textColor">@color/colorPrimary</item>
+		<item name="android:textColor">@color/primaryColor</item>
 		<item name="android:textSize">@dimen/about_app_name_font_size</item>
 		<item name="android:padding">@dimen/about_app_ver_padding</item>
 	</style>
 
 	<style name="AppVerLabel">
 		<item name="android:gravity">start|center_vertical</item>
-		<item name="android:textColor">@color/colorPrimary</item>
+		<item name="android:textColor">@color/primaryColor</item>
 		<item name="android:textSize">@dimen/about_app_ver_font_size</item>
 		<item name="android:paddingLeft">@dimen/about_app_ver_padding</item>
 	</style>

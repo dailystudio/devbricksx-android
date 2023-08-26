@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dailystudio.devbricksx.app.activity.DevBricksActivity
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.usecase.composable.Home
 import com.dailystudio.devbricksx.samples.usecase.compose.UseCasesScreen
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
 
@@ -18,16 +19,7 @@ class MainActivity : DevBricksActivity() {
 
         setContent {
             SamplesTheme {
-                UseCasesScreen(
-                    dataSource = @Composable {
-                        val viewModel = viewModel<UseCaseViewModelExt>()
-                        val data by viewModel.allUseCasesFlow.collectAsState(emptyList())
-                        data
-                    },
-                    onItemClick = {
-                        Logger.debug("click on case: $it")
-                    }
-                )
+                Home()
             }
         }
 

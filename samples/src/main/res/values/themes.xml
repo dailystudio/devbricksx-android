@@ -1,29 +1,41 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.Material3.DayNight">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="Theme.Samples" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
 
-        <item name="actionBarStyle">@style/AppActionBarDarkStyle</item>
-        <item name="actionOverflowButtonStyle">@style/AppBarOverflow</item>
-
-        <item name="snackbarTextViewStyle">@style/DefaultPromptText</item>
+        <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
     </style>
 
-    <style name="AppActionBarDarkStyle" parent="Widget.MaterialComponents.ActionBar.Primary">
-        <item name="backgroundColor">@color/colorPrimary</item>
-        <item name="titleTextStyle">@style/AppBarTitle</item>
+    <style name="Widget.App.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <!-- Change the background color of the AppBarLayout so the AppBarLayout is green.
+                The toolbar is transparent by default so you will see this color through the toolbar. -->
+        <item name="android:background">@color/primaryColor</item>
     </style>
 
-    <style name="AppBarTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/white</item>
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="navigationIconTint">@color/white</item>
+
+        <item name="colorControlActivated">#FFffffff</item>
     </style>
 
-    <style name="AppBarOverflow" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="tint">@color/white</item>
+    <style name="ThemeOverlay.App.Toolbar" parent="">
+        <!-- Text color -->
+        <item name="android:editTextColor">@color/white</item>
+        <!-- Hint text color -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
     </style>
 
     <style name="ChatText">
@@ -62,7 +74,7 @@
 
     <style name="AttributeText">
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">@color/primaryColor</item>
         <item name="android:textSize">@dimen/attribute_font_size</item>
         <item name="android:padding">@dimen/attribute_text_padding</item>
     </style>
