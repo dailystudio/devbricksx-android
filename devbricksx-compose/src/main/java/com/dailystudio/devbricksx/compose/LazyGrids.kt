@@ -16,6 +16,7 @@ import androidx.paging.compose.LazyPagingItems
 
 @Composable
 fun <T : Any> BaseGridScreen(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     dataSource: @Composable () -> List<T>,
@@ -25,12 +26,13 @@ fun <T : Any> BaseGridScreen(
     onItemClick: ((item: T) -> Unit)? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyGrid(orientation, cells, listOfItems = dataSource(),
+    BaseLazyGrid(modifier, orientation, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClick, itemContent)
 }
 
 @Composable
 fun <T : Any> BasePagingGridScreen(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     dataSource: @Composable () -> LazyPagingItems<T>,
@@ -40,12 +42,13 @@ fun <T : Any> BasePagingGridScreen(
     onItemClick: ((item: T) -> Unit)? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyPagingGrid(orientation, cells, listOfItems = dataSource(),
+    BaseLazyPagingGrid(modifier, orientation, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClick, itemContent)
 }
 
 @Composable
 fun <T: Any> BaseLazyPagingGrid(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     listOfItems: LazyPagingItems<T>,
@@ -84,6 +87,7 @@ fun <T: Any> BaseLazyPagingGrid(
 
 @Composable
 fun <T> BaseLazyGrid(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     cells: GridCells,
     listOfItems: List<T>,

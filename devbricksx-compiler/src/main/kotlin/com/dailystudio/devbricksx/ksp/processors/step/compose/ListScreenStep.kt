@@ -76,6 +76,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         warn("symbol: [pack: $packageName, type: $typeName]")
 
         val typeOfObject = ClassName(packageName, typeName)
+        val typeOfModifier = TypeNameUtils.typeOfModifier()
 
         val options = genBuildOptions(resolver, symbol) ?: return emptyResult
 
@@ -84,6 +85,12 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
         val funcScreenSpecBuilder = FunSpec.builder(funcNameOfScreen)
             .addAnnotation(TypeNameUtils.typeOfComposable())
+
+        val modifierParam = ParameterSpec.builder("modifier", typeOfModifier)
+            .defaultValue("%T", typeOfModifier)
+            .build()
+
+        funcScreenSpecBuilder.addParameter(modifierParam)
 
         var ret = false
 
@@ -146,7 +153,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             )
             composableBuilder.addStatement(
                 """
-                    %T(dataSource = dataSource, cells = gridCells, onItemClick = onItemClick, itemContent = itemContent)
+                    %T(modifier = modifier, dataSource = dataSource, cells = gridCells, onItemClick = onItemClick, itemContent = itemContent)
                 """.trimIndent(),
                 gridScreen
             )
@@ -159,7 +166,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
             composableBuilder.addStatement(
                 """
-                    %T(dataSource = dataSource, onItemClick = onItemClick, itemContent = itemContent)
+                    %T(modifier = modifier, dataSource = dataSource, onItemClick = onItemClick, itemContent = itemContent)
                 """.trimIndent(),
                 listScreen
             )
@@ -204,7 +211,6 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         val typeOfModifier = TypeNameUtils.typeOfModifier()
 
         val itemContentParams = mutableListOf<ParameterSpec>()
-        var itemContentParamsInvoke = ""
 
         if (itemContent.parameters.size != 2) {
             error("@${ItemContent::class.simpleName} annotated function should only has 2 parameters: (item: $typeOfObject?, modifier: Modifier)")
@@ -225,18 +231,6 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             ParameterSpec.builder("modifier", typeOfModifier)
                 .build()
         )
-//        itemContent.parameters.forEach {
-//            val type = it.type.resolve().toTypeName()
-//            val name = it.name?.asString() ?: return@forEach
-//
-//            itemContentParams.add(
-//                ParameterSpec.builder(name, type).build()
-//            )
-//
-//            itemContentParamsInvoke += "$name, "
-//        }
-
-        itemContentParamsInvoke = itemContentParamsInvoke.removeSuffix(", ")
 
         val funcTypeOfItemContent = LambdaTypeName.get(
             parameters = itemContentParams,

@@ -14,6 +14,7 @@ import androidx.paging.compose.LazyPagingItems
 
 @Composable
 fun <T : Any> BaseListScreen(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
@@ -21,12 +22,13 @@ fun <T : Any> BaseListScreen(
     onItemClick: ((item: T) -> Unit)? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyList(orientation, listOfItems = dataSource(),
+    BaseLazyList(modifier, orientation, listOfItems = dataSource(),
         key, contentType, onItemClick, itemContent)
 }
 
 @Composable
 fun <T : Any> BasePagingListScreen(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     dataSource: @Composable () -> LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
@@ -34,12 +36,13 @@ fun <T : Any> BasePagingListScreen(
     onItemClick: ((item: T) -> Unit)? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyPagingList(orientation, listOfItems = dataSource(),
+    BaseLazyPagingList(modifier, orientation, listOfItems = dataSource(),
         key, contentType, onItemClick, itemContent)
 }
 
 @Composable
 fun <T: Any> BaseLazyPagingList(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     listOfItems: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
@@ -74,6 +77,7 @@ fun <T: Any> BaseLazyPagingList(
 
 @Composable
 fun <T> BaseLazyList(
+    modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     listOfItems: List<T>,
     key: ((item: T) -> Any)? = null,
@@ -86,6 +90,7 @@ fun <T> BaseLazyList(
     when (orientation) {
         ListOrientation.Vertical -> {
             LazyColumn(
+                modifier = modifier,
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->

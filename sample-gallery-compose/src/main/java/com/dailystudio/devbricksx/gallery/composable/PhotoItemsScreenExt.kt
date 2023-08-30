@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun PhotoItemsScreenExt(
+    modifier: Modifier = Modifier,
     coroutineScope: CoroutineScope = LocalLifecycleOwner.current.lifecycleScope,
     onItemClick: ((item: PhotoItem) -> Unit)? = null,
     itemContent: @Composable (item: PhotoItem?, modifier: Modifier) -> Unit = { item, modifier ->
@@ -40,5 +41,5 @@ fun PhotoItemsScreenExt(
         data.collectAsLazyPagingItems()
     }
 
-    PhotoItemsScreen(dataSource, onItemClick, itemContent)
+    PhotoItemsScreen(modifier, dataSource, onItemClick, itemContent)
 }

@@ -23,7 +23,6 @@ import kotlinx.coroutines.delay
 
 const val MENU_ITEM_ID_ABOUT = 0x1
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Home() {
     val context = LocalContext.current
