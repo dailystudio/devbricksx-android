@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:clipChildren="false"
+    android:background="@color/use_case_background_color"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".quickstart.CaseActivity">
+    android:layout_height="match_parent">
 
-    <fragment
-        android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.MyJillsListFragment"
-        android:id="@+id/fragment_users"
+    <include layout="@layout/layout_appbar"/>
+
+    <RelativeLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/jill_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <fragment
+            android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.MyJillsListFragment"
+            android:id="@+id/fragment_users"
+            android:layout_below="@id/jill_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

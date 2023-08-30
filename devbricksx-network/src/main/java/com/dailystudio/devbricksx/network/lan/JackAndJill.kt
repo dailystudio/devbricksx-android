@@ -15,25 +15,38 @@ import java.util.concurrent.Executors
 
 object JackAndJill {
 
-    const val DEFAULT_TYPE = "_http._tcp"
+    private const val TYPE_SUFFIX = "._tcp."
+
+    const val DEFAULT_TYPE = "_jackandjill"
     const val SERVICE_BASE_NAME = "JackAndJill"
 
     const val ATTR_ONLINE_TIME = "online-time"
 
     const val PORT = 59420
     const val COUPLE_PORT = 1314
+
+    internal val executor = Executors.newSingleThreadExecutor()
+
+    internal fun toNsdType(type: String): String {
+        return buildString {
+            append(type)
+            append(TYPE_SUFFIX)
+        }
+    }
 }
 
-class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
+class Jack(
+    val type: String = JackAndJill.DEFAULT_TYPE,
+    val ignores: List<String> = emptyList()
+) {
 
     private var nsdManager: NsdManager? = null
-    private val executor = Executors.newSingleThreadExecutor()
 
     private var onlineTime: Long = 0
 
-    private val _jills: MutableLiveData<List<String>> = MutableLiveData(emptyList())
+    private val _jills: MutableLiveData<List<Pair<String, Int>>> = MutableLiveData(emptyList())
 
-    val jills: LiveData<List<String>> = _jills
+    val jills: LiveData<List<Pair<String, Int>>> = _jills
 
     fun discover(context: Context, time: Long) {
         Logger.debug("Jack starts discovering Jills ... [time: $time]")
@@ -44,7 +57,7 @@ class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
             Logger.warn("Network Service Discovery not supported!")
         } else {
             nsdManager?.discoverServices(
-                type,
+                JackAndJill.toNsdType(type),
                 NsdManager.PROTOCOL_DNS_SD,
                 discoverListener
             )
@@ -58,33 +71,32 @@ class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
 
     private fun checkInServiceInfo(serviceInfo: NsdServiceInfo) {
         val serviceName = serviceInfo.serviceName ?: return
+        val servicePort = serviceInfo.port
 
-        val serviceOnlineTime = serviceName.replaceFirst(
-            JackAndJill.SERVICE_BASE_NAME, "")
-            .toLong()
+        val serviceId = serviceName.replaceFirst(JackAndJill.SERVICE_BASE_NAME, "")
 
-        Logger.debug("check-in jill: $serviceName, [online: $serviceOnlineTime]")
+        Logger.debug("check-in jill: $serviceName, [id: $serviceId, port: $servicePort]")
 
-        if (serviceOnlineTime == onlineTime) {
-            Logger.debug("skip myself")
+        if (ignores.contains(serviceId)) {
+            Logger.debug("ignore service id: $serviceId")
         } else {
-            val list = mutableListOf<String>()
+            val list = mutableListOf<Pair<String, Int>>()
             _jills.value?.forEach {
                 list.add(it)
             }
-            list.add(serviceName)
+            list.add(Pair(serviceName, servicePort))
 
             _jills.postValue(list)
         }
     }
 
     private fun checkOffServiceInfo(serviceInfo: NsdServiceInfo) {
-        if (serviceInfo.serviceType == type) {
+        if (serviceInfo.serviceType == JackAndJill.toNsdType(type)) {
             Logger.debug("check-out Jill: $serviceInfo")
             val serviceName = serviceInfo.serviceName
 
             _jills.postValue(_jills.value?.filter {
-                it != serviceName
+                it.first != serviceName
             })
         }
     }
@@ -97,7 +109,7 @@ class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
         if (Build.VERSION.SDK_INT >= 34) {
             nsdManager?.registerServiceInfoCallback(
                 info,
-                executor,
+                JackAndJill.executor,
                 object : NsdManager.ServiceInfoCallback {
                     override fun onServiceInfoCallbackRegistrationFailed(p0: Int) {
                         Logger.error("callback registration failed: p0 = $p0")
@@ -151,7 +163,7 @@ class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
         }
 
         override fun onServiceFound(service: NsdServiceInfo?) {
-            if (service?.serviceType != type) {
+            if (service?.serviceType != JackAndJill.toNsdType(type)) {
                 Logger.warn("ignore unmatched service: ${service?.serviceType} [required: ${type}]")
             } else {
                 checkAndResolveService(service)
@@ -159,6 +171,7 @@ class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
         }
 
         override fun onServiceLost(service: NsdServiceInfo?) {
+            Logger.debug("Nsd service lost: ${service?.serviceName}")
             service?.let {
                 checkOffServiceInfo(it)
             }
@@ -168,39 +181,38 @@ class Jack(val type: String = JackAndJill.DEFAULT_TYPE) {
 
 }
 
-class Jill(val type: String = JackAndJill.DEFAULT_TYPE) {
-
+class Jill(
+    val type: String = JackAndJill.DEFAULT_TYPE,
+    val id: String
+) {
     private var nsdManager: NsdManager? = null
+    private var mHttpD: JillHttpD? = null
 
-    var onlineTime: Long = 0
     var servicePort: Int = -1
-
-    init {
-        if (nsdManager == null) {
-            Logger.warn("Network Service Discovery not supported!")
-        }
-    }
 
     @WorkerThread
     fun online(context: Context) {
         Logger.debug("Jill is going on line ...")
         nsdManager = context.getSystemService(Context.NSD_SERVICE) as? NsdManager
-        onlineTime = System.currentTimeMillis()
         servicePort = allocatePort()
 
         val serviceName = buildString {
             append(JackAndJill.SERVICE_BASE_NAME)
-            append(onlineTime)
+            append(id)
         }
 
         val serviceInfo = NsdServiceInfo().apply {
             this.serviceName = serviceName
 
-            serviceType = type
+            serviceType = JackAndJill.toNsdType(type)
             port = servicePort
         }
 
         Logger.debug("Jill is going on line ... [name: $serviceName, port: $servicePort]")
+
+        mHttpD = JillHttpD(port = servicePort).apply {
+            start()
+        }
 
         nsdManager?.registerService(
             serviceInfo, NsdManager.PROTOCOL_DNS_SD,
@@ -209,7 +221,10 @@ class Jill(val type: String = JackAndJill.DEFAULT_TYPE) {
     }
 
     fun offline() {
+        Logger.debug("Jill is going offline ... [port: $servicePort]")
+
         nsdManager?.unregisterService(registrationListener)
+        mHttpD?.stop()
     }
 
     private fun allocatePort(): Int {
@@ -220,7 +235,12 @@ class Jill(val type: String = JackAndJill.DEFAULT_TYPE) {
             Logger.error("could not create server socket: %s", e.toString())
             null
         }
-        return socket?.localPort ?: -1
+
+        val port = socket?.localPort ?: -1
+
+        socket?.close()
+
+        return port
     }
 
     private val registrationListener = object : NsdManager.RegistrationListener {

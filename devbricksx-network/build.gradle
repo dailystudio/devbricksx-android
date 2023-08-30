@@ -49,6 +49,7 @@ dependencies {
     api "com.squareup.retrofit2:retrofit:${project.ext.retrofitVersion}"
     api "com.squareup.retrofit2:converter-gson:${project.ext.retrofitVersion}"
     api "com.squareup.okio:okio:${project.ext.okioVerion}"
+    api "org.nanohttpd:nanohttpd:${project.ext.nanohttpdVersion}"
 }
 
 apply from: '../buildscripts/maven_push.gradle'
