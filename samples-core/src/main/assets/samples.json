@@ -103,5 +103,12 @@
     "title": "Paging",
     "icon": "ic_case_paging",
     "desc": ""
+  },
+  {
+    "name": "jackandjill",
+    "package": "jackandjill",
+    "title": "Jack & Jill",
+    "icon": "ic_case_paging",
+    "desc": ""
   }
 ]

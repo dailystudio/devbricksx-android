@@ -36,6 +36,7 @@
         <activity android:name=".settings.dialog.CaseActivity"/>
         <activity android:name=".nonrecyclablelistview.CaseActivity"/>
         <activity android:name=".paging.CaseActivity"/>
+        <activity android:name=".jackandjill.CaseActivity"/>
 
     </application>
 

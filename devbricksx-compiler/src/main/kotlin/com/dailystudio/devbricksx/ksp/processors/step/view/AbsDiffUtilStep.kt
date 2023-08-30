@@ -77,7 +77,7 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         classBuilder.addFunction(methodItemsSameBuilder.build())
         classBuilder.addFunction(methodContentsSameBuilder.build())
 
-        return singleClassResult(symbol, packageName, classBuilder)
+        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver), packageName, classBuilder)
     }
 
     protected open fun needToDiffUtil(symbol: KSClassDeclaration, resolver: Resolver): Boolean {
