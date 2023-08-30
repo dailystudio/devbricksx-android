@@ -22,8 +22,8 @@ class UseCasesFragmentExt : UseCasesListFragment() {
         }
 
         setHasOptionsMenu(true)
-
     }
+
     override fun onItemClick(recyclerView: RecyclerView, itemView: View, position: Int, item: UseCase, id: Long) {
         super.onItemClick(recyclerView, itemView, position, item, id)
 
