@@ -9,8 +9,10 @@ import androidx.lifecycle.MutableLiveData
 import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -26,14 +28,25 @@ data class JillInfo (
 class Jack(
     val type: String = JackAndJill.DEFAULT_TYPE,
     val ignores: List<String> = emptyList(),
-    val jackScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    scope: CoroutineScope? = null
 ) {
 
+    private val executor = Executors.newFixedThreadPool(4)
     private var nsdManager: NsdManager? = null
+
+    private val jackScope: CoroutineScope
 
     private val _jills: MutableLiveData<List<JillInfo>> = MutableLiveData(emptyList())
 
     val jills: LiveData<List<JillInfo>> = _jills
+
+    init {
+        jackScope = if (scope != null) {
+            CoroutineScope(scope.coroutineContext + executor.asCoroutineDispatcher())
+        } else {
+            CoroutineScope(executor.asCoroutineDispatcher())
+        }
+    }
 
     fun discover(context: Context, time: Long) {
         Logger.debug("Jack starts discovering Jills ... [time: $time]")
@@ -140,7 +153,7 @@ class Jack(
         if (Build.VERSION.SDK_INT >= 34) {
             nsdManager?.registerServiceInfoCallback(
                 serviceInfo,
-                JackAndJill.executor,
+                executor,
                 object : NsdManager.ServiceInfoCallback {
                     override fun onServiceInfoCallbackRegistrationFailed(p0: Int) {
                         Logger.error("callback registration failed: p0 = $p0")

@@ -32,7 +32,7 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
         }
     })
 
-    private val jack = Jack(ignores = listOf(jillId), jackScope = lifecycleScope)
+    private val jack = Jack(ignores = listOf(jillId), scope = lifecycleScope)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
