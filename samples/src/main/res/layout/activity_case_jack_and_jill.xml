@@ -10,22 +10,11 @@
 
     <include layout="@layout/layout_appbar"/>
 
-    <RelativeLayout
+    <fragment
+        android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.MyJillsListFragmentExt"
+        android:id="@+id/fragment_jack_and_jill"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/jill_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <fragment
-            android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.MyJillsListFragment"
-            android:id="@+id/fragment_users"
-            android:layout_below="@id/jill_id"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </RelativeLayout>
+        android:layout_height="match_parent"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

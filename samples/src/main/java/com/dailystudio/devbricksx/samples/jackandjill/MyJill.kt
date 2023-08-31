@@ -12,9 +12,14 @@ import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 @InMemoryCompanion
 @ViewModel
 @Adapter(viewHolder = MyJillViewHolder::class)
-@ListFragment
-data class MyJill(val name: String): InMemoryObject<String> {
-    override fun getKey(): String = name
+@ListFragment(
+    layoutByName = "fragment_jack_and_jill"
+)
+data class MyJill(
+    val id: String,
+    val name: String,
+): InMemoryObject<String> {
+    override fun getKey(): String = id
 }
 
 class MyJillViewHolder(view: View): AbsSingleLineViewHolder<MyJill>(view) {

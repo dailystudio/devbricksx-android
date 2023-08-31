@@ -27,7 +27,7 @@ class JillHttpD(port: Int): NanoHTTPD(port) {
         }
         val uri = Uri.parse(uriString) ?: return emptyResponse
         val command = uri.lastPathSegment
-        Logger.debug("command = %s", command)
+        Logger.debug("[JCMD] command = %s", command)
 
         return newFixedLengthResponse(command)
     }
