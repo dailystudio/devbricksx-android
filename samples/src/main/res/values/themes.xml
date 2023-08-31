@@ -93,4 +93,10 @@
         <item name="android:ellipsize">marquee</item>
     </style>
 
+    <style name="JackNameText" parent="DefaultLabel">
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/primaryColor</item>
+    </style>
+
 </resources>

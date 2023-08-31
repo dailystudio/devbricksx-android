@@ -48,8 +48,8 @@ class Jack(
         }
     }
 
-    fun discover(context: Context, time: Long) {
-        Logger.debug("Jack starts discovering Jills ... [time: $time]")
+    fun discover(context: Context) {
+        Logger.debug("Jack starts discovering Jills ...")
 
         nsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
         if (nsdManager == null) {
@@ -85,25 +85,18 @@ class Jack(
             serviceInfo.host.hostAddress ?: ""
         }
 
-        val serviceId = serviceName.replaceFirst(JackAndJill.SERVICE_BASE_NAME, "")
+        Logger.debug("check-in jill: $serviceName, [ip: $serviceIp, port: $servicePort]")
 
-        Logger.debug("check-in jill: $serviceName, [id: $serviceId, port: $servicePort]")
+        val newJill = JillInfo(serviceName, servicePort, serviceIp)
 
-        return if (ignores.contains(serviceId)) {
-            Logger.debug("ignore service id: $serviceId")
-            null
-        } else {
-            val newJill = JillInfo(serviceName, servicePort, serviceIp)
+        val jillCmdC = JillCmdC()
 
-            val jillCmdC = JillCmdC()
+        jillCmdC.connect(newJill)
+        jillCmdC.ask("Hi Jill")
 
-            jillCmdC.connect(newJill)
-            jillCmdC.ask("Hi Jill")
+        newJill.jillCmdC = jillCmdC
 
-            newJill.jillCmdC = jillCmdC
-
-            newJill
-        }
+        return newJill
     }
 
     private fun findJill(jillId: String): JillInfo? {
@@ -215,10 +208,26 @@ class Jack(
             if (service?.serviceType != JackAndJill.toNsdType(type)) {
                 Logger.warn("ignore unmatched service: ${service?.serviceType} [required: ${type}]")
             } else {
-                jackScope.launch(Dispatchers.IO) {
-                    resolveNsdServiceInfo(service)?.also { nsdInfo ->
-                        wrapJillInfo(nsdInfo)?.also { jillInfo ->
-                            checkInJillInfo(jillInfo)
+                val serviceName = service.serviceName
+                val serviceId = serviceName.replaceFirst(
+                    JackAndJill.SERVICE_BASE_NAME, "")
+                if (ignores.contains(serviceId)) {
+                    Logger.debug("ignore service id: $serviceId")
+                } else {
+                    jackScope.launch(Dispatchers.IO) {
+                        var nsdInfo: NsdServiceInfo? = null
+                        for (i in 0 until 3) {
+                            Logger.debug("trying to resolve info: ${i + 1} time(s)")
+                            nsdInfo = resolveNsdServiceInfo(service)
+                            if (nsdInfo != null) {
+                                break
+                            }
+                        }
+
+                        nsdInfo?.also { it ->
+                            wrapJillInfo(it)?.also { jillInfo ->
+                                checkInJillInfo(jillInfo)
+                            }
                         }
                     }
                 }

@@ -17,8 +17,8 @@ import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 )
 data class MyJill(
     val id: String,
-    val name: String,
 ): InMemoryObject<String> {
+    var name: String = ""
     override fun getKey(): String = id
 }
 

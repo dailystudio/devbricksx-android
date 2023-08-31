@@ -6,13 +6,15 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/jill_id"
+        android:id="@+id/my_name"
+        style="@style/JackNameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@android:id/list"
         style="@style/DefaultRecyclerView"
+        android:layout_below="@id/my_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

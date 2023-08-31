@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.samples.common.RandomNames
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -12,17 +13,6 @@ import kotlin.random.Random
 class CaseActivity : BaseCaseActivity() {
 
     companion object {
-        val LAST_NAMES = arrayOf(
-                "Kelley", "Carter", "Salazar", "Osborne", "Santiago",
-                "Luna", "Wilson", "Craig", "Willis", "Abeln"
-        )
-
-        val FIRST_NAMES = arrayOf(
-                "Tanya", "Miriam", "Julie", "Leona", "Mabel",
-                "Emelia", "Sofia", "Haleema", "Francis", "Elin"
-        )
-
-        val RANDOM = Random(System.currentTimeMillis())
         const val NAMES_COUNT = 50
     }
 
@@ -42,12 +32,9 @@ class CaseActivity : BaseCaseActivity() {
             database.clearAllTables()
 
             for (i in 0 until NAMES_COUNT) {
-                val fIndex = RANDOM.nextInt(FIRST_NAMES.size)
-                val lIndex = RANDOM.nextInt(LAST_NAMES.size)
-
                 val user = User(0,
-                        FIRST_NAMES[fIndex],
-                        LAST_NAMES[lIndex])
+                        RandomNames.nextFirstName(),
+                        RandomNames.nextLastName())
 
                 database.userDao().insert(user)
                 delay(50)
