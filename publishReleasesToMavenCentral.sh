@@ -3,6 +3,7 @@ artifactsToPublish=(
   "devbricksx"
   "devbricksx-annotations"
   "devbricksx-compiler"
+  "devbricksx-compose"
   "devbricksx-audio"
   "devbricksx-camera"
   "devbricksx-network"
