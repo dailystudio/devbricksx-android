@@ -19,6 +19,7 @@ include ':devbricksx-compiler-samples'
 // Media supports
 include ':devbricksx-audio'
 include ':devbricksx-camera'
+include ':devbricksx-music'
 
 // Network supports
 include ':devbricksx-network'
