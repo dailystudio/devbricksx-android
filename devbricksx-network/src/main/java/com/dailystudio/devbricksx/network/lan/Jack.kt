@@ -10,6 +10,7 @@ import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
@@ -25,7 +26,7 @@ data class JillInfo (
     var jillCmdC: JillCmdC = JillCmdC()
 }
 
-class Jack(
+open class Jack(
     val type: String = JackAndJill.DEFAULT_TYPE,
     val ignores: List<String> = emptyList(),
     scope: CoroutineScope? = null
@@ -68,7 +69,7 @@ class Jack(
         nsdManager?.stopServiceDiscovery(discoverListener)
     }
 
-    suspend fun askJill(jillId: String, message: String): String? {
+    open suspend fun askJill(jillId: String, message: String): String? {
         return withContext(Dispatchers.IO) {
             val jill = findJill(jillId)
             Logger.debug("found jill = $jill")
@@ -217,6 +218,7 @@ class Jack(
                     jackScope.launch(Dispatchers.IO) {
                         var nsdInfo: NsdServiceInfo? = null
                         for (i in 0 until 3) {
+                            delay(400)
                             Logger.debug("trying to resolve info: ${i + 1} time(s)")
                             nsdInfo = resolveNsdServiceInfo(service)
                             if (nsdInfo != null) {

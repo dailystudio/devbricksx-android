@@ -8,16 +8,22 @@ import com.dailystudio.devbricksx.development.Logger
 import java.io.IOException
 import java.net.ServerSocket
 
-
-class Jill(
+abstract class Jill(
     val type: String = JackAndJill.DEFAULT_TYPE,
     val id: String,
-    val handler: JillCmdHandler
 ) {
     private var nsdManager: NsdManager? = null
     private var jillCmdD: JillCmdD? = null
 
     var servicePort: Int = -1
+
+    private val cmdHandler = object : JillCmdHandler {
+
+        override fun handleRequest(request: String): String {
+            return this@Jill.handleRequest(request)
+        }
+
+    }
 
     @WorkerThread
     fun online(context: Context) {
@@ -39,7 +45,7 @@ class Jill(
 
         Logger.debug("Jill is going on line ... [name: $serviceName, port: $servicePort]")
 
-        jillCmdD = JillCmdD(handler).apply {
+        jillCmdD = JillCmdD(cmdHandler).apply {
             start(servicePort)
         }
 
@@ -55,6 +61,8 @@ class Jill(
         nsdManager?.unregisterService(registrationListener)
         jillCmdD?.stop()
     }
+
+    abstract fun handleRequest(request: String): String
 
     private fun allocatePort(): Int {
         var socket: ServerSocket? = null

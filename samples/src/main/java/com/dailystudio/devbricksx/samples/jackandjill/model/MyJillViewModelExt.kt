@@ -15,26 +15,31 @@ import com.dailystudio.devbricksx.samples.jackandjill.MyJillManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+class JillExt(
+    id: String,
+    val name: String
+): Jill(id = id) {
+    override fun handleRequest(request: String): String {
+        return when (request) {
+            "name" -> { name }
+
+            else -> {
+                buildString {
+                    append("[Jill Echo]:")
+                    append(request)
+                }
+            }
+        }
+    }
+}
+
 class MyJillViewModelExt(application: Application): MyJillViewModel(application) {
 
 
     val jillId = System.currentTimeMillis().toString()
     val jillName = RandomNames.nextName()
 
-    private val jill = Jill(id = jillId, handler = object : JillCmdHandler {
-        override fun handleRequest(request: String): String {
-            return when (request) {
-                "name" -> { jillName }
-
-                else -> {
-                    buildString {
-                        append("[Jill Echo]:")
-                        append(request)
-                    }
-                }
-            }
-        }
-    })
+    private val jill = JillExt(id = jillId, name = jillName)
 
     private val jack = Jack(ignores = listOf(jillId), scope = viewModelScope)
 
