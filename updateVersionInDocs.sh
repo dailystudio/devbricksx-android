@@ -23,7 +23,7 @@ java_version_=$(echo "${java_version}" | sed 's/\./_/g')
 
 echo "Retrieving version from $VERSION_PROPERTIES: [${version}]"
 echo "Retrieving KSP versions from $DEP_VERSIONS_PROPERTIES: [${ksp_version}]"
-echo "Retrieving Java versions from $DEP_VERSIONS_PROPERTIES: [${java_version}, jvm: ${jvm_target}]"
+echo "Retrieving Java versions from $DEP_VERSIONS_PROPERTIES: [${java_version_}, jvm: ${java_version}]"
 
 files="
   README.md

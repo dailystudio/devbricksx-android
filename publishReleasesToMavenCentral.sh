@@ -6,6 +6,7 @@ artifactsToPublish=(
   "devbricksx-audio"
   "devbricksx-camera"
   "devbricksx-network"
+  "devbricksx-music"
 )
 
 echo "--------- [STEP 1: Building artifacts] ---------"
