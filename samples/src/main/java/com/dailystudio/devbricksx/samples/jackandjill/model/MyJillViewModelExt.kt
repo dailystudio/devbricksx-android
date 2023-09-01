@@ -1,6 +1,8 @@
 package com.dailystudio.devbricksx.samples.jackandjill.model
 
 import android.app.Application
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
@@ -15,7 +17,7 @@ import com.dailystudio.devbricksx.samples.jackandjill.MyJillManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class JillExt(
+open class JillExt(
     id: String,
     val name: String
 ): Jill(id = id) {
@@ -39,7 +41,15 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
     val jillId = System.currentTimeMillis().toString()
     val jillName = RandomNames.nextName()
 
-    private val jill = JillExt(id = jillId, name = jillName)
+    private val jill = object: JillExt(id = jillId, name = jillName) {
+        override fun handleRequest(request: String): String {
+            _jillRequest.postValue(request)
+            return super.handleRequest(request)
+        }
+    }
+
+    private val _jillRequest: MutableLiveData<String> = MutableLiveData()
+    val jillRequest: LiveData<String> = _jillRequest
 
     private val jack = Jack(ignores = listOf(jillId), scope = viewModelScope)
 
@@ -87,6 +97,12 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
                 jill.name = name
                 updateMyJill(jill)
             }
+        }
+    }
+
+    fun askJill(jill: MyJill, request: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            jack.askJill(jill.id, request)
         }
     }
 }

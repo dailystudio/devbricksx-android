@@ -7,14 +7,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.jackandjill.Midi
+import com.dailystudio.devbricksx.samples.jackandjill.MyJill
 import com.dailystudio.devbricksx.samples.jackandjill.model.MyJillViewModelExt
 import com.dailystudio.music.midi.MidiConstants
 import com.dailystudio.music.midi.MidiNote
 import com.dailystudio.music.midi.MidiPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class MyJillsListFragmentExt: MyJillsListFragment() {
 
@@ -40,13 +44,17 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
             Logger.debug("Player: ready: $it")
             if (it) {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    player.changeProgram(programId = MidiConstants.DEFAULT_PROGRAM.id)
-                    player.tapNote(
-                        MidiNote(MidiConstants.Octave.C5).apply {
-                            length = 20
-                        }
-                    )
+//                    player.changeProgram(programId = MidiConstants.DEFAULT_PROGRAM.id)
+//                    player.play(Midi.sequence, 90f)
                 }
+            }
+        }
+
+        viewModel.jillRequest.observe(this) {
+            when(it) {
+                "play" -> player.play(
+                    Midi.sequences[Random.nextInt(0, Midi.sequences.size)],
+                    90f)
             }
         }
 
@@ -55,10 +63,6 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
                 player.prepare()
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun setupViews(fragmentView: View) {
@@ -71,6 +75,18 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
             append(viewModel.jillId)
             append(')')
         }
+    }
+
+    override fun onItemClick(
+        recyclerView: RecyclerView,
+        itemView: View,
+        position: Int,
+        item: MyJill,
+        id: Long
+    ) {
+        super.onItemClick(recyclerView, itemView, position, item, id)
+
+        viewModel.askJill(item, "play")
     }
 
 }
