@@ -5,6 +5,7 @@ buildscript {
     ext.kotlin_version = depVersions.kotlin()
     ext.kotlin_compiler_ext_version = depVersions.kotlinCompilerExtension()
     ext.ksp_version = depVersions.ksp()
+    ext.compose_version = depVersions.compose()
     ext.nav_version = depVersions.navigation()
     ext.coil_version = depVersions.coil()
     ext.devkit_version = "${versions.devBricksXVersion()}-${depVersions.devKit()}"

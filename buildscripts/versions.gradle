@@ -54,6 +54,10 @@ ext.depVersions = [
         ext.depVersions.all(versionsFile)['NAVIGATION']
     },
 
+    compose: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['COMPOSE']
+    },
+
     coil: { versionsFile = "$rootDir/dep_versions.properties" ->
         ext.depVersions.all(versionsFile)['COIL']
     },
@@ -73,6 +77,7 @@ ext.depVersions = [
         println("using Kotlin Compiler Extension (Compose): ${ext.depVersions.kotlinCompilerExtension()}")
         println("using KSP: ${ext.depVersions.ksp()}")
         println("using ROOM: ${ext.depVersions.room()}")
+        println("using Compose: ${ext.depVersions.compose()}")
         println("using Navigation: ${ext.depVersions.navigation()}")
         println("using Coil: ${ext.depVersions.coil()}")
         println("using Java: ${ext.depVersions.java()}")
