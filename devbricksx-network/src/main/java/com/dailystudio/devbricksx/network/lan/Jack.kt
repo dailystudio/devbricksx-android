@@ -17,29 +17,49 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-
-data class JillInfo (
+data class JillEntity (
+    val jillId: String,
     val serviceName: String,
     val servicePort: Int,
-    val serviceIp: String,
+    val serviceIp: String
 ) {
-    var jillCmdC: JillCmdC = JillCmdC()
+    lateinit var jillQAClient: JillQAClient
 }
 
 open class Jack(
+    val myJillId: String,
     val type: String = JackAndJill.DEFAULT_TYPE,
     val ignores: List<String> = emptyList(),
     scope: CoroutineScope? = null
 ) {
+
+    companion object {
+        private const val DISCOVER_SERVICE_RETRY = 5
+        private const val DISCOVER_RETRY_INTERVAL_BASE = 500L
+        private const val DISCOVER_RETRY_INTERVAL_INC = 100L
+
+        fun jillIdFromNsdServiceName(serviceName: String): String {
+            return serviceName.replaceFirst(
+                JackAndJill.SERVICE_BASE_NAME, "")
+        }
+
+        fun jillIdToNsdServiceName(jillId: String): String {
+            return buildString {
+                append(JackAndJill.SERVICE_BASE_NAME)
+                append(jillId)
+            }
+        }
+    }
 
     private val executor = Executors.newFixedThreadPool(4)
     private var nsdManager: NsdManager? = null
 
     private val jackScope: CoroutineScope
 
-    private val _jills: MutableLiveData<List<JillInfo>> = MutableLiveData(emptyList())
+    private val _jillEntities: MutableLiveData<List<JillEntity>> =
+        MutableLiveData(emptyList())
 
-    val jills: LiveData<List<JillInfo>> = _jills
+    val jills: LiveData<List<JillEntity>> = _jillEntities
 
     init {
         jackScope = if (scope != null) {
@@ -69,17 +89,17 @@ open class Jack(
         nsdManager?.stopServiceDiscovery(discoverListener)
     }
 
-    open suspend fun askJill(jillId: String,
-                             action: String,
-                             args: Map<String, String> = mapOf()): JillCmdResult {
+    open suspend fun askQuestion(jillId: String,
+                                 topic: String,
+                                 extras: Map<String, String> = mapOf()): JillAnswer {
         return withContext(Dispatchers.IO) {
             val jill = findJill(jillId)
-            Logger.debug("found jill = $jill")
-            jill?.jillCmdC?.executeCmd(action, args) ?: JillCmdResult.ERROR
+            Logger.debug("found jill = $jill [jillId: $jillId]")
+            jill?.jillQAClient?.askQuestion(myJillId, topic, extras) ?: JillAnswer.ERROR
         }
     }
 
-    private suspend fun wrapJillInfo(serviceInfo: NsdServiceInfo): JillInfo? {
+    private suspend fun toJillEntity(serviceInfo: NsdServiceInfo): JillEntity? {
         val serviceName = serviceInfo.serviceName ?: return null
         val servicePort = serviceInfo.port
         val serviceIp = if (Build.VERSION.SDK_INT >= 34) {
@@ -90,57 +110,60 @@ open class Jack(
 
         Logger.debug("check-in jill: $serviceName, [ip: $serviceIp, port: $servicePort]")
 
-        val newJill = JillInfo(serviceName, servicePort, serviceIp)
+        val newJill = JillEntity(
+            jillIdFromNsdServiceName(serviceName),
+            serviceName,
+            servicePort,
+            serviceIp)
 
-        val jillCmdC = JillCmdC()
+        val jillQAClient = JillQAClient(myJillId)
 
-        jillCmdC.connect(newJill)
-        jillCmdC.executeCmd("Hi Jill")
+        jillQAClient.connect(newJill)
 
-        newJill.jillCmdC = jillCmdC
+        newJill.jillQAClient = jillQAClient
 
         return newJill
     }
 
-    private fun findJill(jillId: String): JillInfo? {
-        return _jills.value?.firstOrNull {
-            it.serviceName == jillId
+    private fun findJill(jillId: String): JillEntity? {
+        return _jillEntities.value?.firstOrNull {
+            it.jillId == jillId
         }
     }
 
-    private fun checkInJillInfo(jillInfo: JillInfo) {
-        Logger.debug("check-in Jill: $jillInfo")
+    private fun checkInEntity(jillEntity: JillEntity) {
+        Logger.debug("check-in Jill: $jillEntity")
 
-        val list = mutableListOf<JillInfo>()
-        _jills.value?.forEach {
+        val list = mutableListOf<JillEntity>()
+        _jillEntities.value?.forEach {
             list.add(it)
         }
 
-        list.add(jillInfo)
+        list.add(jillEntity)
 
-        _jills.postValue(list)
+        _jillEntities.postValue(list)
     }
 
-    private fun checkOutJillInfo(serviceInfo: NsdServiceInfo) {
+    private fun checkOutEntity(serviceInfo: NsdServiceInfo) {
         Logger.debug("check-out Jill: $serviceInfo")
         val serviceName = serviceInfo.serviceName
 
-        var jillInfo: JillInfo? = null
+        var jillEntity: JillEntity? = null
 
-        val list = mutableListOf<JillInfo>()
-        _jills.value?.forEach {
+        val list = mutableListOf<JillEntity>()
+        _jillEntities.value?.forEach {
             if (it.serviceName == serviceName) {
-                jillInfo = it
+                jillEntity = it
             } else {
                 list.add(it)
             }
         }
 
         jackScope.launch(Dispatchers.IO) {
-            jillInfo?.jillCmdC?.disconnect()
+            jillEntity?.jillQAClient?.disconnect()
         }
 
-        _jills.postValue(list)
+        _jillEntities.postValue(list)
     }
 
     private suspend fun resolveNsdServiceInfo(serviceInfo: NsdServiceInfo) = suspendCoroutine<NsdServiceInfo?> { continuation ->
@@ -212,25 +235,25 @@ open class Jack(
                 Logger.warn("ignore unmatched service: ${service?.serviceType} [required: ${type}]")
             } else {
                 val serviceName = service.serviceName
-                val serviceId = serviceName.replaceFirst(
-                    JackAndJill.SERVICE_BASE_NAME, "")
+                val serviceId = jillIdFromNsdServiceName(serviceName)
                 if (ignores.contains(serviceId)) {
                     Logger.debug("ignore service id: $serviceId")
                 } else {
                     jackScope.launch(Dispatchers.IO) {
                         var nsdInfo: NsdServiceInfo? = null
                         for (i in 0 until 3) {
-                            delay(400)
-                            Logger.debug("trying to resolve info: ${i + 1} time(s)")
+                            val delay = DISCOVER_RETRY_INTERVAL_BASE + i * DISCOVER_RETRY_INTERVAL_INC
+                            Logger.debug("trying to resolve info: ${i + 1} time(s), delay = $delay")
+                            delay(delay)
                             nsdInfo = resolveNsdServiceInfo(service)
                             if (nsdInfo != null) {
                                 break
                             }
                         }
 
-                        nsdInfo?.also { it ->
-                            wrapJillInfo(it)?.also { jillInfo ->
-                                checkInJillInfo(jillInfo)
+                        nsdInfo?.also {
+                            toJillEntity(it)?.also { jillInfo ->
+                                checkInEntity(jillInfo)
                             }
                         }
                     }
@@ -242,7 +265,7 @@ open class Jack(
             Logger.debug("Nsd service lost: ${service?.serviceName}")
             service?.let {
                 if (it.serviceType == JackAndJill.toNsdType(type)) {
-                    checkOutJillInfo(it)
+                    checkOutEntity(it)
                 }
             }
         }

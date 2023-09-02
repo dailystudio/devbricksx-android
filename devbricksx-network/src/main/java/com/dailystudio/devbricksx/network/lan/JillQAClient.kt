@@ -12,7 +12,7 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
-class JillCmdC() {
+class JillQAClient(myJillId: String) {
 
     companion object {
         private val GSON = Gson()
@@ -52,7 +52,7 @@ class JillCmdC() {
         jillCmdScope.cancel()
     }
 
-    private fun sendMessage(message: String): String {
+    private fun sendQuestionMessage(message: String): String {
         Logger.debug("[JCMD] write message : [$writer]")
         writer?.println(message)
 
@@ -62,9 +62,9 @@ class JillCmdC() {
         return response ?: ""
     }
 
-    suspend fun connect(jillInfo: JillInfo) {
-        val ip = jillInfo.serviceIp
-        val port = jillInfo.servicePort
+    suspend fun connect(jillEntity: JillEntity) {
+        val ip = jillEntity.serviceIp
+        val port = jillEntity.servicePort
 
         withContext(jillCmdScope.coroutineContext) {
             Logger.debug("Jack Client is connecting with Jill [ip: $ip, port; $port]")
@@ -79,18 +79,20 @@ class JillCmdC() {
         }
     }
 
-    suspend fun executeCmd(action: String, args: Map<String, String> = mapOf()): JillCmdResult {
+    suspend fun askQuestion(jillId: String,
+                            action: String,
+                            extras: Map<String, String> = mapOf()): JillAnswer {
         return try {
             withContext(jillCmdScope.coroutineContext) {
-                val cmd = JillCmd(action, args)
+                val cmd = JillQuestion(jillId, action, extras)
 
-                val resp = sendMessage(GSON.toJson(cmd))
+                val resp = sendQuestionMessage(GSON.toJson(cmd))
 
-                GSON.fromJson(resp, JillCmdResult::class.java)
+                GSON.fromJson(resp, JillAnswer::class.java)
             }
         } catch (e: Exception) {
-            Logger.debug("failed to execute cmd [$action]: $e")
-            JillCmdResult.ERROR
+            Logger.debug("failed to ask question [$action, extras = $extras]: $e")
+            JillAnswer.ERROR
         }
     }
 

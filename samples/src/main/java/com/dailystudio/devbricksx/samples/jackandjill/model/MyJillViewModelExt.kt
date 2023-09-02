@@ -7,66 +7,86 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.network.lan.Jack
+import com.dailystudio.devbricksx.network.lan.JackAndJill
 import com.dailystudio.devbricksx.network.lan.Jill
-import com.dailystudio.devbricksx.network.lan.JillCmd
-import com.dailystudio.devbricksx.network.lan.JillCmdResult
-import com.dailystudio.devbricksx.network.lan.JillInfo
+import com.dailystudio.devbricksx.network.lan.JillQuestion
+import com.dailystudio.devbricksx.network.lan.JillAnswer
+import com.dailystudio.devbricksx.network.lan.JillEntity
 import com.dailystudio.devbricksx.samples.common.RandomNames
 import com.dailystudio.devbricksx.samples.jackandjill.MyJill
 import com.dailystudio.devbricksx.samples.jackandjill.MyJillManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-open class JillExt(
-    id: String,
-    val name: String
-): Jill(id = id) {
-
-    override fun executeCommand(cmd: JillCmd): JillCmdResult? {
-        return when (cmd.action) {
-            "name" -> { JillCmdResult.okMessage(name) }
-
-            else -> {
-                JillCmdResult.okMessage(
-                    "Got it"
-                )
-
-            }
-        }
-    }
-}
-
 class MyJillViewModelExt(application: Application): MyJillViewModel(application) {
 
+    companion object {
+        const val TOPIC_NAME = "name"
+        const val TOPIC_READY = "ready"
+        const val KEY_READY = "ready"
 
-    val jillId = System.currentTimeMillis().toString()
-    val jillName = RandomNames.nextName()
-
-    private val jill = object: JillExt(id = jillId, name = jillName) {
-        override fun executeCommand(cmd: JillCmd): JillCmdResult? {
-            _jillCmd.postValue(cmd)
-            return super.executeCommand(cmd)
-        }
+        val myJillName = RandomNames.nextName()
+        val myJillId: String = System.currentTimeMillis().toString()
     }
 
-    private val _jillCmd: MutableLiveData<JillCmd> = MutableLiveData()
-    val jillCmd: LiveData<JillCmd> = _jillCmd
+    val type: String = JackAndJill.DEFAULT_TYPE
 
-    private val jack = Jack(ignores = listOf(jillId), scope = viewModelScope)
+    private val _jillQuestion: MutableLiveData<JillQuestion> = MutableLiveData()
+    val jillQuestion: LiveData<JillQuestion> = _jillQuestion
 
-    private val jillsObserver = Observer<List<JillInfo>> {
+    private val myJill: Jill = object : Jill(type = type, myJillId) {
+
+        override fun answerQuestion(question: JillQuestion): JillAnswer {
+            _jillQuestion.postValue(question)
+
+            return when (question.topic) {
+                TOPIC_NAME -> {
+                    JillAnswer(message = myJillName)
+                }
+
+                TOPIC_READY -> {
+                    val ready = try {
+                        question.extras[KEY_READY].toBoolean()
+                    } catch (e: Exception) {
+                        Logger.error("failed to parse ready from [$question]: $e")
+                        null
+                    } ?: return JillAnswer()
+
+                    getMyJill(question.from)?.also {
+                        it.ready = ready
+                        updateMyJill(it)
+                    }
+
+                    JillAnswer()
+                }
+
+                else -> {
+                    JillAnswer(message = "${question.topic}, got it.")
+                }
+            }
+        }
+
+    }
+
+    private val myJack: Jack = Jack(type = type,
+        myJillId = myJillId,
+        ignores = listOf(myJillId),
+        scope = viewModelScope)
+
+    private val jillsObserver = Observer<List<JillEntity>> {
         Logger.debug("new jills arrived: $it")
 
         MyJillManager.clear()
 
         it.forEach { jillInfo ->
             val myJill = MyJill(
-                id = jillInfo.serviceName
+                id = jillInfo.jillId
             ).apply {
                 name = buildString {
                     append(jillInfo.serviceIp)
-                    append(",")
+                    append(" [")
                     append(jillInfo.servicePort)
+                    append("]")
                 }
             }
 
@@ -74,38 +94,44 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
         }
     }
 
-    init {
-        jack.jills.observeForever(jillsObserver)
 
-        jack.discover(application)
-        jill.online(application)
+    init {
+        myJack.jills.observeForever(jillsObserver)
+
+        myJack.discover(application)
+        myJill.online(application)
     }
 
     override fun onCleared() {
-        jack.jills.removeObserver(jillsObserver)
+        myJack.jills.removeObserver(jillsObserver)
 
-        jill.offline()
-        jack.stopDiscover()
+        myJill.offline()
+        myJack.stopDiscover()
     }
 
     fun addJill(jill: MyJill) {
         insertMyJill(jill)
+        askName(jill.id)
+    }
 
+    fun askName(jillId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val ret = jack.askJill(jill.id, "name")
-
-            ret.let {
-                if (ret.code == JillCmdResult.STATUS_OK) {
-                    jill.name = ret.getMessage()
-                    updateMyJill(jill)
+            val ret = myJack.askQuestion(jillId, TOPIC_NAME)
+            if (ret.code == JillAnswer.STATUS_OK) {
+                getMyJill(jillId)?.also {
+                    it.name = ret.message
+                    updateMyJill(it)
                 }
             }
         }
     }
 
-    fun askJill(jill: MyJill, request: String) {
+    fun confirmReady(jillId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            jack.askJill(jill.id, request)
+            myJack.askQuestion(jillId,
+                TOPIC_READY, mapOf(KEY_READY to true.toString())
+            )
         }
     }
+
 }

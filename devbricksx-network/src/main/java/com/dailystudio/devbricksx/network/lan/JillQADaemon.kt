@@ -12,24 +12,24 @@ import java.io.PrintWriter
 import java.net.ServerSocket
 import java.net.Socket
 
-interface JillCmdHandler {
+interface JillQAHandler {
 
-    fun handleRequest(request: String): String
+    fun answerQuestion(msgOfQuestion: String): String
 
 }
 
-class JillCmdD(private val handler: JillCmdHandler) {
+class JillQADaemon(private val handler: JillQAHandler) {
 
-    private val jillCmdDScope = CoroutineScope(Dispatchers.IO)
+    private val daemonScope = CoroutineScope(Dispatchers.IO)
 
     fun start(port: Int) {
-        jillCmdDScope.launch {
+        daemonScope.launch {
             startServer(port)
         }
     }
 
     fun stop() {
-        jillCmdDScope.cancel()
+        daemonScope.cancel()
     }
 
     private fun startServer(port: Int) {
@@ -43,7 +43,7 @@ class JillCmdD(private val handler: JillCmdHandler) {
                 val clientSocket = serverSocket.accept()
                 println("Jack Client connected: ${clientSocket.inetAddress.hostAddress}")
 
-                jillCmdDScope.launch { handleClient(clientSocket) }
+                daemonScope.launch { handleClient(clientSocket) }
             }
         } catch (e: IOException) {
             Logger.error("Jill Command Daemon error: $e")
@@ -62,7 +62,7 @@ class JillCmdD(private val handler: JillCmdHandler) {
                 val request = reader.readLine() ?: break
                 Logger.debug("[JCMD] request from jack: [$request]")
 
-                val response = handler.handleRequest(request)
+                val response = handler.answerQuestion(request)
                 Logger.debug("[JCMD] response from jill: [$response]")
 
                 writer.println(response)

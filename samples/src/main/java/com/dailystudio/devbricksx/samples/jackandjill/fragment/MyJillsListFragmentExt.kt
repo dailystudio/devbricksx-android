@@ -13,8 +13,6 @@ import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.jackandjill.Midi
 import com.dailystudio.devbricksx.samples.jackandjill.MyJill
 import com.dailystudio.devbricksx.samples.jackandjill.model.MyJillViewModelExt
-import com.dailystudio.music.midi.MidiConstants
-import com.dailystudio.music.midi.MidiNote
 import com.dailystudio.music.midi.MidiPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,19 +20,18 @@ import kotlin.random.Random
 
 class MyJillsListFragmentExt: MyJillsListFragment() {
 
-    private lateinit var viewModel: MyJillViewModelExt
+    private lateinit var myJillViewModelExt: MyJillViewModelExt
     private lateinit var player: MidiPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[MyJillViewModelExt::class.java]
+        myJillViewModelExt = ViewModelProvider(this)[MyJillViewModelExt::class.java]
 
         player = MidiPlayer(
             requireContext(),
             "GeneralUser GS MuseScore v1.sf2"
-        ).apply {
-        }
+        )
 
         player.playback.observe(this) {
             Logger.debug("Player: event: ${it.event.name}")
@@ -50,9 +47,9 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
             }
         }
 
-        viewModel.jillCmd.observe(this) {
-            Logger.debug("observed cmd: ${it.action}")
-            when(it.action) {
+        myJillViewModelExt.jillQuestion.observe(this) {
+            Logger.debug("observed cmd: ${it.topic}")
+            when(it.topic) {
                 "play" -> player.play(
                     Midi.sequences[Random.nextInt(0, Midi.sequences.size)],
                     90f)
@@ -71,9 +68,9 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
 
         val idView: TextView? = fragmentView.findViewById(R.id.my_name)
         idView?.text = buildString {
-            append(viewModel.jillName)
+            append(MyJillViewModelExt.myJillName)
             append('(')
-            append(viewModel.jillId)
+            append(MyJillViewModelExt.myJillId)
             append(')')
         }
     }
@@ -87,7 +84,7 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
     ) {
         super.onItemClick(recyclerView, itemView, position, item, id)
 
-        viewModel.askJill(item, "play")
+        myJillViewModelExt.confirmReady(item.id)
     }
 
 }

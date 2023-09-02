@@ -19,7 +19,16 @@ data class MyJill(
     val id: String,
 ): InMemoryObject<String> {
     var name: String = ""
+    var ready: Boolean = false
     override fun getKey(): String = id
+
+    override fun toString(): String {
+        return buildString {
+            append(super@MyJill.toString())
+            append(", name: $name")
+            append(", ready: $ready")
+        }
+    }
 }
 
 class MyJillViewHolder(view: View): AbsSingleLineViewHolder<MyJill>(view) {
@@ -28,7 +37,12 @@ class MyJillViewHolder(view: View): AbsSingleLineViewHolder<MyJill>(view) {
     }
 
     override fun getText(item: MyJill): CharSequence? {
-        return item.name
+        return buildString {
+            append(item.name)
+            if (item.ready) {
+                append(" (READY)")
+            }
+        }
     }
 
 }

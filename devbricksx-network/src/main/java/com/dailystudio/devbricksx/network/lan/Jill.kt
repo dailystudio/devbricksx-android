@@ -6,46 +6,38 @@ import android.net.nsd.NsdServiceInfo
 import androidx.annotation.WorkerThread
 import com.dailystudio.devbricksx.development.Logger
 import com.google.gson.Gson
-import okio.GzipSource
 import java.io.IOException
 import java.net.ServerSocket
 
-open class JillCmd(
-    val action: String,
-    val args: Map<String, String> = mapOf()
+open class JillQuestion(
+    val from: String,
+    val topic: String,
+    val extras: Map<String, String> = mapOf()
 ) {
 }
 
-open class JillCmdResult(
-    val code: Int,
-    val results: Map<String, String> = mapOf()
+open class JillAnswer(
+    val code: Int = STATUS_OK,
+    val message: String = "",
+    val extras: Map<String, String> = mapOf()
 ) {
     companion object {
         const val STATUS_OK = 0
         const val STATUS_ERROR = -1
+        const val STATUS_ERROR_NOT_FOUND = 404
 
         private const val KEY_ERROR = "error"
         private const val KEY_MESSAGE = "message"
 
-        val ERROR = JillCmdResult(
+        val ERROR = JillAnswer(
             STATUS_ERROR,
-            mapOf(KEY_ERROR to "not found")
+            "unknown error"
         )
 
-        fun okMessage(message: String): JillCmdResult {
-            return JillCmdResult(
-                STATUS_OK,
-                mapOf(KEY_MESSAGE to message)
-            )
-        }
-    }
-
-    fun getError(): String {
-        return results[KEY_ERROR] ?: ""
-    }
-
-    fun getMessage(): String {
-        return results[KEY_MESSAGE] ?: ""
+        val ERROR_NOT_FOUND = JillAnswer(
+            STATUS_ERROR_NOT_FOUND,
+            "not found"
+        )
     }
 }
 
@@ -59,24 +51,24 @@ abstract class Jill(
     }
 
     private var nsdManager: NsdManager? = null
-    private var jillCmdD: JillCmdD? = null
+    private var jillQADaemon: JillQADaemon? = null
 
     var servicePort: Int = -1
 
-    private val cmdHandler = object : JillCmdHandler {
+    private val cmdHandler = object : JillQAHandler {
 
-        override fun handleRequest(request: String): String {
+        override fun answerQuestion(msgOfQuestion: String): String {
 
             val cmd = try {
-                GSON.fromJson(request, JillCmd::class.java)
+                GSON.fromJson(msgOfQuestion, JillQuestion::class.java)
             } catch (e: Exception) {
-                Logger.error("failed to parse jill cmd from [$request]: $e")
+                Logger.error("failed to parse jill cmd from [$msgOfQuestion]: $e")
                 null
             }
 
             val ret = cmd?.let {
-                this@Jill.executeCommand(it)
-            } ?: JillCmdResult.ERROR
+                this@Jill.answerQuestion(it)
+            } ?: JillAnswer.ERROR
 
             return GSON.toJson(ret)
         }
@@ -103,7 +95,7 @@ abstract class Jill(
 
         Logger.debug("Jill is going on line ... [name: $serviceName, port: $servicePort]")
 
-        jillCmdD = JillCmdD(cmdHandler).apply {
+        jillQADaemon = JillQADaemon(cmdHandler).apply {
             start(servicePort)
         }
 
@@ -117,10 +109,10 @@ abstract class Jill(
         Logger.debug("Jill is going offline ... [port: $servicePort]")
 
         nsdManager?.unregisterService(registrationListener)
-        jillCmdD?.stop()
+        jillQADaemon?.stop()
     }
 
-    abstract fun executeCommand(cmd: JillCmd): JillCmdResult?
+    abstract fun answerQuestion(question: JillQuestion): JillAnswer
 
     private fun allocatePort(): Int {
         var socket: ServerSocket? = null
