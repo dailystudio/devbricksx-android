@@ -4,12 +4,12 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.network.lan.Jack
 import com.dailystudio.devbricksx.network.lan.Jill
-import com.dailystudio.devbricksx.network.lan.JillCmdHandler
+import com.dailystudio.devbricksx.network.lan.JillCmd
+import com.dailystudio.devbricksx.network.lan.JillCmdResult
 import com.dailystudio.devbricksx.network.lan.JillInfo
 import com.dailystudio.devbricksx.samples.common.RandomNames
 import com.dailystudio.devbricksx.samples.jackandjill.MyJill
@@ -21,15 +21,16 @@ open class JillExt(
     id: String,
     val name: String
 ): Jill(id = id) {
-    override fun handleRequest(request: String): String {
-        return when (request) {
-            "name" -> { name }
+
+    override fun executeCommand(cmd: JillCmd): JillCmdResult? {
+        return when (cmd.action) {
+            "name" -> { JillCmdResult.okMessage(name) }
 
             else -> {
-                buildString {
-                    append("[Jill Echo]:")
-                    append(request)
-                }
+                JillCmdResult.okMessage(
+                    "Got it"
+                )
+
             }
         }
     }
@@ -42,14 +43,14 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
     val jillName = RandomNames.nextName()
 
     private val jill = object: JillExt(id = jillId, name = jillName) {
-        override fun handleRequest(request: String): String {
-            _jillRequest.postValue(request)
-            return super.handleRequest(request)
+        override fun executeCommand(cmd: JillCmd): JillCmdResult? {
+            _jillCmd.postValue(cmd)
+            return super.executeCommand(cmd)
         }
     }
 
-    private val _jillRequest: MutableLiveData<String> = MutableLiveData()
-    val jillRequest: LiveData<String> = _jillRequest
+    private val _jillCmd: MutableLiveData<JillCmd> = MutableLiveData()
+    val jillCmd: LiveData<JillCmd> = _jillCmd
 
     private val jack = Jack(ignores = listOf(jillId), scope = viewModelScope)
 
@@ -91,11 +92,13 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
         insertMyJill(jill)
 
         viewModelScope.launch(Dispatchers.IO) {
-            val name = jack.askJill(jill.id, "name")
+            val ret = jack.askJill(jill.id, "name")
 
-            name?.let {
-                jill.name = name
-                updateMyJill(jill)
+            ret.let {
+                if (ret.code == JillCmdResult.STATUS_OK) {
+                    jill.name = ret.getMessage()
+                    updateMyJill(jill)
+                }
             }
         }
     }

@@ -69,11 +69,13 @@ open class Jack(
         nsdManager?.stopServiceDiscovery(discoverListener)
     }
 
-    open suspend fun askJill(jillId: String, message: String): String? {
+    open suspend fun askJill(jillId: String,
+                             action: String,
+                             args: Map<String, String> = mapOf()): JillCmdResult {
         return withContext(Dispatchers.IO) {
             val jill = findJill(jillId)
             Logger.debug("found jill = $jill")
-            jill?.jillCmdC?.ask(message)
+            jill?.jillCmdC?.executeCmd(action, args) ?: JillCmdResult.ERROR
         }
     }
 
@@ -93,7 +95,7 @@ open class Jack(
         val jillCmdC = JillCmdC()
 
         jillCmdC.connect(newJill)
-        jillCmdC.ask("Hi Jill")
+        jillCmdC.executeCmd("Hi Jill")
 
         newJill.jillCmdC = jillCmdC
 

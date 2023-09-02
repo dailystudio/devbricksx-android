@@ -5,13 +5,59 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import androidx.annotation.WorkerThread
 import com.dailystudio.devbricksx.development.Logger
+import com.google.gson.Gson
+import okio.GzipSource
 import java.io.IOException
 import java.net.ServerSocket
+
+open class JillCmd(
+    val action: String,
+    val args: Map<String, String> = mapOf()
+) {
+}
+
+open class JillCmdResult(
+    val code: Int,
+    val results: Map<String, String> = mapOf()
+) {
+    companion object {
+        const val STATUS_OK = 0
+        const val STATUS_ERROR = -1
+
+        private const val KEY_ERROR = "error"
+        private const val KEY_MESSAGE = "message"
+
+        val ERROR = JillCmdResult(
+            STATUS_ERROR,
+            mapOf(KEY_ERROR to "not found")
+        )
+
+        fun okMessage(message: String): JillCmdResult {
+            return JillCmdResult(
+                STATUS_OK,
+                mapOf(KEY_MESSAGE to message)
+            )
+        }
+    }
+
+    fun getError(): String {
+        return results[KEY_ERROR] ?: ""
+    }
+
+    fun getMessage(): String {
+        return results[KEY_MESSAGE] ?: ""
+    }
+}
 
 abstract class Jill(
     val type: String = JackAndJill.DEFAULT_TYPE,
     val id: String,
 ) {
+
+    companion object {
+        val GSON = Gson()
+    }
+
     private var nsdManager: NsdManager? = null
     private var jillCmdD: JillCmdD? = null
 
@@ -20,7 +66,19 @@ abstract class Jill(
     private val cmdHandler = object : JillCmdHandler {
 
         override fun handleRequest(request: String): String {
-            return this@Jill.handleRequest(request)
+
+            val cmd = try {
+                GSON.fromJson(request, JillCmd::class.java)
+            } catch (e: Exception) {
+                Logger.error("failed to parse jill cmd from [$request]: $e")
+                null
+            }
+
+            val ret = cmd?.let {
+                this@Jill.executeCommand(it)
+            } ?: JillCmdResult.ERROR
+
+            return GSON.toJson(ret)
         }
 
     }
@@ -62,7 +120,7 @@ abstract class Jill(
         jillCmdD?.stop()
     }
 
-    abstract fun handleRequest(request: String): String
+    abstract fun executeCommand(cmd: JillCmd): JillCmdResult?
 
     private fun allocatePort(): Int {
         var socket: ServerSocket? = null

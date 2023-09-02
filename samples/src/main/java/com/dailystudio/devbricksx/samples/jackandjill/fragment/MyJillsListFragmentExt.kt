@@ -50,8 +50,9 @@ class MyJillsListFragmentExt: MyJillsListFragment() {
             }
         }
 
-        viewModel.jillRequest.observe(this) {
-            when(it) {
+        viewModel.jillCmd.observe(this) {
+            Logger.debug("observed cmd: ${it.action}")
+            when(it.action) {
                 "play" -> player.play(
                     Midi.sequences[Random.nextInt(0, Midi.sequences.size)],
                     90f)
