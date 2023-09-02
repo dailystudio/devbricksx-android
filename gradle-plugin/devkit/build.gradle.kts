@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "cn.dailystudio"
-version = "1.8.2-1.0.7"
+version = "1.8.3-1.0.7"
 
 repositories {
     mavenCentral()
