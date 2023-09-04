@@ -11,7 +11,7 @@
     <include layout="@layout/layout_appbar"/>
 
     <fragment
-        android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.MyJillsListFragmentExt"
+        android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.NearByJillsListFragmentExt"
         android:id="@+id/fragment_jack_and_jill"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"

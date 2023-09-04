@@ -13,17 +13,20 @@ import com.dailystudio.devbricksx.network.lan.JillQuestion
 import com.dailystudio.devbricksx.network.lan.JillAnswer
 import com.dailystudio.devbricksx.network.lan.JillEntity
 import com.dailystudio.devbricksx.samples.common.RandomNames
-import com.dailystudio.devbricksx.samples.jackandjill.MyJill
-import com.dailystudio.devbricksx.samples.jackandjill.MyJillManager
+import com.dailystudio.devbricksx.samples.jackandjill.NearByJill
+import com.dailystudio.devbricksx.samples.jackandjill.NearByJillManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MyJillViewModelExt(application: Application): MyJillViewModel(application) {
+class NearByJillViewModelExt(application: Application): NearByJillViewModel(application) {
 
     companion object {
         const val TOPIC_NAME = "name"
         const val TOPIC_READY = "ready"
+        const val TOPIC_PLAY = "play"
+
         const val KEY_READY = "ready"
+        const val KEY_SEQ = "seq"
 
         val myJillName = RandomNames.nextName()
         val myJillId: String = System.currentTimeMillis().toString()
@@ -33,6 +36,9 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
 
     private val _jillQuestion: MutableLiveData<JillQuestion> = MutableLiveData()
     val jillQuestion: LiveData<JillQuestion> = _jillQuestion
+
+    private var _ready: MutableLiveData<Boolean> = MutableLiveData(false)
+    val ready: LiveData<Boolean> =_ready
 
     private val myJill: Jill = object : Jill(type = type, myJillId) {
 
@@ -52,9 +58,9 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
                         null
                     } ?: return JillAnswer()
 
-                    getMyJill(question.from)?.also {
+                    getNearByJill(question.from)?.also {
                         it.ready = ready
-                        updateMyJill(it)
+                        updateNearByJill(it)
                     }
 
                     JillAnswer()
@@ -76,10 +82,10 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
     private val jillsObserver = Observer<List<JillEntity>> {
         Logger.debug("new jills arrived: $it")
 
-        MyJillManager.clear()
+        NearByJillManager.clear()
 
         it.forEach { jillInfo ->
-            val myJill = MyJill(
+            val nearByJill = NearByJill(
                 id = jillInfo.jillId
             ).apply {
                 name = buildString {
@@ -90,7 +96,7 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
                 }
             }
 
-            addJill(myJill)
+            addJill(nearByJill)
         }
     }
 
@@ -109,8 +115,8 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
         myJack.stopDiscover()
     }
 
-    fun addJill(jill: MyJill) {
-        insertMyJill(jill)
+    fun addJill(jill: NearByJill) {
+        insertNearByJill(jill)
         askName(jill.id)
     }
 
@@ -118,19 +124,49 @@ class MyJillViewModelExt(application: Application): MyJillViewModel(application)
         viewModelScope.launch(Dispatchers.IO) {
             val ret = myJack.askQuestion(jillId, TOPIC_NAME)
             if (ret.code == JillAnswer.STATUS_OK) {
-                getMyJill(jillId)?.also {
+                getNearByJill(jillId)?.also {
                     it.name = ret.message
-                    updateMyJill(it)
+                    updateNearByJill(it)
                 }
             }
         }
     }
 
-    fun confirmReady(jillId: String) {
+    fun toggleReady() {
+        val valOfNewReady = !(_ready.value ?: false)
+
         viewModelScope.launch(Dispatchers.IO) {
-            myJack.askQuestion(jillId,
-                TOPIC_READY, mapOf(KEY_READY to true.toString())
-            )
+            _ready.postValue(valOfNewReady)
+            val jills = myJack.jills.value ?: return@launch
+            for (j in jills) {
+                myJack.askQuestion(
+                    j.jillId,
+                    TOPIC_READY,
+                    mapOf(KEY_READY to valOfNewReady.toString())
+                )
+            }
+        }
+    }
+
+    fun startPlay() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val jills = myJack.jills.value ?: return@launch
+
+            var seqIndex = 1
+            for (j in jills) {
+                val nearByJill = getNearByJill(j.jillId) ?: continue
+
+                if (nearByJill.ready) {
+
+                    myJack.askQuestion(
+                        j.jillId,
+                        TOPIC_PLAY,
+                        mapOf(KEY_SEQ to seqIndex.toString())
+                    )
+
+                    seqIndex++
+                }
+            }
         }
     }
 

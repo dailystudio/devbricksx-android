@@ -29,4 +29,8 @@
     <string name="prompt_no_samples">No samples found.</string>
     <string name="prompt_welcome">Welcome to DevBricksX</string>
 
+    <string name="btn_play">Play</string>
+    <string name="btn_ready">I\'m ready</string>
+    <string name="btn_not_ready">I\'m NOT ready</string>
+
 </resources>

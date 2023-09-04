@@ -11,11 +11,11 @@ import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 
 @InMemoryCompanion
 @ViewModel
-@Adapter(viewHolder = MyJillViewHolder::class)
+@Adapter(viewHolder = NearByJillViewHolder::class)
 @ListFragment(
     layoutByName = "fragment_jack_and_jill"
 )
-data class MyJill(
+data class NearByJill(
     val id: String,
 ): InMemoryObject<String> {
     var name: String = ""
@@ -24,19 +24,19 @@ data class MyJill(
 
     override fun toString(): String {
         return buildString {
-            append(super@MyJill.toString())
+            append(super@NearByJill.toString())
             append(", name: $name")
             append(", ready: $ready")
         }
     }
 }
 
-class MyJillViewHolder(view: View): AbsSingleLineViewHolder<MyJill>(view) {
-    override fun getIcon(item: MyJill): Drawable? {
+class NearByJillViewHolder(view: View): AbsSingleLineViewHolder<NearByJill>(view) {
+    override fun getIcon(item: NearByJill): Drawable? {
         return null
     }
 
-    override fun getText(item: MyJill): CharSequence? {
+    override fun getText(item: NearByJill): CharSequence? {
         return buildString {
             append(item.name)
             if (item.ready) {

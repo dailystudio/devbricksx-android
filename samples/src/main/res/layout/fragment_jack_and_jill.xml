@@ -11,10 +11,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:padding="@dimen/default_padding"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_play"
+            android:text="@string/btn_play"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <Space
+            android:layout_width="@dimen/default_padding"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_ready"
+            android:text="@string/btn_ready"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@android:id/list"
         style="@style/DefaultRecyclerView"
         android:layout_below="@id/my_name"
+        android:layout_above="@id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
