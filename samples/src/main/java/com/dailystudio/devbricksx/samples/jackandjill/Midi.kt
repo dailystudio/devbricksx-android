@@ -109,7 +109,7 @@ object Midi {
         }
 
 
-    val sequences = arrayOf(
+    var sequences = arrayOf(
         sequence1,
         sequence2,
         sequence3,

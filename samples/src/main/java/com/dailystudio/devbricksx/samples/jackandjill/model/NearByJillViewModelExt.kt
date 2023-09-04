@@ -13,8 +13,11 @@ import com.dailystudio.devbricksx.network.lan.JillQuestion
 import com.dailystudio.devbricksx.network.lan.JillAnswer
 import com.dailystudio.devbricksx.network.lan.JillEntity
 import com.dailystudio.devbricksx.samples.common.RandomNames
+import com.dailystudio.devbricksx.samples.jackandjill.Midi
+import com.dailystudio.devbricksx.samples.jackandjill.MidiImporter
 import com.dailystudio.devbricksx.samples.jackandjill.NearByJill
 import com.dailystudio.devbricksx.samples.jackandjill.NearByJillManager
+import com.dailystudio.devbricksx.samples.jackandjill.Song
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -27,6 +30,8 @@ class NearByJillViewModelExt(application: Application): NearByJillViewModel(appl
 
         const val KEY_READY = "ready"
         const val KEY_SEQ = "seq"
+        const val KEY_TIME_START = "time-start"
+        const val KEY_TIME_SYNC = "time-sync"
 
         val myJillName = RandomNames.nextName()
         val myJillId: String = System.currentTimeMillis().toString()
@@ -100,12 +105,22 @@ class NearByJillViewModelExt(application: Application): NearByJillViewModel(appl
         }
     }
 
+    private var song: Song? = null
+
 
     init {
         myJack.jills.observeForever(jillsObserver)
 
         myJack.discover(application)
         myJill.online(application)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            song = MidiImporter.loadSong(application, "songs/little_star.json")
+            Logger.debug("song: $song")
+            song?.toMidiSequences()?.let {
+                Midi.sequences = it
+            }
+        }
     }
 
     override fun onCleared() {
@@ -148,7 +163,7 @@ class NearByJillViewModelExt(application: Application): NearByJillViewModel(appl
         }
     }
 
-    fun startPlay() {
+    fun startPlay(timeStart: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val jills = myJack.jills.value ?: return@launch
 
@@ -161,7 +176,11 @@ class NearByJillViewModelExt(application: Application): NearByJillViewModel(appl
                     myJack.askQuestion(
                         j.jillId,
                         TOPIC_PLAY,
-                        mapOf(KEY_SEQ to seqIndex.toString())
+                        mapOf(
+                            KEY_SEQ to seqIndex.toString(),
+                            KEY_TIME_SYNC to System.currentTimeMillis().toString(),
+                            KEY_TIME_START to timeStart.toString()
+                        )
                     )
 
                     seqIndex++

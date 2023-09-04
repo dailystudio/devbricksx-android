@@ -113,6 +113,7 @@ class MidiPlayer(private val context: Context,
 
     fun play(sequence: Sequence,
              tempo: Float = MidiConstants.DEFAULT_SONG_TEMPO.toFloat()) {
+        Logger.debug("play [tempo: $tempo]: $sequence")
         val sequencer = sequencer ?: return
 
         sequencer.tempoInBPM = tempo

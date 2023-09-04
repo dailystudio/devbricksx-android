@@ -11,14 +11,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.core.R as coreR
 import com.dailystudio.devbricksx.samples.jackandjill.Midi
 import com.dailystudio.devbricksx.samples.jackandjill.NearByJill
 import com.dailystudio.devbricksx.samples.jackandjill.model.NearByJillViewModelExt
+import com.dailystudio.devbricksx.utils.CalendarUtils
 import com.dailystudio.music.midi.MidiPlayer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
+import com.dailystudio.devbricksx.samples.core.R as coreR
+
 
 class NearByJillsListFragmentExt: NearByJillsListFragment() {
 
@@ -53,10 +55,45 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
                         -1
                     } ?: -1
 
+                    val timeLocal = System.currentTimeMillis()
+                    val timeSync = try {
+                        it.extras[NearByJillViewModelExt.KEY_TIME_SYNC]?.toLong()
+                    } catch (e: Exception) {
+                        Logger.error("failed to parse time sync from [$it]: $e")
+                        -1L
+                    } ?: -1L
+
+                    val timeShift = if (timeSync != -1L) {
+                        timeLocal - timeSync
+                    } else {
+                        0L
+                    }
+
+
+                    val timeStart = try {
+                        it.extras[NearByJillViewModelExt.KEY_TIME_START]?.toLong()
+                    } catch (e: Exception) {
+                        Logger.error("failed to parse time from [$it]: $e")
+                        -1L
+                    } ?: -1L
+
+                    val timeTarget = timeStart + timeShift
+
+                    Logger.debug("time local: $timeStart [${CalendarUtils.timeToReadableString(timeLocal)}]")
+                    Logger.debug("time sync: $timeSync [${CalendarUtils.timeToReadableString(timeSync)}]")
+                    Logger.debug("time shift: $timeShift")
+                    Logger.debug("time target: $timeTarget [${CalendarUtils.timeToReadableString(timeTarget)}]")
+
                     if (seqIndex >= 0 && seqIndex < Midi.sequences.size) {
-                        player.play(
-                            Midi.sequences[seqIndex],
-                            90f)
+                        val now = System.currentTimeMillis()
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            if (timeTarget > now) {
+                                delay(timeTarget - now)
+                            }
+                            player.play(
+                                Midi.sequences[seqIndex])
+
+                        }
                     }
                 }
             }
@@ -109,8 +146,23 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
 
         playBtn = fragmentView.findViewById(R.id.btn_play)
         playBtn?.setOnClickListener {
-            player.play(Midi.sequences[0], 90f)
-            myJillViewModelExt.startPlay()
+            val currentTimeMillis = System.currentTimeMillis()
+
+            val remainder = currentTimeMillis % 10000
+
+            val timeUntilNext10s = 10000 - remainder
+
+            val nearestFutureTimeMillis = currentTimeMillis + timeUntilNext10s
+
+            Logger.debug("curr time: $currentTimeMillis [${CalendarUtils.timeToReadableString(currentTimeMillis)}")
+            Logger.debug("start time: $currentTimeMillis [${CalendarUtils.timeToReadableString(nearestFutureTimeMillis)}")
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                delay(nearestFutureTimeMillis - currentTimeMillis)
+                player.play(Midi.sequences[0])
+            }
+
+            myJillViewModelExt.startPlay(nearestFutureTimeMillis)
         }
     }
 
