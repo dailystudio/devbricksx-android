@@ -48,6 +48,9 @@ class MainActivity : DevBricksActivity() {
             fragment<com.dailystudio.devbricksx.samples.apps.CaseFragment>("apps")
             fragment<com.dailystudio.devbricksx.samples.audio.CaseFragment>("audio")
             fragment<com.dailystudio.devbricksx.samples.camera.CaseFragment>("camera")
+            fragment<com.dailystudio.devbricksx.samples.customadapter.CaseFragment>("customadapter")
+            fragment<com.dailystudio.devbricksx.samples.datachanges.CaseFragment>("datachanges")
+            fragment<com.dailystudio.devbricksx.samples.fragmentpager.CaseFragment>("fragmentpager")
         }
     }
 

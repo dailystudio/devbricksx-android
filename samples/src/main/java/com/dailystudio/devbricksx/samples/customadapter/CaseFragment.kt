@@ -3,19 +3,20 @@ package com.dailystudio.devbricksx.samples.customadapter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.samples.common.BaseCaseFragment
 import com.dailystudio.devbricksx.samples.customadapter.model.ChatRecordViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class CaseActivity : BaseCaseActivity() {
+class CaseFragment : BaseCaseFragment() {
 
     companion object {
         val RANDOM_SEED = Random(System.currentTimeMillis())
@@ -23,17 +24,16 @@ class CaseActivity : BaseCaseActivity() {
 
     private var userInput: EditText? = null
     private var sendButton: Button? = null
+    override val fragmentLayoutResId: Int
+        get() = R.layout.fragment_case_custom_adapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_case_custom_adapter)
-
-        setupViews()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupViews(view)
     }
 
-    private fun setupViews() {
-        userInput = findViewById(R.id.input)
+    private fun setupViews(fragmentView: View) {
+        userInput = fragmentView.findViewById(R.id.input)
         userInput?.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
@@ -46,7 +46,7 @@ class CaseActivity : BaseCaseActivity() {
             }
         })
 
-        sendButton = findViewById(R.id.send_button)
+        sendButton = fragmentView.findViewById(R.id.send_button)
         sendButton?.setOnClickListener{
             val editable = userInput?.text ?: return@setOnClickListener
             val text = editable.toString()
