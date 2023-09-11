@@ -51,6 +51,8 @@ class MainActivity : DevBricksActivity() {
             fragment<com.dailystudio.devbricksx.samples.customadapter.CaseFragment>("customadapter")
             fragment<com.dailystudio.devbricksx.samples.datachanges.CaseFragment>("datachanges")
             fragment<com.dailystudio.devbricksx.samples.fragmentpager.CaseFragment>("fragmentpager")
+            fragment<com.dailystudio.devbricksx.samples.imagemask.CaseFragment>("imagemask")
+            fragment<com.dailystudio.devbricksx.samples.imagematrix.CaseFragment>("imagematrix")
         }
     }
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.samples.common.BaseCaseFragment
 import com.dailystudio.devbricksx.samples.imagemask.model.MaskedImageViewModel
 import com.dailystudio.devbricksx.utils.ImageUtils
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ class MaskData(val data: IntArray,
                val width: Int,
                val height: Int)
 
-class CaseActivity : BaseCaseActivity() {
+class CaseFragment : BaseCaseFragment() {
 
     companion object {
         private const val IMAGE_ASSET = "fathers_day_1280.jpg"
@@ -31,10 +31,11 @@ class CaseActivity : BaseCaseActivity() {
         private val RANDOM = Random(System.currentTimeMillis())
     }
 
+    override val fragmentLayoutResId: Int
+        get() = R.layout.fragment_case_image_masked
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_case_image_masked)
 
         lifecycleScope.launch(Dispatchers.IO) {
             generateMaskedImages()
@@ -42,12 +43,14 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private fun generateMaskedImages() {
-        val viewModel = ViewModelProvider(this@CaseActivity).get(
+        val context = requireContext()
+
+        val viewModel = ViewModelProvider(this).get(
                 MaskedImageViewModel::class.java)
 
         val images = mutableListOf<MaskedImage>()
 
-        val original = ImageUtils.loadAssetBitmap(this@CaseActivity,
+        val original = ImageUtils.loadAssetBitmap(context,
                 IMAGE_ASSET)
         original?.let {
             val buffer = generateBits(257, 257)
@@ -56,7 +59,7 @@ class CaseActivity : BaseCaseActivity() {
             images.add(MaskedImage(0, "Original", it))
         }
 
-        val maskBits = loadBitsFromMaskBitmap(this@CaseActivity,
+        val maskBits = loadBitsFromMaskBitmap(context,
                 IMAGE_MASK_ASSET)
         var maskBitmap: Bitmap? = null
         maskBits?.let {

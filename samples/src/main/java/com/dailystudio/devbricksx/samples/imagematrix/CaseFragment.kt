@@ -9,48 +9,47 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
-import com.dailystudio.devbricksx.samples.databinding.ActivityCaseImageMatrixBinding
+import com.dailystudio.devbricksx.samples.common.BaseCaseFragment
 import com.dailystudio.devbricksx.samples.imagematrix.model.ImageBundleViewModel
 import com.dailystudio.devbricksx.utils.ImageUtils
 import com.dailystudio.devbricksx.utils.MatrixUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CaseActivity : BaseCaseActivity() {
+class CaseFragment : BaseCaseFragment() {
 
-    private lateinit var binding: ActivityCaseImageMatrixBinding
 
     companion object {
         private const val IMAGE_ASSET = "bicycle_1280.jpg"
     }
 
     private var originalBitmap: Bitmap? = null
+    override val fragmentLayoutResId: Int
+        get() = R.layout.fragment_case_image_matrix
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var viewFrameStub: View? = null
 
-        binding = ActivityCaseImageMatrixBinding.inflate(layoutInflater)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val view = binding.root
-        setContentView(view)
+        setupViews(view)
 
-        setupViews()
+        generateBundles()
     }
 
-    private fun setupViews() {
-        binding.viewFrameStub.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-            generateBundles()
-        }
+    private fun setupViews(fragmentView: View) {
+        viewFrameStub = fragmentView.findViewById(R.id.viewFrameStub)
     }
 
     private fun generateBundles() {
+        val context = requireContext()
+
         MatrixUtils.DEBUG_DETAIL = true
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val viewModel = ViewModelProvider(this@CaseActivity).get(ImageBundleViewModel::class.java)
+            val viewModel = ViewModelProvider(this@CaseFragment).get(ImageBundleViewModel::class.java)
 
-            originalBitmap = ImageUtils.loadAssetBitmap(this@CaseActivity,
+            originalBitmap = ImageUtils.loadAssetBitmap(context,
                     IMAGE_ASSET)
 
             originalBitmap?.let {
@@ -58,8 +57,8 @@ class CaseActivity : BaseCaseActivity() {
                 val originalPage = ImageBundle(1,"original",
                         it, Matrix())
                 val presentationPage =
-                        createPresentationImageBundle(it, binding.viewFrameStub)
-                val fitPage = createFitImageBundle(it, binding.viewFrameStub)
+                        createPresentationImageBundle(it, viewFrameStub)
+                val fitPage = createFitImageBundle(it, viewFrameStub)
 
                 viewModel.insertImageBundles(listOf(
                         editPage,
@@ -85,10 +84,10 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private fun createPresentationImageBundle(bitmap: Bitmap,
-                                              presenter: View): ImageBundle {
+                                              presenter: View?): ImageBundle {
         val matrix = MatrixUtils.getTransformationMatrix(
                 bitmap.width, bitmap.height,
-                presenter.width, presenter.height,
+                presenter?.width ?: 1, presenter?.height ?: 1,
                 90)
 
         val transformed = ImageUtils.createTransformedBitmap(
@@ -99,10 +98,10 @@ class CaseActivity : BaseCaseActivity() {
     }
 
     private fun createFitImageBundle(bitmap: Bitmap,
-                                     presenter: View): ImageBundle {
+                                     presenter: View?): ImageBundle {
         val matrix = MatrixUtils.getTransformationMatrix(
                 bitmap.width, bitmap.height,
-                presenter.width, presenter.height,
+                presenter?.width ?: 1, presenter?.height ?: 1,
                 90, fitIn = true)
 
         val transformed = ImageUtils.createTransformedBitmap(
