@@ -1,48 +1,37 @@
 package com.dailystudio.devbricksx.samples.usecase.fragment
 
-import android.content.Intent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.dailystudio.devbricksx.app.activity.ActivityLauncher
-import com.dailystudio.devbricksx.samples.Constants
-import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.core.R
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
 import kotlinx.coroutines.flow.Flow
 
 class UseCasesFragmentExt : UseCasesListFragment() {
 
-    override fun setupViews(fragmentView: View) {
-        super.setupViews(fragmentView)
-        val activity = requireActivity()
-        if (activity is AppCompatActivity) {
-            activity.setSupportActionBar(fragmentView.findViewById(R.id.topAppBar))
-        }
+    override fun onResume() {
+        super.onResume()
 
-        setHasOptionsMenu(true)
+        val actionBar = (activity as AppCompatActivity).supportActionBar
+        actionBar?.title = getString(R.string.app_name)
     }
 
     override fun onItemClick(recyclerView: RecyclerView, itemView: View, position: Int, item: UseCase, id: Long) {
         super.onItemClick(recyclerView, itemView, position, item, id)
 
-        val context = recyclerView.context
-        val intent = Intent().apply {
-            setClassName(context.applicationContext.packageName,
-                    buildString {
-                        append(context.applicationContext.packageName)
-                        append('.')
-                        append(item.`package`)
-                        append('.')
-                        append("CaseActivity")
-                    }
-            )
+        try {
+            findNavController().navigate(item.name)
 
-            putExtra(Constants.EXTRA_TITLE, item.title)
+            val actionBar = (activity as AppCompatActivity).supportActionBar
+            actionBar?.title = item.title
+
+        } catch (e: IllegalArgumentException) {
+            Logger.debug("failed to navigate to [${item.name}]: $e")
         }
-
-        ActivityLauncher.launchActivity(context, intent)
     }
 
     override fun createDataSource(): Flow<List<UseCase>> {
