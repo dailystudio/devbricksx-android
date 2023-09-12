@@ -13,15 +13,36 @@ class DevKitPlugin: Plugin<Project> {
 
     companion object {
         const val EXTENSION_NAME = "devKit"
+
+        const val GRADLE_PROP_MANUALLY_APPLY_KSP = "devkit.apply.ksp"
     }
 
     override fun apply(project: Project) {
         val config = project.extensions.create<DevKitExtension>(EXTENSION_NAME)
-        val kspPluginApplied = project.plugins.hasPlugin("com.google.devtools.ksp")
         val isApplication = project.plugins.hasPlugin("com.android.application")
 
         val androidComponentsExtension = project.extensionByType(
             AndroidComponentsExtension::class) ?: return
+
+        val applyKsp = try {
+            (project.property(GRADLE_PROP_MANUALLY_APPLY_KSP) as String).toBoolean()
+        } catch (e: Exception) {
+            true
+        }
+
+        println(separatorLineToWrap(project.name))
+        println("DevKit properties: [${project.name}]")
+        println(separatorLineToWrap(project.name))
+        println("`- Apply KSP: [$applyKsp]")
+        println()
+
+        if (applyKsp) {
+            println("applying KSP(Kotlin Symbol Processing) plug-in")
+
+            with(project) {
+                plugins.apply("com.google.devtools.ksp")
+            }
+        }
 
         androidComponentsExtension.onVariants { variant ->
             val useAnnotation = config.useAnnotations.get()
@@ -59,8 +80,9 @@ class DevKitPlugin: Plugin<Project> {
             println("   `- DevBricksX: [$devBricksXVersion]")
             println()
 
+            val kspPluginApplied = project.plugins.hasPlugin("com.google.devtools.ksp")
             if (useAnnotation && !kspPluginApplied) {
-                println("applying KSP(Kotlin Symbol Processing) plug-in")
+                println("applying KSP(Kotlin Symbol Processing) plug-in for using annotations")
                 with(project) {
                     plugins.apply("com.google.devtools.ksp")
                 }
@@ -91,7 +113,7 @@ class DevKitPlugin: Plugin<Project> {
                 }
             }
 
-            var useCompose = devKitComps.contains(Components.Compose)
+            val useCompose = devKitComps.contains(Components.Compose)
             if (useCompose) {
                 println("applying Jetpack Compose features")
                 val commonExtension = project.extensionByType(CommonExtension::class)
