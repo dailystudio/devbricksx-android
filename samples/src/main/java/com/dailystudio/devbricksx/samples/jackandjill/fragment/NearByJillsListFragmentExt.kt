@@ -103,11 +103,6 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
     }
 
     private fun setupPlayer() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                player.prepare()
-            }
-        }
         player = MidiPlayer(
             requireContext(),
             "GeneralUser GS MuseScore v1.sf2"
@@ -124,6 +119,12 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
 //                    player.changeProgram(programId = MidiConstants.DEFAULT_PROGRAM.id)
 //                    player.play(Midi.sequence, 90f)
                 }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                player.prepare()
             }
         }
     }

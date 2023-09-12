@@ -4,22 +4,19 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.createGraph
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.fragment
 import com.dailystudio.devbricksx.app.activity.DevBricksActivity
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.samples.apps.CaseFragment
 import com.dailystudio.devbricksx.samples.fragment.AboutFragment
 import com.dailystudio.devbricksx.samples.usecase.fragment.UseCasesFragmentExt
-import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
-
-object nav_routes {
-    const val home = "home"
-}
 
 class MainActivity : DevBricksActivity() {
+
+    companion object {
+        const val NAVIGATION_HOME = "home"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,17 +39,25 @@ class MainActivity : DevBricksActivity() {
         val navController = navHostFragment.findNavController()
 
         navController.graph = navController.createGraph(
-            startDestination = nav_routes.home,
+            startDestination = NAVIGATION_HOME,
         ) {
-            fragment<UseCasesFragmentExt>(nav_routes.home)
+            fragment<UseCasesFragmentExt>(NAVIGATION_HOME)
             fragment<com.dailystudio.devbricksx.samples.apps.CaseFragment>("apps")
             fragment<com.dailystudio.devbricksx.samples.audio.CaseFragment>("audio")
             fragment<com.dailystudio.devbricksx.samples.camera.CaseFragment>("camera")
-            fragment<com.dailystudio.devbricksx.samples.customadapter.CaseFragment>("customadapter")
-            fragment<com.dailystudio.devbricksx.samples.datachanges.CaseFragment>("datachanges")
-            fragment<com.dailystudio.devbricksx.samples.fragmentpager.CaseFragment>("fragmentpager")
-            fragment<com.dailystudio.devbricksx.samples.imagemask.CaseFragment>("imagemask")
-            fragment<com.dailystudio.devbricksx.samples.imagematrix.CaseFragment>("imagematrix")
+            fragment<com.dailystudio.devbricksx.samples.customadapter.CaseFragment>("custom-adapter")
+            fragment<com.dailystudio.devbricksx.samples.datachanges.CaseFragment>("data-changes")
+            fragment<com.dailystudio.devbricksx.samples.fragmentpager.CaseFragment>("fragment-pager")
+            fragment<com.dailystudio.devbricksx.samples.imagemask.CaseFragment>("image-mask")
+            fragment<com.dailystudio.devbricksx.samples.imagematrix.CaseFragment>("image-matrix")
+            fragment<com.dailystudio.devbricksx.samples.inmemory.CaseFragment>("in-memory")
+            fragment<com.dailystudio.devbricksx.samples.jackandjill.CaseFragment>("jack-and-jill")
+            fragment<com.dailystudio.devbricksx.samples.nonrecyclablelistview.CaseFragment>("non-recyclable-list-view")
+            fragment<com.dailystudio.devbricksx.samples.paging.CaseFragment>("paging")
+            fragment<com.dailystudio.devbricksx.samples.quickstart.CaseFragment>("quick-start")
+            fragment<com.dailystudio.devbricksx.samples.settings.dialog.CaseFragment>("settings-dialog")
+            fragment<com.dailystudio.devbricksx.samples.settings.normal.CaseFragment>("settings-normal")
+            fragment<com.dailystudio.devbricksx.samples.viewpager.CaseFragment>("viewpager")
         }
     }
 

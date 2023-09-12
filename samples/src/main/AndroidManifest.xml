@@ -21,15 +21,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".quickstart.CaseActivity"/>
-        <activity android:name=".inmemory.CaseActivity"/>
-        <activity android:name=".viewpager.CaseActivity"/>
-        <activity android:name=".settings.normal.CaseActivity"/>
-        <activity android:name=".settings.dialog.CaseActivity"/>
-        <activity android:name=".nonrecyclablelistview.CaseActivity"/>
-        <activity android:name=".paging.CaseActivity"/>
-        <activity android:name=".jackandjill.CaseActivity"/>
-
     </application>
 
 </manifest>

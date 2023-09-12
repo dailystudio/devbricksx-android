@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true"
-    android:clipChildren="false"
-    android:background="@color/use_case_background_color"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <include layout="@layout/layout_appbar"/>
-
+    android:layout_height="match_parent"
+    tools:context=".jackandjill.CaseFragment">
     <fragment
         android:name="com.dailystudio.devbricksx.samples.jackandjill.fragment.NearByJillsListFragmentExt"
         android:id="@+id/fragment_jack_and_jill"
@@ -17,4 +13,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

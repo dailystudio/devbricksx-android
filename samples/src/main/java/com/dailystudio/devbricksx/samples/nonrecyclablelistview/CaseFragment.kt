@@ -1,24 +1,21 @@
 package com.dailystudio.devbricksx.samples.nonrecyclablelistview
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.samples.common.BaseCaseFragment
 import com.dailystudio.devbricksx.samples.nonrecyclablelistview.model.PixabayImageViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CaseActivity : BaseCaseActivity() {
+class CaseFragment : BaseCaseFragment() {
+    override val fragmentLayoutResId: Int
+        get() = R.layout.fragment_case_non_recyclable_list_view
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_case_non_recyclable_list_view)
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch(Dispatchers.IO) {
             generateImages()

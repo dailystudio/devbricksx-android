@@ -1,25 +1,26 @@
 package com.dailystudio.devbricksx.samples.quickstart
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.devbricksx.samples.common.BaseCaseActivity
+import com.dailystudio.devbricksx.samples.common.BaseCaseFragment
 import com.dailystudio.devbricksx.samples.common.RandomNames
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-class CaseActivity : BaseCaseActivity() {
+class CaseFragment : BaseCaseFragment() {
 
     companion object {
         const val NAMES_COUNT = 50
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override val fragmentLayoutResId: Int
+        get() = R.layout.fragment_case_quick_start
 
-        setContentView(R.layout.activity_case_quick_start)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         generateUsers()
     }
@@ -27,7 +28,7 @@ class CaseActivity : BaseCaseActivity() {
 
     private fun generateUsers() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val database = UserDatabase.getDatabase(this@CaseActivity)
+            val database = UserDatabase.getDatabase(requireContext())
 
             database.clearAllTables()
 
