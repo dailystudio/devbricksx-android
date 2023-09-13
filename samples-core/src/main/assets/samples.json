@@ -110,5 +110,12 @@
     "title": "Jack & Jill",
     "icon": "ic_case_paging",
     "desc": ""
+  },
+  {
+    "name": "webview",
+    "package": "webview",
+    "title": "WebView",
+    "icon": "ic_case_paging",
+    "desc": ""
   }
 ]

@@ -58,6 +58,7 @@ class MainActivity : DevBricksActivity() {
             fragment<com.dailystudio.devbricksx.samples.settings.dialog.CaseFragment>("settings-dialog")
             fragment<com.dailystudio.devbricksx.samples.settings.normal.CaseFragment>("settings-normal")
             fragment<com.dailystudio.devbricksx.samples.viewpager.CaseFragment>("viewpager")
+            fragment<com.dailystudio.devbricksx.samples.webview.CaseFragment>("webview")
         }
     }
 
