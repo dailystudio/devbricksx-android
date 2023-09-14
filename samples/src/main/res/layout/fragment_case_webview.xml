@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/fragment_webview"
-        android:name="com.dailystudio.devbricksx.samples.webview.fragment.WebViewFragment"
+        android:name="com.dailystudio.devbricksx.samples.webview.fragment.PickFilesWebViewFragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

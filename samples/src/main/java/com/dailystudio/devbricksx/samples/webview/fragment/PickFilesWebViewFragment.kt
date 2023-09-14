@@ -1,6 +1,5 @@
 package com.dailystudio.devbricksx.samples.webview.fragment
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,28 +10,26 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
 import com.dailystudio.devbricksx.samples.R
 
 
-class WebViewFragment: AbsPermissionsFragment() {
+class PickFilesWebViewFragment: AbsPermissionsFragment() {
 
     private var pendingInput: String? = null
     private var pendingFilePathCallback: ValueCallback<Array<Uri>>? = null
 
-    private val pickImagesLauncher =
+    private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            val callback = pendingFilePathCallback ?: return@registerForActivityResult
+            processPickedUri(uri)
+        }
 
-            if (uri != null) {
-                callback.onReceiveValue(arrayOf(uri))
-            } else {
-                callback.onReceiveValue(null)
-            }
-
-            pendingFilePathCallback = null
+    private val pickMediaLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            processPickedUri(uri)
         }
 
     private var webView: WebView? = null
@@ -73,10 +70,6 @@ class WebViewFragment: AbsPermissionsFragment() {
                     }
                 }
 
-                if (input.isBlank()) {
-                    input = "*/*"
-                }
-
                 Logger.debug("input: [$input]")
 
                 pendingInput = input
@@ -92,8 +85,20 @@ class WebViewFragment: AbsPermissionsFragment() {
         loadHomepage()
     }
 
+    private fun processPickedUri(uri: Uri?) {
+        val callback = pendingFilePathCallback ?: return
+
+        if (uri != null) {
+            callback.onReceiveValue(arrayOf(uri))
+        } else {
+            callback.onReceiveValue(null)
+        }
+
+        pendingFilePathCallback = null
+    }
+
     private fun loadHomepage() {
-        webView?.loadUrl("file:///android_asset/html/local_album.html")
+        webView?.loadUrl("file:///android_asset/html/pick_files.html")
 //        webView?.loadUrl("https://wpa1.qq.com/YcO1i4YV?_type=wpa&qidian=true")
     }
 
@@ -103,7 +108,10 @@ class WebViewFragment: AbsPermissionsFragment() {
 
     override fun getRequiredPermissions(): Array<String> {
         return if (Build.VERSION.SDK_INT >= 33) {
-            arrayOf("android.permission.READ_MEDIA_IMAGES")
+            arrayOf(
+                "android.permission.READ_MEDIA_IMAGES",
+                "android.permission.READ_MEDIA_VIDEO",
+            )
         } else {
             emptyArray()
         }
@@ -115,7 +123,22 @@ class WebViewFragment: AbsPermissionsFragment() {
     override fun onPermissionsGranted(newlyGranted: Boolean) {
         val input = pendingInput ?: return
 
-        pickImagesLauncher.launch(input)
+        val pickImages = input.contains("image")
+        val pickVideos = input.contains("video")
+
+        if (!pickImages && !pickVideos) {
+            pickFileLauncher.launch("*/*")
+        } else {
+            val mediaType = if (pickImages && pickVideos) {
+                ActivityResultContracts.PickVisualMedia.ImageAndVideo
+            } else if (pickImages) {
+                ActivityResultContracts.PickVisualMedia.ImageOnly
+            } else {
+                ActivityResultContracts.PickVisualMedia.VideoOnly
+            }
+
+            pickMediaLauncher.launch(PickVisualMediaRequest(mediaType))
+        }
     }
 
 }
