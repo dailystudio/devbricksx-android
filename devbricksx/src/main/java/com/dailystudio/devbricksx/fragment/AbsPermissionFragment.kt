@@ -22,6 +22,7 @@ abstract class AbsPermissionsFragment : DevBricksFragment() {
             for (perm in permissions) {
                 granted = ContextCompat.checkSelfPermission(
                         context, perm)
+                Logger.debug("[perm: $perm]: granted = ${granted == PackageManager.PERMISSION_GRANTED}")
                 if (granted != PackageManager.PERMISSION_GRANTED) {
                     return false
                 }

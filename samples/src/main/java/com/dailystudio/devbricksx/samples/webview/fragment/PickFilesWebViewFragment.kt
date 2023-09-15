@@ -70,6 +70,10 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
                     }
                 }
 
+                if (input.isBlank()) {
+                    input = "*/*"
+                }
+
                 Logger.debug("input: [$input]")
 
                 pendingInput = input
@@ -107,7 +111,11 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
     }
 
     override fun getRequiredPermissions(): Array<String> {
-        return if (Build.VERSION.SDK_INT >= 33) {
+        return if (Build.VERSION.SDK_INT >= 34) {
+            arrayOf(
+                "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+            )
+        } else if (Build.VERSION.SDK_INT >= 33) {
             arrayOf(
                 "android.permission.READ_MEDIA_IMAGES",
                 "android.permission.READ_MEDIA_VIDEO",
@@ -118,6 +126,7 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
     }
 
     override fun onPermissionsDenied() {
+        processPickedUri(null)
     }
 
     override fun onPermissionsGranted(newlyGranted: Boolean) {
@@ -127,17 +136,28 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
         val pickVideos = input.contains("video")
 
         if (!pickImages && !pickVideos) {
-            pickFileLauncher.launch("*/*")
+            // Pick files rather than images and videos
+            pickFileLauncher.launch(input)
         } else {
-            val mediaType = if (pickImages && pickVideos) {
-                ActivityResultContracts.PickVisualMedia.ImageAndVideo
-            } else if (pickImages) {
-                ActivityResultContracts.PickVisualMedia.ImageOnly
-            } else {
-                ActivityResultContracts.PickVisualMedia.VideoOnly
-            }
+            // Pick media files
 
-            pickMediaLauncher.launch(PickVisualMediaRequest(mediaType))
+            val photoPickerAvailable =
+                ActivityResultContracts.PickVisualMedia
+                    .isPhotoPickerAvailable(requireContext())
+
+            if (photoPickerAvailable) {
+                val mediaType = if (pickImages && pickVideos) {
+                    ActivityResultContracts.PickVisualMedia.ImageAndVideo
+                } else if (pickImages) {
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                } else {
+                    ActivityResultContracts.PickVisualMedia.VideoOnly
+                }
+
+                pickMediaLauncher.launch(PickVisualMediaRequest(mediaType))
+            } else {
+                pickFileLauncher.launch(input)
+            }
         }
     }
 
