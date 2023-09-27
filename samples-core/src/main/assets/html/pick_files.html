@@ -6,7 +6,8 @@
 </head>
 <body>
     <h3>1. Pick images only</h3>
-    <input accept="image/*" type="file">
+    <input id="img-only-input" accept="image/*" type="file" multiple>
+    <img id="img-only" src=""/>
     <h3>2. Pick videos only</h3>
     <input accept="video/*" type="file">
     <h3>3. Pick images and videos</h3>
@@ -14,4 +15,31 @@
     <h3>4. Pick files</h3>
     <input type="file">
 </body>
+<style>
+    img {
+        display: block;
+        width: 30%;
+    }
+</style>
+<script>
+    var imageInput = document.getElementById('img-only-input');
+
+    var selectedImage = document.getElementById('img-only');
+
+    imageInput.addEventListener('change', function() {
+        // Check if a file has been selected
+        if (imageInput.files && imageInput.files[0]) {
+            var reader = new FileReader();
+
+            // Set a callback function to handle the file load
+            reader.onload = function(e) {
+                // Set the src attribute of the img element to the loaded image data
+                selectedImage.src = e.target.result;
+            };
+
+            // Read the selected file as a data URL
+            reader.readAsDataURL(imageInput.files[0]);
+        }
+    });
+</script>
 </html>

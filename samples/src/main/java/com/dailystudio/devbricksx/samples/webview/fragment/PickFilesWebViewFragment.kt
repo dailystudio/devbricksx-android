@@ -1,7 +1,6 @@
 package com.dailystudio.devbricksx.samples.webview.fragment
 
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +12,12 @@ import android.webkit.WebViewClient
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.fragment.AbsPermissionsFragment
+import com.dailystudio.devbricksx.fragment.DevBricksFragment
 import com.dailystudio.devbricksx.samples.R
 
 
-class PickFilesWebViewFragment: AbsPermissionsFragment() {
+class PickFilesWebViewFragment: DevBricksFragment() {
 
-    private var pendingInput: String? = null
     private var pendingFilePathCallback: ValueCallback<Array<Uri>>? = null
 
     private val pickFileLauncher =
@@ -27,15 +25,22 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
             processPickedUri(uri)
         }
 
+    private val pickFilesLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+            processPickedUris(uris.toTypedArray())
+        }
+
     private val pickMediaLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             processPickedUri(uri)
         }
 
-    private var webView: WebView? = null
+    private val pickMediasLauncher =
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            processPickedUris(uris.toTypedArray())
+        }
 
-    override val autoCheckPermissions: Boolean
-        get() = false
+    private var webView: WebView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,10 +81,10 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
 
                 Logger.debug("input: [$input]")
 
-                pendingInput = input
                 pendingFilePathCallback = filePathCallback
 
-                checkOrGrantPermissions()
+                openFilePicker(input,
+                    fileChooserParams.mode == FileChooserParams.MODE_OPEN_MULTIPLE)
 
                 return true
             }
@@ -90,10 +95,22 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
     }
 
     private fun processPickedUri(uri: Uri?) {
+        processPickedUris(
+            if (uri == null) {
+                null
+            } else {
+                arrayOf(uri)
+            }
+        )
+    }
+
+    private fun processPickedUris(listOfUri: Array<Uri>?) {
+        Logger.debug("pick URIs: $listOfUri")
         val callback = pendingFilePathCallback ?: return
 
-        if (uri != null) {
-            callback.onReceiveValue(arrayOf(uri))
+
+        if (!listOfUri.isNullOrEmpty()) {
+            callback.onReceiveValue(listOfUri)
         } else {
             callback.onReceiveValue(null)
         }
@@ -106,38 +123,17 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
 //        webView?.loadUrl("https://wpa1.qq.com/YcO1i4YV?_type=wpa&qidian=true")
     }
 
-    override fun getPermissionsPromptViewId(): Int {
-        return -1
-    }
-
-    override fun getRequiredPermissions(): Array<String> {
-        return if (Build.VERSION.SDK_INT >= 34) {
-            arrayOf(
-                "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
-            )
-        } else if (Build.VERSION.SDK_INT >= 33) {
-            arrayOf(
-                "android.permission.READ_MEDIA_IMAGES",
-                "android.permission.READ_MEDIA_VIDEO",
-            )
-        } else {
-            emptyArray()
-        }
-    }
-
-    override fun onPermissionsDenied() {
-        processPickedUri(null)
-    }
-
-    override fun onPermissionsGranted(newlyGranted: Boolean) {
-        val input = pendingInput ?: return
-
+    private fun openFilePicker(input: String, multiple: Boolean) {
         val pickImages = input.contains("image")
         val pickVideos = input.contains("video")
 
         if (!pickImages && !pickVideos) {
             // Pick files rather than images and videos
-            pickFileLauncher.launch(input)
+            if (multiple) {
+                pickFilesLauncher.launch(input)
+            } else {
+                pickFileLauncher.launch(input)
+            }
         } else {
             // Pick media files
 
@@ -154,9 +150,17 @@ class PickFilesWebViewFragment: AbsPermissionsFragment() {
                     ActivityResultContracts.PickVisualMedia.VideoOnly
                 }
 
-                pickMediaLauncher.launch(PickVisualMediaRequest(mediaType))
+                if (multiple) {
+                    pickMediasLauncher.launch(PickVisualMediaRequest(mediaType))
+                } else {
+                    pickMediaLauncher.launch(PickVisualMediaRequest(mediaType))
+                }
             } else {
-                pickFileLauncher.launch(input)
+                if (multiple) {
+                    pickFilesLauncher.launch(input)
+                } else {
+                    pickFileLauncher.launch(input)
+                }
             }
         }
     }
