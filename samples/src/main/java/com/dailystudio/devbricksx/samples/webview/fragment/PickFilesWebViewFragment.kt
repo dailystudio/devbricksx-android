@@ -120,7 +120,6 @@ class PickFilesWebViewFragment: DevBricksFragment() {
 
     private fun loadHomepage() {
         webView?.loadUrl("file:///android_asset/html/pick_files.html")
-//        webView?.loadUrl("https://wpa1.qq.com/YcO1i4YV?_type=wpa&qidian=true")
     }
 
     private fun openFilePicker(input: String, multiple: Boolean) {
