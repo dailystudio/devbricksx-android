@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.paging.PagingSource
 import androidx.room.Query
 import com.dailystudio.devbricksx.annotations.data.DaoExtension
+import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
@@ -23,15 +24,17 @@ import java.util.*
     converters = [DateConverter::class],
     database = "unsplash"
 )
-open class PhotoItem(override val id: String,
-                var cachedIndex: String,
-                val uid: String,
-                val userName: String,
-                val description: String?,
-                val color: String,
-                val exif: String,
-                val thumbnailUrl: String,
-                val downloadUrl: String
+open class PhotoItem(
+    override val id: String,
+    var cachedIndex: String,
+    val uid: String,
+    val userName: String,
+    val description: String?,
+    val color: String,
+    val exif: String,
+    val thumbnailUrl: String,
+    val downloadUrl: String,
+    var downloaded: Boolean
 ): StringIdRecord(id) {
 
     companion object {
@@ -70,7 +73,8 @@ open class PhotoItem(override val id: String,
                 photo.color,
                 photo.exif?.name ?: "",
                 photo.urls.small,
-                photo.urls.full
+                photo.urls.full,
+                false,
             ).apply {
                 this.created = created
                 this.lastModified = lastModified
@@ -84,7 +88,7 @@ open class PhotoItem(override val id: String,
             append(super.toString())
             append(", user: [$userName, uid = $uid]")
             append(", thumb: $thumbnailUrl")
-            append(", download: $downloadUrl")
+            append(", download: $downloadUrl [DOWNLOADED: $downloaded]")
         }
     }
 }

@@ -52,8 +52,10 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
         val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
         val typeOfLiveDataOfNullableObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject.copy(nullable = true))
+        val typeOfFlowOfNullableObject = TypeNameUtils.typeOfFlowOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion)
         val typeOfLiveDataOfNullableCompanion = TypeNameUtils.typeOfLiveDataOf(typeOfCompanion.copy(nullable = true))
+        val typeOfFlowOfNullableCompanion = TypeNameUtils.typeOfFlowOf(typeOfCompanion.copy(nullable = true))
         val typeOfLiveDataOfListOfCompanions =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfCompanions)
         val typeOfLiveDataOfListOfObjects =
@@ -114,6 +116,20 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
         )
 
         classBuilder.addFunction(methodGetOneLiveBuilder.build())
+
+        val methodGetOneFlowBuilder: FunSpec.Builder =
+            FunSpec.builder(FunctionNames.GET_ONE_FLOW.nameOfFuncForCompanion())
+                .addModifiers(KModifier.PUBLIC, KModifier.ABSTRACT)
+                .returns(typeOfFlowOfNullableCompanion)
+        RoomCompanionUtils.attachPrimaryKeysToMethodParameters(methodGetOneFlowBuilder, primaryKeys)
+
+        methodGetOneFlowBuilder.addAnnotation(
+            AnnotationSpec.builder(Query::class)
+                .addMember("value = %S", "SELECT * FROM `$tableName` $whereClauseForGetOneMethods")
+                .build()
+        )
+
+        classBuilder.addFunction(methodGetOneFlowBuilder.build())
 
         val methodGetAllBuilder: FunSpec.Builder =
             FunSpec.builder(FunctionNames.GET_ALL.nameOfFuncForCompanion())
@@ -280,6 +296,22 @@ class RoomCompanionDaoStep (processor: BaseSymbolProcessor)
             FunctionNames.GET_ONE_LIVE.nameOfFuncForCompanion(), getOneMethodCallParameters)
 
         classBuilder.addFunction(methodWrapperOfGetOneLiveBuilder.build())
+
+        val methodWrapperOfGetFlowLiveBuilder = FunSpec.builder(
+            FunctionNames.GET_ONE_FLOW.nameOfFunc())
+            .addModifiers(KModifier.PUBLIC)
+            .returns(typeOfFlowOfNullableObject)
+
+        RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
+            methodWrapperOfGetFlowLiveBuilder, primaryKeys)
+
+        FuncSpecStatementsGenerator.mapOutputToFlowOfObject(
+            methodWrapperOfGetFlowLiveBuilder,
+            typeOfObject,
+            typeOfFlowOfNullableObject,
+            FunctionNames.GET_ONE_FLOW.nameOfFuncForCompanion(), getOneMethodCallParameters)
+
+        classBuilder.addFunction(methodWrapperOfGetFlowLiveBuilder.build())
 
         val methodWrapperOfGetAllBuilder = FunSpec.builder(
             FunctionNames.GET_ALL.nameOfFunc())

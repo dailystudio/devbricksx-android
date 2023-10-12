@@ -1,13 +1,10 @@
 package com.dailystudio.devbricksx.gallery.composable
 
-import android.app.Activity
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,7 +14,6 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.core.R
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
-import com.dailystudio.devbricksx.utils.SystemBarsUtils
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
@@ -34,6 +30,18 @@ fun Home() {
     val viewModel = activityViewModel<PhotoItemViewModelExt>()
     val photo by viewModel.currentPhoto.observeAsState()
 
+/*
+    navController.addOnDestinationChangedListener { _, destination, arguments ->
+        Logger.debug("[DC] destination: $destination ")
+
+        destination.route.let {
+            Logger.debug("[DC] navi change: $it ")
+            if (it.equals("photos")) {
+                viewModel.closePhoto()
+            }
+        }
+    }
+*/
     NavHost(navController = navController,
         startDestination = "photos") {
         composable("photos",

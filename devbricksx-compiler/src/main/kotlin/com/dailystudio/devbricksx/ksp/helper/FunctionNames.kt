@@ -4,6 +4,7 @@ enum class FunctionNames {
 
     GET_ONE,
     GET_ONE_LIVE,
+    GET_ONE_FLOW,
     GET_ALL,
     GET_ALL_LIVE,
     GET_ALL_DATA_SOURCE,

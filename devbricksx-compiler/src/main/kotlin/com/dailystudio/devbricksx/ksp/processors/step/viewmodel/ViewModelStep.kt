@@ -152,6 +152,8 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingSourceOfObject =
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
+        val typeOfLiveDataOfNullableObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject.copy(nullable = true))
+        val typeOfFlowOfNullableObject = TypeNameUtils.typeOfFlowOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfObjects)
         val typeOfFlowOfListOfObjects =
@@ -221,39 +223,50 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             ))
         }
 
-        val methodGetOneBuilder: FunSpec.Builder =
-            FunSpec.builder(FunctionNames.GET_ONE.nameOfFuncForType(typeName))
-                .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
-                .returns(typeOfObject.copy(nullable = true))
+        arrayOf(
+            Pair(FunctionNames.GET_ONE, typeOfObject.copy(nullable = true)),
+            Pair(FunctionNames.GET_ONE_LIVE, typeOfLiveDataOfNullableObject),
+            Pair(FunctionNames.GET_ONE_FLOW, typeOfFlowOfNullableObject),
+        ).forEach {
+            val method = it.first
+            val typesOfReturn = it.second
 
-        if (isInMemoryRepo) {
-            val typeOfKey = InMemoryCompanionUtils
-                .getKeyForInMemoryObject(symbol)
-            if (typeOfKey != null) {
-                methodGetOneBuilder.addParameter("key", typeOfKey)
+            val methodGetOneBuilder: FunSpec.Builder =
+                FunSpec.builder(method.nameOfFuncForType(typeName))
+                    .addModifiers(KModifier.PUBLIC, KModifier.OPEN)
+                    .returns(typesOfReturn)
+
+            if (isInMemoryRepo) {
+                val typeOfKey = InMemoryCompanionUtils
+                    .getKeyForInMemoryObject(symbol)
+                if (typeOfKey != null) {
+                    methodGetOneBuilder.addParameter("key", typeOfKey)
+
+                    methodGetOneBuilder.addStatement(
+                        "return %N.%N(key)",
+                        repoVariableName,
+                        method.nameOfFunc()
+                    )
+                }
+            } else {
+                val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
+                val getOneMethodCallParameters: String =
+                    RoomCompanionUtils.primaryKeysToFuncCallParameters(primaryKeys)
+
+                RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
+                    methodGetOneBuilder, primaryKeys
+                )
 
                 methodGetOneBuilder.addStatement(
-                    "return %N.get(key)",
+                    "return %N.%N(%L)",
                     repoVariableName,
+                    method.nameOfFuncForType(typeName),
+                    getOneMethodCallParameters
                 )
             }
-        } else {
-            val primaryKeys = RoomCompanionUtils.findPrimaryKeys(symbol)
-            val getOneMethodCallParameters: String =
-                RoomCompanionUtils.primaryKeysToFuncCallParameters(primaryKeys)
 
-            RoomCompanionUtils.attachPrimaryKeysToMethodParameters(
-                methodGetOneBuilder, primaryKeys)
-
-            methodGetOneBuilder.addStatement(
-                "return %N.%N(%L)",
-                repoVariableName,
-                FunctionNames.GET_ONE.nameOfFuncForType(typeName),
-                getOneMethodCallParameters
-            )
+            classBuilder.addFunction(methodGetOneBuilder.build())
         }
-
-        classBuilder.addFunction(methodGetOneBuilder.build())
 
         arrayOf(
             FunctionNames.INSERT,

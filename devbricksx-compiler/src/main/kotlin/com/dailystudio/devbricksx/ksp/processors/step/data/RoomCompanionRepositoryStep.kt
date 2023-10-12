@@ -58,6 +58,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
         val typeOfLiveDataOfObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject)
         val typeOfLiveDataOfNullableObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject.copy(nullable = true))
+        val typeOfFlowOfNullableObject = TypeNameUtils.typeOfFlowOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfListOfObjects =
             TypeNameUtils.typeOfLiveDataOf(typeOfListOfObjects)
         val typeOfFlowOfListOfObjects =
@@ -93,7 +94,8 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
 
         arrayOf(
             Pair(FunctionNames.GET_ONE, typeOfObject.copy(nullable = true)),
-            Pair(FunctionNames.GET_ONE_LIVE, typeOfLiveDataOfNullableObject)
+            Pair(FunctionNames.GET_ONE_LIVE, typeOfLiveDataOfNullableObject),
+            Pair(FunctionNames.GET_ONE_FLOW, typeOfFlowOfNullableObject),
         ).forEach {
             val method = it.first
             val typesOfReturn = it.second

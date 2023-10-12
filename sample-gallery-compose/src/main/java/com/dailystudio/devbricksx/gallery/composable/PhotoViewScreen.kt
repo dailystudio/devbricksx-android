@@ -64,6 +64,7 @@ fun PhotoViewScreen(item: PhotoItem?) {
     val uid = photo.uid
     Logger.debug("photo: ${photo.id}")
     Logger.debug("user: $uid")
+    Logger.debug("downloaded: ${photo.downloaded}")
 
     val userItemViewModel = viewModel<UserItemViewModelExt>()
     val downloadViewModel = viewModel<DownloadViewModelExt>()
@@ -155,7 +156,9 @@ fun PhotoViewScreen(item: PhotoItem?) {
                             color = Color.Gray
                         )
                     }
-                    Box {
+                    Box(
+                        modifier = Modifier.padding(end = 16.dp)
+                    ) {
                         if (download != null) {
                             val prg = (download?.progress ?:0) / 100f
                             CircularProgressIndicator(
@@ -165,32 +168,44 @@ fun PhotoViewScreen(item: PhotoItem?) {
                                     .size(32.dp)
                             )
                         } else {
+                            var modifier = Modifier
+                                .padding(2.dp)
+                                .size(32.dp)
+                            if (!photo.downloaded) {
+                                modifier = modifier.clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = rememberRipple(
+                                        radius = 16.dp,
+                                        bounded = true
+                                    ),
+                                    onClick = {
+                                        if (allGranted) {
+                                            downloadViewModel.downloadImage(
+                                                photo.id,
+                                                photo.downloadUrl
+                                            )
+                                        } else {
+                                            Logger.debug("[PER] launch request")
+                                            state.launchMultiplePermissionRequest()
+                                            pendingDownload = true
+                                        }
+                                    }
+                                )
+                            }
+
+                            val painter = painterResource(
+                                if (photo.downloaded) {
+                                    R.drawable.ic_action_downloaded
+                                } else {
+                                    R.drawable.ic_action_download
+                                }
+                            )
+
                             Icon(
-                                painterResource(R.drawable.ic_action_download),
+                                painter,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .padding(2.dp)
-                                    .size(32.dp)
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = rememberRipple(
-                                            radius = 16.dp,
-                                            bounded = true
-                                        ),
-                                        onClick = {
-                                            if (allGranted) {
-                                                downloadViewModel.downloadImage(
-                                                    photo.id,
-                                                    photo.downloadUrl
-                                                )
-                                            } else {
-                                                Logger.debug("[PER] launch request")
-                                                state.launchMultiplePermissionRequest()
-                                                pendingDownload = true
-                                            }
-                                        }
-                                    )
+                                modifier = modifier
                             )
                         }
 
