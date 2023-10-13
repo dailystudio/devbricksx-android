@@ -1,51 +1,50 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.SampleGallery" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
 
-    <style name="PhotoItemText">
-        <item name="android:textStyle">italic</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:ellipsize">marquee</item>
+        <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
     </style>
 
-    <style name="PhotoItemTitle" parent="PhotoItemText">
-        <item name="android:textSize">@dimen/photo_item_title_font_size</item>
-        <item name="android:textColor">@color/light_white</item>
-        <item name="android:gravity">end|bottom</item>
-        <item name="android:background">@drawable/photo_item_title_background</item>
-        <item name="android:paddingStart">@dimen/photo_item_title_padding_h</item>
-        <item name="android:paddingEnd">@dimen/photo_item_title_padding_h</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">@dimen/photo_item_title_padding_v</item>
+    <style name="Widget.App.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <!-- Change the background color of the AppBarLayout so the AppBarLayout is green.
+                The toolbar is transparent by default so you will see this color through the toolbar. -->
+        <item name="android:background">@color/primaryColor</item>
     </style>
 
-    <style name="PhotoItemSupportingText" parent="PhotoItemText">
-        <item name="android:textStyle">italic|bold</item>
-        <item name="android:textSize">@dimen/photo_item_supporting_font_size</item>
-        <item name="android:textColor">@color/primaryColor</item>
-        <item name="android:gravity">start|top</item>
-        <item name="android:background">@drawable/photo_item_supporting_background</item>
-        <item name="android:paddingStart">@dimen/photo_item_title_padding_h</item>
-        <item name="android:paddingEnd">@dimen/photo_item_title_padding_h</item>
-        <item name="android:paddingTop">@dimen/photo_item_title_padding_v</item>
-        <item name="android:paddingBottom">0dp</item>
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="navigationIconTint">@color/white</item>
+
+        <item name="colorControlActivated">#FFffffff</item>
     </style>
 
-    <style name="UserName">
-        <item name="android:gravity">left|center_vertical</item>
-        <item name="android:textColor">@color/light_black</item>
-        <item name="android:textSize">@dimen/photo_user_name_font_size</item>
-        <item name="android:paddingStart">@dimen/default_label_padding</item>
-        <item name="android:paddingEnd">@dimen/default_label_padding</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:ellipsize">end</item>
+    <style name="ThemeOverlay.App.Toolbar" parent="">
+        <!-- Text color -->
+        <item name="android:editTextColor">@color/white</item>
+        <!-- Hint text color -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
     </style>
 
-    <style name="ImageSource">
-        <item name="android:gravity">left|center_vertical</item>
-        <item name="android:textColor">@color/light_gray</item>
-        <item name="android:textSize">@dimen/photo_source_font_size</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:paddingStart">@dimen/default_label_padding</item>
-        <item name="android:paddingEnd">@dimen/default_label_padding</item>
+    <style name="ToolbarChip" parent="Widget.Material3.Chip.Input">
+        <item name="chipBackgroundColor">@color/white</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.SmallComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">16dp</item>
     </style>
 
 </resources>
