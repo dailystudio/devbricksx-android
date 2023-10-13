@@ -1,0 +1,68 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'androidx.navigation.safeargs'
+
+    id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
+}
+
+android {
+    compileSdkVersion COMPILE_SDK
+    buildToolsVersion BUILD_TOOLS
+
+    defaultConfig {
+        applicationId "com.dailystudio.devbricksx.notebook.compose"
+        namespace "com.dailystudio.devbricksx.notebook.compose"
+
+        minSdkVersion 21
+        targetSdkVersion TARGET_SDK
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JAVA_VERSION
+        targetCompatibility JAVA_VERSION
+    }
+
+    kotlinOptions {
+        jvmTarget = JVM_TARGET
+    }
+}
+
+devKit {
+    compileType = "Project"
+    devKitComps = [ "Compose"]
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation(project(":sample-notebook-core"))
+
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+}
