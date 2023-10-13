@@ -1,7 +1,7 @@
 package com.dailystudio.devbricksx.notebook.fragment
 
 import com.dailystudio.devbricksx.fragment.AbsAboutFragment
-import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.core.R
 
 class AboutFragment: AbsAboutFragment() {
     override val appName: CharSequence?

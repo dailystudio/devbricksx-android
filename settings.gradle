@@ -32,12 +32,7 @@ include ':samples-core'
 include ':samples'
 include ':samples-compose'
 include ':sample-notebook'
+include ':sample-notebook-core'
 include ':sample-gallery-core'
 include ':sample-gallery'
 include ':sample-gallery-compose'
-
-// Modules to be deprecated
-// include ':devbricksx-kotlin-annotations'
-// include ':devbricksx-kotlin-compiler'
-// include ':devbricksx-java-compiler'
-// include ':devbricksx-java-annotations'

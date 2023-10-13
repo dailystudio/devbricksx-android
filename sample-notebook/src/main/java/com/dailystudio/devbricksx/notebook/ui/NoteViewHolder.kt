@@ -3,9 +3,9 @@ package com.dailystudio.devbricksx.notebook.ui
 import android.graphics.drawable.Drawable
 import android.view.View
 import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.ui.AbsInformativeCardViewHolder
-import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
 class NoteViewHolder(itemView: View) : AbsInformativeCardViewHolder<Note>(itemView) {
 
@@ -27,7 +27,7 @@ class NoteViewHolder(itemView: View) : AbsInformativeCardViewHolder<Note>(itemVi
 
         val text = item.desc
         return if (text.isNullOrEmpty()) {
-            context.getString(R.string.label_empty)
+            context.getString(coreR.string.label_empty)
         } else {
             text
         }

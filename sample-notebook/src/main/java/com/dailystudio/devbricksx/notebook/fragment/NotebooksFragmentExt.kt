@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
@@ -58,7 +59,7 @@ class NotebooksFragmentExt : NotebooksListFragment() {
     override fun onResume() {
         super.onResume()
 
-        changeTitle(getString(R.string.app_name))
+        changeTitle(getString(coreR.string.app_name))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -76,8 +77,8 @@ class NotebooksFragmentExt : NotebooksListFragment() {
                     val items = adapter?.getSelection()
                     items?.let {
                         MaterialAlertDialogBuilder(requireContext())
-                                .setTitle(R.string.label_delete)
-                                .setMessage(R.string.prompt_deletion)
+                                .setTitle(coreR.string.label_delete)
+                                .setMessage(coreR.string.prompt_deletion)
                                 .setPositiveButton(android.R.string.ok) { dialog, which ->
                                     val viewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
                                     for (item in items) {

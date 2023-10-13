@@ -11,13 +11,13 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.paging.PagedList
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.utils.FabAnimationDirection
@@ -82,8 +82,8 @@ class NotesFragmentExt : NotesListFragment() {
 
     private fun performDeletion(items: List<Note>) {
         MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.label_delete)
-                .setMessage(R.string.prompt_deletion)
+                .setTitle(coreR.string.label_delete)
+                .setMessage(coreR.string.prompt_deletion)
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     val viewModel =
                             ViewModelProvider(this)
@@ -109,7 +109,7 @@ class NotesFragmentExt : NotesListFragment() {
     override fun setupViews(fragmentView: View) {
         super.setupViews(fragmentView)
 
-        fab?.setImageResource(R.drawable.ic_fab_edit)
+        fab?.setImageResource(coreR.drawable.ic_fab_edit)
     }
 
     private fun createNote() {

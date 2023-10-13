@@ -13,10 +13,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -87,7 +87,7 @@ class NoteEditFragment : Fragment() {
             Logger.debug("action bar: $actionBar")
             actionBar?.title = null
             actionBar?.setDisplayHomeAsUpEnabled(true)
-            actionBar?.setHomeAsUpIndicator(R.drawable.ic_action_finish)
+            actionBar?.setHomeAsUpIndicator(coreR.drawable.ic_action_finish)
         }
     }
 

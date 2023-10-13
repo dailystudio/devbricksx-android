@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.AbsRecyclerViewFragment
 import com.dailystudio.devbricksx.notebook.R
+import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.ui.AbsRecyclerAdapter
 import com.dailystudio.devbricksx.utils.FabAnimationDirection
 import com.dailystudio.devbricksx.utils.hideWithAnimation
@@ -112,7 +113,7 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, ListDataSource, Ada
 
         val actionBar = activity.supportActionBar ?: return
         actionBar.setDisplayHomeAsUpEnabled(true)
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_action_close)
+        actionBar.setHomeAsUpIndicator(coreR.drawable.ic_action_close)
 
         fab?.hideWithAnimation(requireContext(), fabAnimationDirection)
     }
@@ -127,7 +128,7 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, ListDataSource, Ada
 
         val actionBar = activity.supportActionBar ?: return
         activity.invalidateOptionsMenu()
-        actionBar.title = getString(R.string.app_name)
+        actionBar.title = getString(coreR.string.app_name)
         actionBar.setHomeButtonEnabled(false)
         actionBar.setDisplayHomeAsUpEnabled(false)
 
@@ -141,7 +142,7 @@ abstract class AbsMultiSelectionListFragment<Item, ItemList, ListDataSource, Ada
         val count = selectedItems.size
 
         if (count > 0) {
-            changeTitle(getString(R.string.prompt_selection, selectedItems.size))
+            changeTitle(getString(coreR.string.prompt_selection, selectedItems.size))
         } else {
             changeTitle(null)
         }
