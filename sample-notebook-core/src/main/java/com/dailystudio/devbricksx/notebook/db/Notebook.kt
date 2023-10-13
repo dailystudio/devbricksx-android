@@ -3,17 +3,9 @@ package com.dailystudio.devbricksx.notebook.db
 import androidx.room.ForeignKey
 import androidx.room.Ignore
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
-import com.dailystudio.devbricksx.annotations.fragment.DataSource
-import com.dailystudio.devbricksx.annotations.fragment.ListFragment
-import com.dailystudio.devbricksx.annotations.view.Adapter
-import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
 import com.dailystudio.devbricksx.database.SelectableRecord
-import com.dailystudio.devbricksx.notebook.R
-import com.dailystudio.devbricksx.notebook.fragment.AbsMultiSelectionListFragment
-import com.dailystudio.devbricksx.notebook.ui.NoteViewHolder
-import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
 import java.util.*
 
 @RoomCompanion(primaryKeys = ["id"],
@@ -23,12 +15,6 @@ import java.util.*
         database = "notes",
 )
 @ViewModel
-@Adapter(viewType = ViewType.Customized,
-        layoutByName = "layout_notebook",
-        viewHolder = NotebookViewHolder::class)
-@ListFragment(layoutByName = "fragment_recycler_view_with_new_button",
-        dataSource = DataSource.Flow,
-        superClass = AbsMultiSelectionListFragment::class)
 open class Notebook(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
@@ -66,13 +52,6 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
         )]
 )
 @ViewModel
-@Adapter(viewType = ViewType.Customized,
-        layoutByName = "layout_note",
-        paged = true,
-        viewHolder = NoteViewHolder::class)
-@ListFragment(layoutByName = "fragment_recycler_view_with_new_button",
-        gridLayout = true,
-        superClass = AbsMultiSelectionListFragment::class)
 class Note(id: Int = 0) : SelectableRecord(id) {
 
     companion object {

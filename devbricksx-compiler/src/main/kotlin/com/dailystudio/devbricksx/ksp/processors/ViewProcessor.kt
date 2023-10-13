@@ -7,6 +7,7 @@ import com.dailystudio.devbricksx.ksp.processors.step.view.RoomCompanionDiffUtil
 import com.dailystudio.devbricksx.ksp.processors.step.view.AdapterStep
 import com.dailystudio.devbricksx.ksp.processors.step.view.DefaultDiffUtilStep
 import com.dailystudio.devbricksx.ksp.processors.step.view.FragmentAdapterStep
+import com.dailystudio.devbricksx.ksp.processors.step.view.GenericDiffUtilStep
 import com.dailystudio.devbricksx.ksp.processors.step.view.InMemoryCompanionDiffUtilStep
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 
@@ -16,8 +17,11 @@ class ViewProcessor(
 
     override val steps: Array<ProcessStep>
         get() = arrayOf(
-            DefaultDiffUtilStep(Adapter::class, this),
-            DefaultDiffUtilStep(FragmentAdapter::class, this),
+            // for classes which are declared in higher library or applications
+            GenericDiffUtilStep(Adapter::class, this),
+            GenericDiffUtilStep(FragmentAdapter::class, this),
+
+            // for classes which are declared in low-level library
             RoomCompanionDiffUtilStep(this),
             InMemoryCompanionDiffUtilStep(this),
             AdapterStep(this),

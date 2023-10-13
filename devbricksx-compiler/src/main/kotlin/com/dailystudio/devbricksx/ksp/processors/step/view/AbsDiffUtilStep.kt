@@ -95,9 +95,9 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
         return matched
     }
 
-    protected abstract fun attachEqualsStatements(resolver: Resolver,
-                                                  symbol: KSClassDeclaration,
-                                                  methodItemsSameBuilder: FunSpec.Builder,
-                                                  methodContentsSameBuilder: FunSpec.Builder)
+    abstract fun attachEqualsStatements(resolver: Resolver,
+                                        symbol: KSClassDeclaration,
+                                        methodItemsSameBuilder: FunSpec.Builder,
+                                        methodContentsSameBuilder: FunSpec.Builder)
 
 }

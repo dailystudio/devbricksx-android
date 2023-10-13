@@ -24,7 +24,7 @@ import java.util.*
     converters = [DateConverter::class],
     database = "unsplash"
 )
-open class PhotoItem(
+class PhotoItem(
     override val id: String,
     var cachedIndex: String,
     val uid: String,
