@@ -15,7 +15,7 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
-import com.dailystudio.devbricksx.notebook.model.NoteViewModel
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,7 +46,7 @@ class NoteEditFragment : Fragment() {
         if (noteId != -1) {
             lifecycleScope.launch(Dispatchers.IO) {
                 val viewModel = ViewModelProvider(this@NoteEditFragment)
-                        .get(NoteViewModel::class.java)
+                        .get(NotebookViewModel::class.java)
 
                 val task = viewModel.getNote(noteId)
                 task?.let {
@@ -131,7 +131,7 @@ class NoteEditFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@NoteEditFragment)
-                    .get(NoteViewModel::class.java)
+                    .get(NotebookViewModel::class.java)
 
             viewModel.insertOrUpdateNote(note)
         }
@@ -142,7 +142,7 @@ class NoteEditFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@NoteEditFragment)
-                    .get(NoteViewModel::class.java)
+                    .get(NotebookViewModel::class.java)
 
             val note = viewModel.getNote(nId) ?: return@launch
 
@@ -159,7 +159,7 @@ class NoteEditFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val viewModel = ViewModelProvider(this@NoteEditFragment)
-                    .get(NoteViewModel::class.java)
+                    .get(NotebookViewModel::class.java)
 
             val note = viewModel.getNote(nId) ?: return@launch
 

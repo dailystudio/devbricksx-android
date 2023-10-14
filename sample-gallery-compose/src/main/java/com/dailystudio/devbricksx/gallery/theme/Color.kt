@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.gallery.compose
+package com.dailystudio.devbricksx.gallery.theme
 
 import androidx.compose.ui.graphics.Color
 

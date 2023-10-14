@@ -1,4 +1,5 @@
-package com.dailystudio.devbricksx.gallery.compose
+
+package com.dailystudio.devbricksx.notebook.theme
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -6,7 +7,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.dailystudio.compose.notebook.theme.primaryColor
 
 private val colorPalette = lightColorScheme(
     primary = primaryColor,
@@ -16,7 +17,7 @@ private val colorPalette = lightColorScheme(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun galleryTopAppBarColors() = TopAppBarDefaults.topAppBarColors(
+fun notebookTopAppBarColors() = TopAppBarDefaults.topAppBarColors(
     containerColor = MaterialTheme.colorScheme.primary,
     titleContentColor = MaterialTheme.colorScheme.onPrimary,
     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
@@ -24,9 +25,12 @@ fun galleryTopAppBarColors() = TopAppBarDefaults.topAppBarColors(
 )
 
 @Composable
-fun GalleryTheme(content: @Composable() () -> Unit) {
+fun NotebookTheme(
+    content: @Composable () -> Unit
+) {
     MaterialTheme(
         colorScheme = colorPalette,
+        shapes = shapes,
         content = content
     )
 }

@@ -19,11 +19,9 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
-import com.dailystudio.devbricksx.notebook.model.NoteViewModel
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.dailystudio.devbricksx.utils.FabAnimationDirection
-import com.dailystudio.devbricksx.utils.showWithAnimation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,7 +32,7 @@ class NotesFragmentExt : NotesListFragment() {
     override val fabAnimationDirection: FabAnimationDirection
         get() = FabAnimationDirection.RIGHT
 
-    private lateinit var notebookViewModel: NoteViewModel
+    private lateinit var notebookViewModel: NotebookViewModel
 
     private var notebookId: Int = -1
     private var notebookName: String? = null
@@ -87,7 +85,7 @@ class NotesFragmentExt : NotesListFragment() {
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     val viewModel =
                             ViewModelProvider(this)
-                                    .get(NoteViewModel::class.java)
+                                    .get(NotebookViewModel::class.java)
                     for (item in items) {
                         viewModel.deleteNote(item)
                     }
@@ -99,7 +97,7 @@ class NotesFragmentExt : NotesListFragment() {
 
 
     override fun getDataSource(): LiveData<PagingData<Note>> {
-        notebookViewModel = ViewModelProvider(requireActivity()).get(NoteViewModel::class.java)
+        notebookViewModel = ViewModelProvider(requireActivity()).get(NotebookViewModel::class.java)
         return Pager(
                 PagingConfig(20)) {
             notebookViewModel.getAllNotesOrderedByLastModifiedLivePaged(notebookId)

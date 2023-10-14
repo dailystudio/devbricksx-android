@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import com.dailystudio.devbricksx.gallery.composable.Home
+import com.dailystudio.devbricksx.gallery.theme.GalleryTheme
 
 class MainActivity : ComponentActivity() {
 

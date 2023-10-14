@@ -18,6 +18,9 @@ abstract class NotebookDaoExtension {
     @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
     abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): Flow<List<Notebook>>
 
+    @Query("DELETE FROM notebook WHERE id IN (:ids)")
+    abstract fun deleteNotebooks(ids: IntArray)
+
 }
 
 @DaoExtension(entity = Note::class)
@@ -29,5 +32,8 @@ abstract class NoteDaoExtension {
 
     @Query("SELECT COUNT(*) FROM note WHERE notebook_id = :notebookId")
     abstract fun countNotes(notebookId: Int): Int
+
+    @Query("DELETE FROM note WHERE id IN (:ids)")
+    abstract fun deleteNotes(ids: IntArray)
 
 }

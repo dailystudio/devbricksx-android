@@ -10,7 +10,6 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Notebook
-import com.dailystudio.devbricksx.notebook.model.NoteViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +43,7 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
             for (notebook in notebooks) {
                 val noteViewModel =
-                        ViewModelProvider(this@NotebooksFragmentExt).get(NoteViewModel::class.java)
+                        ViewModelProvider(this@NotebooksFragmentExt).get(NotebookViewModel::class.java)
 
                 notebook.notesCount = noteViewModel.countNotes(notebook.id)
                 Logger.debug("nc: ${notebook.notesCount} of $notebook")

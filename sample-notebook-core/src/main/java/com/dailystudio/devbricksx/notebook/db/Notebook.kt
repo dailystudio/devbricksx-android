@@ -14,7 +14,7 @@ import java.util.*
         extension = NotebookDaoExtension::class,
         database = "notes",
 )
-@ViewModel
+@ViewModel(group = "notebook")
 open class Notebook(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
@@ -51,14 +51,14 @@ open class Notebook(id: Int = 0) : SelectableRecord(id) {
                 onDelete = ForeignKey.CASCADE
         )]
 )
-@ViewModel
+@ViewModel(group = "notebook")
 class Note(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
 
-        fun createNote(notebookId: Int,
-                       title: String?,
-                       desc: String?): Note {
+        fun createNote(notebookId: Int = -1,
+                       title: String? = null,
+                       desc: String? = null): Note {
             return Note(0).apply {
                 val now = System.currentTimeMillis()
 
