@@ -3,4 +3,10 @@
     <color name="primaryColor">#503E4E</color>
     <color name="primaryDarkColor">#503E4E</color>
     <color name="accentColor">#503E4E</color>
+    <color name="secondaryColor">#503E4E</color>
+    <color name="secondaryLightColor">#503E4E</color>
+    <color name="secondaryDarkColor">#503E4E</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#ffffff</color>
+
 </resources>
