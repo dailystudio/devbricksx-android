@@ -1,9 +1,10 @@
-package com.dailystudio.devbricks.notebook.composable
+package com.dailystudio.devbricksx.notebook.composable
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
+import com.dailystudio.devbricksx.notebook.compose.NotebooksScreen
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 
@@ -16,6 +17,7 @@ fun Home() {
     val notes by notebookViewModel.notesInOpenedNotebook.collectAsState(initial = null)
     val note by notebookViewModel.currentNote.observeAsState(Note.createNote(-1))
 
+/*
     navController.addOnDestinationChangedListener { _, destination, arguments ->
         destination.navigatorName.let {
             if (it.startsWith("notebooks")) {
@@ -25,8 +27,12 @@ fun Home() {
             }
         }
     }
-//
-//    NavHost(navController = navController,
-//        startDestination = "notebooks") {
-//    }
+*/
+
+    NavHost(navController = navController,
+        startDestination = "notebooks") {
+        composable("notebooks") {
+            NotebooksScreen()
+        }
+    }
 }
