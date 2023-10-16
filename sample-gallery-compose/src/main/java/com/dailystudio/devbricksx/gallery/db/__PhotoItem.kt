@@ -28,7 +28,7 @@ import com.dailystudio.devbricksx.development.Logger
 @Composable
 fun PhotoItemContent(item: PhotoItem?, modifier: Modifier) {
     Logger.debug("item: $item")
-    Card(modifier = Modifier
+    Card(Modifier
         .height(250.dp)
         .padding(8.dp),
 //                elevation = 3.dp,
@@ -36,7 +36,7 @@ fun PhotoItemContent(item: PhotoItem?, modifier: Modifier) {
             CornerSize(5.dp)
         )
     ) {
-        Surface(color = Color.Black) {
+        Surface(modifier, color = Color.Black) {
             Image(
                 modifier = Modifier.fillMaxSize(),
                 painter = rememberAsyncImagePainter(item?.thumbnailUrl),

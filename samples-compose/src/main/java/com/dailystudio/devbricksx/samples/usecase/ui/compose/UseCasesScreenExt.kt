@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.samples.usecase.composable
+package com.dailystudio.devbricksx.samples.usecase.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -28,7 +28,6 @@ import com.dailystudio.devbricksx.compose.app.OptionMenus
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.compose.samplesTopAppBarColors
 import com.dailystudio.devbricksx.samples.core.R
-import com.dailystudio.devbricksx.samples.usecase.compose.UseCasesScreen
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
 
 const val MENU_ITEM_ID_ABOUT = 0x1
@@ -79,8 +78,11 @@ fun UseCasesScreenExt() {
                         val data by viewModel.allUseCasesFlow.collectAsState(emptyList())
                         data
                     },
-                    onItemClick = {
+                    onItemClicked = {
                         Logger.debug("click on case: $it")
+                    },
+                    onItemLongClicked = {
+                        Logger.debug("long click on case: $it")
                     }
                 )
 

@@ -23,11 +23,12 @@ fun <T : Any> BaseGridScreen(
     key: ((item: T) -> Any)? = null,
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
-    onItemClick: ((item: T) -> Unit)? = null,
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
     BaseLazyGrid(modifier, orientation, cells, listOfItems = dataSource(),
-        key, span, contentType, onItemClick, itemContent)
+        key, span, contentType, onItemClicked, onItemLongClicked, itemContent)
 }
 
 @Composable
@@ -39,11 +40,12 @@ fun <T : Any> BasePagingGridScreen(
     key: ((item: T) -> Any)? = null,
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
-    onItemClick: ((item: T) -> Unit)? = null,
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
     BaseLazyPagingGrid(modifier, orientation, cells, listOfItems = dataSource(),
-        key, span, contentType, onItemClick, itemContent)
+        key, span, contentType, onItemClicked, onItemLongClicked, itemContent)
 }
 
 @Composable
@@ -55,7 +57,8 @@ fun <T: Any> BaseLazyPagingGrid(
     key: ((item: T) -> Any)? = null,
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
-    onItemClick: ((item: T) -> Unit)? = null,
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: @Composable (item: T?, modifier: Modifier) -> Unit
 ) {
     val gridState = rememberLazyGridState()
@@ -67,7 +70,7 @@ fun <T: Any> BaseLazyPagingGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClick, itemContent)
+                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
                 }
             }
         }
@@ -78,7 +81,7 @@ fun <T: Any> BaseLazyPagingGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClick, itemContent)
+                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
                 }
             }
         }
@@ -94,7 +97,8 @@ fun <T> BaseLazyGrid(
     key: ((item: T) -> Any)? = null,
     span: (LazyGridItemSpanScope.(item: T) -> GridItemSpan)? = null,
     contentType: (item: T) -> Any? = { null },
-    onItemClick: ((item: T) -> Unit)? = null,
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
     val gridState = rememberLazyGridState()
@@ -106,7 +110,7 @@ fun <T> BaseLazyGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClick, itemContent)
+                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
                 }
             }
         }
@@ -117,7 +121,7 @@ fun <T> BaseLazyGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClick, itemContent)
+                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
                 }
             }
         }

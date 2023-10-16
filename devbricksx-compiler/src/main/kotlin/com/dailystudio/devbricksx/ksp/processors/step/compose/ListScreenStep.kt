@@ -97,7 +97,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         ret = addDataSourceParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
-        ret = addOnItemClickParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+        ret = addOnItemClickActionParameters(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
         ret = addItemContentParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
@@ -153,7 +153,14 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             )
             composableBuilder.addStatement(
                 """
-                    %T(modifier = modifier, dataSource = dataSource, cells = gridCells, onItemClick = onItemClick, itemContent = itemContent)
+                    %T(
+                        modifier = modifier, 
+                        dataSource = dataSource, 
+                        cells = gridCells, 
+                        onItemClicked = onItemClicked, 
+                        onItemLongClicked = onItemLongClicked, 
+                        itemContent = itemContent
+                    )
                 """.trimIndent(),
                 gridScreen
             )
@@ -166,18 +173,24 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
             composableBuilder.addStatement(
                 """
-                    %T(modifier = modifier, dataSource = dataSource, onItemClick = onItemClick, itemContent = itemContent)
+                    %T(
+                        modifier = modifier, 
+                        dataSource = dataSource, 
+                        onItemClicked = onItemClicked, 
+                        onItemLongClicked = onItemLongClicked, 
+                        itemContent = itemContent
+                    )
                 """.trimIndent(),
                 listScreen
             )
         }
     }
 
-    protected open fun addOnItemClickParameter(resolver: Resolver,
-                                               symbol: KSClassDeclaration,
-                                               typeOfObject: TypeName,
-                                               composableBuilder: FunSpec.Builder,
-                                               options: BuildOptions): Boolean {
+    protected open fun addOnItemClickActionParameters(resolver: Resolver,
+                                                      symbol: KSClassDeclaration,
+                                                      typeOfObject: TypeName,
+                                                      composableBuilder: FunSpec.Builder,
+                                                      options: BuildOptions): Boolean {
         warn("add data source parameter for [${typeOfObject}]: options = $options")
 
         val funcTypeOfItemContent = LambdaTypeName.get(
@@ -187,12 +200,23 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             returnType = UNIT
         ).copy(nullable = true)
 
-        val itemContentParam = ParameterSpec.builder(
-            name = "onItemClick",
-            funcTypeOfItemContent
+        val typeOfItemClickAction = TypeNameUtils
+            .typeOfItemClickActionOf(typeOfObject)
+            .copy(nullable = true)
+
+        val itemClickedParam = ParameterSpec.builder(
+            name = "onItemClicked",
+            typeOfItemClickAction
         ).defaultValue("null")
 
-        composableBuilder.addParameter(itemContentParam.build())
+        composableBuilder.addParameter(itemClickedParam.build())
+
+        val itemLongClickedParam = ParameterSpec.builder(
+            name = "onItemLongClicked",
+            typeOfItemClickAction
+        ).defaultValue("null")
+
+        composableBuilder.addParameter(itemLongClickedParam.build())
 
         return true
     }

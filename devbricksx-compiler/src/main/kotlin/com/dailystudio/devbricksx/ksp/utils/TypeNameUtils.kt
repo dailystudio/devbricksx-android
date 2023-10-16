@@ -467,6 +467,13 @@ object TypeNameUtils {
             "BasePagingListScreen")
     }
 
+    fun typeOfItemClickActionOf(typeName: TypeName): TypeName {
+        val itemClickAction = ClassName("com.dailystudio.devbricksx.compose",
+            "ItemClickAction")
+
+        return itemClickAction.parameterizedBy(typeName)
+    }
+
     fun typeOfNoLiveLiterals(): ClassName {
         return ClassName("androidx.compose.runtime", "NoLiveLiterals")
 

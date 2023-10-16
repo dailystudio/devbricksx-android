@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.samples.usecase.composable
+package com.dailystudio.devbricksx.samples.usecase.ui.compose
 
 import androidx.compose.runtime.Composable
 import com.dailystudio.devbricksx.compose.app.AboutDialog

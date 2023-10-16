@@ -37,5 +37,5 @@ fun PhotoItemsScreenExt(
         data.collectAsLazyPagingItems()
     }
 
-    PhotoItemsScreen(modifier, dataSource, onItemClick, itemContent)
+    PhotoItemsScreen(modifier, dataSource, onItemClick, null, itemContent)
 }
