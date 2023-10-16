@@ -1,12 +1,12 @@
-package com.dailystudio.devbricksx.notebook.composable
+package com.dailystudio.devbricksx.notebook.ui.compose
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
-import com.dailystudio.devbricksx.notebook.compose.NotebooksScreen
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
+import com.dailystudio.devbricksx.notebook.ui.compose.NotebooksScreen
 
 @Composable
 fun Home() {

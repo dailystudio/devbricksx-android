@@ -30,7 +30,7 @@ object GeneratedNames {
     private const val SHARED_PREFS_SUFFIX = "Prefs"
     private const val PREF_KEY_PREFIX = "PREF_"
     private const val SCREEN_SUFFIX = "Screen"
-    private const val COMPOSE_PACKAGE_SUFFIX = ".compose"
+    private const val COMPOSE_PACKAGE_SUFFIX = ".ui.compose"
 
     fun getTableName(className: String): String {
         return className.lowercase(Locale.getDefault())

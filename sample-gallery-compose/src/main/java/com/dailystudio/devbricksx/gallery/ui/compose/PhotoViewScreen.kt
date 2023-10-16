@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.gallery.composable
+package com.dailystudio.devbricksx.gallery.ui.compose
 
 import android.Manifest
 import android.os.Build
@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,12 +48,9 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.core.R
 import com.dailystudio.devbricksx.gallery.data.Download
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
-import com.dailystudio.devbricksx.gallery.db.UserItem
 import com.dailystudio.devbricksx.gallery.model.DownloadViewModelExt
 import com.dailystudio.devbricksx.gallery.model.UserItemViewModelExt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

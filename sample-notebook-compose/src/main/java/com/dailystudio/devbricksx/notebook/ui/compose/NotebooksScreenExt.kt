@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.notebook.composable
+package com.dailystudio.devbricksx.notebook.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -6,7 +6,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.notebook.compose.NotebooksScreen
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 
 @Composable

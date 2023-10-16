@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.gallery.composable
+package com.dailystudio.devbricksx.gallery.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets

@@ -1,8 +1,6 @@
-package com.dailystudio.devbricksx.gallery.composable
+package com.dailystudio.devbricksx.gallery.ui.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import com.dailystudio.devbricksx.compose.app.AboutDialog
 import com.dailystudio.devbricksx.compose.app.AboutInfo
 import com.dailystudio.devbricksx.gallery.core.R as coreR

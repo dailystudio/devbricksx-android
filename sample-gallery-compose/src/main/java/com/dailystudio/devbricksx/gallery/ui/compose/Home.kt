@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.gallery.composable
+package com.dailystudio.devbricksx.gallery.ui.compose
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween

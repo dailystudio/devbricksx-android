@@ -1,4 +1,4 @@
-package com.dailystudio.devbricksx.gallery.composable
+package com.dailystudio.devbricksx.gallery.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,13 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.dailystudio.devbricksx.compose.utils.activityViewModel
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.gallery.compose.PhotoItemsScreen
 import com.dailystudio.devbricksx.gallery.db.PhotoItem
 import com.dailystudio.devbricksx.gallery.db.PhotoItemContent
 import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt

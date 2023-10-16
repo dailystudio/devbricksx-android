@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.notebook.DummyDataUtils
-import com.dailystudio.devbricksx.notebook.composable.Home
+import com.dailystudio.devbricksx.notebook.ui.compose.Home
 import com.dailystudio.devbricksx.notebook.theme.NotebookTheme
 
 class MainActivity : ComponentActivity() {
