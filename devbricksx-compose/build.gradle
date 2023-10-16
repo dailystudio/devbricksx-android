@@ -85,6 +85,9 @@ dependencies {
     // Optional - permissions
     api "com.google.accompanist:accompanist-permissions:${project.ext.permissionsVersioin}"
 
+    // Optional -ConstraintLayout
+    api "androidx.constraintlayout:constraintlayout-compose:${project.ext.constraintVersioin}"
+
     // Coil Compose
     api("io.coil-kt:coil-compose:${project.ext.coilComposeVersion}")
 }

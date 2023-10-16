@@ -32,7 +32,7 @@ fun Home() {
     NavHost(navController = navController,
         startDestination = "notebooks") {
         composable("notebooks") {
-            NotebooksScreen()
+            NotebooksPage()
         }
     }
 }
