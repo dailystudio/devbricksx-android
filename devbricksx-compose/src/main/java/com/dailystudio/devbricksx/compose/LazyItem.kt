@@ -33,9 +33,13 @@ import androidx.compose.ui.unit.dp
 import com.dailystudio.devbricksx.R
 
 typealias ItemContentComposable<T> =
-        @Composable (item: T?, modifier: Modifier) -> Unit
+        @Composable (item: T?,
+                     modifier: Modifier) -> Unit
 typealias SelectableItemContentComposable<T> =
-        @Composable (item: T?, selectable: Boolean, selected: Boolean, modifier: Modifier) -> Unit
+        @Composable (item: T?,
+                     modifier: Modifier,
+                     selectable: Boolean,
+                     selected: Boolean) -> Unit
 
 typealias ItemClickAction<T> = (item: T) -> Unit
 
@@ -90,14 +94,73 @@ fun <T> SingleLineItemContent(
     }
 }
 
+
+@Composable
+fun <T> SelectableLazyItem(item: T?,
+                           selectable: Boolean = false,
+                           selected: Boolean = false,
+                           onItemSelected: ItemClickAction<T>? = null,
+                           onItemClicked: ItemClickAction<T>? = null,
+                           onItemLongClicked: ItemClickAction<T>? = null,
+                           itemContent: SelectableItemContentComposable<T>,
+) {
+    ClickableLazyItem(item = item,
+        clickable = hasItemClickAction(arrayOf(onItemClicked, onItemLongClicked, onItemSelected)),
+        onClick = {
+            if (selectable) {
+                if (onItemSelected != null && item != null) {
+                    onItemSelected(item)
+                }
+            } else {
+                if (onItemClicked != null && item != null) {
+                    onItemClicked(item)
+                }
+            }
+        },
+        onLongClick = {
+            if (onItemLongClicked != null && item != null) {
+                onItemLongClicked(item)
+            }
+        }
+    ) { item, modifier ->
+        itemContent(item, modifier, selectable, selected)
+    }
+}
+
+
+
+@Composable
+fun <T> LazyItem (item: T?,
+                  onItemClicked: ItemClickAction<T>? = null,
+                  onItemLongClicked: ItemClickAction<T>? = null,
+                  itemContent: ItemContentComposable<T>,
+) {
+    ClickableLazyItem(item = item,
+        clickable = hasItemClickAction(arrayOf(onItemClicked, onItemLongClicked)),
+        onClick = {
+            if (onItemClicked != null && item != null) {
+                onItemClicked(item)
+            }
+        },
+        onLongClick = {
+            if (onItemLongClicked != null && item != null) {
+                onItemLongClicked(item)
+            }
+        }
+    ) { item, modifier ->
+        itemContent(item, modifier)
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun <T> LazyItem(item: T?,
-                 onItemClicked: ItemClickAction<T>? = null,
-                 onItemLongClicked: ItemClickAction<T>? = null,
-                 itemContent: ItemContentComposable<T>,
+internal fun <T> ClickableLazyItem(item: T?,
+                                   clickable: Boolean = false,
+                                   onClick: () -> Unit,
+                                   onLongClick: () -> Unit,
+                                   itemContent: ItemContentComposable<T>,
 ) {
-    if ((onItemClicked != null || onItemLongClicked != null) && item != null) {
+    if (clickable && item != null) {
         val interactionSource = MutableInteractionSource()
 
         Box(
@@ -106,14 +169,15 @@ fun <T> LazyItem(item: T?,
                     interactionSource = interactionSource,
                     indication = null,
                     onClick = {
-                        if (onItemClicked != null) onItemClicked(item)
+                        onClick()
                     },
                     onLongClick = {
-                        if (onItemLongClicked != null) onItemLongClicked(item)
+                        onLongClick()
                         interactionSource.tryEmit(
                             PressInteraction.Release(
-                                PressInteraction.Press(
-                                    Offset.Zero)))
+                                PressInteraction.Press(Offset.Zero)
+                            )
+                        )
                     }
                 )
         ) {
@@ -127,4 +191,16 @@ fun <T> LazyItem(item: T?,
     } else {
         itemContent(item, Modifier)
     }
+}
+
+private fun <T> hasItemClickAction(
+    clickActions: Array<ItemClickAction<T>?>,
+): Boolean {
+    for (action in clickActions) {
+        if (action != null) {
+            return true
+        }
+    }
+
+    return false
 }

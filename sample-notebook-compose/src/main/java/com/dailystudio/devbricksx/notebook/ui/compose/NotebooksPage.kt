@@ -69,7 +69,9 @@ fun NotebooksPage(
             Column (
                 modifier = Modifier.padding(padding)
             ) {
-                NotebooksScreen()
+                NotebooksScreen(selectKey = {
+                    it?.id ?: -1
+                })
                 AppAbout(showDialog = showAboutDialog) {
                     showAboutDialog = false
                 }

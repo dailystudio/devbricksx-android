@@ -457,6 +457,16 @@ object TypeNameUtils {
             "BasePagingGridScreen")
     }
 
+    fun typeOfBaseSelectableGridScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BaseSelectableGridScreen")
+    }
+
+    fun typeOfBaseSelectablePagingGridScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BaseSelectablePagingGridScreen")
+    }
+
     fun typeOfBaseListScreen(): ClassName {
         return ClassName("com.dailystudio.devbricksx.compose",
             "BaseListScreen")
@@ -465,6 +475,16 @@ object TypeNameUtils {
     fun typeOfBasePagingListScreen(): ClassName {
         return ClassName("com.dailystudio.devbricksx.compose",
             "BasePagingListScreen")
+    }
+
+    fun typeOfBaseSelectableListScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BaseSelectableListScreen")
+    }
+
+    fun typeOfBaseSelectablePagingListScreen(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose",
+            "BaseSelectablePagingListScreen")
     }
 
     fun typeOfItemClickActionOf(typeName: TypeName): TypeName {

@@ -45,6 +45,8 @@ import com.dailystudio.devbricksx.notebook.core.R
 fun NotebookContent(
     notebook: Notebook?,
     modifier: Modifier = Modifier,
+    selectable: Boolean,
+    selected: Boolean
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Logger.debug("notebook: $notebook")
@@ -146,7 +148,11 @@ fun NotebookContent(
 }
 
 
-@ListScreen(paged = true, dataSource = DataSource.Flow, gridLayout = true, columns = 2)
+@ListScreen(paged = true,
+    dataSource = DataSource.Flow,
+    gridLayout = false,
+    columns = 2,
+    selectable = true)
 class __Notebook
 
 @ListScreen(paged = true, dataSource = DataSource.Flow, gridLayout = true, columns = 2)

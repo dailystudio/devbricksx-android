@@ -19,17 +19,22 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
-open class BuildOptions(val dataSource: DataSource,
-                        val paged: Boolean = false,
-                        val pageSize: Int = 20,
-                        val isGradLayout: Boolean = false,
-                        val columns: Int
+open class BuildOptions(
+    val dataSource: DataSource,
+    val paged: Boolean = false,
+    val pageSize: Int = 20,
+    val isGradLayout: Boolean = false,
+    val columns: Int = 2,
+    val selectable: Boolean = false,
 ) {
     override fun toString(): String {
         return buildString {
-            append("dataSource: ${dataSource},")
-            append("paged: ${paged},")
-            append("pageSize: $pageSize")
+            append("dataSource: ${dataSource}, ")
+            append("paged: ${paged}, ")
+            append("pageSize: $pageSize, ")
+            append("isGradLayout: $isGradLayout, ")
+            append("columns: $columns, ")
+            append("selectable: $selectable")
         }
     }
 }
@@ -100,6 +105,11 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         ret = addOnItemClickActionParameters(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
+        if (options.selectable) {
+            ret = addSelectableParameters(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+            if (!ret)  return emptyResult
+        }
+
         ret = addItemContentParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
@@ -121,8 +131,10 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         val pageSize = screenAnnotation.pageSize
         val gridLayout = screenAnnotation.gridLayout
         val columns = screenAnnotation.columns
+        val selectable = screenAnnotation.selectable
 
-        return BuildOptions(dataSource, paged, pageSize, gridLayout, columns)
+        return BuildOptions(dataSource, paged, pageSize,
+            gridLayout, columns, selectable)
     }
 
     protected open fun genScreenComposable(resolver: Resolver,
@@ -140,9 +152,17 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
         if (gridLayout) {
             val gridScreen = if (paged) {
-                TypeNameUtils.typeOfBasePagingGridScreen()
+                if (options.selectable) {
+                    TypeNameUtils.typeOfBaseSelectablePagingGridScreen()
+                } else {
+                    TypeNameUtils.typeOfBasePagingGridScreen()
+                }
             } else {
-                TypeNameUtils.typeOfBaseGridScreen()
+                if (options.selectable) {
+                    TypeNameUtils.typeOfBaseSelectableGridScreen()
+                } else {
+                    TypeNameUtils.typeOfBaseGridScreen()
+                }
             }
 
             composableBuilder.addStatement(
@@ -151,7 +171,22 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 """.trimIndent(),
                 gridCells, columns
             )
-            composableBuilder.addStatement(
+
+            val statements = if (options.selectable) {
+                """
+                    %T(
+                        modifier = modifier, 
+                        dataSource = dataSource, 
+                        cells = gridCells, 
+                        onItemClicked = onItemClicked, 
+                        onItemLongClicked = onItemLongClicked, 
+                        selectable = selectable,
+                        selectKey = selectKey,
+                        onItemSelected = onItemSelected,
+                        itemContent = itemContent
+                    )
+                """.trimIndent()
+            } else {
                 """
                     %T(
                         modifier = modifier, 
@@ -161,17 +196,42 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                         onItemLongClicked = onItemLongClicked, 
                         itemContent = itemContent
                     )
-                """.trimIndent(),
+                """.trimIndent()
+            }
+
+            composableBuilder.addStatement(
+                statements,
                 gridScreen
             )
         } else {
             val listScreen = if (paged) {
-                TypeNameUtils.typeOfBasePagingListScreen()
+                if (options.selectable) {
+                    TypeNameUtils.typeOfBaseSelectablePagingListScreen()
+                } else {
+                    TypeNameUtils.typeOfBasePagingListScreen()
+                }
             } else {
-                TypeNameUtils.typeOfBaseListScreen()
+                if (options.selectable) {
+                    TypeNameUtils.typeOfBaseSelectableListScreen()
+                } else {
+                    TypeNameUtils.typeOfBaseListScreen()
+                }
             }
 
-            composableBuilder.addStatement(
+            val statements = if (options.selectable) {
+                """
+                    %T(
+                        modifier = modifier, 
+                        dataSource = dataSource, 
+                        onItemClicked = onItemClicked, 
+                        onItemLongClicked = onItemLongClicked, 
+                        selectable = selectable,
+                        selectKey = selectKey,
+                        onItemSelected = onItemSelected,
+                        itemContent = itemContent
+                    )
+                """.trimIndent()
+            } else {
                 """
                     %T(
                         modifier = modifier, 
@@ -180,10 +240,57 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                         onItemLongClicked = onItemLongClicked, 
                         itemContent = itemContent
                     )
-                """.trimIndent(),
+                """.trimIndent()
+            }
+
+            composableBuilder.addStatement(
+                statements,
                 listScreen
             )
         }
+    }
+
+    protected open fun addSelectableParameters(resolver: Resolver,
+                                               symbol: KSClassDeclaration,
+                                               typeOfObject: TypeName,
+                                               composableBuilder: FunSpec.Builder,
+                                               options: BuildOptions): Boolean {
+        warn("add selectable parameter for [${typeOfObject}]: options = $options")
+
+        val typeOfItemClickAction = TypeNameUtils
+            .typeOfItemClickActionOf(typeOfObject)
+            .copy(nullable = true)
+
+        val selectableParam = ParameterSpec.builder(
+            name = "selectable",
+            BOOLEAN
+        ).defaultValue("false")
+
+        composableBuilder.addParameter(selectableParam.build())
+
+        val funcTypeOfSelectKey = LambdaTypeName.get(
+            parameters = listOf(
+                ParameterSpec.builder("item",
+                    typeOfObject.copy(nullable = true)).build()
+            ),
+            returnType = ANY
+        )
+
+        val selectKeyParam = ParameterSpec.builder(
+            name = "selectKey",
+            funcTypeOfSelectKey
+        )
+
+        composableBuilder.addParameter(selectKeyParam.build())
+
+        val itemSelectedParam = ParameterSpec.builder(
+            name = "onItemSelected",
+            typeOfItemClickAction
+        ).defaultValue("null")
+
+        composableBuilder.addParameter(itemSelectedParam.build())
+
+        return true
     }
 
     protected open fun addOnItemClickActionParameters(resolver: Resolver,
@@ -191,14 +298,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                                                       typeOfObject: TypeName,
                                                       composableBuilder: FunSpec.Builder,
                                                       options: BuildOptions): Boolean {
-        warn("add data source parameter for [${typeOfObject}]: options = $options")
-
-        val funcTypeOfItemContent = LambdaTypeName.get(
-            parameters = listOf(
-                ParameterSpec.builder("item", typeOfObject).build()
-            ),
-            returnType = UNIT
-        ).copy(nullable = true)
+        warn("add item click parameter for [${typeOfObject}]: options = $options")
 
         val typeOfItemClickAction = TypeNameUtils
             .typeOfItemClickActionOf(typeOfObject)
@@ -236,9 +336,16 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
         val itemContentParams = mutableListOf<ParameterSpec>()
 
-        if (itemContent.parameters.size != 2) {
-            error("@${ItemContent::class.simpleName} annotated function should only has 2 parameters: (item: $typeOfObject?, modifier: Modifier)")
-            return false
+        if (options.selectable) {
+            if (itemContent.parameters.size != 4) {
+                error("@${ItemContent::class.simpleName} annotated function should only has 4 parameters: (item: $typeOfObject?, modifier: Modifier, selected: Boolean, selectable: Boolean)")
+                return false
+            }
+        } else {
+            if (itemContent.parameters.size != 2) {
+                error("@${ItemContent::class.simpleName} annotated function should only has 2 parameters: (item: $typeOfObject?, modifier: Modifier)")
+                return false
+            }
         }
 
         if (itemContent.returnType?.resolve()?.toTypeName() != UNIT) {
@@ -256,6 +363,18 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 .build()
         )
 
+        if (options.selectable) {
+            itemContentParams.add(
+                ParameterSpec.builder("selectable", BOOLEAN)
+                    .build()
+            )
+
+            itemContentParams.add(
+                ParameterSpec.builder("selected", BOOLEAN)
+                    .build()
+            )
+        }
+
         val funcTypeOfItemContent = LambdaTypeName.get(
             parameters = itemContentParams,
             returnType = UNIT
@@ -269,9 +388,18 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             name = "itemContent",
             funcTypeOfItemContent
         ).defaultValue(
-            CodeBlock.of("{ item, modifier -> %T(item, modifier) }",
-                typeOfItemContent,
-            )
+            if (options.selectable) {
+                CodeBlock.of(
+                    "{ item, modifier, selectable, selected -> %T(item, modifier, selectable, selected) }",
+                    typeOfItemContent,
+                )
+            } else {
+
+                CodeBlock.of(
+                    "{ item, modifier -> %T(item, modifier) }",
+                    typeOfItemContent,
+                )
+            }
         )
 
         composableBuilder.addParameter(itemContentParam.build())

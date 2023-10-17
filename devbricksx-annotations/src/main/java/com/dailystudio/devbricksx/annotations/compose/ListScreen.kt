@@ -11,6 +11,7 @@ annotation class ListScreen(
     val pageSize: Int = 20,
     val gridLayout: Boolean = false,
     val columns: Int = 2,
+    val selectable: Boolean = false,
 )
 
 @Retention(AnnotationRetention.RUNTIME)

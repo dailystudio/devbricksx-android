@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.LazyPagingItems
 
@@ -26,6 +28,26 @@ fun <T : Any> BaseListScreen(
 }
 
 @Composable
+fun <T : Any> BaseSelectableListScreen(
+    modifier: Modifier = Modifier,
+    orientation: ListOrientation = ListOrientation.Vertical,
+    dataSource: @Composable () -> List<T>,
+    key: ((item: T) -> Any)? = null,
+    contentType: (item: T) -> Any? = { null },
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
+    selectable: Boolean = false,
+    selectKey: ((item: T) -> Any),
+    onItemSelected: ItemClickAction<T>? = null,
+    itemContent: SelectableItemContentComposable<T>
+) {
+    BaseSelectableLazyList(modifier, orientation, listOfItems = dataSource(),
+        key, contentType, onItemClicked, onItemLongClicked,
+        selectable, selectKey, onItemSelected,
+        itemContent)
+}
+
+@Composable
 fun <T : Any> BasePagingListScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
@@ -38,6 +60,26 @@ fun <T : Any> BasePagingListScreen(
 ) {
     BaseLazyPagingList(modifier, orientation, listOfItems = dataSource(),
         key, contentType, onItemClicked, onItemLongClicked, itemContent)
+}
+
+@Composable
+fun <T : Any> BaseSelectablePagingListScreen(
+    modifier: Modifier = Modifier,
+    orientation: ListOrientation = ListOrientation.Vertical,
+    dataSource: @Composable () -> LazyPagingItems<T>,
+    key: ((item: T) -> Any)? = null,
+    contentType: (item: T) -> Any? = { null },
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
+    selectable: Boolean = false,
+    selectKey: ((item: T) -> Any),
+    onItemSelected: ItemClickAction<T>? = null,
+    itemContent: SelectableItemContentComposable<T>
+) {
+    BaseSelectableLazyPagingList(modifier, orientation, listOfItems = dataSource(),
+        key, contentType, onItemClicked, onItemLongClicked,
+        selectable, selectKey, onItemSelected,
+        itemContent)
 }
 
 @Composable
@@ -77,7 +119,73 @@ fun <T: Any> BaseLazyPagingList(
 }
 
 @Composable
-fun <T> BaseLazyList(
+fun <T: Any> BaseSelectableLazyPagingList(
+    modifier: Modifier = Modifier,
+    orientation: ListOrientation = ListOrientation.Vertical,
+    listOfItems: LazyPagingItems<T>,
+    key: ((item: T) -> Any)? = null,
+    contentType: (item: T) -> Any? = { null },
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
+    selectable: Boolean = false,
+    selectKey: ((item: T) -> Any),
+    onItemSelected: ItemClickAction<T>? = null,
+    itemContent: SelectableItemContentComposable<T>
+) {
+    val listState = rememberLazyListState()
+
+    val selectedItems = remember {
+        mutableStateMapOf<Any, Boolean>()
+    }
+
+    when (orientation) {
+        ListOrientation.Vertical -> {
+            LazyColumn(
+                state = listState
+            ) {
+                items(listOfItems, key, contentType) { item ->
+                    val selected = item?.let {
+                        selectedItems.containsKey(selectKey(item))
+                    } ?: false
+
+                    SelectableLazyItem(
+                        item = item,
+                        selectable = selectable,
+                        selected,
+                        onItemSelected = onItemSelected,
+                        onItemClicked = onItemClicked,
+                        onItemLongClicked = onItemLongClicked,
+                        itemContent)
+                }
+            }
+        }
+
+        ListOrientation.Horizontal -> {
+            LazyRow(
+                state = listState
+            ) {
+                items(listOfItems, key, contentType) { item ->
+                    val selected = item?.let {
+                        selectedItems.containsKey(selectKey(item))
+                    } ?: false
+
+                    SelectableLazyItem(
+                        item = item,
+                        selectable = selectable,
+                        selected,
+                        onItemSelected = onItemSelected,
+                        onItemClicked = onItemClicked,
+                        onItemLongClicked = onItemLongClicked,
+                        itemContent)
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun <T: Any> BaseLazyList(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
     listOfItems: List<T>,
@@ -107,6 +215,70 @@ fun <T> BaseLazyList(
             ) {
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun <T: Any> BaseSelectableLazyList(
+    modifier: Modifier = Modifier,
+    orientation: ListOrientation = ListOrientation.Vertical,
+    listOfItems: List<T>,
+    key: ((item: T) -> Any)? = null,
+    contentType: (item: T) -> Any? = { null },
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
+    selectable: Boolean = false,
+    selectKey: ((item: T) -> Any),
+    onItemSelected: ItemClickAction<T>? = null,
+    itemContent: SelectableItemContentComposable<T>
+) {
+    val listState = rememberLazyListState()
+
+    val selectedItems = remember {
+        mutableStateMapOf<Any, Boolean>()
+    }
+
+    when (orientation) {
+        ListOrientation.Vertical -> {
+            LazyColumn(
+                modifier = modifier,
+                state = listState
+            ) {
+                items(listOfItems, key, contentType) { item ->
+                    val selected = selectedItems
+                        .containsKey(selectKey(item))
+
+                    SelectableLazyItem(
+                        item = item,
+                        selectable = selectable,
+                        selectedItems.containsKey(selected),
+                        onItemSelected = onItemSelected,
+                        onItemClicked = onItemClicked,
+                        onItemLongClicked = onItemLongClicked,
+                        itemContent)
+                }
+            }
+        }
+
+        ListOrientation.Horizontal -> {
+            LazyRow(
+                state = listState
+            ) {
+                items(listOfItems, key, contentType) { item ->
+                    val selected = selectedItems
+                        .containsKey(selectKey(item))
+
+                    SelectableLazyItem(
+                        item = item,
+                        selectable = selectable,
+                        selectedItems.containsKey(selected),
+                        onItemSelected = onItemSelected,
+                        onItemClicked = onItemClicked,
+                        onItemLongClicked = onItemLongClicked,
+                        itemContent)
                 }
             }
         }
