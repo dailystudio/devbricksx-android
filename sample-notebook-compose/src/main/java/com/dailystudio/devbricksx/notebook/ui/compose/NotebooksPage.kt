@@ -20,11 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.dailystudio.devbricksx.compose.app.OptionMenuItem
 import com.dailystudio.devbricksx.compose.app.OptionMenus
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.core.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.dailystudio.devbricksx.notebook.theme.notebookTopAppBarColors
 
 const val MENU_ITEM_ID_ABOUT = 0x1
@@ -36,6 +41,17 @@ fun NotebooksPage(
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
+    val viewModel = viewModel<NotebookViewModel>()
+
+        val data = Pager(
+            PagingConfig(20)
+        ) {
+            viewModel.allNotebooksPagingSource
+        }.flow.collectAsLazyPagingItems()
+
+    var inSelectionMode by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         topBar = {
@@ -69,9 +85,14 @@ fun NotebooksPage(
             Column (
                 modifier = Modifier.padding(padding)
             ) {
-                NotebooksScreen(selectKey = {
-                    it?.id ?: -1
-                })
+                NotebooksScreen(
+                    dataSource = @Composable { data },
+                    selectable = inSelectionMode,
+                    selectKey = { it?.id ?: -1 },
+                    onItemLongClicked = {
+                        inSelectionMode = true
+                    }
+                )
                 AppAbout(showDialog = showAboutDialog) {
                     showAboutDialog = false
                 }

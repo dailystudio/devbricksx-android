@@ -163,14 +163,11 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    val selected = item?.let {
-                        selectedItems.containsKey(selectKey(item))
-                    } ?: false
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selected,
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,
@@ -185,14 +182,11 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    val selected = item?.let {
-                        selectedItems.containsKey(selectKey(item))
-                    } ?: false
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selectedItems.containsKey(selected),
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,
@@ -273,13 +267,11 @@ fun <T: Any> BaseSelectableLazyGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    val selected = selectedItems
-                        .containsKey(selectKey(item))
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selectedItems.containsKey(selected),
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,
@@ -294,13 +286,11 @@ fun <T: Any> BaseSelectableLazyGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    val selected = selectedItems
-                        .containsKey(selectKey(item))
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selectedItems.containsKey(selected),
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,

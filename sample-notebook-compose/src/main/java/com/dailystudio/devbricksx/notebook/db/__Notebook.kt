@@ -62,24 +62,6 @@ fun NotebookContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp)
-                .combinedClickable(
-                    interactionSource = interactionSource,
-                    indication = rememberRipple(),
-                    onClick = {
-                       /* if (selectable) {
-                            onItemSelected(notebook)
-                        } else {
-                            onItemClicked(notebook)
-                        }*/
-                    },
-                    onLongClick = {
-                        /*onItemLongClicked(notebook)
-                        interactionSource.tryEmit(
-                            PressInteraction.Release(
-                                PressInteraction.Press(
-                                    Offset.Zero)))*/
-                    }
-                )
         ) {
             val (icon, name, count, indicator) = createRefs()
 
@@ -124,7 +106,7 @@ fun NotebookContent(
             )
 
 
-//            /*if (selected) {
+            if (selected) {
                 val indicatorColor = MaterialTheme.colorScheme.primary
                 Canvas(
                     modifier = Modifier
@@ -140,7 +122,7 @@ fun NotebookContent(
                 ) {
                     drawRect(indicatorColor, size = size)
                 }
-//            }*/
+            }
         }
 
     }

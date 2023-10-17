@@ -94,6 +94,33 @@ fun <T> SingleLineItemContent(
     }
 }
 
+@Composable
+fun <T> SelectableLazyItem(
+    item: T?,
+    selectable: Boolean = false,
+    selectKey: ((item: T) -> Any),
+    selectedItems: MutableMap<Any, Boolean>,
+    onItemSelected: ItemClickAction<T>? = null,
+    onItemClicked: ItemClickAction<T>? = null,
+    onItemLongClicked: ItemClickAction<T>? = null,
+    itemContent: SelectableItemContentComposable<T>,
+) {
+    val selected = item?.let {
+        selectedItems[selectKey(it)]
+    } ?: false
+
+    SelectableLazyItem(
+        item = item,
+        selectable = selectable,
+        selected,
+        onItemSelected = {
+            selectedItems[selectKey(it)] = !selected
+            if (onItemSelected != null) onItemSelected(it)
+        },
+        onItemClicked = onItemClicked,
+        onItemLongClicked = onItemLongClicked,
+        itemContent)
+}
 
 @Composable
 fun <T> SelectableLazyItem(item: T?,

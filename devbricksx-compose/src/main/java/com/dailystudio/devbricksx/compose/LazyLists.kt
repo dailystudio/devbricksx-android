@@ -144,14 +144,11 @@ fun <T: Any> BaseSelectableLazyPagingList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    val selected = item?.let {
-                        selectedItems.containsKey(selectKey(item))
-                    } ?: false
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selected,
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,
@@ -165,14 +162,11 @@ fun <T: Any> BaseSelectableLazyPagingList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    val selected = item?.let {
-                        selectedItems.containsKey(selectKey(item))
-                    } ?: false
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selected,
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,
@@ -248,13 +242,11 @@ fun <T: Any> BaseSelectableLazyList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    val selected = selectedItems
-                        .containsKey(selectKey(item))
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selectedItems.containsKey(selected),
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,
@@ -268,13 +260,11 @@ fun <T: Any> BaseSelectableLazyList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    val selected = selectedItems
-                        .containsKey(selectKey(item))
-
                     SelectableLazyItem(
                         item = item,
                         selectable = selectable,
-                        selectedItems.containsKey(selected),
+                        selectKey,
+                        selectedItems,
                         onItemSelected = onItemSelected,
                         onItemClicked = onItemClicked,
                         onItemLongClicked = onItemLongClicked,

@@ -404,6 +404,10 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.preference", "AbsPrefs")
     }
 
+    fun typeOfRemember(): ClassName {
+        return ClassName("androidx.compose.runtime", "remember")
+    }
+
     fun typeOfComposable(): ClassName {
         return ClassName("androidx.compose.runtime", "Composable")
     }
