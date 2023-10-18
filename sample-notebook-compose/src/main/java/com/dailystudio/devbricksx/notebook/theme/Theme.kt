@@ -13,6 +13,7 @@ private val colorPalette = lightColorScheme(
     primary = primaryColor,
     onPrimary = Color.White,
     secondary = primaryColor,
+    surface = Color.White
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -125,6 +125,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val allPagedName = FunctionNames.GET_ALL_LIVE_PAGED.nameOfPropFuncForType(typeName)
         val allFlowName = FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(typeName)
         val allPagingSourceName = FunctionNames.GET_ALL_PAGING_SOURCE.nameOfPropFuncForType(typeName)
+        val allPagingDataName = FunctionNames.GET_ALL_PAGING_DATA.nameOfPropFuncForType(typeName)
         val repoAllName = FunctionNames.GET_ALL.nameOfPropFuncForType(
             if (isInMemoryRepo) "Object" else typeName)
         val repoAllLiveName = FunctionNames.GET_ALL_LIVE.nameOfPropFuncForType(
@@ -134,6 +135,8 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val repoAllFlowName = FunctionNames.GET_ALL_FLOW.nameOfPropFuncForType(
             if (isInMemoryRepo) "Object" else typeName)
         val repoAllPagingSourceName = FunctionNames.GET_ALL_PAGING_SOURCE.nameOfPropFuncForType(
+            if (isInMemoryRepo) "Object" else typeName)
+        val repoAllPagingDataName = FunctionNames.GET_ALL_PAGING_DATA.nameOfPropFuncForType(
             if (isInMemoryRepo) "Object" else typeName)
         val daoVariableName = GeneratedNames.getDaoVariableName(typeName)
 
@@ -152,6 +155,10 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingSourceOfObject =
             TypeNameUtils.typeOfPagingSourceOf(typeOfObject)
+        val typeOfPagingDataOfObject =
+            TypeNameUtils.typeOfPagingDataOf(typeOfObject)
+        val typeOfFlowOfPagingDataOfObject =
+            TypeNameUtils.typeOfFlowOf(TypeNameUtils.typeOfPagingDataOf(typeOfObject))
         val typeOfLiveDataOfNullableObject = TypeNameUtils.typeOfLiveDataOf(typeOfObject.copy(nullable = true))
         val typeOfFlowOfNullableObject = TypeNameUtils.typeOfFlowOf(typeOfObject.copy(nullable = true))
         val typeOfLiveDataOfListOfObjects =
@@ -163,7 +170,11 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         val typeOfDispatchers = TypeNameUtils.typeOfDispatchers()
         val typeOfLaunch = TypeNameUtils.typeOfLaunchMemberName()
         val typeOfJob = TypeNameUtils.typeOfJob()
+        val typeOfPager = TypeNameUtils.typeOfPager()
+        val typeOfPageConfig = TypeNameUtils.typeOfPageConfig()
+        val typeOfFlowOn = TypeNameUtils.typeOfFlowOn()
         val typeOfShareIn = TypeNameUtils.typeOfShareIn()
+        val typeOfCachedIn = TypeNameUtils.typeOfCachedIn()
         val typeOfSharingStarted = TypeNameUtils.typeOfSharingStarted()
         val typeOfViewModelScope = TypeNameUtils.typeOfViewModelScope()
 
@@ -182,6 +193,24 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                 .build()
             ).addModifiers(KModifier.OPEN)
 
+//        val propOfPagingDataBuilder = PropertySpec.builder(allPagingDataName, typeOfFlowOfPagingDataOfObject)
+//            .getter(FunSpec.getterBuilder()
+//                .addStatement(
+//                    """
+//                        return %T(
+//                            %T(pageSize = %L),
+//                        ) {
+//                            %N
+//                        }.flow.%T(%T.IO).%T(%T)
+//                    """.trimIndent(),
+//                    typeOfPager,
+//                    typeOfPageConfig, 20,
+//                    repoAllPagingSourceName,
+//                    typeOfFlowOn, typeOfDispatchers, typeOfCachedIn, typeOfViewModelScope,
+//                ).build()
+//            )
+//            .addModifiers(KModifier.OPEN)
+
         classBuilder.addProperty(repoVariableName, typeOfRepo,
             KModifier.PROTECTED, KModifier.OPEN)
         classBuilder.addProperty(propOfAllBuilder.build())
@@ -189,6 +218,8 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         classBuilder.addProperty(allPagedName, typeOfLiveDataOfPagedListOfObjects, KModifier.OPEN)
         classBuilder.addProperty(allFlowName, typeOfFlowOfListOfObjects, KModifier.OPEN)
         classBuilder.addProperty(propOfPagingSourceBuilder.build())
+//        classBuilder.addProperty(propOfPagingDataBuilder.build())
+        classBuilder.addProperty(allPagingDataName,  typeOfFlowOfPagingDataOfObject, KModifier.OPEN)
 
         if (isInMemoryRepo) {
             classBuilder.addInitializerBlock(CodeBlock.of(
@@ -197,12 +228,21 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                     %N = %N.%N
                     %N = %N.%N
                     %N = %N.%N.%T(%T, %T.Eagerly, 1)
+                    %N = %T(
+                        %T(pageSize = %L),
+                    ) {
+                        %N.%N
+                    }.flow.%T(%T.IO).%T(%T)
                     
                 """.trimIndent(),
                 repoVariableName, typeOfRepo,
                 allLiveName, repoVariableName, repoAllLiveName,
                 allPagedName, repoVariableName, repoAllPagedName,
-                allFlowName, repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted
+                allFlowName, repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted,
+                allPagingDataName, typeOfPager,
+                typeOfPageConfig, 20,
+                repoVariableName, repoAllPagingSourceName,
+                typeOfFlowOn, typeOfDispatchers, typeOfCachedIn, typeOfViewModelScope,
             ))
         } else {
             classBuilder.addInitializerBlock(CodeBlock.of(
@@ -213,13 +253,22 @@ class ViewModelStep (processor: BaseSymbolProcessor)
                     %N = %N.%N
                     %N = %N.%N
                     %N = %N.%N.%T(%T, %T.Eagerly, 1)
-                    
+                    %N = %T(
+                        %T(pageSize = %L),
+                    ) {
+                        %N.%N
+                    }.flow.%T(%T.IO).%T(%T)
+                
                 """.trimIndent(),
                 daoVariableName, typeOfDatabase, daoVariableName,
                 repoVariableName, typeOfRepo, daoVariableName,
                 allLiveName, repoVariableName, repoAllLiveName,
                 allPagedName, repoVariableName, repoAllPagedName,
-                allFlowName, repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted
+                allFlowName, repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted,
+                allPagingDataName, typeOfPager,
+                typeOfPageConfig, 20,
+                repoVariableName, repoAllPagingSourceName,
+                typeOfFlowOn, typeOfDispatchers, typeOfCachedIn, typeOfViewModelScope,
             ))
         }
 

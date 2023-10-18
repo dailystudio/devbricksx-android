@@ -156,6 +156,10 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
         mutableStateMapOf<Any, Boolean>()
     }
 
+    if (!selectable) {
+        selectedItems.clear()
+    }
+
     when (orientation) {
         ListOrientation.Vertical -> {
             LazyVerticalGrid(
@@ -268,6 +272,10 @@ fun <T: Any> BaseSelectableLazyGrid(
 
     val selectedItems = remember {
         mutableStateMapOf<Any, Boolean>()
+    }
+
+    if (!selectable) {
+        selectedItems.clear()
     }
 
     when (orientation) {

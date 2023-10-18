@@ -260,6 +260,10 @@ object TypeNameUtils {
         return typeOfFlow.parameterizedBy(typeName)
     }
 
+    fun typeOfFlowOn(): ClassName {
+        return ClassName("kotlinx.coroutines.flow", "flowOn")
+    }
+
     fun typeOfList(): ClassName {
         return ClassName("kotlin.collections", "List")
     }
@@ -330,6 +334,10 @@ object TypeNameUtils {
         val listAdapter = typeOfAbsPagingDataAdapter()
 
         return listAdapter.parameterizedBy(typeName, viewHolder)
+    }
+
+    fun typeOfCachedIn(): ClassName {
+        return ClassName("androidx.paging", "cachedIn")
     }
 
     fun typeOfDevBricksXR(): ClassName {

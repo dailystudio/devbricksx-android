@@ -491,13 +491,9 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 DataSource.Flow -> {
                     defaultValueBuilder.addStatement(
                         """
-                        val data = %T(
-                           %T(%L)) {
-                           viewModel.%N
-                        }.flow.%T()
+                        val data = viewModel.%N.%T()
                         """.trimIndent(),
-                        pager, pageConfig, options.pageSize,
-                        FunctionNames.GET_ALL_PAGING_SOURCE.nameOfPropFuncForType(typeName),
+                        FunctionNames.GET_ALL_PAGING_DATA.nameOfPropFuncForType(typeName),
                         collectAsLazyPagingItems
                     )
                 }

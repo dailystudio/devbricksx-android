@@ -138,6 +138,10 @@ fun <T: Any> BaseSelectableLazyPagingList(
         mutableStateMapOf<Any, Boolean>()
     }
 
+    if (!selectable) {
+        selectedItems.clear()
+    }
+
     when (orientation) {
         ListOrientation.Vertical -> {
             LazyColumn(
@@ -243,6 +247,10 @@ fun <T: Any> BaseSelectableLazyList(
 
     val selectedItems = remember {
         mutableStateMapOf<Any, Boolean>()
+    }
+
+    if (!selectable) {
+        selectedItems.clear()
     }
 
     when (orientation) {

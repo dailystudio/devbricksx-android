@@ -48,18 +48,17 @@ fun NotebookContent(
     selectable: Boolean,
     selected: Boolean
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     Logger.debug("notebook: $notebook")
 
     Card(
         modifier = Modifier
-            .background(Color.Cyan)
             .fillMaxWidth()
             .padding(all = 8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         ConstraintLayout(
-            modifier = Modifier
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.surface)
                 .fillMaxWidth()
                 .height(64.dp)
         ) {

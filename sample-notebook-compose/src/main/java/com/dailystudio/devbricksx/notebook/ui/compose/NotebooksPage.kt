@@ -3,6 +3,8 @@ package com.dailystudio.devbricksx.notebook.ui.compose
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,11 +47,6 @@ const val MENU_ITEM_ID_ABOUT = 0x1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotebooksPage(
-    dataSource: @Composable () -> LazyPagingItems<Notebook> =
-        @Composable {
-            val viewModel = viewModel<NotebookViewModelExt>()
-            viewModel.notebooks.collectAsLazyPagingItems()
-        },
     onItemClick: (item: Notebook) -> Unit = {}
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -77,30 +74,56 @@ fun NotebooksPage(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(id = R.string.app_name))
-                },
-                colors = notebookTopAppBarColors(),
-                actions = {
-                    IconButton(onClick = {
-                        showMenu = true
-                    }) {
-                        Icon(Icons.Default.MoreVert, "More actions")
-                    }
-
-                    NotebooksMenus(
-                        showMenu = showMenu,
-                        onMenuDismissed = { showMenu = false }) {
-                        when(it) {
-                            MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+            if (inSelectionMode) {
+                TopAppBar(
+                    colors = notebookTopAppBarColors(),
+                    title = {
+                        Text(text = stringResource(
+                            R.string.prompt_selection,
+                            0
+//                            selectedItems.size
+                        ))
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            endSelection()
+                        }) {
+                            Icon(Icons.Default.Clear, "Back")
                         }
+                    },
+                    actions = {
+                        IconButton(onClick = {
+//                            showDeletionConfirmDialog = true
+                        }) {
+                            Icon(Icons.Default.Delete, "Delete")
+                        }
+
                     }
+                )
+            } else {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(id = R.string.app_name))
+                    },
+                    colors = notebookTopAppBarColors(),
+                    actions = {
+                        IconButton(onClick = {
+                            showMenu = true
+                        }) {
+                            Icon(Icons.Default.MoreVert, "More actions")
+                        }
 
-                }
-            )
+                        NotebooksMenus(
+                            showMenu = showMenu,
+                            onMenuDismissed = { showMenu = false }) {
+                            when (it) {
+                                MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                            }
+                        }
 
-
+                    }
+                )
+            }
         },
         content = { padding ->
             Logger.debug("padding: $padding")
@@ -109,7 +132,6 @@ fun NotebooksPage(
             ) {
                 NotebooksScreenExt(
                     modifier = Modifier,
-                    dataSource = dataSource,
                     selectable = inSelectionMode,
                     onSelectionStarted = {
                         beginSelection()

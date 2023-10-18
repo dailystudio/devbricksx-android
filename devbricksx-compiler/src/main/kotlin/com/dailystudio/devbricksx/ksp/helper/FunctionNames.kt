@@ -11,6 +11,7 @@ enum class FunctionNames {
     GET_ALL_FLOW,
     GET_ALL_LIVE_PAGED,
     GET_ALL_PAGING_SOURCE,
+    GET_ALL_PAGING_DATA,
 
     INSERT,
     UPDATE,

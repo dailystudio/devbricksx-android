@@ -31,6 +31,7 @@ class NotebookViewModelExt(application: Application): NotebookViewModel(applicat
             allNotebooksPagingSource
         }.flow.flowOn(Dispatchers.IO)
 
+
     private val _currentNoteId = MutableStateFlow<Int>(-1)
     private val _currentNotebookId = MutableStateFlow<Int>(-1)
 
