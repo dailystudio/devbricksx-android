@@ -27,6 +27,7 @@ object DummyDataUtils {
             val database = NotesDatabase.getDatabase(
                 context)
 
+            database.clearAllTables()
             val notes = mutableListOf<Note>()
             for ((i, displayName) in notebooks.withIndex()) {
                 val notebookId = i + 1

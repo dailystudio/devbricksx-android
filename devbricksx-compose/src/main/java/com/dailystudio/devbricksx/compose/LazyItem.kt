@@ -94,29 +94,68 @@ fun <T> SingleLineItemContent(
     }
 }
 
+fun <T> wrapOnItemSelected(
+    item: T?,
+    selectKey: ((item: T) -> Any),
+    selectedItems: MutableMap<Any, Boolean>,
+    onItemSelected: ItemClickAction<T>? = null
+) {
+    item?.let {
+        val sKey = selectKey(it)
+
+        val selected = selectedItems.containsKey(sKey)
+        if (selected) {
+            selectedItems.remove(sKey)
+        } else {
+            selectedItems[sKey] = true
+        }
+
+        if (onItemSelected != null) {
+            onItemSelected(it)
+        }
+    }
+}
+
+fun <T> wrapOnItemLongClicked(
+    item: T?,
+    selectKey: ((item: T) -> Any),
+    selectedItems: MutableMap<Any, Boolean>,
+    onItemLongClicked: ItemClickAction<T>? = null
+) {
+    item?.let {
+        val sKey = selectKey(it)
+
+        val selected = selectedItems.containsKey(sKey)
+        if (!selected) {
+            selectedItems[sKey] = true
+        }
+
+        if (onItemLongClicked != null) {
+            onItemLongClicked(it)
+        }
+    }
+}
+
 @Composable
 fun <T> SelectableLazyItem(
     item: T?,
     selectable: Boolean = false,
     selectKey: ((item: T) -> Any),
-    selectedItems: MutableMap<Any, Boolean>,
+    selectedItems: Set<Any>,
     onItemSelected: ItemClickAction<T>? = null,
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>,
 ) {
     val selected = item?.let {
-        selectedItems[selectKey(it)]
+        selectedItems.contains(selectKey(it))
     } ?: false
 
     SelectableLazyItem(
         item = item,
         selectable = selectable,
         selected,
-        onItemSelected = {
-            selectedItems[selectKey(it)] = !selected
-            if (onItemSelected != null) onItemSelected(it)
-        },
+        onItemSelected = onItemSelected,
         onItemClicked = onItemClicked,
         onItemLongClicked = onItemLongClicked,
         itemContent)

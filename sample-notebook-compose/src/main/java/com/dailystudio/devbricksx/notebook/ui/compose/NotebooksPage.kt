@@ -23,35 +23,57 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.dailystudio.devbricksx.compose.BaseSelectablePagingListScreen
+import com.dailystudio.devbricksx.compose.ItemClickAction
 import com.dailystudio.devbricksx.compose.app.OptionMenuItem
 import com.dailystudio.devbricksx.compose.app.OptionMenus
+import com.dailystudio.devbricksx.compose.utils.activityViewModel
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.core.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
+import com.dailystudio.devbricksx.notebook.db.NotebookContent
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 import com.dailystudio.devbricksx.notebook.theme.notebookTopAppBarColors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 
 const val MENU_ITEM_ID_ABOUT = 0x1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotebooksPage(
+    dataSource: @Composable () -> LazyPagingItems<Notebook> =
+        @Composable {
+            val viewModel = viewModel<NotebookViewModelExt>()
+            viewModel.notebooks.collectAsLazyPagingItems()
+        },
     onItemClick: (item: Notebook) -> Unit = {}
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
-    val viewModel = viewModel<NotebookViewModel>()
-
-        val data = Pager(
-            PagingConfig(20)
-        ) {
-            viewModel.allNotebooksPagingSource
-        }.flow.collectAsLazyPagingItems()
+    val viewModel = viewModel<NotebookViewModelExt>()
 
     var inSelectionMode by remember {
         mutableStateOf(false)
     }
+
+    var fabVisible by remember {
+        mutableStateOf(false)
+    }
+
+    val beginSelection = {
+        inSelectionMode = true
+        fabVisible = false
+    }
+
+    val endSelection = {
+        inSelectionMode = false
+        fabVisible = true
+    }
+
 
     Scaffold(
         topBar = {
@@ -85,14 +107,22 @@ fun NotebooksPage(
             Column (
                 modifier = Modifier.padding(padding)
             ) {
-                NotebooksScreen(
-                    dataSource = @Composable { data },
+                NotebooksScreenExt(
+                    modifier = Modifier,
+                    dataSource = dataSource,
                     selectable = inSelectionMode,
-                    selectKey = { it?.id ?: -1 },
-                    onItemLongClicked = {
-                        inSelectionMode = true
-                    }
+                    onSelectionStarted = {
+                        beginSelection()
+
+                    },
+                    onOpenNotebook = {
+
+                    },
+                    onSelectNotebook = {
+
+                    },
                 )
+
                 AppAbout(showDialog = showAboutDialog) {
                     showAboutDialog = false
                 }

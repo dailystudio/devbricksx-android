@@ -420,8 +420,17 @@ object TypeNameUtils {
         return ClassName("androidx.lifecycle.viewmodel.compose", "viewModel")
     }
 
+    fun typeOfComposeActivityViewModel(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose.utils", "activityViewModel")
+    }
+
     fun typeOfComposeViewModelOf(typeName: TypeName): TypeName {
         val composeViewModel = typeOfComposeViewModel()
+        return composeViewModel.parameterizedBy(typeName)
+    }
+
+    fun typeOfComposeActivityViewModelOf(typeName: TypeName): TypeName {
+        val composeViewModel = typeOfComposeActivityViewModel()
         return composeViewModel.parameterizedBy(typeName)
     }
 

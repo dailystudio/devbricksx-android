@@ -148,11 +148,16 @@ fun <T: Any> BaseSelectableLazyPagingList(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
@@ -166,11 +171,16 @@ fun <T: Any> BaseSelectableLazyPagingList(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
@@ -246,11 +256,16 @@ fun <T: Any> BaseSelectableLazyList(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
@@ -264,11 +279,16 @@ fun <T: Any> BaseSelectableLazyList(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }

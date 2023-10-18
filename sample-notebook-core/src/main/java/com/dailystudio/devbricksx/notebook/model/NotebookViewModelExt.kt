@@ -12,6 +12,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.db.Note
+import com.dailystudio.devbricksx.notebook.db.Notebook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -21,8 +22,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagingApi::class)
 class NotebookViewModelExt(application: Application): NotebookViewModel(application) {
+
+    val notebooks: Flow<PagingData<Notebook>> =
+        Pager(
+            PagingConfig(20)
+        ) {
+            allNotebooksPagingSource
+        }.flow.flowOn(Dispatchers.IO)
 
     private val _currentNoteId = MutableStateFlow<Int>(-1)
     private val _currentNotebookId = MutableStateFlow<Int>(-1)

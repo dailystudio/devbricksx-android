@@ -167,11 +167,16 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
@@ -186,11 +191,16 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
@@ -271,11 +281,16 @@ fun <T: Any> BaseSelectableLazyGrid(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
@@ -290,11 +305,16 @@ fun <T: Any> BaseSelectableLazyGrid(
                         item = item,
                         selectable = selectable,
                         selectKey,
-                        selectedItems,
-                        onItemSelected = onItemSelected,
+                        selectedItems.keys,
+                        onItemSelected = {
+                            wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
+                        },
                         onItemClicked = onItemClicked,
-                        onItemLongClicked = onItemLongClicked,
-                        itemContent)
+                        onItemLongClicked = {
+                            wrapOnItemLongClicked(item, selectKey, selectedItems, onItemLongClicked)
+                        },
+                        itemContent
+                    )
                 }
             }
         }
