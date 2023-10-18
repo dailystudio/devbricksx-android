@@ -39,7 +39,6 @@ import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.core.R
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @ItemContent(Notebook::class)
 @Composable
 fun NotebookContent(
@@ -129,7 +128,7 @@ fun NotebookContent(
 }
 
 
-@ListScreen(paged = true,
+@ListScreen(paged = false,
     dataSource = DataSource.Flow,
     gridLayout = false,
     columns = 2,

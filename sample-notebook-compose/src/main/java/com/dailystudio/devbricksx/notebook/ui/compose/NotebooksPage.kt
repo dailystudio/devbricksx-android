@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,17 +50,17 @@ const val MENU_ITEM_ID_ABOUT = 0x1
 fun NotebooksPage(
     onItemClick: (item: Notebook) -> Unit = {}
 ) {
+    val notebookViewModel = viewModel<NotebookViewModelExt>()
+
     var showMenu by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
-    val viewModel = viewModel<NotebookViewModelExt>()
+    var showDeletionConfirmDialog by remember { mutableStateOf(false) }
 
-    var inSelectionMode by remember {
-        mutableStateOf(false)
-    }
+    var inSelectionMode by remember { mutableStateOf(false) }
 
-    var fabVisible by remember {
-        mutableStateOf(false)
-    }
+    var fabVisible by remember { mutableStateOf(false) }
+
+    val selectedIds = remember { mutableStateMapOf<Int, Boolean>() }
 
     val beginSelection = {
         inSelectionMode = true
@@ -69,8 +70,9 @@ fun NotebooksPage(
     val endSelection = {
         inSelectionMode = false
         fabVisible = true
-    }
 
+        selectedIds.clear()
+    }
 
     Scaffold(
         topBar = {
@@ -80,8 +82,7 @@ fun NotebooksPage(
                     title = {
                         Text(text = stringResource(
                             R.string.prompt_selection,
-                            0
-//                            selectedItems.size
+                            selectedIds.size
                         ))
                     },
                     navigationIcon = {
@@ -93,7 +94,7 @@ fun NotebooksPage(
                     },
                     actions = {
                         IconButton(onClick = {
-//                            showDeletionConfirmDialog = true
+                            showDeletionConfirmDialog = true
                         }) {
                             Icon(Icons.Default.Delete, "Delete")
                         }
@@ -135,18 +136,38 @@ fun NotebooksPage(
                     selectable = inSelectionMode,
                     onSelectionStarted = {
                         beginSelection()
-
+                        selectedIds[it.id] = true
                     },
                     onOpenNotebook = {
 
                     },
                     onSelectNotebook = {
+                        Logger.debug("on selected: $it")
+                        val selected =
+                            selectedIds.containsKey(it.id)
+                        if (selected) {
+                            selectedIds.remove(it.id)
+                        } else {
+                            selectedIds[it.id] = true
+                        }
 
+                        Logger.debug("after selected: $selectedIds")
                     },
                 )
 
                 AppAbout(showDialog = showAboutDialog) {
                     showAboutDialog = false
+                }
+
+
+                DeletionConfirmDialog(
+                    showDialog = showDeletionConfirmDialog,
+                    onCancel = { showDeletionConfirmDialog = false }) {
+                    showDeletionConfirmDialog = false
+
+                    notebookViewModel.deleteNotebooks(selectedIds.keys.toSet())
+
+                    endSelection()
                 }
             }
         }
