@@ -2,7 +2,10 @@ package com.dailystudio.devbricksx.notebook.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.dailystudio.devbricksx.notebook.db.Notebook
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 
 @Composable
 fun NotebooksScreenExt(
@@ -14,6 +17,10 @@ fun NotebooksScreenExt(
 ) {
     NotebooksScreen(
         modifier,
+        dataSource = {
+           viewModel<NotebookViewModelExt>().notebooks.collectAsLazyPagingItems()
+        },
+        key = { it?.id ?: -1 },
         selectable = selectable,
         selectKey = { it?.id ?: -1 },
         onItemSelected = {

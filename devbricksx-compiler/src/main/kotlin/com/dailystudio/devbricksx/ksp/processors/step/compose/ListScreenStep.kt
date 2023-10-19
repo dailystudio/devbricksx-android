@@ -102,6 +102,9 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         ret = addDataSourceParameter(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
+        ret = addItemExtraParameters(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
+        if (!ret)  return emptyResult
+
         ret = addOnItemClickActionParameters(resolver, symbol, typeOfObject, funcScreenSpecBuilder, options)
         if (!ret)  return emptyResult
 
@@ -177,6 +180,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                     %T(
                         modifier = modifier, 
                         dataSource = dataSource, 
+                        key = key,
+                        contentType = contentType,
                         cells = gridCells, 
                         onItemClicked = onItemClicked, 
                         onItemLongClicked = onItemLongClicked, 
@@ -191,6 +196,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                     %T(
                         modifier = modifier, 
                         dataSource = dataSource, 
+                        key = key,
+                        contentType = contentType,
                         cells = gridCells, 
                         onItemClicked = onItemClicked, 
                         onItemLongClicked = onItemLongClicked, 
@@ -223,6 +230,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                     %T(
                         modifier = modifier, 
                         dataSource = dataSource, 
+                        key = key,
+                        contentType = contentType,
                         onItemClicked = onItemClicked, 
                         onItemLongClicked = onItemLongClicked, 
                         selectable = selectable,
@@ -236,6 +245,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                     %T(
                         modifier = modifier, 
                         dataSource = dataSource, 
+                        key = key,
+                        contentType = contentType,
                         onItemClicked = onItemClicked, 
                         onItemLongClicked = onItemLongClicked, 
                         itemContent = itemContent
@@ -317,6 +328,47 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         ).defaultValue("null")
 
         composableBuilder.addParameter(itemLongClickedParam.build())
+
+        return true
+    }
+
+    protected open fun addItemExtraParameters(resolver: Resolver,
+                                              symbol: KSClassDeclaration,
+                                              typeOfObject: TypeName,
+                                              composableBuilder: FunSpec.Builder,
+                                              options: BuildOptions): Boolean {
+        warn("add item extra parameter for [${typeOfObject}]: options = $options")
+
+
+        val funcTypeOfKey = LambdaTypeName.get(
+            parameters = listOf(
+                ParameterSpec.builder("item",
+                    typeOfObject.copy(nullable = true)).build()
+            ),
+            returnType = ANY
+        ).copy(nullable = true)
+
+        val funcTypeOfContentType = LambdaTypeName.get(
+            parameters = listOf(
+                ParameterSpec.builder("item",
+                    typeOfObject.copy(nullable = true)).build()
+            ),
+            returnType = ANY.copy(nullable = true)
+        )
+
+        val keyParameter = ParameterSpec.builder(
+            name = "key",
+            funcTypeOfKey
+        ).defaultValue("null")
+
+        composableBuilder.addParameter(keyParameter.build())
+
+        val contentTypeParameter = ParameterSpec.builder(
+            name = "contentType",
+            funcTypeOfContentType
+        ).defaultValue("{ null }")
+
+        composableBuilder.addParameter(contentTypeParameter.build())
 
         return true
     }

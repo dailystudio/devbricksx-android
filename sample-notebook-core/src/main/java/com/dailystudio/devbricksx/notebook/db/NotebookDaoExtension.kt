@@ -16,6 +16,9 @@ abstract class NotebookDaoExtension {
 */
 
     @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
+    abstract fun getAllNotebooksOrderedByLastModifiedPagingSource(): PagingSource<Int, Notebook>
+
+    @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
     abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): Flow<List<Notebook>>
 
     @Query("DELETE FROM notebook WHERE id IN (:ids)")

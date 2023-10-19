@@ -30,7 +30,7 @@ fun NewNotebookDialog(showDialog: Boolean,
             title = {
                 Text(
                     text = stringResource(id = R.string.dialog_title_new_notebook),
-                    style = MaterialTheme.typography.titleSmall.copy(
+                    style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
                 )
@@ -43,14 +43,21 @@ fun NewNotebookDialog(showDialog: Boolean,
                         notebookName = it
                     },
                     placeholder = {
-                        Text(text = stringResource(id = R.string.hint_new_notebook),
-                            style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            text = stringResource(id = R.string.hint_new_notebook),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     },
                     colors = TextFieldDefaults.colors(
-                        focusedPlaceholderColor = Color.Transparent,
-                        unfocusedPlaceholderColor = Color.Transparent,
+                        focusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                        unfocusedPlaceholderColor = MaterialTheme.colorScheme.onPrimary,
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
                     ),
-                    textStyle = MaterialTheme.typography.bodySmall,
+                    textStyle = MaterialTheme.typography.bodyMedium,
                 )
             },
             dismissButton = {
@@ -83,10 +90,17 @@ fun DeletionConfirmDialog(showDialog: Boolean,
             },
 
             title = {
-                Text(text = stringResource(id = R.string.label_delete))
+                Text(
+                    text = stringResource(id = R.string.label_delete),
+                    style = MaterialTheme.typography.titleLarge
+                )
             },
             text = {
-                Text(text = stringResource(id = R.string.prompt_deletion))
+                Text(
+                    text = stringResource(id = R.string.prompt_deletion),
+                    style = MaterialTheme.typography.bodyMedium
+
+                )
 
             },
             dismissButton = {

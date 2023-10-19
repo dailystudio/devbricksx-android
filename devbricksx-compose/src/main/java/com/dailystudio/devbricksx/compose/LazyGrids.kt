@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.compose
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
@@ -93,6 +94,7 @@ fun <T : Any> BaseSelectablePagingGridScreen(
         itemContent)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseLazyPagingGrid(
     modifier: Modifier = Modifier,
@@ -115,7 +117,12 @@ fun <T: Any> BaseLazyPagingGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
@@ -126,7 +133,12 @@ fun <T: Any> BaseLazyPagingGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
@@ -134,6 +146,7 @@ fun <T: Any> BaseLazyPagingGrid(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseSelectableLazyPagingGrid(
     modifier: Modifier = Modifier,
@@ -169,6 +182,7 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -193,6 +207,7 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -212,6 +227,7 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseLazyGrid(
     modifier: Modifier = Modifier,
@@ -234,7 +250,12 @@ fun <T: Any> BaseLazyGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
@@ -245,13 +266,19 @@ fun <T: Any> BaseLazyGrid(
                 state = gridState
             ) {
                 items(listOfItems, key, span, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseSelectableLazyGrid(
     modifier: Modifier = Modifier,
@@ -287,6 +314,7 @@ fun <T: Any> BaseSelectableLazyGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -311,6 +339,7 @@ fun <T: Any> BaseSelectableLazyGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,

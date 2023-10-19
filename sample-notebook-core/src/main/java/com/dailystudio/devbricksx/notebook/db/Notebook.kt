@@ -15,7 +15,7 @@ import java.util.*
         database = "notes",
 )
 @ViewModel(group = "notebook")
-open class Notebook(id: Int = 0) : SelectableRecord(id) {
+data class Notebook(override val id: Int = 0) : SelectableRecord(id) {
 
     companion object {
 

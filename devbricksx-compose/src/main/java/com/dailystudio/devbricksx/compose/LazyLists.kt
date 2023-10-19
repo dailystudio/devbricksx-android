@@ -1,5 +1,7 @@
 package com.dailystudio.devbricksx.compose
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
@@ -10,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.paging.compose.LazyPagingItems
 
 @Composable
@@ -82,6 +85,7 @@ fun <T : Any> BaseSelectablePagingListScreen(
         itemContent)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseLazyPagingList(
     modifier: Modifier = Modifier,
@@ -101,7 +105,12 @@ fun <T: Any> BaseLazyPagingList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
@@ -111,13 +120,19 @@ fun <T: Any> BaseLazyPagingList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseSelectableLazyPagingList(
     modifier: Modifier = Modifier,
@@ -150,6 +165,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -173,6 +189,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -192,6 +209,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseLazyList(
     modifier: Modifier = Modifier,
@@ -212,7 +230,12 @@ fun <T: Any> BaseLazyList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
@@ -222,13 +245,19 @@ fun <T: Any> BaseLazyList(
                 state = listState
             ) {
                 items(listOfItems, key, contentType) { item ->
-                    LazyItem(item, onItemClicked, onItemLongClicked, itemContent)
+                    LazyItem(
+                        item,
+                        modifier.animateItemPlacement(),
+                        onItemClicked,
+                        onItemLongClicked,
+                        itemContent)
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T: Any> BaseSelectableLazyList(
     modifier: Modifier = Modifier,
@@ -262,6 +291,7 @@ fun <T: Any> BaseSelectableLazyList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -285,6 +315,7 @@ fun <T: Any> BaseSelectableLazyList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
+                        Modifier.animateItemPlacement(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -302,7 +333,6 @@ fun <T: Any> BaseSelectableLazyList(
         }
     }
 }
-
 
 fun <T : Any> LazyListScope.items(
     items: LazyPagingItems<T>,

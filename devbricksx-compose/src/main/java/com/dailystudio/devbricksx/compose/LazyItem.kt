@@ -3,7 +3,6 @@ package com.dailystudio.devbricksx.compose
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -139,6 +138,7 @@ fun <T> wrapOnItemLongClicked(
 @Composable
 fun <T> SelectableLazyItem(
     item: T?,
+    modifier: Modifier,
     selectable: Boolean = false,
     selectKey: ((item: T) -> Any),
     selectedItems: Set<Any>,
@@ -153,6 +153,7 @@ fun <T> SelectableLazyItem(
 
     SelectableLazyItem(
         item = item,
+        modifier,
         selectable = selectable,
         selected,
         onItemSelected = onItemSelected,
@@ -163,6 +164,7 @@ fun <T> SelectableLazyItem(
 
 @Composable
 fun <T> SelectableLazyItem(item: T?,
+                           modifier: Modifier,
                            selectable: Boolean = false,
                            selected: Boolean = false,
                            onItemSelected: ItemClickAction<T>? = null,
@@ -170,7 +172,9 @@ fun <T> SelectableLazyItem(item: T?,
                            onItemLongClicked: ItemClickAction<T>? = null,
                            itemContent: SelectableItemContentComposable<T>,
 ) {
-    ClickableLazyItem(item = item,
+    ClickableLazyItem(
+        item = item,
+        modifier,
         clickable = hasItemClickAction(arrayOf(onItemClicked, onItemLongClicked, onItemSelected)),
         onClick = {
             if (selectable) {
@@ -197,11 +201,14 @@ fun <T> SelectableLazyItem(item: T?,
 
 @Composable
 fun <T> LazyItem (item: T?,
+                  modifier: Modifier,
                   onItemClicked: ItemClickAction<T>? = null,
                   onItemLongClicked: ItemClickAction<T>? = null,
                   itemContent: ItemContentComposable<T>,
 ) {
-    ClickableLazyItem(item = item,
+    ClickableLazyItem(
+        item = item,
+        modifier,
         clickable = hasItemClickAction(arrayOf(onItemClicked, onItemLongClicked)),
         onClick = {
             if (onItemClicked != null && item != null) {
@@ -221,6 +228,7 @@ fun <T> LazyItem (item: T?,
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun <T> ClickableLazyItem(item: T?,
+                                   modifier: Modifier,
                                    clickable: Boolean = false,
                                    onClick: () -> Unit,
                                    onLongClick: () -> Unit,
@@ -230,7 +238,7 @@ internal fun <T> ClickableLazyItem(item: T?,
         val interactionSource = MutableInteractionSource()
 
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .combinedClickable (
                     interactionSource = interactionSource,
                     indication = null,

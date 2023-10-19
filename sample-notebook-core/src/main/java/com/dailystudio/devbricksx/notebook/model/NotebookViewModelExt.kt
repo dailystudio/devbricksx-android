@@ -28,7 +28,7 @@ class NotebookViewModelExt(application: Application): NotebookViewModel(applicat
         Pager(
             PagingConfig(20)
         ) {
-            allNotebooksPagingSource
+            notebookRepository.getAllNotebooksOrderedByLastModifiedPagingSource()
         }.flow.flowOn(Dispatchers.IO)
 
 

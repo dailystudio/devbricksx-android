@@ -9,7 +9,7 @@ import java.util.*
 @RoomCompanion(primaryKeys = ["id"],
         autoGenerate = true,
         converters = [DateConverter::class])
-open class Record(val id: Int = 0) {
+open class Record(open val id: Int = 0) {
     var created: Date? = null
     var lastModified: Date? = null
 
