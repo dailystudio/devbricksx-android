@@ -27,6 +27,7 @@ open class Record(open val id: Int = 0) {
 open class SelectableRecord(id: Int = 0) : Record(id), SelectableListItem {
 
     @IgnoreField
+    @Ignore
     var selected: Boolean = false
 
     override fun isItemSelected(): Boolean {
@@ -57,6 +58,7 @@ open class StringIdRecord(open val id: String) {
 )
 open class SelectableStringIdRecord(id: String) : StringIdRecord(id), SelectableListItem {
 
+    @IgnoreField
     @Ignore
     var selected: Boolean = false
 

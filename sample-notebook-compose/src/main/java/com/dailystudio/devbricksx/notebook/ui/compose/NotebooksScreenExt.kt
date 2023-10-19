@@ -18,7 +18,7 @@ fun NotebooksScreenExt(
     NotebooksScreen(
         modifier,
         dataSource = {
-           viewModel<NotebookViewModelExt>().notebooks.collectAsLazyPagingItems()
+           viewModel<NotebookViewModelExt>().allNotebooksCounted.collectAsLazyPagingItems()
         },
         key = { it?.id ?: -1 },
         selectable = selectable,

@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.notebook.db
 
 import androidx.room.ForeignKey
 import androidx.room.Ignore
+import com.dailystudio.devbricksx.annotations.data.IgnoreField
 import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.database.DateConverter
@@ -15,7 +16,7 @@ import java.util.*
         database = "notes",
 )
 @ViewModel(group = "notebook")
-data class Notebook(override val id: Int = 0) : SelectableRecord(id) {
+open class Notebook(id: Int = 0) : SelectableRecord(id) {
 
     companion object {
 
@@ -32,13 +33,16 @@ data class Notebook(override val id: Int = 0) : SelectableRecord(id) {
     }
 
     var name: String? = null
-    @Ignore var notesCount: Int = 0
 
     override fun toString(): String {
         return buildString {
             append("Notebook [$id]: $name")
         }
     }
+}
+
+class NotebookInfo(override val id: Int): Notebook(id) {
+    var notesCount: Int = 0
 }
 
 @RoomCompanion(primaryKeys = ["id"],

@@ -5,12 +5,14 @@ import android.view.*
 import android.widget.EditText
 import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
+import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -19,7 +21,7 @@ import kotlinx.coroutines.withContext
 
 class NotebooksFragmentExt : NotebooksListFragment() {
 
-    private lateinit var notebookViewModel: NotebookViewModel
+    private lateinit var notebookViewModel: NotebookViewModelExt
 
     private var nbNameView: EditText? = null
 
@@ -33,26 +35,10 @@ class NotebooksFragmentExt : NotebooksListFragment() {
         nbNameView?.requestFocus()
     }
 
-    override fun getDataSource(): Flow<List<Notebook>> {
-        notebookViewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
+    override fun getDataSource(): Flow<PagingData<Notebook>> {
+        notebookViewModel = ViewModelProvider(this)[NotebookViewModelExt::class.java]
 
-        val flowOfNotebooks = notebookViewModel.getAllNotebooksOrderedByLastModifiedLivePaged()
-
-        return flowOfNotebooks.mapLatest { notebooks ->
-            val wrapper = mutableListOf<Notebook>()
-
-            for (notebook in notebooks) {
-                val noteViewModel =
-                        ViewModelProvider(this@NotebooksFragmentExt).get(NotebookViewModel::class.java)
-
-                notebook.notesCount = noteViewModel.countNotes(notebook.id)
-                Logger.debug("nc: ${notebook.notesCount} of $notebook")
-
-                wrapper.add(notebook)
-            }
-
-            wrapper
-        }.flowOn(Dispatchers.IO)
+        return notebookViewModel.allNotebooksCounted
     }
 
     override fun onResume() {

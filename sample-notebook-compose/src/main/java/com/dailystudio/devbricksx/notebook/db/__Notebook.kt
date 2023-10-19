@@ -26,7 +26,6 @@ import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.core.R
 
-
 @ItemContent(Notebook::class)
 @Composable
 fun NotebookContent(
@@ -64,17 +63,20 @@ fun NotebookContent(
                     .size(44.dp)
             )
 
-            Text(
-                text = notebook?.notesCount.toString(),
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
-                    .constrainAs(count) {
-                        end.linkTo(parent.end, margin = 10.dp)
-                        width = Dimension.fillToConstraints
-                        centerVerticallyTo(parent)
-                    }
-            )
+            val counts = (notebook as? NotebookInfo)?.notesCount ?: 0
+            if (counts > 0) {
+                Text(
+                    text = counts.toString(),
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier
+                        .constrainAs(count) {
+                            end.linkTo(parent.end, margin = 10.dp)
+                            width = Dimension.fillToConstraints
+                            centerVerticallyTo(parent)
+                        }
+                )
+            }
 
             Text(
                 text = notebook?.name ?: "",
@@ -115,10 +117,9 @@ fun NotebookContent(
 
 }
 
-
 @ListScreen(paged = true,
     dataSource = DataSource.Flow,
-    gridLayout = false,
+    gridLayout = true,
     columns = 2,
     selectable = true)
 class __Notebook

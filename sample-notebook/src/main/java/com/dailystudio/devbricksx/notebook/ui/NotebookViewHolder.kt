@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Notebook
+import com.dailystudio.devbricksx.notebook.db.NotebookInfo
 import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import com.dailystudio.devbricksx.utils.ResourcesCompatUtils
 
@@ -24,10 +25,16 @@ class NotebookViewHolder(itemView: View) : AbsSingleLineViewHolder<Notebook>(ite
         selectedHandlerStart?.visibility = handlerVisibility
 
         val notesCountView: TextView? = itemView.findViewById(R.id.notes_count)
-        notesCountView?.text = if (item.notesCount == 0) {
+        val count = if (item is NotebookInfo) {
+            item.notesCount
+        } else {
+            0
+        }
+
+        notesCountView?.text = if (count == 0) {
             null
         } else {
-            item.notesCount.toString()
+            count.toString()
         }
     }
 

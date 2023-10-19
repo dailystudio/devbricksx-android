@@ -203,7 +203,7 @@ fun PhotosScreen(
             Column (
                 modifier = Modifier.padding(padding)
             ) {
-                PhotoItemsScreenExt(onItemClick = onItemClick)
+                PhotoItemsScreenExt(onItemClicked = onItemClick)
 
                 AppAbout(showDialog = showAboutDialog) {
                     showAboutDialog = false

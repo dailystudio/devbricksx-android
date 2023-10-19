@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
-import com.dailystudio.devbricksx.notebook.ui.compose.NotebooksScreen
 
 @Composable
 fun Home() {

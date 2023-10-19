@@ -9,7 +9,8 @@ import com.dailystudio.devbricksx.notebook.ui.NoteViewHolder
 import com.dailystudio.devbricksx.notebook.ui.NotebookViewHolder
 
 
-@Adapter(viewType = ViewType.Customized,
+@Adapter(paged = true,
+        viewType = ViewType.Customized,
         layoutByName = "layout_notebook",
         viewHolder = NotebookViewHolder::class)
 @ListFragment(layoutByName = "fragment_recycler_view_with_new_button",

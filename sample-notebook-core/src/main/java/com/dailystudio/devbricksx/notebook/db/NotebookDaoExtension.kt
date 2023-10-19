@@ -15,8 +15,8 @@ abstract class NotebookDaoExtension {
     abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): LiveData<PagedList<Notebook>>
 */
 
-    @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
-    abstract fun getAllNotebooksOrderedByLastModifiedPagingSource(): PagingSource<Int, Notebook>
+    @Query("SELECT notebook.id, notebook.name, notebook.created, notebook.last_modified, count(note.id) as notesCount FROM notebook LEFT OUTER JOIN note ON note.notebook_id = notebook.id GROUP BY notebook.id ORDER BY notebook.last_modified DESC")
+    abstract fun getAllNotebooksOrderedByLastModifiedPagingSource(): PagingSource<Int, NotebookInfo>
 
     @Query("SELECT * FROM notebook ORDER BY last_modified DESC")
     abstract fun getAllNotebooksOrderedByLastModifiedLivePaged(): Flow<List<Notebook>>

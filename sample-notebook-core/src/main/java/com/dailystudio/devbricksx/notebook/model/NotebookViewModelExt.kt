@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.db.Note
@@ -24,13 +24,12 @@ import kotlinx.coroutines.launch
 
 class NotebookViewModelExt(application: Application): NotebookViewModel(application) {
 
-    val notebooks: Flow<PagingData<Notebook>> =
+    val allNotebooksCounted: Flow<PagingData<Notebook>> =
         Pager(
             PagingConfig(20)
         ) {
-            notebookRepository.getAllNotebooksOrderedByLastModifiedPagingSource()
+            notebookRepository.getAllNotebooksOrderedByLastModifiedPagingSource() as PagingSource<Int, Notebook>
         }.flow.flowOn(Dispatchers.IO)
-
 
     private val _currentNoteId = MutableStateFlow<Int>(-1)
     private val _currentNotebookId = MutableStateFlow<Int>(-1)
