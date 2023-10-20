@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.dailystudio.devbricksx.compose.app.BackPressHandler
 import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
@@ -94,6 +95,10 @@ fun <T, I> BaseNoteItemsPage(
         },
         content = { padding ->
             Logger.debug("padding: $padding")
+            BackPressHandler(inSelectionMode) {
+                endSelection()
+            }
+
             Column (
                 modifier = Modifier.padding(padding)
             ) {
