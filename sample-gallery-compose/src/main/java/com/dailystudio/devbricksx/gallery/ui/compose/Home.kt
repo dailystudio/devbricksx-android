@@ -9,6 +9,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dailystudio.devbricksx.compose.animation.leftInTransition
+import com.dailystudio.devbricksx.compose.animation.leftOutTransition
+import com.dailystudio.devbricksx.compose.animation.rightInTransition
+import com.dailystudio.devbricksx.compose.animation.rightOutTransition
 import com.dailystudio.devbricksx.compose.utils.activityViewModel
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.gallery.core.R
@@ -45,30 +49,9 @@ fun Home() {
     NavHost(navController = navController,
         startDestination = "photos") {
         composable("photos",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },) {
+            enterTransition = { leftInTransition() },
+            exitTransition = { leftOutTransition() },
+        ) {
 
             systemUiController.setStatusBarColor(
                 Color(ResourcesCompatUtils.getColor(context, R.color.primaryColor))
@@ -81,30 +64,8 @@ fun Home() {
             }
         }
         composable("photos/{photoId}",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(timeOfAnim)
-                )
-            },
+            enterTransition = { rightInTransition() },
+            exitTransition = { rightOutTransition() },
         ) {
             LaunchedEffect(true) {
                 delay(timeOfAnim / 2L)

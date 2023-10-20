@@ -3,7 +3,13 @@ package com.dailystudio.devbricksx.notebook.ui.compose
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
+import com.dailystudio.devbricksx.compose.animation.leftInTransition
+import com.dailystudio.devbricksx.compose.animation.leftOutTransition
+import com.dailystudio.devbricksx.compose.animation.rightInTransition
+import com.dailystudio.devbricksx.compose.animation.rightOutTransition
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 
@@ -30,8 +36,33 @@ fun Home() {
 
     NavHost(navController = navController,
         startDestination = "notebooks") {
-        composable("notebooks") {
-            NotebooksPage()
+        composable("notebooks",
+            enterTransition = { leftInTransition() },
+            exitTransition = { leftOutTransition() },
+        ) {
+            NotebooksPage(
+                onOpenNotebook = {
+                    notebookViewModel.openNotebook(it.id)
+                    navController.navigate("notes/${it.id}?notebookName=${it.name}")
+            })
+        }
+        composable("notes/{notebookId}?notebookName={notebookName}",
+            enterTransition = { rightInTransition() },
+            exitTransition = { rightOutTransition() },
+            arguments = listOf(
+                navArgument("notebookId") {
+                    type = NavType.IntType
+                },
+                navArgument("notebookName") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val notebookId = backStackEntry.arguments?.getInt("notebookId")
+            val notebookName = backStackEntry.arguments?.getString("notebookName")
+            if (notebookId != null && notebookName != null) {
+                NotesPage(notebookId, notebookName)
+            }
         }
     }
 }

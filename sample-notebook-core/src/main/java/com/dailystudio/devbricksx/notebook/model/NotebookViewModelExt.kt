@@ -10,6 +10,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.db.Notebook
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 class NotebookViewModelExt(application: Application): NotebookViewModel(application) {
@@ -48,11 +50,18 @@ class NotebookViewModelExt(application: Application): NotebookViewModel(applicat
 
     val notesInOpenedNotebook: Flow<PagingData<Note>> =
         _currentNotebookId.flatMapLatest { notebookId ->
+            Logger.debug("[Note Data}: notebookId = $notebookId")
             Pager (
                 PagingConfig(20),
             ) {
                 getAllNotesOrderedByLastModifiedLivePaged(notebookId)
-            }.flow.flowOn(Dispatchers.IO).cachedIn(viewModelScope)
+            }.flow.mapLatest {
+                it.map {
+                    it.also {
+                        Logger.debug("[Note Data]: note = $it")
+                    }
+                }
+            }.flowOn(Dispatchers.IO).cachedIn(viewModelScope)
         }.flowOn(Dispatchers.IO)
 
 

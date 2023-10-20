@@ -45,7 +45,7 @@ fun <T: Any> BaseSelectableGridScreen(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T?) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
@@ -84,7 +84,7 @@ fun <T : Any> BaseSelectablePagingGridScreen(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T?) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
@@ -159,7 +159,7 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
@@ -291,7 +291,7 @@ fun <T: Any> BaseSelectableLazyGrid(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {

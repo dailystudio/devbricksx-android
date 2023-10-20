@@ -281,8 +281,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
         val funcTypeOfSelectKey = LambdaTypeName.get(
             parameters = listOf(
-                ParameterSpec.builder("item",
-                    typeOfObject.copy(nullable = true)).build()
+                ParameterSpec.builder("item", typeOfObject).build()
             ),
             returnType = ANY
         )
@@ -290,7 +289,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         val selectKeyParam = ParameterSpec.builder(
             name = "selectKey",
             funcTypeOfSelectKey
-        )
+        ).defaultValue( "{ it }")
 
         composableBuilder.addParameter(selectKeyParam.build())
 

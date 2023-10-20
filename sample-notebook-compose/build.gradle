@@ -52,7 +52,7 @@ android {
 
 devKit {
     compileType = "Project"
-    devKitComps = [ "Compose"]
+    devKitComps = [ "Compose" ]
 }
 
 dependencies {

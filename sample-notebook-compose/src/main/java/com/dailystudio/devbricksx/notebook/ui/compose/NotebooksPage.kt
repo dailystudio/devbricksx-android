@@ -1,30 +1,11 @@
 package com.dailystudio.devbricksx.notebook.ui.compose
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,193 +13,67 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.dailystudio.devbricksx.compose.BaseSelectablePagingListScreen
-import com.dailystudio.devbricksx.compose.ItemClickAction
 import com.dailystudio.devbricksx.compose.app.OptionMenuItem
 import com.dailystudio.devbricksx.compose.app.OptionMenus
 import com.dailystudio.devbricksx.compose.utils.activityViewModel
-import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.core.R
 import com.dailystudio.devbricksx.notebook.db.Notebook
-import com.dailystudio.devbricksx.notebook.db.NotebookContent
-import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
-import com.dailystudio.devbricksx.notebook.theme.notebookTopAppBarColors
-import com.dailystudio.devbricksx.notebook.theme.shapes
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlin.math.roundToInt
 
 const val MENU_ITEM_ID_ABOUT = 0x1
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotebooksPage(
-    onItemClick: (item: Notebook) -> Unit = {}
+    onOpenNotebook: (item: Notebook) -> Unit = {}
 ) {
-    val notebookViewModel = viewModel<NotebookViewModelExt>()
+    val notebookViewModel = activityViewModel<NotebookViewModelExt>()
 
-    var showMenu by remember { mutableStateOf(false) }
+    var showNewNotebookDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
-    var showNewNoteDialog by remember { mutableStateOf(false) }
-    var showDeletionConfirmDialog by remember { mutableStateOf(false) }
 
-    var inSelectionMode by remember { mutableStateOf(false) }
-
-    var fabVisible by remember { mutableStateOf(false) }
-
-    val selectedIds = remember { mutableStateMapOf<Int, Boolean>() }
-
-    val beginSelection = {
-        inSelectionMode = true
-        fabVisible = false
-    }
-
-    val endSelection = {
-        inSelectionMode = false
-        fabVisible = true
-
-        selectedIds.clear()
-    }
-
-    LaunchedEffect(key1 = true) {
-        fabVisible = true
-    }
-
-    Scaffold(
-        topBar = {
-            if (inSelectionMode) {
-                TopAppBar(
-                    colors = notebookTopAppBarColors(),
-                    title = {
-                        Text(text = stringResource(
-                            R.string.prompt_selection,
-                            selectedIds.size
-                        ))
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            endSelection()
-                        }) {
-                            Icon(Icons.Default.Clear, "Back")
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            showDeletionConfirmDialog = true
-                        }) {
-                            Icon(Icons.Default.Delete, "Delete")
-                        }
-
-                    }
-                )
-            } else {
-                TopAppBar(
-                    title = {
-                        Text(text = stringResource(id = R.string.app_name))
-                    },
-                    colors = notebookTopAppBarColors(),
-                    actions = {
-                        IconButton(onClick = {
-                            showMenu = true
-                        }) {
-                            Icon(Icons.Default.MoreVert, "More actions")
-                        }
-
-                        NotebooksMenus(
-                            showMenu = showMenu,
-                            onMenuDismissed = { showMenu = false }) {
-                            when (it) {
-                                MENU_ITEM_ID_ABOUT -> showAboutDialog = true
-                            }
-                        }
-
-                    }
-                )
-            }
-        },
-        floatingActionButton = {
-            AnimatedVisibility(fabVisible,
-                enter = slideInHorizontally(initialOffsetX = {it}),
-                exit = slideOutHorizontally(targetOffsetX = { (it * 1.2).roundToInt()})
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier.padding(8.dp),
-                    shape = CircleShape,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    onClick = {
-//                        onNewNote()
-                        showNewNoteDialog = true
-                    }
-                ) {
-                    Icon(Icons.Filled.Create, contentDescription = null)
+    BaseNoteItemsPage<Notebook, Int>(
+        itemId = { it.id },
+        actionBar = {
+            NotebooksTopBar() {
+                when (it) {
+                    MENU_ITEM_ID_ABOUT -> showAboutDialog = true
                 }
             }
         },
-        content = { padding ->
-            Logger.debug("padding: $padding")
-            Column (
-                modifier = Modifier.padding(padding)
-            ) {
-                NotebooksScreenExt(
-                    modifier = Modifier,
-                    selectable = inSelectionMode,
-                    onSelectionStarted = {
-                        beginSelection()
-                        selectedIds[it.id] = true
-                    },
-                    onOpenNotebook = {
-
-                    },
-                    onSelectNotebook = {
-                        Logger.debug("on selected: $it")
-                        val selected =
-                            selectedIds.containsKey(it.id)
-                        if (selected) {
-                            selectedIds.remove(it.id)
-                        } else {
-                            selectedIds[it.id] = true
-                        }
-
-                        Logger.debug("after selected: $selectedIds")
-                    },
-                )
-
-                AppAbout(showDialog = showAboutDialog) {
-                    showAboutDialog = false
-                }
-
-                NewNotebookDialog(
-                    showDialog = showNewNoteDialog,
-                    onCancel = { showNewNoteDialog = false},
-                    onNewNotebook = {
-                        showNewNoteDialog = false
-
-                        val newNotebook = Notebook.createNoteBook(it)
-
-                        notebookViewModel.insertNotebook(newNotebook)
-                    }
-                )
-
-
-                DeletionConfirmDialog(
-                    showDialog = showDeletionConfirmDialog,
-                    onCancel = { showDeletionConfirmDialog = false }) {
-                    showDeletionConfirmDialog = false
-
-                    notebookViewModel.deleteNotebooks(selectedIds.keys.toSet())
-
-                    endSelection()
-                }
+        fabContent = {
+            Icon(Icons.Filled.Add, contentDescription = null)
+        },
+        onFabClicked = {
+            showNewNotebookDialog = true
+        },
+        onItemsAction = { itemIds, action ->
+            when(action) {
+                ACTION_DELETE -> notebookViewModel.deleteNotebooks(itemIds)
             }
         }
-    )
+    ) { modifier, selectable, onSelectionStarted, onSelectionEnded, onSelectItem ->
+        NotebooksScreenExt(
+            modifier = modifier,
+            selectable = selectable,
+            onSelectionStarted = onSelectionStarted,
+            onOpenNotebook = {
+                onOpenNotebook(it)
+            },
+            onSelectNotebook = onSelectItem,
+        )
+
+        NewNotebookDialog(
+            showDialog = showNewNotebookDialog,
+            onCancel = { showNewNotebookDialog = false},
+            onNewNotebook = {
+                showNewNotebookDialog = false
+
+                val newNotebook = Notebook.createNoteBook(it)
+
+                notebookViewModel.insertNotebook(newNotebook)
+            }
+        )
+    }
 }
 
 

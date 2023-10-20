@@ -40,7 +40,7 @@ fun <T : Any> BaseSelectableListScreen(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
@@ -75,7 +75,7 @@ fun <T : Any> BaseSelectablePagingListScreen(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
@@ -143,7 +143,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
@@ -167,7 +167,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
                         item = item,
                         Modifier.animateItemPlacement(),
                         selectable = selectable,
-                        selectKey,
+                        selectKey = selectKey,
                         selectedItems.keys,
                         onItemSelected = {
                             wrapOnItemSelected(item, selectKey, selectedItems, onItemSelected)
@@ -268,7 +268,7 @@ fun <T: Any> BaseSelectableLazyList(
     onItemClicked: ItemClickAction<T>? = null,
     onItemLongClicked: ItemClickAction<T>? = null,
     selectable: Boolean = false,
-    selectKey: ((item: T) -> Any),
+    selectKey: (item: T) -> Any = { it },
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {

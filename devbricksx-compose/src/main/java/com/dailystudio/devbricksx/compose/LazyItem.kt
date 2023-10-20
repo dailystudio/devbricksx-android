@@ -100,7 +100,7 @@ fun <T> wrapOnItemSelected(
     onItemSelected: ItemClickAction<T>? = null
 ) {
     item?.let {
-        val sKey = selectKey(it)
+        val sKey = selectKey(item)
 
         val selected = selectedItems.containsKey(sKey)
         if (selected) {
@@ -110,7 +110,7 @@ fun <T> wrapOnItemSelected(
         }
 
         if (onItemSelected != null) {
-            onItemSelected(it)
+            onItemSelected(item)
         }
     }
 }
@@ -122,7 +122,7 @@ fun <T> wrapOnItemLongClicked(
     onItemLongClicked: ItemClickAction<T>? = null
 ) {
     item?.let {
-        val sKey = selectKey(it)
+        val sKey = selectKey(item)
 
         val selected = selectedItems.containsKey(sKey)
         if (!selected) {
@@ -130,7 +130,7 @@ fun <T> wrapOnItemLongClicked(
         }
 
         if (onItemLongClicked != null) {
-            onItemLongClicked(it)
+            onItemLongClicked(item)
         }
     }
 }

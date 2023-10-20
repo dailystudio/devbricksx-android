@@ -3,20 +3,32 @@ package com.dailystudio.devbricksx.notebook.db
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -121,9 +133,96 @@ fun NotebookContent(
     dataSource = DataSource.Flow,
     gridLayout = true,
     columns = 2,
-    selectable = true)
+    selectable = true
+)
 class __Notebook
 
-@ListScreen(paged = true, dataSource = DataSource.Flow, gridLayout = true, columns = 2)
+
+@ItemContent(Note::class)
+@Composable
+fun NoteContent(
+    note: Note?,
+    modifier: Modifier = Modifier,
+    selectable: Boolean = false,
+    selected: Boolean,
+) {
+    Card(
+        modifier = modifier
+            .padding(all = 8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        ConstraintLayout(modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp)
+        ) {
+            val (content, indicator) = createRefs()
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(content) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = note?.title ?: "",
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        textAlign = TextAlign.Left,
+                        fontWeight = FontWeight.Bold
+                    ),
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = note?.desc ?: "Empty",
+                    overflow = TextOverflow.Clip,
+                    maxLines = 6,
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        textAlign = TextAlign.Left
+                    ),
+                )
+            }
+
+
+            if (selected) {
+                val indicatorColor = MaterialTheme.colorScheme.primary
+                Canvas(
+                    modifier = Modifier
+                        .constrainAs(indicator) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+
+                            height = Dimension.fillToConstraints
+                        }
+                        .width(8.dp)
+
+                ) {
+                    drawRect(indicatorColor, size = size)
+                }
+            }
+        }
+
+    }
+
+}
+
+
+@ListScreen(
+    paged = true,
+    dataSource = DataSource.Flow,
+    gridLayout = true,
+    columns = 2,
+    selectable = true
+)
 class __Note
 
