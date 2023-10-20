@@ -131,6 +131,8 @@ fun NoteEdit(title: String?,
                 cursorColor = MaterialTheme.colorScheme.primary,
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
             ),
             textStyle = MaterialTheme.typography.bodyMedium,
             modifier = Modifier

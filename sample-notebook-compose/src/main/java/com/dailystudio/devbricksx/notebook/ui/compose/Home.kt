@@ -50,7 +50,9 @@ fun Home() {
         }
         composable("notes/{notebookId}?notebookName={notebookName}",
             enterTransition = { rightInTransition() },
-            exitTransition = { rightOutTransition() },
+            exitTransition = { leftOutTransition() },
+            popEnterTransition = { leftInTransition() },
+            popExitTransition = { rightOutTransition() },
             arguments = listOf(
                 navArgument("notebookId") {
                     type = NavType.IntType
@@ -77,6 +79,8 @@ fun Home() {
             }
         }
         composable("note/{noteId}",
+            enterTransition = { rightInTransition() },
+            exitTransition = { rightOutTransition() },
             arguments = listOf(
                 navArgument("noteId") {
                     type = NavType.IntType
@@ -93,6 +97,8 @@ fun Home() {
             }
         }
         composable("note/new/{notebookId}",
+            enterTransition = { rightInTransition() },
+            exitTransition = { rightOutTransition() },
             arguments = listOf(
                 navArgument("notebookId") {
                     type = NavType.IntType
