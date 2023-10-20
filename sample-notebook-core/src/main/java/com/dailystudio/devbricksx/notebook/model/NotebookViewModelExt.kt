@@ -33,19 +33,17 @@ class NotebookViewModelExt(application: Application): NotebookViewModel(applicat
             notebookRepository.getAllNotebooksOrderedByLastModifiedPagingSource() as PagingSource<Int, Notebook>
         }.flow.flowOn(Dispatchers.IO)
 
-    private val _currentNoteId = MutableStateFlow<Int>(-1)
-    private val _currentNotebookId = MutableStateFlow<Int>(-1)
+    private val _currentNoteId = MutableStateFlow(-1)
+    private val _currentNotebookId = MutableStateFlow(-1)
 
-    val currentNote: LiveData<Note?> =
+    val currentNote: LiveData<Note> =
         _currentNoteId.flatMapLatest { noteId ->
-            Logger.debug("[DC] retrieve note: ${noteId}")
+            Logger.debug("[DC] retrieve note: $noteId")
 
-            noteId?.let {
-                noteRepository.getNoteFlow(noteId)
-            } ?: flow {
-                emit(null)
+            noteRepository.getNoteFlow(noteId).mapLatest {
+                it ?: Note.createNote()
             }
-        }.flowOn(Dispatchers.IO).asLiveData() ?: MutableLiveData(null)
+        }.flowOn(Dispatchers.IO).asLiveData()
 
 
     val notesInOpenedNotebook: Flow<PagingData<Note>> =

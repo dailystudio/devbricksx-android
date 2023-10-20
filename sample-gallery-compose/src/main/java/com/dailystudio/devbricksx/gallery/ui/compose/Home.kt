@@ -1,7 +1,5 @@
 package com.dailystudio.devbricksx.gallery.ui.compose
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
@@ -34,18 +32,6 @@ fun Home() {
     val viewModel = activityViewModel<PhotoItemViewModelExt>()
     val photo by viewModel.currentPhoto.observeAsState()
 
-/*
-    navController.addOnDestinationChangedListener { _, destination, arguments ->
-        Logger.debug("[DC] destination: $destination ")
-
-        destination.route.let {
-            Logger.debug("[DC] navi change: $it ")
-            if (it.equals("photos")) {
-                viewModel.closePhoto()
-            }
-        }
-    }
-*/
     NavHost(navController = navController,
         startDestination = "photos") {
         composable("photos",

@@ -74,6 +74,17 @@ class Note(id: Int = 0) : SelectableRecord(id) {
             }
         }
 
+
+        fun copyNote(note: Note): Note {
+            return Note(note.id).apply {
+                notebook_id = note.notebook_id
+                title = note.title
+                desc = note.desc
+                created = note.created
+                lastModified = note.lastModified
+            }
+        }
+
     }
 
     var notebook_id: Int = -1

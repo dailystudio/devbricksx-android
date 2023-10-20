@@ -73,6 +73,10 @@ fun NotebooksPage(
                 notebookViewModel.insertNotebook(newNotebook)
             }
         )
+
+        AppAbout(showDialog = showAboutDialog) {
+            showAboutDialog = false
+        }
     }
 }
 

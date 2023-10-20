@@ -10,13 +10,15 @@ import com.dailystudio.devbricksx.compose.animation.leftInTransition
 import com.dailystudio.devbricksx.compose.animation.leftOutTransition
 import com.dailystudio.devbricksx.compose.animation.rightInTransition
 import com.dailystudio.devbricksx.compose.animation.rightOutTransition
+import com.dailystudio.devbricksx.compose.utils.activityViewModel
+import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 
 @Composable
 fun Home() {
     val navController = rememberNavController()
-    val notebookViewModel = viewModel<NotebookViewModelExt>()
+    val notebookViewModel = activityViewModel<NotebookViewModelExt>()
 
     val notebooks by notebookViewModel.allNotebooksFlow.collectAsState(initial = null)
     val notes by notebookViewModel.notesInOpenedNotebook.collectAsState(initial = null)
@@ -61,7 +63,50 @@ fun Home() {
             val notebookId = backStackEntry.arguments?.getInt("notebookId")
             val notebookName = backStackEntry.arguments?.getString("notebookName")
             if (notebookId != null && notebookName != null) {
-                NotesPage(notebookId, notebookName)
+                NotesPage(
+                    notebookId,
+                    notebookName,
+                    onNewNote = {
+                        navController.navigate("note/new/${notebookId}")
+                    },
+                    onEditNote = {
+                        notebookViewModel.openNote(it.id)
+                        navController.navigate("note/${it.id}")
+                    },
+                )
+            }
+        }
+        composable("note/{noteId}",
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getInt("noteId") ?: -1
+
+            NoteEditPage(note) {
+                Logger.debug("update note: $it")
+                notebookViewModel.updateNote(it)
+
+                navController.popBackStack()
+            }
+        }
+        composable("note/new/{notebookId}",
+            arguments = listOf(
+                navArgument("notebookId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val notebookId = requireNotNull(backStackEntry.arguments?.getInt("notebookId"))
+
+            val newNote = Note.createNote(notebookId)
+
+            NoteEditPage(newNote) {
+                notebookViewModel.insertNote(it)
+
+                navController.popBackStack()
             }
         }
     }

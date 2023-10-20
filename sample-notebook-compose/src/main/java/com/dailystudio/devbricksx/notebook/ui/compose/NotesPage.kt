@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.notebook.ui.compose
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,7 +17,8 @@ import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
 fun NotesPage(
     notebookId: Int,
     notebookName: String,
-    onOpenNote: (item: Note) -> Unit = {}
+    onNewNote: () -> Unit = {},
+    onEditNote: (item: Note) -> Unit = {}
 ) {
     val notebookViewModel = activityViewModel<NotebookViewModelExt>()
 
@@ -28,10 +30,10 @@ fun NotesPage(
             NotesTopAppbar(notebookName)
         },
         fabContent = {
-            Icon(Icons.Filled.Add, contentDescription = null)
+            Icon(Icons.Filled.Create, contentDescription = null)
         },
         onFabClicked = {
-            showNewNoteDialog = true
+            onNewNote()
         },
         onItemsAction = { itemIds, action ->
             when (action) {
@@ -44,7 +46,7 @@ fun NotesPage(
             selectable = selectable,
             onSelectionStarted = onSelectionStarted,
             onOpenNote = {
-                onOpenNote(it)
+                onEditNote(it)
             },
             onSelectNote = onSelectItem,
         )
