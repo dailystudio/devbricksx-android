@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.samples.usecase.ui.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -49,19 +50,20 @@ fun UseCasesScreenExt() {
                 },
                 colors = samplesTopAppBarColors(),
                 actions = {
-                    IconButton(onClick = {
-                        showMenu = true
-                    }) {
-                        Icon(Icons.Default.MoreVert, "More actions")
-                    }
+                    Box {
+                        IconButton(onClick = {
+                            showMenu = true
+                        }) {
+                            Icon(Icons.Default.MoreVert, "More actions")
+                        }
 
-                    MainMenus(showMenu = showMenu,
-                        onMenuDismissed = { showMenu = false }) {
-                        when(it) {
-                            MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                        MainMenus(showMenu = showMenu,
+                            onMenuDismissed = { showMenu = false }) {
+                            when(it) {
+                                MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                            }
                         }
                     }
-
                 }
             )
 

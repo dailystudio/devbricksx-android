@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.notebook.ui.compose
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -74,17 +75,19 @@ fun NotebooksTopBar(
         },
         colors = notebookTopAppBarColors(),
         actions = {
-            IconButton(onClick = {
-                showMenu = true
-            }) {
-                Icon(Icons.Default.MoreVert, "More actions")
-            }
+            Box {
+                IconButton(onClick = {
+                    showMenu = true
+                }) {
+                    Icon(Icons.Default.MoreVert, "More actions")
+                }
 
-            NotebooksMenus(
-                showMenu = showMenu,
-                onMenuDismissed = { showMenu = false },
-                onMenuItemClick = onMenuItemClick
-            )
+                NotebooksMenus(
+                    showMenu = showMenu,
+                    onMenuDismissed = { showMenu = false },
+                    onMenuItemClick = onMenuItemClick
+                )
+            }
         }
     )
 }

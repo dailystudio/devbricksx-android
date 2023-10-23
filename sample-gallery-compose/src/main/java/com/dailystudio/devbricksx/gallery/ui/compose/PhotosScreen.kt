@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.gallery.ui.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -169,31 +170,21 @@ fun PhotosScreen(
                         }
                     }
 
-                    IconButton(onClick = {
-                        showMenu = true
-                    }) {
-                        Icon(Icons.Default.MoreVert, "More actions")
-                    }
+                    Box {
+                        IconButton(onClick = {
+                            showMenu = true
+                        }) {
+                            Icon(Icons.Default.MoreVert, "More actions")
+                        }
 
-                    val density = LocalDensity.current.density
-                    var marginToEndOfScreenInPx = with(LocalDensity.current) {
-                        (LocalConfiguration.current.screenWidthDp.dp.roundToPx() - xOffsetOfSearchInPx)
-                    }
-
-                    MainMenus(/*modifier = Modifier.onGloballyPositioned {
-                        marginToEndOfScreenInPx -= it.size.width
-                    },
-                        menuOffset = DpOffset(
-                            (marginToEndOfScreenInPx / density).dp,
-                            0.dp
-                        ),*/
-                        showMenu = showMenu,
-                        onMenuDismissed = { showMenu = false }) {
-                        when(it) {
-                            MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                        MainMenus(
+                            showMenu = showMenu,
+                            onMenuDismissed = { showMenu = false }) {
+                            when(it) {
+                                MENU_ITEM_ID_ABOUT -> showAboutDialog = true
+                            }
                         }
                     }
-
                 }
             )
 
