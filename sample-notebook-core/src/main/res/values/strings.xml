@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Daily Notes</string>
+    <string name="app_name">Notes</string>
     <string name="app_desc">This is a sample application written with DevbricksX library. It illustrates how to use the library to compose a notebook app in the most efficient way.\n\nIt includes a set of functions that a notebook app should have. And, all the notes are store permanently in you local storage.\n\nIf you have any problem, please feel free to contact me:\n\n\t\t\tdailystudio2010@gmail.com\n</string>
 
     <string name="dialog_title_new_notebook">New notebook</string>
