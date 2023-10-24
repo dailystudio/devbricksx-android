@@ -54,7 +54,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PhotoViewScreen(item: PhotoItem?) {
+fun PhotoPage(item: PhotoItem?) {
     val photo = item ?: return
     val uid = photo.uid
     Logger.debug("photo: ${photo.id}")

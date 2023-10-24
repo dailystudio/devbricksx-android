@@ -34,7 +34,7 @@ fun NotebooksPage(
     BaseNoteItemsPage<Notebook, Int>(
         itemId = { it.id },
         actionBar = {
-            NotebooksTopBar() {
+            NotebooksTopBar {
                 when (it) {
                     MENU_ITEM_ID_ABOUT -> showAboutDialog = true
                 }

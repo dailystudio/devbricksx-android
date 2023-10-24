@@ -36,10 +36,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,7 +43,6 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import com.dailystudio.devbricksx.compose.app.OptionMenuItem
 import com.dailystudio.devbricksx.compose.app.OptionMenus
 import com.dailystudio.devbricksx.compose.utils.activityViewModel
@@ -60,7 +55,7 @@ import com.dailystudio.devbricksx.gallery.model.PhotoItemViewModelExt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun PhotosScreen(
+fun PhotosPage(
     onItemClick: (item: PhotoItem) -> Unit
 ) {
     val viewModel = activityViewModel<PhotoItemViewModelExt>()
@@ -130,8 +125,6 @@ fun PhotosScreen(
                     }
                 },
                 actions = {
-                    var xOffsetOfSearchInPx = 0f
-
                     if (searchActivated) {
                         SearchBar(
                             queryInputState.value,
@@ -152,9 +145,6 @@ fun PhotosScreen(
                             onClick = {
                                 searchActivated = true
                             },
-                            modifier = Modifier.onGloballyPositioned {
-                                xOffsetOfSearchInPx = it.positionInRoot().x
-                            }
                         ) {
                             Icon(Icons.Default.Search, "Search")
                         }

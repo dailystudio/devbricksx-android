@@ -43,7 +43,7 @@ fun Home() {
                 Color(ResourcesCompatUtils.getColor(context, R.color.primaryColor))
             )
 
-            PhotosScreen {
+            PhotosPage {
                 Logger.debug("click on item: $it")
                 viewModel.viewPhoto(it.id)
                 navController.navigate("photos/${it.id}")
@@ -60,7 +60,7 @@ fun Home() {
                 )
             }
 
-            PhotoViewScreen(photo)
+            PhotoPage(photo)
         }
     }
 }

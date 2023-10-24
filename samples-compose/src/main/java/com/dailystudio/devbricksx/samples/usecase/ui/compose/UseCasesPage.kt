@@ -35,7 +35,7 @@ const val MENU_ITEM_ID_ABOUT = 0x1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UseCasesScreenExt() {
+fun UseCasesPage() {
     var showMenu by remember { mutableStateOf(false) }
 
     var showAboutDialog by remember {

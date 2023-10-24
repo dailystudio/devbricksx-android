@@ -12,7 +12,7 @@ fun Home() {
     NavHost(navController = navController,
         startDestination = "usecases") {
         composable("usecases") {
-            UseCasesScreenExt()
+            UseCasesPage()
         }
         composable("usecase/{caseId}") {
 

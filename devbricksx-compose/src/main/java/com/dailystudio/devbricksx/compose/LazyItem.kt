@@ -49,7 +49,7 @@ fun <T> SingleLineItemContent(
     iconOfItem: @Composable (item: T?) -> Painter?,
     labelOfItem: @Composable (item: T?) -> String?,
 ) {
-    Card(modifier = Modifier.padding(8.dp),
+    Card(
         elevation = CardDefaults.cardElevation(3.dp),
         shape = MaterialTheme.shapes.medium.copy(
             CornerSize(5.dp)
