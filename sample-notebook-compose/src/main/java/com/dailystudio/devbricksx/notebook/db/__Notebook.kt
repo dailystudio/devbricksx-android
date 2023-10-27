@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.dailystudio.devbricksx.annotations.compose.ItemContent
@@ -157,7 +158,7 @@ fun NoteContent(
             .background(MaterialTheme.colorScheme.surface)
             .fillMaxWidth()
             .wrapContentHeight(align = Alignment.Top)
-            .heightIn(min = 120.dp, max = 180.dp)
+            .heightIn(min = 190.dp, max = 250.dp)
         ) {
             val (content, indicator) = createRefs()
 
@@ -176,8 +177,9 @@ fun NoteContent(
             ) {
                 Text(
                     text = note?.title ?: "",
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    maxLines = 2,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontSize = 18.sp,
                         textAlign = TextAlign.Left,
                         fontWeight = FontWeight.Bold
                     ),
@@ -191,6 +193,8 @@ fun NoteContent(
                     maxLines = 6,
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 14.sp,
+
                         textAlign = TextAlign.Left
                     ),
                 )
