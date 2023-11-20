@@ -48,10 +48,10 @@ interface UserDaoExtension {
     fun getUserById(userId: Int): Flow<User>?
 
     @Insert
-    fun insertAll(vararg users: User?)
+    fun insertAll(vararg users: User)
 
     @Insert
-    fun insertAllUsers(users: List<User?>)
+    fun insertAllUsers(users: List<User>)
 }
 
 @ViewPagerFragment(
