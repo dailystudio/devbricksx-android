@@ -3,7 +3,7 @@ package com.dailystudio.devbricksx.annotations.compose
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import kotlin.reflect.KClass
 
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 annotation class ListScreen(
     val dataSource: DataSource = DataSource.LiveData,

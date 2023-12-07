@@ -2,7 +2,7 @@ package com.dailystudio.devbricksx.annotations.data
 
 import com.dailystudio.devbricksx.annotations.InternalConstants
 
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
 annotation class Page(val pageSize: Int = DEFAULT_PAGE_SIZE) {
 

@@ -2,7 +2,7 @@ package com.dailystudio.devbricksx.annotations.fragment
 
 import kotlin.reflect.KClass
 
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 annotation class NonRecyclableListFragment(
         val layout: Int = -1,

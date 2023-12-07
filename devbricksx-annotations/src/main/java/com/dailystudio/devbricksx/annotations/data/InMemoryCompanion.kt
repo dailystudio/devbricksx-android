@@ -7,7 +7,7 @@ enum class Ordering {
     Descending
 }
 
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 annotation class InMemoryCompanion(
         val ordering: Ordering = Ordering.Ascending,

@@ -11,7 +11,7 @@ enum class ViewType {
     Customized,
 }
 
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 annotation class Adapter(
         val viewHolder: KClass<*>,
