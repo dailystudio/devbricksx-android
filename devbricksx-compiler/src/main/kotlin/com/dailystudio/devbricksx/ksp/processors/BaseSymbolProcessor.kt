@@ -83,7 +83,8 @@ abstract class BaseSymbolProcessor(
         error(message, null, symbol)
     }
 
-    fun writeToFile(resolver: Resolver, result: GeneratedResult) {
+    fun writeToFile(resolver: Resolver, result: GeneratedResult,
+                    aggregating: Boolean = false) {
         val fileBuilder = when (result) {
             is GeneratedClassResult -> {
                 val typeSpec = result.classBuilder.build()
@@ -125,7 +126,7 @@ abstract class BaseSymbolProcessor(
                     sourceFiles.add(originalDepFile)
                 }
             }
-            val dependencies = Dependencies(aggregating = true,
+            val dependencies = Dependencies(aggregating = aggregating,
                 *sourceFiles.toTypedArray())
 
             warn("writing to file: ${it.packageName}.${it.name}.kt [dependencies: ${sourceFiles}]")
