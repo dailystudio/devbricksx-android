@@ -81,6 +81,12 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
     }
 
     protected open fun needToDiffUtil(symbol: KSClassDeclaration, resolver: Resolver): Boolean {
+        val typeName = symbol.typeName()
+        val packageName = symbol.packageName()
+
+        val typeNameToGenerate = GeneratedNames.getDiffUtilName(typeName)
+        val typeOfDiffUtils = ClassName(packageName, typeNameToGenerate)
+
         val hasAdapterAnnotated =
             symbol.hasAnnotation(Adapter::class, resolver)
                     || symbol.hasAnnotation(FragmentAdapter::class, resolver)
@@ -92,7 +98,12 @@ abstract class AbsDiffUtilStep(classOfAnnotation: KClass<out Annotation>,
             warn("final class [$symbol] is NOT annotated by @Adapter, skip DiffUtils generation")
         }
 
-        return matched
+        val existed = resolver.getClassDeclarationByName(
+            resolver.getKSNameFromString(typeOfDiffUtils.canonicalName)
+        ) != null
+
+
+        return matched && !existed
     }
 
     abstract fun attachEqualsStatements(resolver: Resolver,
