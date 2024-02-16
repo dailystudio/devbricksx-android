@@ -82,7 +82,7 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())
 
-        return singleClassResult(symbol,
+        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
             GeneratedNames.getAdapterPackageName(packageName),
             classBuilder)
     }
