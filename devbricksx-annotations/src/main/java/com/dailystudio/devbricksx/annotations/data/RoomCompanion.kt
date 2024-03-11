@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.annotations.data
 
+import androidx.room.AutoMigration
 import androidx.room.ForeignKey
 import androidx.room.Index
 import com.dailystudio.devbricksx.annotations.InternalConstants
@@ -12,6 +13,7 @@ annotation class RoomCompanion(
     val autoGenerate: Boolean = false,
     val converters: Array<KClass<*>> = [],
     val foreignKeys: Array<ForeignKey> = [],
+    val autoMigrations: Array<AutoMigration> = [],
     val indices: Array<Index> = [],
     val extension: KClass<*> = Unit::class,  // database name
     val database: String = "",  // database version

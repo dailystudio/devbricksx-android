@@ -6,15 +6,17 @@ import com.dailystudio.devbricksx.annotations.data.RoomCompanion
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.helper.lowerCamelCaseName
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
-import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.GroupedSymbolsProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.ksp.toAnnotationSpec
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
@@ -44,10 +46,12 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
         val strOfEntitiesBuilder = StringBuilder("entities = [ ")
         val converters = mutableSetOf<KSType>()
         val migrations = mutableSetOf<KSType>()
+        val autoMigrations: MutableList<KSAnnotation> = mutableListOf()
 
         var dbVersion = 1
         for ((i, symbol) in symbols.withIndex()) {
             val companion = symbol.getAnnotation(RoomCompanion::class) ?: continue
+            val companionKS = symbol.getKSAnnotation(RoomCompanion::class, resolver) ?: continue
 
             if (companion.databaseVersion > dbVersion) {
                 dbVersion = companion.databaseVersion
@@ -63,6 +67,11 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
                 symbol.collectTypesInAnnotationArguments(
                     RoomCompanion::class, "migrations", resolver)
             migrations.addAll(migrationsInSymbol)
+
+            val autoMigrationsInSymbol: MutableList<KSAnnotation> =
+                companionKS.findArgument("autoMigrations") ?: mutableListOf()
+            warn("autoMigrations in symbol [$symbol]: $autoMigrationsInSymbol")
+            autoMigrations.addAll(autoMigrationsInSymbol)
 
             strOfEntitiesBuilder.append("%T::class")
             if (i < symbols.size - 1) {
@@ -83,6 +92,20 @@ class RoomCompanionDatabaseStep(processor: BaseSymbolProcessor)
             AnnotationSpec.builder(Database::class)
                 .addMember(strOfEntitiesBuilder.toString(), *typeNamesOfEntities)
                 .addMember("version = %L", dbVersion)
+
+        if (autoMigrations.isNotEmpty()) {
+            warn("processing: auto migrations [$autoMigrations]")
+
+            val strOfAutoMigration = autoMigrations.joinToString(separator = ",") {
+                val annotationSpec = it.toAnnotationSpec()
+                warn("processing: auto migration spec: $annotationSpec")
+                annotationSpec.toString()
+                    .removePrefix("@")
+            }
+            warn("processing: new auto migration str = [$strOfAutoMigration]")
+
+            databaseAnnotationBuilder.addMember("autoMigrations = [%L]", strOfAutoMigration)
+        }
 
         val typeOfDatabase = ClassName(packageName, typeNameToGenerate)
         val typeOfContext = TypeNameUtils.typeOfContext()

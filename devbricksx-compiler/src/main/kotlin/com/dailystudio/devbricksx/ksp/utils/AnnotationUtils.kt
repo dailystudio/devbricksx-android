@@ -80,6 +80,31 @@ fun KSClassDeclaration.collectTypesInAnnotationArguments(
     return converters
 }
 
+fun KSClassDeclaration.collectObjectsInAnnotationArguments(
+    annotationClass: KClass<out Annotation>,
+    nameOfArgument: String,
+    resolver: Resolver): Set<Any> {
+    val companion = getKSAnnotation(annotationClass, resolver)
+
+    val objects = mutableSetOf<Any>()
+
+    if (superClassType() != TypeNameUtils.typeOfKotlinAny(resolver)) {
+        val convertersInSuperType =
+            superClassType().collectObjectsInAnnotationArguments(annotationClass,
+                nameOfArgument, resolver)
+
+        if (convertersInSuperType.isNotEmpty()) {
+            objects.addAll(convertersInSuperType)
+        }
+    }
+
+    companion?.findArgument<ArrayList<Any>>(nameOfArgument)?.let { it ->
+        objects.addAll(it)
+    }
+
+    return objects
+}
+
 fun KSClassDeclaration.packageName(): String {
     return this.toClassName().packageName
 }
