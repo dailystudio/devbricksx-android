@@ -14,4 +14,5 @@ annotation class ListFragment(
         val gridLayout: Boolean = false,
         val columns: Int = 2,
         val adapter: KClass<*> = Unit::class,
+        val dataCollectingRepeatOn: RepeatOnLifecycle = RepeatOnLifecycle.RESUMED
 )

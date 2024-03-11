@@ -11,4 +11,5 @@ annotation class NonRecyclableListFragment(
         val dataSource: DataSource = DataSource.LiveData,
         val superClass: KClass<*> = Unit::class,
         val adapter: KClass<*> = Unit::class,
+        val dataCollectingRepeatOn: RepeatOnLifecycle = RepeatOnLifecycle.RESUMED
 )

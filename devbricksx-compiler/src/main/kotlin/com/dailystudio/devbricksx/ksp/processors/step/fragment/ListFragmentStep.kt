@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
@@ -23,10 +24,11 @@ class ListFragmentMethodBuilderOptions(layout: Int,
                                        paged: Boolean,
                                        pageSize: Int,
                                        adapter: ClassName,
+                                       dataCollectingRepeatOn: RepeatOnLifecycle,
                                        val isGradLayout: Boolean = false,
                                        val columns: Int)
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
-    fillParent, dataSource, paged, pageSize, adapter)
+    fillParent, dataSource, paged, pageSize, adapter, dataCollectingRepeatOn)
 
 class ListFragmentStep(processor: BaseSymbolProcessor)
     : AbsListFragmentStep(ListFragment::class, processor) {
@@ -96,6 +98,7 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
         val fragmentKSAnnotation = symbol.getKSAnnotation(ListFragment::class, resolver) ?: return null
 
         val dataSource = fragmentAnnotation.dataSource
+        val dataCollectingRepeatOn = fragmentAnnotation.dataCollectingRepeatOn
         val isGradLayout = fragmentAnnotation.gridLayout
         val columns = fragmentAnnotation.columns
         val layout = fragmentAnnotation.layout
@@ -111,6 +114,7 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
             fillParent,
             dataSource, paged, pageSize,
             adapter,
+            dataCollectingRepeatOn,
             isGradLayout, columns)
     }
 

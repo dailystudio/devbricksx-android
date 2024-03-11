@@ -13,4 +13,5 @@ annotation class ViewPagerFragment(
         val adapter: KClass<*> = Unit::class,
         val useFragment: Boolean = false,
         val offscreenPageLimit: Int = 1,
+        val dataCollectingRepeatOn: RepeatOnLifecycle = RepeatOnLifecycle.RESUMED
 )

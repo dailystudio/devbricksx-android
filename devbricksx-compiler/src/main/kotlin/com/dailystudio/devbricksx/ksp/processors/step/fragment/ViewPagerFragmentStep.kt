@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
+import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
 import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
@@ -21,10 +22,11 @@ class ViewPagerFragmentBuildOptions(layout: Int,
                                     fillParent: Boolean,
                                     dataSource: DataSource,
                                     adapter: ClassName,
+                                    dataCollectingRepeatOn: RepeatOnLifecycle,
                                     val useFragment: Boolean,
                                     val offscreenPageLimit: Int)
     : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
-    fillParent, dataSource, false, adapter = adapter)
+    fillParent, dataSource, false, adapter = adapter, dataCollectingRepeatOn = dataCollectingRepeatOn)
 
 class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
     : AbsListFragmentStep(ViewPagerFragment::class, processor) {
@@ -119,6 +121,7 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
         val dataSource = fragmentAnnotation.dataSource
+        val dataCollectingRepeatOn = fragmentAnnotation.dataCollectingRepeatOn
         val useFragment = fragmentAnnotation.useFragment
         val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
         val adapter = fragmentKSAnnotation
@@ -128,7 +131,7 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
             layout, layoutByName,
             "fragment_view_pager", "fragment_view_pager_compact",
             fillParent,
-            dataSource, adapter, useFragment, offscreenPageLimit)
+            dataSource, adapter, dataCollectingRepeatOn, useFragment, offscreenPageLimit)
     }
 
     override fun genMethodBuilders(): MutableList<BuilderOfMethod> {

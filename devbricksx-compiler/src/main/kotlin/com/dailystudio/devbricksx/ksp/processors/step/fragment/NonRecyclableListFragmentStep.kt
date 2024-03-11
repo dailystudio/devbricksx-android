@@ -85,6 +85,7 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
         val layoutByName = fragmentAnnotation.layoutByName
         val fillParent = fragmentAnnotation.fillParent
         val dataSource = fragmentAnnotation.dataSource
+        val dataCollectingRepeatOn = fragmentAnnotation.dataCollectingRepeatOn
         val adapter = fragmentKSAnnotation
             .findArgument<KSType>("adapter").toClassName()
 
@@ -93,6 +94,7 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
             "fragment_non_recyclable_list_view", "fragment_non_recyclable_list_view_compact",
             fillParent,
             dataSource,
-            paged, adapter = adapter)
+            paged, adapter = adapter,
+            dataCollectingRepeatOn = dataCollectingRepeatOn)
     }
 }

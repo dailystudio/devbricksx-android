@@ -6,6 +6,7 @@ import android.view.View
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.ListFragment
+import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
@@ -18,7 +19,11 @@ import java.util.*
 @Adapter(viewHolder = CardViewHolder::class,
         paged = true,
         viewType = ViewType.CardInformative)
-@ListFragment(gridLayout = true, dataSource = DataSource.LiveData)
+@ListFragment(
+    gridLayout = true,
+    dataSource = DataSource.Flow,
+    dataCollectingRepeatOn = RepeatOnLifecycle.CREATED
+)
 @InMemoryCompanion
 data class Card(val id: Int,
                 val title: String,

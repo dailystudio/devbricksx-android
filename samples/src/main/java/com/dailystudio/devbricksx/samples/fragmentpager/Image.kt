@@ -8,6 +8,7 @@ import android.widget.ImageView
 import coil.load
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
 import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
 import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
@@ -17,7 +18,8 @@ import com.dailystudio.devbricksx.inmemory.InMemoryObject
 @ViewPagerFragment(
     useFragment = true,
     offscreenPageLimit = 2,
-    dataSource = DataSource.Flow
+    dataSource = DataSource.Flow,
+    dataCollectingRepeatOn = RepeatOnLifecycle.CREATED
 )
 @FragmentAdapter(pageFragment = ImageFragment::class)
 @ViewModel

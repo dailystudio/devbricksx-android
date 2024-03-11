@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
+import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ksp.helper.FunctionNames
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
@@ -27,7 +28,8 @@ open class BuildOptions(val layout: Int,
                         val dataSource: DataSource,
                         val paged: Boolean = false,
                         val pageSize: Int = 20,
-                        val adapter: ClassName
+                        val adapter: ClassName,
+                        val dataCollectingRepeatOn: RepeatOnLifecycle,
 )
 
 typealias BuilderOfMethod = (resolver: Resolver,
@@ -171,6 +173,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                                    options: BuildOptions
     ): FunSpec.Builder? {
         val dataSource = options.dataSource
+        val dataCollectingRepeatOn = options.dataCollectingRepeatOn
 
         val lifecycleScope = TypeNameUtils.typeOfLifecycleScope()
         val collectLatest = TypeNameUtils.typeOfCollectLatest()
@@ -201,7 +204,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                     %T.debug("collectJob to cancel: ${'$'}collectJob")
                     collectJob?.cancel()
                     collectJob = %T.%T {
-                       lifecycle.%T(%T.RESUMED) {
+                       lifecycle.%T(%T.%L) {
                            %T.debug("repeat collect on flow [${'$'}dataSource]")
                            dataSource.%T { listOfItems ->
                                %T.debug("collected new data for flow ${'$'}dataSource]: ${'$'}listOfItems")
@@ -214,7 +217,7 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
                     """.trimIndent(),
                     logger,
                     lifecycleScope, launch,
-                    repeatOnLifecycle, lifecycleState,
+                    repeatOnLifecycle, lifecycleState, dataCollectingRepeatOn.toString().uppercase(),
                     logger,
                     collectLatest,
                     logger,
