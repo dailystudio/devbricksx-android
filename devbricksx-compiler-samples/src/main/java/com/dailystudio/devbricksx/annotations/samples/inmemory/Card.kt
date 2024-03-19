@@ -1,6 +1,7 @@
 package com.dailystudio.devbricksx.annotations.samples.inmemory
 
 import android.graphics.Color
+import androidx.recyclerview.widget.DiffUtil
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.Ordering
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
@@ -11,6 +12,7 @@ import com.dailystudio.devbricksx.annotations.samples.other.DummyViewHolder
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
+import com.dailystudio.devbricksx.ui.AbsListAdapter
 import java.util.*
 
 @ViewPagerFragment
@@ -21,15 +23,24 @@ import java.util.*
 )
 @ListFragment(
     name = "CardFlowListFragment",
-
     dataSource = DataSource.Flow,
     dataCollectingRepeatOn = RepeatOnLifecycle.CREATED
 )
-@Adapter(viewHolder = DummyViewHolder::class)
 @Adapter(
     name = "CardAdapter1",
+    viewHolder = DummyViewHolder::class,
+    superClass = BaseCardsAdapter::class,
+)
+@Adapter(
+    name = "CardPagedAdapter1",
     paged = true,
-    viewHolder = DummyViewHolder::class)
+    viewHolder = DummyViewHolder::class,
+)
+@Adapter(
+    name = "CardAdapter2",
+    viewHolder = DummyViewHolder::class,
+    superClass = BaseCardsAdapter::class,
+)
 @ViewModel
 @InMemoryCompanion(ordering = Ordering.Descending)
 open class Card(val id: Int,
@@ -61,3 +72,10 @@ class EmptyCardWrapper(id: Int,
 
 @InMemoryCompanion(ordering = Ordering.Descending)
 abstract class IntKeyInMemoryObject: InMemoryObject<Int>
+
+
+public abstract class BaseCardsAdapter(
+    diffCallback: DiffUtil.ItemCallback<Card>,
+) : AbsListAdapter<Card, DummyViewHolder>(diffCallback) {
+
+}

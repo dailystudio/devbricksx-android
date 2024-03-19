@@ -15,6 +15,7 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class AdapterStep (processor: BaseSymbolProcessor)
@@ -105,11 +106,15 @@ class AdapterStep (processor: BaseSymbolProcessor)
         val viewGroup = TypeNameUtils.typeOfViewGroup()
         val layoutInflater = TypeNameUtils.typeOfLayoutInflater()
 
+        val typeOfSuperClass =
+            adapterKSAnnotation.findArgument<KSType>("superClass")
+                .toClassName()
+
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
-            .superclass(if (paged) {
-                pagingDataAdapter
+            .superclass(if (typeOfSuperClass == UNIT) {
+                if (paged) pagingDataAdapter else listAdapter
             } else {
-                listAdapter
+                typeOfSuperClass
             })
             .primaryConstructor(
                 FunSpec.constructorBuilder()

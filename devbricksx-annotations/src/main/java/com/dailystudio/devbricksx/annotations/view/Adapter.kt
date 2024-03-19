@@ -23,6 +23,7 @@ annotation class Adapter(
     val paged: Boolean = false,
     val notifyAfterListChanged: Boolean = false,
     val diffUtil: KClass<*> = Unit::class,
+    val superClass: KClass<*> = Unit::class,
 )
 
 @Retention(AnnotationRetention.SOURCE)
@@ -36,4 +37,5 @@ annotation class FragmentAdapter(
         val name: String = "",
         val pageFragment: KClass<*>,
         val diffUtil: KClass<*> = Unit::class,
+        val superClass: KClass<*> = Unit::class,
 )

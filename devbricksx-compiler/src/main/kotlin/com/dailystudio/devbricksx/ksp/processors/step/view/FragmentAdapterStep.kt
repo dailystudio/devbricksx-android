@@ -12,6 +12,7 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 class FragmentAdapterStep (processor: BaseSymbolProcessor)
@@ -88,8 +89,16 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
         val fragmentManager = TypeNameUtils.typeOfFragmentManager()
         val lifecycle = TypeNameUtils.typeOfLifecycle()
 
+        val typeOfSuperClass =
+            adapterKSAnnotation.findArgument<KSType>("superClass")
+                .toClassName()
+
         val classBuilder = TypeSpec.classBuilder(typeNameToGenerate)
-            .superclass(fragmentAdapter)
+            .superclass(if (typeOfSuperClass == UNIT) {
+                fragmentAdapter
+            } else {
+                typeOfSuperClass
+            })
             .primaryConstructor(
                 FunSpec.constructorBuilder()
                     .addParameter("fragmentManager", fragmentManager)
