@@ -7,8 +7,8 @@ import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
 import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
-import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
@@ -32,24 +32,59 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
         resolver: Resolver,
         symbol: KSClassDeclaration
     ): List<GeneratedResult> {
+        val packageName = symbol.packageName()
+
+        val annotations = symbol.getAnnotations(FragmentAdapter::class, resolver)
+        val ksAnnotations = symbol.getKSAnnotations(classOfAnnotation, resolver)
+
+        if (annotations.size != ksAnnotations.size) {
+            error("annotation declaration mismatched for symbol: $symbol")
+            return emptyResult
+        }
+
+        val classBuilders = mutableListOf<TypeSpec.Builder>()
+
+        val N = annotations.size
+        for (i in 0 until N) {
+            val classBuilder = genClassBuilder(resolver, symbol,
+                annotations[i], ksAnnotations[i])
+            classBuilders.add(classBuilder)
+        }
+
+        return classBuilders.map {
+            GeneratedClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
+                GeneratedNames.getAdapterPackageName(packageName),
+                it)
+        }
+    }
+
+
+    private fun genClassBuilder(
+        resolver: Resolver,
+        symbol: KSClassDeclaration,
+        adapterAnnotation: FragmentAdapter,
+        adapterKSAnnotation: KSAnnotation,
+    ): TypeSpec.Builder {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
-        val adapterAnnotation =
-            symbol.getKSAnnotation(FragmentAdapter::class, resolver)
-                ?: return emptyResult
-
-        val pageFragment = adapterAnnotation.findArgument<KSType>(
-            "pageFragment").toTypeName()
+        val pageFragment = adapterKSAnnotation.findArgument<KSType>(
+            "pageFragment"
+        ).toTypeName()
 
         val typeNameToGenerate =
             GeneratedNames.getFragmentAdapterName(typeName)
 
+        val typeOfDiffUtil = adapterKSAnnotation
+            .findArgument<KSType>("diffUtil").toTypeName()
+
         val objectTypeName = ClassName(packageName, typeName)
         val fragmentAdapter = TypeNameUtils.typeOfAbsFragmentStateAdapterOf(objectTypeName)
         val itemCallback = TypeNameUtils.typeOfItemCallbackOf(objectTypeName)
-        val diffUtils  = ClassName(packageName,
-            GeneratedNames.getDiffUtilName(typeName))
+        val diffUtils = ClassName(
+            packageName,
+            GeneratedNames.getDiffUtilName(typeName)
+        )
         val fragmentManager = TypeNameUtils.typeOfFragmentManager()
         val lifecycle = TypeNameUtils.typeOfLifecycle()
 
@@ -57,8 +92,9 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
             .superclass(fragmentAdapter)
             .primaryConstructor(
                 FunSpec.constructorBuilder()
-                .addParameter("fragmentManager", fragmentManager)
-                .addParameter("lifecycle", lifecycle).build())
+                    .addParameter("fragmentManager", fragmentManager)
+                    .addParameter("lifecycle", lifecycle).build()
+            )
             .addSuperclassConstructorParameter("DIFF_CALLBACK")
             .addSuperclassConstructorParameter("fragmentManager")
             .addSuperclassConstructorParameter("lifecycle")
@@ -68,8 +104,10 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
 
         classCompanionBuilder.addProperty(
             PropertySpec.builder("DIFF_CALLBACK", itemCallback)
-            .initializer("%T()", diffUtils)
-            .build())
+                .initializer("%T()",
+                    if (typeOfDiffUtil == UNIT) diffUtils else typeOfDiffUtil)
+                .build()
+        )
 
         classBuilder.addType(classCompanionBuilder.build())
 
@@ -82,8 +120,6 @@ class FragmentAdapterStep (processor: BaseSymbolProcessor)
 
         classBuilder.addFunction(methodOnCreateViewBuilder.build())
 
-        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
-            GeneratedNames.getAdapterPackageName(packageName),
-            classBuilder)
+        return classBuilder
     }
 }

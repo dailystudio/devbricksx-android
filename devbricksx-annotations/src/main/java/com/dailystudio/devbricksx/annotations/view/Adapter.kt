@@ -11,24 +11,29 @@ enum class ViewType {
     Customized,
 }
 
+@Repeatable
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 annotation class Adapter(
-        val viewHolder: KClass<*>,
-        val viewType: ViewType = ViewType.SingleLine,
-        val layout: Int = -1,
-        val layoutByName: String = "",
-        val paged: Boolean = false,
-        val notifyAfterListChanged: Boolean = false,
-        val diffUtil: KClass<*> = Unit::class,
+    val name: String = "",
+    val viewHolder: KClass<*>,
+    val viewType: ViewType = ViewType.SingleLine,
+    val layout: Int = -1,
+    val layoutByName: String = "",
+    val paged: Boolean = false,
+    val notifyAfterListChanged: Boolean = false,
+    val diffUtil: KClass<*> = Unit::class,
 )
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 annotation class ExperimentalPagingDataAdapter
 
+@Repeatable
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 annotation class FragmentAdapter(
-        val pageFragment: KClass<*>
+        val name: String = "",
+        val pageFragment: KClass<*>,
+        val diffUtil: KClass<*> = Unit::class,
 )

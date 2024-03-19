@@ -12,6 +12,7 @@ fun <T: Annotation> KSDeclaration.hasAnnotation(
     resolver: Resolver? = null,
 ): Boolean = (getAnnotation(annotationClass, resolver) != null)
 
+/*
 @OptIn(KspExperimental::class)
 fun <T: Annotation> KSDeclaration.getAnnotation(
     annotationClass: KClass<T>,
@@ -28,8 +29,51 @@ fun <T: Annotation> KSDeclaration.getAnnotation(
         return toShadowClass(resolver)?.getAnnotation(annotationClass)
     }
 }
+*/
 
-fun <T: Annotation> KSDeclaration.getKSAnnotation(
+fun <T: Annotation> KSDeclaration.getAnnotation(
+    annotationClass: KClass<T>,
+    resolver: Resolver? = null,
+): T? {
+    return getAnnotation(annotationClass, 0, resolver)
+}
+
+fun <T: Annotation> KSDeclaration.getAnnotation(
+    annotationClass: KClass<T>,
+    position: Int = 0,
+    resolver: Resolver? = null,
+): T? {
+    val annotations =  getAnnotations(annotationClass, resolver)
+
+    return if (position < annotations.size) {
+        annotations[position]
+    } else {
+        if (annotations.isNotEmpty()) {
+            return annotations[0]
+        } else {
+            null
+        }
+    }
+}
+
+@OptIn(KspExperimental::class)
+fun <T: Annotation> KSDeclaration.getAnnotations(
+    annotationClass: KClass<T>,
+    resolver: Resolver? = null,
+): List<T> {
+    if (resolver == null) {
+        return getAnnotationsByType(annotationClass).toList()
+    } else {
+        val list = getAnnotationsByType(annotationClass).toList()
+        if (list.isNotEmpty() || this !is KSClassDeclaration) {
+            return list
+        }
+
+        return toShadowClass(resolver)?.getAnnotations(annotationClass) ?: emptyList()
+    }
+}
+
+/*fun <T: Annotation> KSDeclaration.getKSAnnotation(
     annotationClass: KClass<T>,
     resolver: Resolver
 ): KSAnnotation? {
@@ -47,6 +91,50 @@ fun <T: Annotation> KSDeclaration.getKSAnnotation(
 
     return toShadowClass(resolver)?.getKSAnnotation(
         annotationClass, resolver)
+}*/
+
+fun <T: Annotation> KSDeclaration.getKSAnnotation(
+    annotationClass: KClass<T>,
+    resolver: Resolver
+): KSAnnotation? {
+    return getKSAnnotation(annotationClass, 0, resolver)
+}
+
+fun <T: Annotation> KSDeclaration.getKSAnnotation(
+    annotationClass: KClass<T>,
+    position: Int = 0,
+    resolver: Resolver
+): KSAnnotation? {
+    val annotations = getKSAnnotations(annotationClass, resolver)
+
+    return if (position < annotations.size) {
+        annotations[position]
+    } else {
+        if (annotations.isNotEmpty()) {
+            return annotations[0]
+        } else {
+            null
+        }
+    }
+}
+
+fun <T: Annotation> KSDeclaration.getKSAnnotations(
+    annotationClass: KClass<T>,
+    resolver: Resolver
+): List<KSAnnotation> {
+    val found = mutableListOf<KSAnnotation>()
+    for (annotation in this.annotations) {
+        if (annotation.annotationType.resolve() == annotationClass.asAnnotationType(resolver)) {
+            found.add(annotation)
+        }
+    }
+
+    if (found.isNotEmpty() || this !is KSClassDeclaration) {
+        return found
+    }
+
+    return toShadowClass(resolver)?.getKSAnnotations(
+        annotationClass, resolver) ?: emptyList()
 }
 
 inline fun <reified R> KSAnnotation.findArgument(argName: String): R {

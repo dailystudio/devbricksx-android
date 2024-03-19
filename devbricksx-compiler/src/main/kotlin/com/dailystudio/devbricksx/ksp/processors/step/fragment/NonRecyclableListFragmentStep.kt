@@ -8,6 +8,7 @@ import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
@@ -15,26 +16,32 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toClassName
 
 class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
-    : AbsListFragmentStep(NonRecyclableListFragment::class, processor) {
+    : AbsListFragmentStep<NonRecyclableListFragment>(NonRecyclableListFragment::class, processor) {
 
     override fun genClassBuilder(
         resolver: Resolver,
         symbol: KSClassDeclaration,
+        listFragmentAnnotation: NonRecyclableListFragment,
+        listFragmentKSAnnotation: KSAnnotation,
+        annotationPosition: Int,
         typeOfObject: TypeName,
         options: BuildOptions
     ): TypeSpec.Builder? {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
+        val adapterAnnotation =
+            symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
+        if (adapterAnnotation == null) {
+            warn("Adapter annotation missed on symbol [$symbol]")
+            return null
+        }
+
         val paged = options.paged
         val dataSource = options.dataSource
 
-        val listFragmentKS =
-            symbol.getKSAnnotation(NonRecyclableListFragment::class, resolver)
-                ?: return null
-
         val typeOfSuperClass =
-            listFragmentKS.findArgument<KSType>("superClass")
+            listFragmentKSAnnotation.findArgument<KSType>("superClass")
                 .toClassName()
 
         val typeOfSuperFragment = if (typeOfSuperClass == UNIT) {
@@ -43,8 +50,9 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
             typeOfSuperClass
         }
 
-        val typeNameToGenerate =
+        val typeNameToGenerate = options.name.ifBlank {
             GeneratedNames.getNonRecyclableListFragmentName(typeName)
+        }
 
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
@@ -55,7 +63,8 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
             DataSource.Flow -> TypeNameUtils.typeOfFlowOf(dataType)
         }
 
-        var adapter = TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        var adapter = TypeNameUtils.typeOfAdapterOf(
+            typeName, adapterAnnotation.name, packageName)
         if (options.adapter != UNIT) {
             adapter = options.adapter
         }
@@ -71,25 +80,25 @@ class NonRecyclableListFragmentStep(processor: BaseSymbolProcessor)
             .addModifiers(KModifier.OPEN)
     }
 
-    override fun genBuildOptions(resolver: Resolver,
-                                 symbol: KSClassDeclaration): BuildOptions? {
-        val adapterAnnotation = symbol.getAnnotation(Adapter::class, resolver)
+    override fun genBuildOptions(
+        resolver: Resolver,
+        symbol: KSClassDeclaration,
+        listFragmentAnnotation: NonRecyclableListFragment,
+        listFragmentKSAnnotation: KSAnnotation,
+        annotationPosition: Int,
+    ): BuildOptions? {
+        val adapterAnnotation = symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
         val paged = adapterAnnotation?.paged ?: false
 
-        val fragmentAnnotation =
-            symbol.getAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
-        val fragmentKSAnnotation =
-            symbol.getKSAnnotation(NonRecyclableListFragment::class, resolver) ?: return null
-
-        val layout = fragmentAnnotation.layout
-        val layoutByName = fragmentAnnotation.layoutByName
-        val fillParent = fragmentAnnotation.fillParent
-        val dataSource = fragmentAnnotation.dataSource
-        val dataCollectingRepeatOn = fragmentAnnotation.dataCollectingRepeatOn
-        val adapter = fragmentKSAnnotation
+        val layout = listFragmentAnnotation.layout
+        val layoutByName = listFragmentAnnotation.layoutByName
+        val fillParent = listFragmentAnnotation.fillParent
+        val dataSource = listFragmentAnnotation.dataSource
+        val dataCollectingRepeatOn = listFragmentAnnotation.dataCollectingRepeatOn
+        val adapter = listFragmentKSAnnotation
             .findArgument<KSType>("adapter").toClassName()
 
-        return BuildOptions(
+        return BuildOptions("",
             layout, layoutByName,
             "fragment_non_recyclable_list_view", "fragment_non_recyclable_list_view_compact",
             fillParent,

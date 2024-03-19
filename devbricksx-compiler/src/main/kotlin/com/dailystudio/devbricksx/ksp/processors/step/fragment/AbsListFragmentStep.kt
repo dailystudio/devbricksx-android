@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.ksp.processors.step.fragment
 
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
 import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
+import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ksp.helper.FunctionNames
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
@@ -11,16 +12,20 @@ import com.dailystudio.devbricksx.ksp.processors.GeneratedResult
 import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.TypeNameUtils
 import com.dailystudio.devbricksx.ksp.utils.getAnnotation
+import com.dailystudio.devbricksx.ksp.utils.getAnnotations
+import com.dailystudio.devbricksx.ksp.utils.getKSAnnotations
 import com.dailystudio.devbricksx.ksp.utils.mapToShadowClass
 import com.dailystudio.devbricksx.ksp.utils.packageName
 import com.dailystudio.devbricksx.ksp.utils.typeName
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
 import kotlin.reflect.KClass
 
-open class BuildOptions(val layout: Int,
+open class BuildOptions(val name: String = "",
+                        val layout: Int,
                         val layoutByName: String = "",
                         val defaultLayout: String,
                         val defaultLayoutCompat: String = defaultLayout,
@@ -32,15 +37,20 @@ open class BuildOptions(val layout: Int,
                         val dataCollectingRepeatOn: RepeatOnLifecycle,
 )
 
-typealias BuilderOfMethod = (resolver: Resolver,
+typealias BuilderOfMethod<ListFragmentAnnotation> =  (resolver: Resolver,
                              symbol: KSClassDeclaration,
                              typeOfObject: TypeName,
+                             listFragmentAnnotation: ListFragmentAnnotation,
+                             listFragmentKSAnnotation: KSAnnotation,
+                             annotationPosition: Int,
                              classBuilder: TypeSpec.Builder,
                              options: BuildOptions
 ) -> FunSpec.Builder?
 
-abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
-                                   processor: BaseSymbolProcessor
+@Suppress("UNCHECKED_CAST")
+abstract class AbsListFragmentStep<ListFragmentAnnotation>(
+    classOfAnnotation: KClass<out Annotation>,
+    processor: BaseSymbolProcessor
 ) : SingleSymbolProcessStep(classOfAnnotation, processor) {
 
     companion object {
@@ -68,41 +78,72 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
 
         val typeOfObject = ClassName(packageName, typeName)
 
-        val options = genBuildOptions(resolver, symbol) ?: return emptyResult
+        val classBuilders = mutableListOf<TypeSpec.Builder>()
 
-        val classBuilder = genClassBuilder(resolver, symbol, typeOfObject, options)
-            ?: return emptyResult
+        val annotations = symbol.getAnnotations(classOfAnnotation, resolver)
+        val ksAnnotations = symbol.getKSAnnotations(classOfAnnotation, resolver)
 
-        val viewModelAnnotation = symbol.getAnnotation(ViewModel::class, resolver)
-        if (viewModelAnnotation == null) {
-            warn("ViewModel annotation is missing on element: $symbol, generate abstract class")
-            classBuilder.addModifiers(KModifier.ABSTRACT)
+        if (annotations.size != ksAnnotations.size) {
+            error("annotation declaration mismatched for symbol: $symbol")
+            return emptyResult
         }
 
-        val methodBuilders = genMethodBuilders()
+        val N = annotations.size
+        for (i in 0 until N) {
+            val options = genBuildOptions(resolver, symbol,
+                annotations[i] as ListFragmentAnnotation, ksAnnotations[i], i,
+            ) ?: return emptyResult
+            warn("[MLF]: ${packageName}.${typeName}: option.name = ${options.name}")
 
-        methodBuilders.forEach { func ->
-            val builder = func.invoke(resolver, symbol, typeOfObject, classBuilder, options)
-            builder?.let {
-                classBuilder.addFunction(it.build())
+            val classBuilder = genClassBuilder(resolver, symbol,
+                annotations[i] as ListFragmentAnnotation, ksAnnotations[i], i,
+                typeOfObject, options)
+                ?: return emptyResult
+
+            val viewModelAnnotation = symbol.getAnnotation(ViewModel::class, resolver)
+            if (viewModelAnnotation == null) {
+                warn("ViewModel annotation is missing on element: $symbol, generate abstract class")
+                classBuilder.addModifiers(KModifier.ABSTRACT)
             }
+
+            val methodBuilders = genMethodBuilders()
+
+            methodBuilders.forEach { func ->
+                val builder = func.invoke(resolver, symbol, typeOfObject,
+                    annotations[i] as ListFragmentAnnotation, ksAnnotations[i], i,
+                    classBuilder, options)
+                builder?.let {
+                    classBuilder.addFunction(it.build())
+                }
+            }
+
+            classBuilders.add(classBuilder)
         }
 
-        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
-            GeneratedNames.getFragmentPackageName(packageName),
-            classBuilder)
+        return classBuilders.map {
+            GeneratedClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
+                GeneratedNames.getFragmentPackageName(packageName),
+                it)
+        }
     }
 
     protected abstract fun genClassBuilder(resolver: Resolver,
                                            symbol: KSClassDeclaration,
+                                           listFragmentAnnotation: ListFragmentAnnotation,
+                                           listFragmentKSAnnotation: KSAnnotation,
+                                           annotationPosition: Int,
                                            typeOfObject: TypeName,
                                            options: BuildOptions
     ): TypeSpec.Builder?
 
     protected abstract fun genBuildOptions(resolver: Resolver,
-                                           symbol: KSClassDeclaration): BuildOptions?
+                                           symbol: KSClassDeclaration,
+                                           listFragmentAnnotation: ListFragmentAnnotation,
+                                           listFragmentKSAnnotation: KSAnnotation,
+                                           annotationPosition: Int,
+    ): BuildOptions?
 
-    protected open fun genMethodBuilders(): MutableList<BuilderOfMethod> {
+    protected open fun genMethodBuilders(): MutableList<BuilderOfMethod<ListFragmentAnnotation>> {
         return mutableListOf(
             ::genOnCreateAdapter,
             ::genSubmitData,
@@ -115,10 +156,20 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     protected open fun genOnCreateAdapter(resolver: Resolver,
                                           symbol: KSClassDeclaration,
                                           typeOfObject: TypeName,
+                                          listFragmentAnnotation: ListFragmentAnnotation,
+                                          listFragmentKSAnnotation: KSAnnotation,
+                                          annotationPosition: Int,
                                           classBuilder: TypeSpec.Builder,
                                           options: BuildOptions
     ): FunSpec.Builder? {
-        var adapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        val adapterAnnotation =
+            symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
+        if (adapterAnnotation == null) {
+            warn("Adapter annotation missed on symbol [$symbol]")
+            return null
+        }
+
+        var adapter = TypeNameUtils.typeOfAdapterOf(typeOfObject, adapterAnnotation.name)
         if (options.adapter != UNIT) {
             adapter = options.adapter
         }
@@ -133,12 +184,21 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     protected open fun genSubmitData(resolver: Resolver,
                                      symbol: KSClassDeclaration,
                                      typeOfObject: TypeName,
+                                     listFragmentAnnotation: ListFragmentAnnotation,
+                                     listFragmentKSAnnotation: KSAnnotation,
+                                     annotationPosition: Int,
                                      classBuilder: TypeSpec.Builder,
                                      options: BuildOptions
     ): FunSpec.Builder? {
         val paged = options.paged
+        val adapterAnnotation =
+            symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
+        if (adapterAnnotation == null) {
+            warn("Adapter annotation missed on symbol [$symbol]")
+            return null
+        }
 
-        var typeOfAdapter = TypeNameUtils.typeOfAdapterOf(typeOfObject)
+        var typeOfAdapter = TypeNameUtils.typeOfAdapterOf(typeOfObject, adapterAnnotation.name)
         if (options.adapter != UNIT) {
             typeOfAdapter = options.adapter
         }
@@ -169,6 +229,9 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     protected open fun genBindData(resolver: Resolver,
                                    symbol: KSClassDeclaration,
                                    typeOfObject: TypeName,
+                                   listFragmentAnnotation: ListFragmentAnnotation,
+                                   listFragmentKSAnnotation: KSAnnotation,
+                                   annotationPosition: Int,
                                    classBuilder: TypeSpec.Builder,
                                    options: BuildOptions
     ): FunSpec.Builder? {
@@ -244,6 +307,9 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     protected open fun genCreateDataSource(resolver: Resolver,
                                            symbol: KSClassDeclaration,
                                            typeOfObject: TypeName,
+                                           listFragmentAnnotation: ListFragmentAnnotation,
+                                           listFragmentKSAnnotation: KSAnnotation,
+                                           annotationPosition: Int,
                                            classBuilder: TypeSpec.Builder,
                                            options: BuildOptions
     ): FunSpec.Builder? {
@@ -340,6 +406,9 @@ abstract class AbsListFragmentStep(classOfAnnotation: KClass<out Annotation>,
     protected open fun genOnCreateView(resolver: Resolver,
                                        symbol: KSClassDeclaration,
                                        typeOfObject: TypeName,
+                                       listFragmentAnnotation: ListFragmentAnnotation,
+                                       listFragmentKSAnnotation: KSAnnotation,
+                                       annotationPosition: Int,
                                        classBuilder: TypeSpec.Builder,
                                        options: BuildOptions
     ): FunSpec.Builder? {

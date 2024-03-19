@@ -368,26 +368,30 @@ object TypeNameUtils {
         return ClassName("com.dailystudio.devbricksx.fragment", "AbsPagingViewPagerFragment")
     }
 
-    fun typeOfAdapterOf(typeName: TypeName): ClassName {
+    fun typeOfAdapterOf(typeName: TypeName, specifyClassName: String = ""): ClassName {
         require(typeName is ClassName)
-        return typeOfAdapterOf(typeName.simpleName, typeName.packageName)
+        return typeOfAdapterOf(typeName.simpleName, specifyClassName, typeName.packageName)
     }
 
     fun typeOfAdapterOf(className: String,
+                        specifyClassName: String = "",
                         packageName: String) : ClassName {
         return ClassName(GeneratedNames.getAdapterPackageName(packageName),
-            GeneratedNames.getAdapterName(className))
+            specifyClassName.ifBlank {  GeneratedNames.getAdapterName(className) })
     }
 
-    fun typeOfFragmentAdapterOf(typeName: TypeName): ClassName {
+    fun typeOfFragmentAdapterOf(typeName: TypeName,
+                                specifyClassName: String = ""): ClassName {
         require(typeName is ClassName)
-        return typeOfFragmentAdapterOf(typeName.simpleName, typeName.packageName)
+        return typeOfFragmentAdapterOf(typeName.simpleName,
+            specifyClassName, typeName.packageName)
     }
 
     fun typeOfFragmentAdapterOf(className: String,
+                                specifyClassName: String = "",
                                 packageName: String) : ClassName {
         return ClassName(GeneratedNames.getAdapterPackageName(packageName),
-            GeneratedNames.getFragmentAdapterName(className))
+            specifyClassName.ifBlank {  GeneratedNames.getFragmentAdapterName(className) })
     }
 
     fun typeOfAbsFragmentStateAdapter(): ClassName {

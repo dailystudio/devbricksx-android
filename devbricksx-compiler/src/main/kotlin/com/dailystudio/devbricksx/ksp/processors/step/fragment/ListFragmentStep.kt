@@ -8,6 +8,7 @@ import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
@@ -15,7 +16,8 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toClassName
 
 
-class ListFragmentMethodBuilderOptions(layout: Int,
+class ListFragmentMethodBuilderOptions(name: String,
+                                       layout: Int,
                                        layoutByName: String,
                                        defaultLayout: String,
                                        defaultLayoutCompat: String = defaultLayout,
@@ -27,11 +29,11 @@ class ListFragmentMethodBuilderOptions(layout: Int,
                                        dataCollectingRepeatOn: RepeatOnLifecycle,
                                        val isGradLayout: Boolean = false,
                                        val columns: Int)
-    : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
+    : BuildOptions(name, layout, layoutByName, defaultLayout, defaultLayoutCompat,
     fillParent, dataSource, paged, pageSize, adapter, dataCollectingRepeatOn)
 
 class ListFragmentStep(processor: BaseSymbolProcessor)
-    : AbsListFragmentStep(ListFragment::class, processor) {
+    : AbsListFragmentStep<ListFragment>(ListFragment::class, processor) {
 
     companion object {
         const val METHOD_ON_CREATE_LAYOUT_MANAGER = "onCreateLayoutManager"
@@ -40,21 +42,27 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
     override fun genClassBuilder(
         resolver: Resolver,
         symbol: KSClassDeclaration,
+        listFragmentAnnotation: ListFragment,
+        listFragmentKSAnnotation: KSAnnotation,
+        annotationPosition: Int,
         typeOfObject: TypeName,
         options: BuildOptions
     ): TypeSpec.Builder? {
         val typeName = symbol.typeName()
         val packageName = symbol.packageName()
 
+        val adapterAnnotation =
+            symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
+        if (adapterAnnotation == null) {
+            warn("Adapter annotation missed on symbol [$symbol]")
+            return null
+        }
+
         val paged = options.paged
         val dataSource = options.dataSource
 
-        val listFragmentKS =
-            symbol.getKSAnnotation(ListFragment::class, resolver)
-                ?: return null
-
         val typeOfSuperClass =
-            listFragmentKS.findArgument<KSType>("superClass")
+            listFragmentKSAnnotation.findArgument<KSType>("superClass")
                 .toClassName()
 
         val typeOfSuperFragment = if (typeOfSuperClass == UNIT) {
@@ -63,7 +71,9 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
             typeOfSuperClass
         }
 
-        val typeNameToGenerate = GeneratedNames.getListFragmentName(typeName)
+        val typeNameToGenerate = options.name.ifBlank {
+            GeneratedNames.getListFragmentName(typeName)
+        }
 
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfPagingDataOfObjects = TypeNameUtils.typeOfPagingDataOf(typeOfObject)
@@ -74,7 +84,8 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
             DataSource.Flow -> TypeNameUtils.typeOfFlowOf(dataType)
         }
 
-        var adapter = TypeNameUtils.typeOfAdapterOf(typeName, packageName)
+        var adapter = TypeNameUtils.typeOfAdapterOf(
+            typeName, adapterAnnotation.name, packageName)
         if (options.adapter != UNIT) {
             adapter = options.adapter
         }
@@ -90,25 +101,32 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
             .addModifiers(KModifier.OPEN)
     }
 
-    override fun genBuildOptions(resolver: Resolver, symbol: KSClassDeclaration): BuildOptions? {
-        val adapterAnnotation = symbol.getAnnotation(Adapter::class, resolver)
+
+    override fun genBuildOptions(
+        resolver: Resolver,
+        symbol: KSClassDeclaration,
+        listFragmentAnnotation: ListFragment,
+        listFragmentKSAnnotation: KSAnnotation,
+        annotationPosition: Int,
+    ): BuildOptions? {
+        val adapterAnnotation = symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
         val paged = adapterAnnotation?.paged ?: false
 
-        val fragmentAnnotation = symbol.getAnnotation(ListFragment::class, resolver) ?: return null
-        val fragmentKSAnnotation = symbol.getKSAnnotation(ListFragment::class, resolver) ?: return null
+        warn("list fragment name = ${listFragmentAnnotation.name}, paged = $paged")
 
-        val dataSource = fragmentAnnotation.dataSource
-        val dataCollectingRepeatOn = fragmentAnnotation.dataCollectingRepeatOn
-        val isGradLayout = fragmentAnnotation.gridLayout
-        val columns = fragmentAnnotation.columns
-        val layout = fragmentAnnotation.layout
-        val layoutByName = fragmentAnnotation.layoutByName
-        val fillParent = fragmentAnnotation.fillParent
-        val pageSize = fragmentAnnotation.pageSize
-        val adapter = fragmentKSAnnotation
+        val name = listFragmentAnnotation.name
+        val dataSource = listFragmentAnnotation.dataSource
+        val dataCollectingRepeatOn = listFragmentAnnotation.dataCollectingRepeatOn
+        val isGradLayout = listFragmentAnnotation.gridLayout
+        val columns = listFragmentAnnotation.columns
+        val layout = listFragmentAnnotation.layout
+        val layoutByName = listFragmentAnnotation.layoutByName
+        val fillParent = listFragmentAnnotation.fillParent
+        val pageSize = listFragmentAnnotation.pageSize
+        val adapter = listFragmentKSAnnotation
             .findArgument<KSType>("adapter").toClassName()
 
-        return ListFragmentMethodBuilderOptions(
+        return ListFragmentMethodBuilderOptions(name,
             layout, layoutByName,
             "fragment_recycler_view", "fragment_recycler_view_compact",
             fillParent,
@@ -118,7 +136,7 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
             isGradLayout, columns)
     }
 
-    override fun genMethodBuilders(): MutableList<BuilderOfMethod> {
+    override fun genMethodBuilders(): MutableList<BuilderOfMethod<ListFragment>> {
         return super.genMethodBuilders().apply {
             add(::genOnCreateLayoutManager)
         }
@@ -127,6 +145,9 @@ class ListFragmentStep(processor: BaseSymbolProcessor)
     private fun genOnCreateLayoutManager(resolver: Resolver,
                                          symbol: KSClassDeclaration,
                                          typeOfObject: TypeName,
+                                         listFragmentAnnotation: ListFragment,
+                                         listFragmentKSAnnotation: KSAnnotation,
+                                         annotationPosition: Int,
                                          classBuilder: TypeSpec.Builder,
                                          options: BuildOptions
     ): FunSpec.Builder {

@@ -2,6 +2,7 @@ package com.dailystudio.devbricksx.ksp.processors.step.view
 
 import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.view.ViewType
+import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.processors.GeneratedClassResult
@@ -10,6 +11,7 @@ import com.dailystudio.devbricksx.ksp.processors.step.SingleSymbolProcessStep
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
@@ -34,20 +36,50 @@ class AdapterStep (processor: BaseSymbolProcessor)
         resolver: Resolver,
         symbol: KSClassDeclaration
     ): List<GeneratedResult> {
+        val packageName = symbol.packageName()
+
+        val annotations = symbol.getAnnotations(Adapter::class, resolver)
+        val ksAnnotations = symbol.getKSAnnotations(classOfAnnotation, resolver)
+
+        if (annotations.size != ksAnnotations.size) {
+            error("annotation declaration mismatched for symbol: $symbol")
+            return emptyResult
+        }
+
+        val classBuilders = mutableListOf<TypeSpec.Builder>()
+
+        val N = annotations.size
+        for (i in 0 until N) {
+            val classBuilder = genClassBuilder(resolver, symbol,
+                annotations[i], ksAnnotations[i])
+            classBuilders.add(classBuilder)
+        }
+
+        return classBuilders.map {
+            GeneratedClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
+                GeneratedNames.getAdapterPackageName(packageName),
+                it)
+        }
+    }
+
+    private fun genClassBuilder(
+        resolver: Resolver,
+        symbol: KSClassDeclaration,
+        adapterAnnotation: Adapter,
+        adapterKSAnnotation: KSAnnotation,
+    ): TypeSpec.Builder {
         val typeName = symbol.typeName()
 
         val packageName = symbol.packageName()
 
-        val adapterAnnotation =
-            symbol.getAnnotation(Adapter::class, resolver) ?: return emptyResult
-
-        val adapterKSAnnotation =
-            symbol.getKSAnnotation(Adapter::class, resolver) ?: return emptyResult
+        val name = adapterAnnotation.name
+        warn("[$symbol] adapter name: $name")
 
         val paged = adapterAnnotation.paged
         warn("[$symbol] adapter paged: $paged")
         val viewType = adapterAnnotation.viewType
         warn("[$symbol] viewType: $viewType")
+
 
         val layout = adapterAnnotation.layout
         val layoutByName = adapterAnnotation.layoutByName
@@ -58,8 +90,9 @@ class AdapterStep (processor: BaseSymbolProcessor)
         val typeOfDiffUtil = adapterKSAnnotation
             .findArgument<KSType>("diffUtil").toTypeName()
 
-        val typeNameToGenerate =
+        val typeNameToGenerate = name.ifBlank {
             GeneratedNames.getAdapterName(typeName)
+        }
 
         val typeOfObject = ClassName(packageName, typeName)
         val pagingDataAdapter = TypeNameUtils.typeOfAbsAbsPagingDataAdapterOf(
@@ -80,11 +113,11 @@ class AdapterStep (processor: BaseSymbolProcessor)
             })
             .primaryConstructor(
                 FunSpec.constructorBuilder()
-                .addParameter(
-                    ParameterSpec.builder(PROP_OF_DIFF_UTIL, itemCallback)
-                    .defaultValue(DEFAULT_PROP_OF_DIFF_UTIL)
+                    .addParameter(
+                        ParameterSpec.builder(PROP_OF_DIFF_UTIL, itemCallback)
+                            .defaultValue(DEFAULT_PROP_OF_DIFF_UTIL)
+                            .build())
                     .build())
-                .build())
             .addSuperclassConstructorParameter(PROP_OF_DIFF_UTIL)
             .addModifiers(KModifier.OPEN)
 
@@ -93,7 +126,7 @@ class AdapterStep (processor: BaseSymbolProcessor)
         classCompanionBuilder.addProperty(
             PropertySpec.builder(DEFAULT_PROP_OF_DIFF_UTIL, itemCallback)
                 .initializer("%T()",
-                if (typeOfDiffUtil == UNIT) diffUtils else typeOfDiffUtil)
+                    if (typeOfDiffUtil == UNIT) diffUtils else typeOfDiffUtil)
                 .build())
 
         classBuilder.addType(classCompanionBuilder.build())
@@ -176,9 +209,7 @@ class AdapterStep (processor: BaseSymbolProcessor)
             classBuilder.addFunction(methodOnCurrentListChanged.build())
         }
 
-        return singleClassResult(GeneratedResult.setWithShadowClass(symbol, resolver),
-            GeneratedNames.getAdapterPackageName(packageName),
-            classBuilder)
+        return classBuilder
     }
 
 }

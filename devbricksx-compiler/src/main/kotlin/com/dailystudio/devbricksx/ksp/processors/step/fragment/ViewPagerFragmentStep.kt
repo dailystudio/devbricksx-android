@@ -5,17 +5,20 @@ import com.dailystudio.devbricksx.annotations.fragment.NonRecyclableListFragment
 import com.dailystudio.devbricksx.annotations.fragment.RepeatOnLifecycle
 import com.dailystudio.devbricksx.annotations.fragment.ViewPagerFragment
 import com.dailystudio.devbricksx.annotations.view.Adapter
+import com.dailystudio.devbricksx.annotations.view.FragmentAdapter
 import com.dailystudio.devbricksx.ksp.helper.GeneratedNames
 import com.dailystudio.devbricksx.ksp.processors.BaseSymbolProcessor
 import com.dailystudio.devbricksx.ksp.utils.*
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toClassName
 
-class ViewPagerFragmentBuildOptions(layout: Int,
+class ViewPagerFragmentBuildOptions(name: String,
+                                    layout: Int,
                                     layoutByName: String,
                                     defaultLayout: String,
                                     defaultLayoutCompat: String = defaultLayout,
@@ -25,11 +28,11 @@ class ViewPagerFragmentBuildOptions(layout: Int,
                                     dataCollectingRepeatOn: RepeatOnLifecycle,
                                     val useFragment: Boolean,
                                     val offscreenPageLimit: Int)
-    : BuildOptions(layout, layoutByName, defaultLayout, defaultLayoutCompat,
+    : BuildOptions(name, layout, layoutByName, defaultLayout, defaultLayoutCompat,
     fillParent, dataSource, false, adapter = adapter, dataCollectingRepeatOn = dataCollectingRepeatOn)
 
 class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
-    : AbsListFragmentStep(ViewPagerFragment::class, processor) {
+    : AbsListFragmentStep<ViewPagerFragment>(ViewPagerFragment::class, processor) {
 
     companion object {
         const val METHOD_SETUP_VIEW = "setupViews"
@@ -38,6 +41,9 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
     override fun genClassBuilder(
         resolver: Resolver,
         symbol: KSClassDeclaration,
+        listFragmentAnnotation: ViewPagerFragment,
+        listFragmentKSAnnotation: KSAnnotation,
+        annotationPosition: Int,
         typeOfObject: TypeName,
         options: BuildOptions
     ): TypeSpec.Builder? {
@@ -47,12 +53,8 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         val paged = options.paged
         val dataSource = options.dataSource
 
-        val viewPagerFragmentKS =
-            symbol.getKSAnnotation(ViewPagerFragment::class, resolver)
-                ?: return null
-
         val typeOfSuperClass =
-            viewPagerFragmentKS.findArgument<KSType>("superClass")
+            listFragmentKSAnnotation.findArgument<KSType>("superClass")
                 .toClassName()
 
         val typeOfSuperFragment = if (typeOfSuperClass == UNIT) {
@@ -65,8 +67,9 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
             typeOfSuperClass
         }
 
-        val typeNameToGenerate =
+        val typeNameToGenerate = options.name.ifBlank {
             GeneratedNames.getPagerFragmentName(typeName)
+        }
 
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
         val typeOfLiveDataOfListOfObjects =
@@ -78,14 +81,8 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
         val typeOfPagedListOfObjects =
             TypeNameUtils.typeOfPagedListOf(typeOfObject)
 
-        var adapter = if ((options as ViewPagerFragmentBuildOptions).useFragment) {
-            TypeNameUtils.typeOfFragmentAdapterOf(typeName, packageName)
-        } else {
-            TypeNameUtils.typeOfAdapterOf(typeName, packageName)
-        }
-        if (options.adapter != UNIT) {
-            adapter = options.adapter
-        }
+        val adapter = getAdapterType(resolver, symbol, typeOfObject,
+            annotationPosition, options) ?: return null
 
         val superFragment = typeOfSuperFragment.parameterizedBy(
             typeOfObject,
@@ -103,38 +100,39 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
             .addModifiers(KModifier.OPEN)
     }
 
-    override fun genBuildOptions(resolver: Resolver,
-                                 symbol: KSClassDeclaration): BuildOptions? {
-        val adapterAnnotation = symbol.getAnnotation(Adapter::class, resolver)
+    override fun genBuildOptions(
+        resolver: Resolver,
+        symbol: KSClassDeclaration,
+        listFragmentAnnotation: ViewPagerFragment,
+        listFragmentKSAnnotation: KSAnnotation,
+        annotationPosition: Int,
+    ): BuildOptions? {
+        val adapterAnnotation = symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
         val paged = adapterAnnotation?.paged ?: false
         if (paged) {
             error("@ViewPagerFragment does not support @Adapter with paged = true.")
             return null
         }
 
-        val fragmentAnnotation =
-            symbol.getAnnotation(ViewPagerFragment::class, resolver) ?: return null
-        val fragmentKSAnnotation =
-            symbol.getKSAnnotation(ViewPagerFragment::class, resolver) ?: return null
-
-        val layout = fragmentAnnotation.layout
-        val layoutByName = fragmentAnnotation.layoutByName
-        val fillParent = fragmentAnnotation.fillParent
-        val dataSource = fragmentAnnotation.dataSource
-        val dataCollectingRepeatOn = fragmentAnnotation.dataCollectingRepeatOn
-        val useFragment = fragmentAnnotation.useFragment
-        val offscreenPageLimit = fragmentAnnotation.offscreenPageLimit
-        val adapter = fragmentKSAnnotation
+        val name = listFragmentAnnotation.name
+        val layout = listFragmentAnnotation.layout
+        val layoutByName = listFragmentAnnotation.layoutByName
+        val fillParent = listFragmentAnnotation.fillParent
+        val dataSource = listFragmentAnnotation.dataSource
+        val dataCollectingRepeatOn = listFragmentAnnotation.dataCollectingRepeatOn
+        val useFragment = listFragmentAnnotation.useFragment
+        val offscreenPageLimit = listFragmentAnnotation.offscreenPageLimit
+        val adapter = listFragmentKSAnnotation
             .findArgument<KSType>("adapter").toClassName()
 
-        return ViewPagerFragmentBuildOptions(
+        return ViewPagerFragmentBuildOptions(name,
             layout, layoutByName,
             "fragment_view_pager", "fragment_view_pager_compact",
             fillParent,
             dataSource, adapter, dataCollectingRepeatOn, useFragment, offscreenPageLimit)
     }
 
-    override fun genMethodBuilders(): MutableList<BuilderOfMethod> {
+    override fun genMethodBuilders(): MutableList<BuilderOfMethod<ViewPagerFragment>> {
         return super.genMethodBuilders().apply {
             add(::genSetupViews)
         }
@@ -143,6 +141,9 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
     private fun genSetupViews(resolver: Resolver,
                               symbol: KSClassDeclaration,
                               typeOfObject: TypeName,
+                              listFragmentAnnotation: ViewPagerFragment,
+                              listFragmentKSAnnotation: KSAnnotation,
+                              annotationPosition: Int,
                               classBuilder: TypeSpec.Builder,
                               options: BuildOptions): FunSpec.Builder? {
         val buildOptions = (options as ViewPagerFragmentBuildOptions)
@@ -160,20 +161,52 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
             .addStatement("viewPager?.offscreenPageLimit = %L", limit)
     }
 
-    override fun genOnCreateAdapter(resolver: Resolver,
-                                    symbol: KSClassDeclaration,
-                                    typeOfObject: TypeName,
-                                    classBuilder: TypeSpec.Builder,
-                                    options: BuildOptions): FunSpec.Builder? {
+    private fun getAdapterType(resolver: Resolver,
+                               symbol: KSClassDeclaration,
+                               typeOfObject: TypeName,
+                               annotationPosition: Int,
+                               options: BuildOptions): ClassName? {
         val useFragment = (options as ViewPagerFragmentBuildOptions).useFragment
+
         var adapter = if (useFragment) {
-            TypeNameUtils.typeOfFragmentAdapterOf(typeOfObject)
+            val fragmentAdapterAnnotation =
+                symbol.getAnnotation(FragmentAdapter::class, annotationPosition, resolver)
+            if (fragmentAdapterAnnotation == null) {
+                warn("FragmentAdapter annotation missed on symbol [$symbol]")
+                return null
+            }
+
+            TypeNameUtils.typeOfFragmentAdapterOf(typeOfObject, fragmentAdapterAnnotation.name)
         } else {
-            TypeNameUtils.typeOfAdapterOf(typeOfObject)
+            val adapterAnnotation =
+                symbol.getAnnotation(Adapter::class, annotationPosition, resolver)
+            if (adapterAnnotation == null) {
+                warn("Adapter annotation missed on symbol [$symbol]")
+                return null
+            }
+
+            TypeNameUtils.typeOfAdapterOf(typeOfObject, adapterAnnotation.name)
         }
+
         if (options.adapter != UNIT) {
             adapter = options.adapter
         }
+
+        return adapter
+    }
+
+    override fun genOnCreateAdapter(resolver: Resolver,
+                                    symbol: KSClassDeclaration,
+                                    typeOfObject: TypeName,
+                                    listFragmentAnnotation: ViewPagerFragment,
+                                    listFragmentKSAnnotation: KSAnnotation,
+                                    annotationPosition: Int,
+                                    classBuilder: TypeSpec.Builder,
+                                    options: BuildOptions): FunSpec.Builder? {
+        val useFragment = (options as ViewPagerFragmentBuildOptions).useFragment
+
+        val adapter = getAdapterType(resolver, symbol, typeOfObject,
+            annotationPosition, options) ?: return null
 
         val methodOnCreateAdapterBuilder = FunSpec.builder(METHOD_ON_CREATE_ADAPTER)
             .addModifiers(KModifier.PUBLIC)
@@ -192,17 +225,13 @@ class ViewPagerFragmentStep(processor: BaseSymbolProcessor)
     override fun genSubmitData(resolver: Resolver,
                                symbol: KSClassDeclaration,
                                typeOfObject: TypeName,
+                               listFragmentAnnotation: ViewPagerFragment,
+                               listFragmentKSAnnotation: KSAnnotation,
+                               annotationPosition: Int,
                                classBuilder: TypeSpec.Builder,
                                options: BuildOptions): FunSpec.Builder? {
-        val useFragment = (options as ViewPagerFragmentBuildOptions).useFragment
-        var adapter = if (useFragment) {
-            TypeNameUtils.typeOfFragmentAdapterOf(typeOfObject)
-        } else {
-            TypeNameUtils.typeOfAdapterOf(typeOfObject)
-        }
-        if (options.adapter != UNIT) {
-            adapter = options.adapter
-        }
+        val adapter = getAdapterType(resolver, symbol, typeOfObject,
+            annotationPosition, options) ?: return null
 
         val typeOfListOfObjects = TypeNameUtils.typeOfListOf(typeOfObject)
 
