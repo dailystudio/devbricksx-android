@@ -15,6 +15,7 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
@@ -114,7 +115,8 @@ class AdapterStep (processor: BaseSymbolProcessor)
             .superclass(if (typeOfSuperClass == UNIT) {
                 if (paged) pagingDataAdapter else listAdapter
             } else {
-                typeOfSuperClass
+                typeOfSuperClass.parameterizedBy(
+                    typeOfObject, typeOfViewHolder)
             })
             .primaryConstructor(
                 FunSpec.constructorBuilder()

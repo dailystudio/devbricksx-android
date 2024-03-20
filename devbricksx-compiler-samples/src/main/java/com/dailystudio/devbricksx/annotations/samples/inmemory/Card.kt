@@ -1,7 +1,10 @@
 package com.dailystudio.devbricksx.annotations.samples.inmemory
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.annotations.data.InMemoryCompanion
 import com.dailystudio.devbricksx.annotations.data.Ordering
 import com.dailystudio.devbricksx.annotations.fragment.DataSource
@@ -13,6 +16,7 @@ import com.dailystudio.devbricksx.annotations.view.Adapter
 import com.dailystudio.devbricksx.annotations.viewmodel.ViewModel
 import com.dailystudio.devbricksx.inmemory.InMemoryObject
 import com.dailystudio.devbricksx.ui.AbsListAdapter
+import com.dailystudio.devbricksx.ui.AbsSingleLineViewHolder
 import java.util.*
 
 @ViewPagerFragment
@@ -28,7 +32,7 @@ import java.util.*
 )
 @Adapter(
     name = "CardAdapter1",
-    viewHolder = DummyViewHolder::class,
+    viewHolder = BaseCardViewHolder::class,
     superClass = BaseCardsAdapter::class,
 )
 @Adapter(
@@ -38,7 +42,7 @@ import java.util.*
 )
 @Adapter(
     name = "CardAdapter2",
-    viewHolder = DummyViewHolder::class,
+    viewHolder = BaseCardViewHolder::class,
     superClass = BaseCardsAdapter::class,
 )
 @ViewModel
@@ -74,8 +78,22 @@ class EmptyCardWrapper(id: Int,
 abstract class IntKeyInMemoryObject: InMemoryObject<Int>
 
 
-public abstract class BaseCardsAdapter(
-    diffCallback: DiffUtil.ItemCallback<Card>,
-) : AbsListAdapter<Card, DummyViewHolder>(diffCallback) {
+public abstract class BaseCardsAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
+    diffCallback: DiffUtil.ItemCallback<Item>,
+) : AbsListAdapter<Item, ViewHolder>(diffCallback) {
 
 }
+
+open class BaseCardViewHolder(view: View): AbsSingleLineViewHolder<Card>(view) {
+    override fun getIcon(item: Card): Drawable? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getText(item: Card): CharSequence? {
+        TODO("Not yet implemented")
+    }
+
+}
+
+class CardViewHolder1(view: View): BaseCardViewHolder(view)
+class CardViewHolder2(view: View): BaseCardViewHolder(view)
