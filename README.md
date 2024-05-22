@@ -27,7 +27,7 @@ plugins {
 The latest version of the Gradle plugin is:
 
 ```Groovy
-devkit_version = "1.9.1-1.1.0"
+devkit_version = "1.9.2-1.1.1"
 ```
 
 That's it. Everything is done. You can use anything provided by **DevBricks X**. 
@@ -82,8 +82,8 @@ dependencies {
 The latest version of the dependencies above are:
 
 ```groovy
-ksp_version = "1.9.20-1.0.14"
-devbricksx_version = "1.9.1"
+ksp_version = "1.9.24-1.0.20"
+devbricksx_version = "1.9.2"
 ```
 
 Then, if you are using annotations through [KSP (Kotlin Symbol Processing)](https://kotlinlang.org/docs/ksp-overview.html), DO NOT forget to add plug-ins repo in **settings.gradle**:
