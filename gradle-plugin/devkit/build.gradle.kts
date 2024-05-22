@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "1.9.24"
     `java-gradle-plugin`
     `kotlin-dsl`
     id("maven-publish")
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "cn.dailystudio"
-version = "1.9.1-1.1.0"
+version = "1.9.2-1.1.1"
 
 repositories {
     mavenCentral()
@@ -18,8 +18,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.android.tools.build:gradle:8.2.0")
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.20-1.0.14")
+    compileOnly("com.android.tools.build:gradle:8.4.1")
+    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.24-1.0.20")
     testImplementation(kotlin("test"))
 }
 
