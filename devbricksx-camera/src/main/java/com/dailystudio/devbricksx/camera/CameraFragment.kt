@@ -177,13 +177,10 @@ open class CameraFragment: AbsPermissionsFragment() {
             val cases = buildUseCases(screenAspectRatio, rotation)
 
             useCases.clear()
-            for (case in cases) {
-                // Bind use cases to camera
-                camera = cameraProvider?.bindToLifecycle(
-                        this, cameraSelector, case)
+            useCases.addAll(useCases)
 
-                useCases.add(case)
-            }
+            camera = cameraProvider?.bindToLifecycle(
+                this, cameraSelector, *cases.toTypedArray())
 
             postConfigurationOfUseCases(cases)
         } catch(exc: Exception) {
