@@ -6,13 +6,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion COMPILE_SDK
-    buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
         namespace "com.dailystudio.devbricksx.gallery.core"
 
-        minSdkVersion 21
+        compileSdk COMPILE_SDK
+        minSdkVersion MINI_SDK
         targetSdkVersion TARGET_SDK
         versionCode VERSION_CODE
         versionName VERSION_NAME

@@ -79,6 +79,7 @@ ext {
     // Compile Settings
     COMPILE_SDK = 34
     TARGET_SDK = 34
+    MINI_SDK = 21
     BUILD_TOOLS = '34.0.0'
     VERSION_NAME = versions.devBricksXVersion()
     VERSION_CODE = versions.devBricksXVersionCode().toInteger()

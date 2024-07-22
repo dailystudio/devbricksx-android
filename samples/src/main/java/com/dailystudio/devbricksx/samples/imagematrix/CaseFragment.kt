@@ -34,20 +34,23 @@ class CaseFragment : BaseCaseFragment() {
 
         setupViews(view)
 
-        generateBundles()
+//        generateBundles()
     }
 
     private fun setupViews(fragmentView: View) {
         viewFrameStub = fragmentView.findViewById(R.id.viewFrameStub)
+        viewFrameStub?.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+            generateBundles(v)
+        }
     }
 
-    private fun generateBundles() {
+    private fun generateBundles(presenter: View) {
         val context = requireContext()
 
         MatrixUtils.DEBUG_DETAIL = true
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val viewModel = ViewModelProvider(this@CaseFragment).get(ImageBundleViewModel::class.java)
+            val viewModel = ViewModelProvider(this@CaseFragment)[ImageBundleViewModel::class.java]
 
             originalBitmap = ImageUtils.loadAssetBitmap(context,
                     IMAGE_ASSET)
@@ -57,8 +60,8 @@ class CaseFragment : BaseCaseFragment() {
                 val originalPage = ImageBundle(1,"original",
                         it, Matrix())
                 val presentationPage =
-                        createPresentationImageBundle(it, viewFrameStub)
-                val fitPage = createFitImageBundle(it, viewFrameStub)
+                        createPresentationImageBundle(it, presenter)
+                val fitPage = createFitImageBundle(it, presenter)
 
                 viewModel.insertImageBundles(listOf(
                         editPage,
@@ -85,10 +88,14 @@ class CaseFragment : BaseCaseFragment() {
 
     private fun createPresentationImageBundle(bitmap: Bitmap,
                                               presenter: View?): ImageBundle {
+        Logger.debug("[CPI]: bitmap: w= ${bitmap.width}, h = ${bitmap.height}")
+        Logger.debug("[CPI]: presenter: w = ${presenter?.width}, h = ${presenter?.height}")
+
         val matrix = MatrixUtils.getTransformationMatrix(
                 bitmap.width, bitmap.height,
                 presenter?.width ?: 1, presenter?.height ?: 1,
                 90)
+
 
         val transformed = ImageUtils.createTransformedBitmap(
                 bitmap, matrix)

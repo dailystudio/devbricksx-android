@@ -7,14 +7,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion COMPILE_SDK
-    buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
         applicationId "com.dailystudio.devbricksx.notebook.compose"
         namespace "com.dailystudio.devbricksx.notebook.compose"
 
-        minSdkVersion 21
+        compileSdk COMPILE_SDK
+        minSdkVersion MINI_SDK
         targetSdkVersion TARGET_SDK
         versionCode VERSION_CODE
         versionName VERSION_NAME
