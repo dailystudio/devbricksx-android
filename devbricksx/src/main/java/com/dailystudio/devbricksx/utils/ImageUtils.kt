@@ -1093,4 +1093,56 @@ object ImageUtils {
         return bitmap
     }
 
+    private fun resizeToNxN(bitmap: Bitmap, n: Int): Bitmap {
+        return Bitmap.createScaledBitmap(bitmap, n, n, true)
+    }
+
+    fun buildPHash(bitmap: Bitmap, bitSize: Int): String {
+        val resizedBitmap = resizeToNxN(bitmap, bitSize)
+        val grayscaleBitmap = createGrayScaledBitmap(resizedBitmap)
+
+        val height = grayscaleBitmap.height
+        val width = grayscaleBitmap.width
+
+        var totalPixVal = 0
+        for (i in 0 until width) {
+            for (j in 0 until height) {
+                val currPixel = grayscaleBitmap.getPixel(i, j) and 0xff //read lowest byte of pixels
+                totalPixVal += currPixel
+            }
+        }
+
+        val average = totalPixVal / 64
+        var hashVal = ""
+        for (i in 0 until width) {
+            for (j in 0 until height) {
+                val currPixel = grayscaleBitmap.getPixel(i, j) and 0xff //read lowest byte of pixels
+                hashVal += if (currPixel >= average) {
+                    "1"
+                } else {
+                    "0"
+                }
+            }
+        }
+
+        return hashVal
+    }
+
+    private fun getHammingDistance(pHash1: String, pHash2: String): Int {
+        if (pHash1.length != pHash2.length) {
+            return -1
+        }
+
+        var counter = 0
+        for (i in pHash1.indices) {
+            if (pHash1[i] != pHash2[i]) counter++
+        }
+
+        return counter
+    }
+
+    fun getSimilarity(pHash1: String, pHash2: String): Int {
+        return 100 - getHammingDistance(pHash1, pHash2)
+    }
+
 }

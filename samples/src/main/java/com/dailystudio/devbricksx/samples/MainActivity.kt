@@ -54,6 +54,7 @@ class MainActivity : DevBricksActivity() {
             fragment<com.dailystudio.devbricksx.samples.jackandjill.CaseFragment>("jack-and-jill")
             fragment<com.dailystudio.devbricksx.samples.nonrecyclablelistview.CaseFragment>("non-recyclable-list-view")
             fragment<com.dailystudio.devbricksx.samples.paging.CaseFragment>("paging")
+            fragment<com.dailystudio.devbricksx.samples.phash.CaseFragment>("phash")
             fragment<com.dailystudio.devbricksx.samples.quickstart.CaseFragment>("quick-start")
             fragment<com.dailystudio.devbricksx.samples.settings.dialog.CaseFragment>("settings-dialog")
             fragment<com.dailystudio.devbricksx.samples.settings.normal.CaseFragment>("settings-normal")

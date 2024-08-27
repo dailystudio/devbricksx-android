@@ -105,10 +105,17 @@
     "desc": ""
   },
   {
+    "name": "phash",
+    "package": "phash",
+    "title": "pHash Similarity",
+    "icon": "ic_case_phash",
+    "desc": ""
+  },
+  {
     "name": "jack-and-jill",
     "package": "jackandjill",
     "title": "Jack & Jill",
-    "icon": "ic_case_paging",
+    "icon": "ic_case_jack_and_jill",
     "desc": ""
   },
   {
