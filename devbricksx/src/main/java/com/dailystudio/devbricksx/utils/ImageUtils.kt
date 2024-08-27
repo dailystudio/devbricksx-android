@@ -1112,7 +1112,7 @@ object ImageUtils {
             }
         }
 
-        val average = totalPixVal / 64
+        val average = totalPixVal / (bitSize*bitSize)
         var hashVal = ""
         for (i in 0 until width) {
             for (j in 0 until height) {
@@ -1138,7 +1138,7 @@ object ImageUtils {
             if (pHash1[i] != pHash2[i]) counter++
         }
 
-        return counter
+        return (counter * 100f / pHash1.length).roundToInt()
     }
 
     fun getSimilarity(pHash1: String, pHash2: String): Int {

@@ -17,6 +17,7 @@ import okhttp3.Dispatcher
 
 class PHashViewModel(application: Application): AndroidViewModel(application) {
 
+    private val _imageUris: MutableList<Uri?> = mutableListOf(null, null)
     private val _pHashValues: List<MutableStateFlow<String?>> = listOf(
         MutableStateFlow(null),
         MutableStateFlow(null)
@@ -30,7 +31,8 @@ class PHashViewModel(application: Application): AndroidViewModel(application) {
 
     val similarity: StateFlow<Int> = _similarity
 
-    private val resizeN: Int = 8
+    private val _sampleN: MutableStateFlow<Int> = MutableStateFlow(8)
+    private val sampleN: StateFlow<Int> = _sampleN
 
     fun setImage(index: Int, uri: Uri?) {
         if (index < 0 || index >= _pHashValues.size) {
@@ -38,9 +40,20 @@ class PHashViewModel(application: Application): AndroidViewModel(application) {
         }
 
         viewModelScope.launch(Dispatchers.IO) {
+            _imageUris[index] = uri
             _pHashValues[index].value = imageToPHash(uri)
             _similarity.value = calculateSimilarity()
         }
+    }
+
+    fun setSample(sample: Int) {
+        _sampleN.value = sample
+
+        _pHashValues.forEachIndexed { index, pHashFlow ->
+            pHashFlow.value = imageToPHash(_imageUris[index])
+        }
+
+        _similarity.value = calculateSimilarity()
     }
 
     private fun calculateSimilarity(): Int {
@@ -53,7 +66,7 @@ class PHashViewModel(application: Application): AndroidViewModel(application) {
     private fun imageToPHash(uri: Uri?): String? {
         val bitmap = uriToImage(uri) ?: return null
 
-        return ImageUtils.buildPHash(bitmap, resizeN)
+        return ImageUtils.buildPHash(bitmap, sampleN.value)
     }
 
     private fun uriToImage(uri: Uri?): Bitmap? {
