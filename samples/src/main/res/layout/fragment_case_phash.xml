@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".phash.CaseFragment">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/image_picker_1"
+            android:name="com.dailystudio.devbricksx.samples.phash.PickImage1Fragment"
+            android:layout_margin="@dimen/default_padding"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+        <TextView
+            android:id="@+id/similarity"
+            style="@style/DefaultLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <fragment
+            android:id="@+id/image_picker_2"
+            android:name="com.dailystudio.devbricksx.samples.phash.PickImage2Fragment"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/default_padding"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

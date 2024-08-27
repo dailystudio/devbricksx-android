@@ -1142,6 +1142,10 @@ object ImageUtils {
     }
 
     fun getSimilarity(pHash1: String, pHash2: String): Int {
+        val hammingDistance = getHammingDistance(pHash1, pHash2)
+        Logger.debug("[PHASH]: hash1 = $pHash1")
+        Logger.debug("[PHASH]: hash2 = $pHash2")
+        Logger.debug("[PHASH]: hammingDistance = $hammingDistance")
         return 100 - getHammingDistance(pHash1, pHash2)
     }
 
