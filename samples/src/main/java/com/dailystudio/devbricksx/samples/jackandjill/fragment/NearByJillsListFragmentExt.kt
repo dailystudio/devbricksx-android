@@ -105,7 +105,7 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
     private fun setupPlayer() {
         player = MidiPlayer(
             requireContext(),
-            "GeneralUser GS MuseScore v1.sf2"
+            "soundfont/FluidR3_GM.sf2"
         )
 
         player.playback.observe(this) {

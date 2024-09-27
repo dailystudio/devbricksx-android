@@ -124,5 +124,12 @@
     "title": "WebView",
     "icon": "ic_case_paging",
     "desc": ""
+  },
+  {
+    "name": "midi",
+    "package": "midi",
+    "title": "Midi",
+    "icon": "ic_case_paging",
+    "desc": ""
   }
 ]

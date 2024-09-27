@@ -60,6 +60,7 @@ class MainActivity : DevBricksActivity() {
             fragment<com.dailystudio.devbricksx.samples.settings.normal.CaseFragment>("settings-normal")
             fragment<com.dailystudio.devbricksx.samples.viewpager.CaseFragment>("viewpager")
             fragment<com.dailystudio.devbricksx.samples.webview.CaseFragment>("webview")
+            fragment<com.dailystudio.devbricksx.samples.midi.CaseFragment>("midi")
         }
     }
 

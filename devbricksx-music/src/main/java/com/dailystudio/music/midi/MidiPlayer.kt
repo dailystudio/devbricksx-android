@@ -186,7 +186,7 @@ class MidiPlayer(private val context: Context,
     private val eventReceiver = object: Receiver {
 
         override fun send(message: MidiMessage, timeStamp: Long) {
-            Logger.debug("message coming[$timeStamp]: $message")
+//            Logger.debug("message coming[$timeStamp]: $message")
             if (playing) {
                 if (message is ShortMessage) {
                     _playback.postValue(
