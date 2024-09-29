@@ -1,1 +1,4 @@
-*.mid
+# Ignore all files
+*
+
+!twinkle_twinkle_little_star.mid

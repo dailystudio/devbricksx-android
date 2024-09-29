@@ -13,15 +13,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.lifecycle.repeatOnLifecycle
 import com.dailystudio.devbricksx.samples.R
+import com.dailystudio.devbricksx.samples.midi.ui.MidiChannelViewer
 import com.dailystudio.devbricksx.samples.midi.utils.MidiAnalyzer
-import jp.kshoji.javax.sound.midi.ShortMessage
 import jp.kshoji.javax.sound.midi.io.StandardMidiFileReader
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.io.InputStream
-import kotlin.math.min
 
 class CaseFragment: DevBricksFragment() {
 
     private lateinit var midiPlayer: MidiPlayer
+
+    private var midiChannelViewer: MidiChannelViewer? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,37 +41,62 @@ class CaseFragment: DevBricksFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        midiChannelViewer = view.findViewById(R.id.channel_view)
     }
 
-    private fun loadMidi() {
+    suspend fun loadMidi() {
         val assets = requireContext().assets
 
 //        val inputStream: InputStream = assets.open("midi/love.mid") // Load your MIDI file from assets
         val inputStream: InputStream = assets.open("midi/PokerFace.mid") // Load your MIDI file from assets
+//        val inputStream: InputStream = assets.open("midi/twinkle_twinkle_little_star.mid") // Load your MIDI file from assets
 
         val fileReader = StandardMidiFileReader()
-        val sequence =  StandardMidiFileReader().getSequence(inputStream)
+        val sequence =  fileReader.getSequence(inputStream)
 
         val analyzer = MidiAnalyzer(sequence)
 
         analyzer.analyze()
         val tracksInfo = analyzer.getTracksInfo()
-        tracksInfo.entries.forEach { entry ->
-            Logger.debug("track info[${entry.key}]: ")
+        tracksInfo.entries.forEach { entryOfTrack ->
+            Logger.debug("track info[${entryOfTrack.key}]: ${entryOfTrack.value}")
+        }
 
-            entry.value.programs.entries.forEach { entry ->
-                Logger.debug("channel [${entry.key}] program: ${entry.value}")
-            }
-
-            entry.value.ranges.entries.forEach { entry ->
-                val min = entry.value.first
-                val max = entry.value.second
-                val range = (max - min)
-                Logger.debug("channel [${entry.key}] note range: [$min, $max], $range")
+        withContext(Dispatchers.Main) {
+            if (tracksInfo.isNotEmpty()) {
+                midiChannelViewer?.setBars(3)
+                midiChannelViewer?.displayEvents(
+                    sequence.tracks[0],
+                    tracksInfo[0]!!,
+                    channel = 1
+                )
             }
         }
 
-        midiPlayer.play(sequence, 160F)
+        midiPlayer.play(sequence)
+
+        lifecycleScope.launch {
+            val run = true
+
+            if (run) {
+                val now = System.currentTimeMillis()
+                var tick = now
+
+                while ((tick - now) <= 5000L) {
+                    tick = System.currentTimeMillis() - now
+                    withContext(Dispatchers.Main) {
+                        midiChannelViewer?.viewTickFrom(tick)
+                    }
+
+                    delay(5L)
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    midiChannelViewer?.viewTickFrom(17280L)
+                }
+            }
+        }
     }
 
     private fun setupPlayer() {
