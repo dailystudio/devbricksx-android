@@ -8,6 +8,8 @@ import cn.sherlock.com.sun.media.sound.SoftSynthesizer
 import com.dailystudio.devbricksx.development.Logger
 import jp.kshoji.javax.sound.midi.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.IOException
 
 class MidiPlayer(private val context: Context,
@@ -16,8 +18,8 @@ class MidiPlayer(private val context: Context,
     private var synthesizer: SoftSynthesizer? = null
     private var sequencer: Sequencer? = null
 
-    private val _playback: MutableLiveData<MidiPlayback> = MutableLiveData(MidiPlayback())
-    val playback: LiveData<MidiPlayback> = _playback
+    private val _playback: MutableStateFlow<MidiPlayback> = MutableStateFlow(MidiPlayback())
+    val playback: StateFlow<MidiPlayback> = _playback
 
     private val _ready: MutableLiveData<Boolean> = MutableLiveData(false)
     val ready: LiveData<Boolean> = _ready
@@ -82,25 +84,44 @@ class MidiPlayer(private val context: Context,
         return synthesizerPid + 1
     }
 
-
-    fun noteOn(note: MidiNote) {
+    fun noteOn(note: Int , channelId: Int = 0) {
         Logger.debug("synthesizer: $synthesizer")
         Logger.debug("channels: ${synthesizer?.channels}")
-        synthesizer?.channels?.get(0)?.noteOn(note.value(), 100)
+        synthesizer?.channels?.get(channelId)?.noteOn(note, 200)
         Logger.debug("note on: $note")
     }
 
-    fun noteOff(note: MidiNote) {
-        synthesizer?.channels?.get(0)?.noteOff(note.value(), 100)
+    fun noteOn(note: MidiNote, channelId: Int = 0) {
+        noteOn(note.value())
+    }
+
+    fun noteOff(note: Int, channelId: Int = 0) {
+        synthesizer?.channels?.get(channelId)?.noteOff(note, 100)
         Logger.debug("note off: $note")
     }
 
-    suspend fun tapNote(note: MidiNote, ticksPerUnit: Int = 1, msPerTick: Long = 50) {
-        val delayTime = msPerTick * ticksPerUnit * note.length
-        noteOn(note)
+    fun noteOff(note: MidiNote, channelId: Int = 0) {
+        noteOff(note.value())
+    }
+
+    suspend fun tapNote(note: Int,
+                        length: Int = 1,
+                        channelId: Int = 0,
+                        ticksPerUnit: Int = 1,
+                        msPerTick: Long = 50, ) {
+        val delayTime = msPerTick * ticksPerUnit * length
+        noteOn(note, channelId)
         Logger.debug("note delay: $delayTime")
         delay(delayTime)
-        noteOff(note)
+        noteOff(note, channelId)
+    }
+
+
+    suspend fun tapNote(note: MidiNote,
+                        channelId: Int = 0,
+                        ticksPerUnit: Int = 1,
+                        msPerTick: Long = 50, ) {
+        tapNote(note.value(), note.length, channelId, ticksPerUnit, msPerTick)
     }
 
     private fun allNoteOff() {
@@ -126,7 +147,7 @@ class MidiPlayer(private val context: Context,
         paused = false
         playingSequence = sequence
 
-        _playback.postValue(MidiPlayback(PlaybackEvent.Start, 0, 0))
+        _playback.value = MidiPlayback(PlaybackEvent.Start, 0, 0)
     }
 
     fun reload(sequence: Sequence, tempo: Float) {
@@ -148,7 +169,7 @@ class MidiPlayer(private val context: Context,
         playingSequence = null
         playingSequenceTick = 0L
 
-        _playback.postValue(MidiPlayback(PlaybackEvent.Stop, 0, 0))
+        _playback.value = MidiPlayback(PlaybackEvent.Stop, 0, 0)
     }
 
     fun pause() {
@@ -161,7 +182,7 @@ class MidiPlayer(private val context: Context,
 
         paused = true
 
-        _playback.postValue(MidiPlayback(PlaybackEvent.Pause))
+        _playback.value = MidiPlayback(PlaybackEvent.Pause)
     }
 
     fun resume(sequence: Sequence, syncToTick: Long = -1L) {
@@ -180,16 +201,16 @@ class MidiPlayer(private val context: Context,
 
         paused = false
 
-        _playback.postValue(MidiPlayback(PlaybackEvent.Resume))
+        _playback.value = MidiPlayback(PlaybackEvent.Resume)
     }
 
     private val eventReceiver = object: Receiver {
 
         override fun send(message: MidiMessage, timeStamp: Long) {
-//            Logger.debug("message coming[$timeStamp]: $message")
+            Logger.debug("[playing: ${playing}] message coming[$timeStamp]: $message")
             if (playing) {
                 if (message is ShortMessage) {
-                    _playback.postValue(
+                    _playback.value =
                         MidiPlayback(
                         when (message.command) {
                             ShortMessage.NOTE_ON -> {
@@ -205,9 +226,9 @@ class MidiPlayer(private val context: Context,
                         data = message.data1,
                         timeStamp
                     )
-                    )
                 } else if (message is MetaMessage) {
-                    _playback.postValue(
+                    val stop = (message.type == MetaMessage.TYPE_END_OF_TRACK)
+                    _playback.value =
                         MidiPlayback(
                         when (message.type) {
                             MetaMessage.TYPE_END_OF_TRACK -> {
@@ -220,13 +241,14 @@ class MidiPlayer(private val context: Context,
                         0,
                         timeStamp
                     )
-                    )
 
-                    playing = false
-                    paused = false
+                    if (stop) {
+                        playing = false
+                        paused = false
 
-                    playingSequence = null
-                    playingSequenceTick = 0L
+                        playingSequence = null
+                        playingSequenceTick = 0L
+                    }
                 }
             }
         }

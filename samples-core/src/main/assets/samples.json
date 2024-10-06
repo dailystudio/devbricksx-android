@@ -126,9 +126,9 @@
     "desc": ""
   },
   {
-    "name": "midi",
-    "package": "midi",
-    "title": "Midi",
+    "name": "midichannelview",
+    "package": "midi.channelview",
+    "title": "Midi Channel View",
     "icon": "ic_case_paging",
     "desc": ""
   }

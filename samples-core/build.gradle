@@ -65,4 +65,5 @@ dependencies {
 
     api "com.airbnb.android:lottie:${project.ext.lottieVersion}"
     api "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
+
 }

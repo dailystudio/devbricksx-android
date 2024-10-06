@@ -35,7 +35,6 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
 
         myJillViewModelExt = ViewModelProvider(this)[NearByJillViewModelExt::class.java]
 
-
         setupPlayer()
 
         myJillViewModelExt.ready.observe(this) {
@@ -108,9 +107,6 @@ class NearByJillsListFragmentExt: NearByJillsListFragment() {
             "soundfont/FluidR3_GM.sf2"
         )
 
-        player.playback.observe(this) {
-            Logger.debug("Player: event: ${it.event.name}")
-        }
 
         player.ready.observe(this) {
             Logger.debug("Player: ready: $it")
