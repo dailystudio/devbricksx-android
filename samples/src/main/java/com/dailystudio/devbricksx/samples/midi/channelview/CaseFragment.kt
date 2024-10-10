@@ -8,14 +8,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.fragment.DevBricksFragment
-import com.dailystudio.music.midi.MidiPlayer
+import com.dailystudio.devbricksx.music.midi.MidiPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.lifecycle.repeatOnLifecycle
 import com.dailystudio.devbricksx.samples.R
-import com.dailystudio.music.midi.MidiAnalyzer
-import com.dailystudio.music.midi.PlaybackEvent
-import com.dailystudio.music.midi.ui.MidiChannelViewer
+import com.dailystudio.devbricksx.music.midi.utils.MidiAnalyzer
+import com.dailystudio.devbricksx.music.midi.PlaybackEvent
+import com.dailystudio.devbricksx.music.midi.ui.MidiChannelViewer
 import jp.kshoji.javax.sound.midi.io.StandardMidiFileReader
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -51,8 +51,8 @@ class CaseFragment: DevBricksFragment() {
         val assets = requireContext().assets
 
 //        val inputStream: InputStream = assets.open("midi/love.mid") // Load your MIDI file from assets
-        val inputStream: InputStream = assets.open("midi/PokerFace.mid") // Load your MIDI file from assets
-//        val inputStream: InputStream = assets.open("midi/twinkle_twinkle_little_star.mid") // Load your MIDI file from assets
+//        val inputStream: InputStream = assets.open("midi/PokerFace.mid") // Load your MIDI file from assets
+        val inputStream: InputStream = assets.open("midi/twinkle_twinkle_little_star.mid") // Load your MIDI file from assets
 
         val fileReader = StandardMidiFileReader()
         val sequence =  fileReader.getSequence(inputStream)
@@ -69,9 +69,9 @@ class CaseFragment: DevBricksFragment() {
             if (tracksInfo.isNotEmpty()) {
                 midiChannelViewer?.setBars(3)
                 midiChannelViewer?.displayEvents(
-                    sequence.tracks[0],
-                    tracksInfo[0]!!,
-                    channel = 1
+                    sequence.tracks[1],
+                    tracksInfo[1]!!,
+                    channel = 0
                 )
             }
         }

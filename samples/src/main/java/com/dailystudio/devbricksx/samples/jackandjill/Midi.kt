@@ -1,7 +1,7 @@
 package com.dailystudio.devbricksx.samples.jackandjill
 
-import com.dailystudio.music.midi.MidiConstants
-import com.dailystudio.music.midi.MidiNote
+import com.dailystudio.devbricksx.music.midi.MidiConstants
+import com.dailystudio.devbricksx.music.midi.MidiNote
 import jp.kshoji.javax.sound.midi.MidiEvent
 import jp.kshoji.javax.sound.midi.Sequence
 import jp.kshoji.javax.sound.midi.ShortMessage

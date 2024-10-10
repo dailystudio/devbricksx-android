@@ -15,7 +15,7 @@ import com.dailystudio.devbricksx.samples.jackandjill.Midi
 import com.dailystudio.devbricksx.samples.jackandjill.NearByJill
 import com.dailystudio.devbricksx.samples.jackandjill.model.NearByJillViewModelExt
 import com.dailystudio.devbricksx.utils.CalendarUtils
-import com.dailystudio.music.midi.MidiPlayer
+import com.dailystudio.devbricksx.music.midi.MidiPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

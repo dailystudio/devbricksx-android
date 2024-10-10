@@ -1,7 +1,4 @@
-package com.dailystudio.music.midi
-
-import jp.kshoji.javax.sound.midi.MidiEvent
-import jp.kshoji.javax.sound.midi.MidiMessage
+package com.dailystudio.devbricksx.music.midi
 
 enum class PlaybackEvent {
     Start,

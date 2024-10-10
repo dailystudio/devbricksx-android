@@ -1,4 +1,4 @@
-package com.dailystudio.music.midi.ui
+package com.dailystudio.devbricksx.music.midi.ui
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,8 +8,8 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.ui.AbsSurfaceView
-import com.dailystudio.music.midi.ChannelInfo
-import com.dailystudio.music.midi.TrackInfo
+import com.dailystudio.devbricksx.music.midi.utils.ChannelInfo
+import com.dailystudio.devbricksx.music.midi.utils.TrackInfo
 import jp.kshoji.javax.sound.midi.MidiEvent
 import jp.kshoji.javax.sound.midi.ShortMessage
 import jp.kshoji.javax.sound.midi.Track

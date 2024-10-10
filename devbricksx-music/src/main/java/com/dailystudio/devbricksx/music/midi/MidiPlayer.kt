@@ -1,4 +1,4 @@
-package com.dailystudio.music.midi
+package com.dailystudio.devbricksx.music.midi
 
 import android.content.Context
 import androidx.lifecycle.LiveData

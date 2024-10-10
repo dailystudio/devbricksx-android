@@ -1,7 +1,8 @@
-package com.dailystudio.music.midi
+package com.dailystudio.devbricksx.music.midi
 
 class MidiNote(val octave: MidiConstants.Octave = MidiConstants.Octave.C5,
-               val pitch: MidiConstants.PitchName = MidiConstants.PitchName.C) {
+               val pitch: MidiConstants.PitchName = MidiConstants.PitchName.C
+) {
 
     var length: Int = 1
 

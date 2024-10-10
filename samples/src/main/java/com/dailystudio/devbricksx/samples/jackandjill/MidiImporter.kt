@@ -2,10 +2,9 @@ package com.dailystudio.devbricksx.samples.jackandjill
 
 import android.content.Context
 import com.dailystudio.devbricksx.development.Logger
-import com.dailystudio.devbricksx.utils.CalendarUtils
 import com.dailystudio.devbricksx.utils.FileUtils
-import com.dailystudio.music.midi.MidiConstants
-import com.dailystudio.music.midi.MidiNote
+import com.dailystudio.devbricksx.music.midi.MidiConstants
+import com.dailystudio.devbricksx.music.midi.MidiNote
 import com.google.gson.Gson
 import jp.kshoji.javax.sound.midi.MidiEvent
 import jp.kshoji.javax.sound.midi.Sequence
@@ -13,7 +12,6 @@ import jp.kshoji.javax.sound.midi.ShortMessage
 import jp.kshoji.javax.sound.midi.Track
 import okio.ByteString.Companion.decodeBase64
 import java.nio.ByteOrder
-import kotlin.math.roundToLong
 
 
 class NoteTap(
