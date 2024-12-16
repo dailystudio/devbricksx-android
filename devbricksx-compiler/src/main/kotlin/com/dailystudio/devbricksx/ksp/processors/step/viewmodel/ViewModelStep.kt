@@ -241,14 +241,14 @@ class ViewModelStep (processor: BaseSymbolProcessor)
             repoVariableName, repoAllLiveName,
         )
 
-        val propAllPagedBuilder = PropertySpec.builder(
+       /* val propAllPagedBuilder = PropertySpec.builder(
             allPagedName, typeOfLiveDataOfPagedListOfObjects, KModifier.OPEN
         ).initializer(
             """
                 %N.%N
             """.trimIndent(),
             repoVariableName, repoAllPagedName,
-        )
+        )*/
 
         val propAllFlowBuilder = PropertySpec.builder(
             allFlowName, typeOfFlowOfListOfObjects, KModifier.OPEN
@@ -279,7 +279,7 @@ class ViewModelStep (processor: BaseSymbolProcessor)
         classBuilder.addProperty(propOfRepoBuilder.build())
         classBuilder.addProperty(propOfAllBuilder.build())
         classBuilder.addProperty(propAllLiveBuilder.build())
-        classBuilder.addProperty(propAllPagedBuilder.build())
+//        classBuilder.addProperty(propAllPagedBuilder.build())
         classBuilder.addProperty(propAllFlowBuilder.build())
         classBuilder.addProperty(propOfPagingSourceBuilder.build())
         classBuilder.addProperty(propAllPagingDataBuilder.build())

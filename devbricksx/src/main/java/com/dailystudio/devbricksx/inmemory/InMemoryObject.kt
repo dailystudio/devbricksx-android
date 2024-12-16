@@ -1,15 +1,12 @@
 package com.dailystudio.devbricksx.inmemory
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PageKeyedDataSource
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.dailystudio.devbricksx.development.Logger
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.flow.*
-import java.lang.Exception
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -200,10 +197,6 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         return InMemoryObjectsLiveData(this)
     }
 
-    fun toDataSource(): DataSource.Factory<Long, Object> {
-        return InMemoryObjectDataSourceFactory(this)
-    }
-
     fun toPagingSource(): PagingSource<Int, Object> {
         return InMemoryObjectPagingSource(this)
     }
@@ -235,65 +228,12 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
 
 }
 
-class InMemoryObjectDataSource<Object: InMemoryObject<*>>(
-        private val manager: InMemoryObjectManager<*, Object>)
-    : PageKeyedDataSource<Long, Object>(), InMemoryObjectObserver {
-
-    init {
-        manager.addObserver(this)
-    }
-
-    override fun loadInitial(params: LoadInitialParams<Long>,
-                             callback: LoadInitialCallback<Long, Object>) {
-        val listOfObjects = manager.toList()
-
-        val start = 0
-//        val end = min(listOfObjects.size, params.requestedLoadSize)
-        val end = listOfObjects.size
-        Logger.debug("start: $start, end: $end, size: ${listOfObjects.size}, req: ${params.requestedLoadSize}")
-
-        val next = if (end < listOfObjects.size) end else null
-
-        callback.onResult(listOfObjects.subList(start, end), null, next?.toLong())
-    }
-
-    override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<Long, Object>) {
-        val listOfObjects = manager.toList()
-
-        val start = params.key
-        val end = min(listOfObjects.size.toLong(), start + params.requestedLoadSize)
-        Logger.debug("start: $start, end: $end, size: ${listOfObjects.size}, req: ${params.requestedLoadSize}")
-
-        val next = if (end < listOfObjects.size) end else null
-
-        callback.onResult(listOfObjects.subList(start.toInt(), end.toInt()), next)
-    }
-
-    override fun loadBefore(params: LoadParams<Long>, callback: LoadCallback<Long, Object>) {
-    }
-
-    override fun onChanged() {
-        invalidate()
-    }
-
-}
-
-class InMemoryObjectDataSourceFactory<Object: InMemoryObject<*>>(
-        private val manager: InMemoryObjectManager<*, Object>)
-    : DataSource.Factory<Long, Object>() {
-
-    override fun create(): DataSource<Long, Object> {
-        return InMemoryObjectDataSource(manager)
-    }
-
-}
-
 class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
         private val manager: InMemoryObjectManager<*, Object>)
     : PagingSource<Int, Object>(), InMemoryObjectObserver {
 
     companion object {
-        var DEBUG_PAGING_3 = false
+        var DEBUG_PAGING_3 = true
     }
 
     init {

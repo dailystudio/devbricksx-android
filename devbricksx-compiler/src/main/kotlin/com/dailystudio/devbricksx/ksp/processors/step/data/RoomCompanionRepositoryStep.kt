@@ -121,7 +121,7 @@ class RoomCompanionRepositoryStep (processor: BaseSymbolProcessor)
             Pair(FunctionNames.GET_ALL, typeOfListOfObjects),
             Pair(FunctionNames.GET_ALL_LIVE, typeOfLiveDataOfListOfObjects),
             Pair(FunctionNames.GET_ALL_FLOW, typeOfFlowOfListOfObjects),
-            Pair(FunctionNames.GET_ALL_LIVE_PAGED, typeOfLiveDataOfPagedListOfObjects),
+//            Pair(FunctionNames.GET_ALL_LIVE_PAGED, typeOfLiveDataOfPagedListOfObjects),
             Pair(FunctionNames.GET_ALL_PAGING_SOURCE, typeOfPagingSourceOfObject),
         ).forEach {
             val method = it.first
