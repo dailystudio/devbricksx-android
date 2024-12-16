@@ -211,66 +211,78 @@ class ViewModelStep (processor: BaseSymbolProcessor)
 //            )
 //            .addModifiers(KModifier.OPEN)
 
-        classBuilder.addProperty(repoVariableName, typeOfRepo,
-            KModifier.PROTECTED, KModifier.OPEN)
-        classBuilder.addProperty(propOfAllBuilder.build())
-        classBuilder.addProperty(allLiveName, typeOfLiveDataOfListOfObjects, KModifier.OPEN)
-        classBuilder.addProperty(allPagedName, typeOfLiveDataOfPagedListOfObjects, KModifier.OPEN)
-        classBuilder.addProperty(allFlowName, typeOfFlowOfListOfObjects, KModifier.OPEN)
-        classBuilder.addProperty(propOfPagingSourceBuilder.build())
-//        classBuilder.addProperty(propOfPagingDataBuilder.build())
-        classBuilder.addProperty(allPagingDataName,  typeOfFlowOfPagingDataOfObject, KModifier.OPEN)
+        val propOfRepoBuilder = PropertySpec.builder(
+            repoVariableName, typeOfRepo,
+            KModifier.PROTECTED, KModifier.OPEN
+        ).initializer(
+            if (isInMemoryRepo) {
+                CodeBlock.of(
+                    """
+                        %T()
+                    """.trimIndent(),
+                    typeOfRepo,
+                )
+            } else {
+                CodeBlock.of(
+                    """
+                        %T(%T.getDatabase(application).%N())
+                    """.trimIndent(),
+                    typeOfRepo, typeOfDatabase, daoVariableName,
+                )
+            }
+        )
 
-        if (isInMemoryRepo) {
-            classBuilder.addInitializerBlock(CodeBlock.of(
-                """
-                    %N = %T()
-                    %N = %N.%N
-                    %N = %N.%N
-                    %N = %N.%N.%T(%T, %T.Eagerly, 1)
-                    %N = %T(
-                        %T(pageSize = %L),
-                    ) {
-                        %N.%N
-                    }.flow.%T(%T.IO).%T(%T)
-                    
-                """.trimIndent(),
-                repoVariableName, typeOfRepo,
-                allLiveName, repoVariableName, repoAllLiveName,
-                allPagedName, repoVariableName, repoAllPagedName,
-                allFlowName, repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted,
-                allPagingDataName, typeOfPager,
-                typeOfPageConfig, 20,
-                repoVariableName, repoAllPagingSourceName,
-                typeOfFlowOn, typeOfDispatchers, typeOfCachedIn, typeOfViewModelScope,
-            ))
-        } else {
-            classBuilder.addInitializerBlock(CodeBlock.of(
-                """
-                    val %N = %T.getDatabase(application).%N()
-                    
-                    %N = %T(%N)
-                    %N = %N.%N
-                    %N = %N.%N
-                    %N = %N.%N.%T(%T, %T.Eagerly, 1)
-                    %N = %T(
-                        %T(pageSize = %L),
-                    ) {
-                        %N.%N
-                    }.flow.%T(%T.IO).%T(%T)
+        val propAllLiveBuilder = PropertySpec.builder(
+            allLiveName, typeOfLiveDataOfListOfObjects, KModifier.OPEN
+        ).initializer(
+            """
+                %N.%N
+            """.trimIndent(),
+            repoVariableName, repoAllLiveName,
+        )
+
+        val propAllPagedBuilder = PropertySpec.builder(
+            allPagedName, typeOfLiveDataOfPagedListOfObjects, KModifier.OPEN
+        ).initializer(
+            """
+                %N.%N
+            """.trimIndent(),
+            repoVariableName, repoAllPagedName,
+        )
+
+        val propAllFlowBuilder = PropertySpec.builder(
+            allFlowName, typeOfFlowOfListOfObjects, KModifier.OPEN
+        ).initializer(
+            """
+                %N.%N.%T(%T, %T.Eagerly, 1)
+            """.trimIndent(),
+            repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted,
+        )
+
+        val propAllPagingDataBuilder = PropertySpec.builder(
+            allPagingDataName,  typeOfFlowOfPagingDataOfObject, KModifier.OPEN
+        ).initializer(
+            """
+                %T(
+                    %T(pageSize = %L),
+                ) {
+                    %N.%N
+                }.flow.%T(%T.IO).%T(%T)
                 
-                """.trimIndent(),
-                daoVariableName, typeOfDatabase, daoVariableName,
-                repoVariableName, typeOfRepo, daoVariableName,
-                allLiveName, repoVariableName, repoAllLiveName,
-                allPagedName, repoVariableName, repoAllPagedName,
-                allFlowName, repoVariableName, repoAllFlowName, typeOfShareIn, typeOfViewModelScope, typeOfSharingStarted,
-                allPagingDataName, typeOfPager,
-                typeOfPageConfig, 20,
-                repoVariableName, repoAllPagingSourceName,
-                typeOfFlowOn, typeOfDispatchers, typeOfCachedIn, typeOfViewModelScope,
-            ))
-        }
+            """.trimIndent(),
+            typeOfPager,
+            typeOfPageConfig, 20,
+            repoVariableName, repoAllPagingSourceName,
+            typeOfFlowOn, typeOfDispatchers, typeOfCachedIn, typeOfViewModelScope,
+        )
+
+        classBuilder.addProperty(propOfRepoBuilder.build())
+        classBuilder.addProperty(propOfAllBuilder.build())
+        classBuilder.addProperty(propAllLiveBuilder.build())
+        classBuilder.addProperty(propAllPagedBuilder.build())
+        classBuilder.addProperty(propAllFlowBuilder.build())
+        classBuilder.addProperty(propOfPagingSourceBuilder.build())
+        classBuilder.addProperty(propAllPagingDataBuilder.build())
 
         arrayOf(
             Pair(FunctionNames.GET_ONE, typeOfObject.copy(nullable = true)),

@@ -11,6 +11,7 @@ import android.util.Base64
 import android.view.View
 import android.view.View.MeasureSpec
 import androidx.annotation.ColorInt
+import androidx.paging.Config
 import com.dailystudio.devbricksx.development.Logger
 import java.io.*
 import java.nio.ByteBuffer
@@ -21,6 +22,8 @@ import kotlin.math.roundToInt
 
 
 object ImageUtils {
+
+    private val DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565
 
     fun estimateSampleSize(filePath: String,
                            destWidth: Int, destHeight: Int): Int {
@@ -163,7 +166,8 @@ object ImageUtils {
                 newBitmap = createClippedBitmap(bitmap, 0,
                         (bitmap.height - destHeight) / 2, oWidth, destHeight)
             } else {
-                newBitmap = Bitmap.createBitmap(destWidth, destHeight, bitmap.config)
+                newBitmap = createBitmap(destWidth, destHeight,
+                    bitmap.config ?: DEFAULT_BITMAP_CONFIG)
                 val c = Canvas(newBitmap)
                 val p = Paint(Paint.ANTI_ALIAS_FLAG)
                 c.drawBitmap(bitmap,
@@ -189,16 +193,16 @@ object ImageUtils {
         Logger.debug("mapped rect: $rect")
 
         val transformed = if (dstWidth != 0 && dstHeight != 0) {
-            Bitmap.createBitmap(dstWidth, dstHeight,
-                    bitmap.config)
+            createBitmap(dstWidth, dstHeight,
+                    bitmap.config ?: DEFAULT_BITMAP_CONFIG)
         } else {
             val widthCropped = -rect.left * 2
             val heightCropped = -rect.top * 2
 
-            Bitmap.createBitmap(
+            createBitmap(
                     (rect.width() - widthCropped).roundToInt(),
                     (rect.height() - heightCropped).roundToInt(),
-                    bitmap.config)
+                    bitmap.config ?: DEFAULT_BITMAP_CONFIG)
         }
 
         val canvas = Canvas(transformed)
@@ -441,7 +445,7 @@ object ImageUtils {
 */
         var finalBitmap: Bitmap? = null
         finalBitmap = try {
-            Bitmap.createBitmap(bw, bh, config)
+            Bitmap.createBitmap(bw, bh, config ?: DEFAULT_BITMAP_CONFIG)
         } catch (e: OutOfMemoryError) {
             Logger.warn("could not create composite bitmap: %s",
                     e.toString())
@@ -856,7 +860,7 @@ object ImageUtils {
 
         var newBitmap: Bitmap? = null
         try {
-            newBitmap = Bitmap.createBitmap(w, h, bitmap1.config)
+            newBitmap = Bitmap.createBitmap(w, h, bitmap1.config ?: DEFAULT_BITMAP_CONFIG)
             val c = Canvas(newBitmap)
             val p = Paint(Paint.ANTI_ALIAS_FLAG)
             if (landscape1) {

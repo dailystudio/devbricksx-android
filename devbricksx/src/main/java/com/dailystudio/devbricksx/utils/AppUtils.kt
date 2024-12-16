@@ -154,7 +154,7 @@ object AppUtils {
         }
 
         pkgInfo?.let { info ->
-            verName = info.versionName
+            verName = info.versionName ?: ""
         }
 
         return verName

@@ -116,11 +116,14 @@ class DevKitPlugin: Plugin<Project> {
             val useCompose = devKitComps.contains(Components.Compose)
             if (useCompose) {
                 println("applying Jetpack Compose features")
-                val commonExtension = project.extensionByType(CommonExtension::class)
-                commonExtension?.buildFeatures?.compose = true
-                commonExtension?.composeOptions?.kotlinCompilerExtensionVersion = Dependencies.KOTLIN_COMPILER_EXT_VERSION
-                println("applying Kotlin Compiler Extension to ${Dependencies.KOTLIN_COMPILER_EXT_VERSION}")
+//                val commonExtension = project.extensionByType(CommonExtension::class)
+//                commonExtension?.buildFeatures?.compose = true
+//                commonExtension?.composeOptions?.kotlinCompilerExtensionVersion = Dependencies.KOTLIN_COMPILER_EXT_VERSION
+//                println("applying Kotlin Compiler Extension to ${Dependencies.KOTLIN_COMPILER_EXT_VERSION}")
 
+                with(project) {
+                    plugins.apply("org.jetbrains.kotlin.plugin.compose")
+                }
             }
 
             if (useAnnotation) {

@@ -53,6 +53,7 @@ for f in ${files}; do
   echo "Updating dependencies version in file [${f}]..."
   sed -i "" "s/\"com.android.tools.build:gradle:.*\"/\"com.android.tools.build:gradle:${agp_version}\"/g" ${f}
   sed -i "" "s/\"com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:.*\"/\"com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${ksp_version}\"/g" ${f}
+  sed -i "" "s/\"org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:.*\"/\"org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:${kotlin_version}\"/g" ${f}
   sed -i "" "s/kotlin(\"jvm\") version \".*\"/kotlin(\"jvm\") version \"${kotlin_version}\"/g" ${f}
   sed -i "" "s/ROOM_VERSION\ =\ \".*\"/ROOM_VERSION\ =\ \"${room_version}\"/g" ${f}
   sed -i "" "s/KOTLIN_COMPILER_EXT_VERSION\ =\ \".*\"/KOTLIN_COMPILER_EXT_VERSION\ =\ \"${kotlin_compiler_ext_version}\"/g" ${f}
