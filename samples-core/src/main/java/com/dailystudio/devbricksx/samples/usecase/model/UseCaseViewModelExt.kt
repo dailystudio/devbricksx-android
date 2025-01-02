@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.AppSettingsPrefs
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 import com.dailystudio.devbricksx.samples.usecase.UseCaseJsonDeserializer
 import com.dailystudio.devbricksx.utils.JSONUtils
 import com.google.gson.JsonDeserializer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class UseCaseViewModelExt(application: Application): UseCaseViewModel(application) {
@@ -34,5 +36,12 @@ class UseCaseViewModelExt(application: Application): UseCaseViewModel(applicatio
                 insertUseCases(it.toList())
             }
         }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            AppSettingsPrefs.instance.prefsChanges.collectLatest {
+                Logger.debug("[PREF] IN ViewModel, app settings changed: $it")
+            }
+        }
+
     }
 }

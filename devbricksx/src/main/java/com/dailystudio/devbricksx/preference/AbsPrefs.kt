@@ -11,27 +11,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.shareIn
 
 data class PrefsChange(val appPrefs: AbsPrefs,
                        val prefKey: String)
 
 abstract class AbsPrefs {
 
-    private var changesChannel: Channel<PrefsChange>? = null
-
     val prefsChange: MutableLiveData<PrefsChange> = MutableLiveData()
-    val prefsChanges: Flow<PrefsChange> = flow {
-        try {
-            changesChannel = Channel<PrefsChange>();
-
-            changesChannel?.consumeEach { change ->
-                Logger.debug("new change [${change.prefKey}] comes to channel [$changesChannel]")
-                emit(change)
-            }
-        } finally {
-            Logger.debug("change flow[${this@flow.hashCode()}] is destroyed.")
-        }
-    }
+    val prefsChanges: MutableSharedFlow<PrefsChange> = MutableSharedFlow<PrefsChange>(replay = 0, extraBufferCapacity = 64)
 
     private fun getSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
@@ -159,8 +147,7 @@ abstract class AbsPrefs {
         Logger.debug("preference changed: [$key]")
         prefsChange.postValue(change)
 
-        Logger.debug("send change [$key] to channel [$changesChannel]")
-        changesChannel?.trySend(change)
+        prefsChanges.tryEmit(change)
     }
 
     protected abstract val prefName: String

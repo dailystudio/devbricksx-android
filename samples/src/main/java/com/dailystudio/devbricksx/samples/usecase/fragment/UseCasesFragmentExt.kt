@@ -1,8 +1,12 @@
 package com.dailystudio.devbricksx.samples.usecase.fragment
 
+import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
@@ -12,8 +16,23 @@ import com.dailystudio.devbricksx.samples.core.R
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class UseCasesFragmentExt : UseCasesListFragment() {
+
+    private val viewModel: UseCaseViewModelExt by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                AppSettingsPrefs.instance.prefsChanges.collect {
+                    Logger.debug("[PREF] IN Fragment, app settings changed: $it")
+                }
+            }
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -44,7 +63,6 @@ class UseCasesFragmentExt : UseCasesListFragment() {
     }
 
     override fun createDataSource(): Flow<List<UseCase>> {
-        val viewModel = ViewModelProvider(requireActivity())[UseCaseViewModelExt::class.java]
         return viewModel.allUseCasesFlow
     }
 
