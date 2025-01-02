@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
+import com.dailystudio.devbricksx.samples.AppSettingsPrefs
+import com.dailystudio.devbricksx.samples.NaviAnimations
 import com.dailystudio.devbricksx.samples.core.R
 import com.dailystudio.devbricksx.samples.usecase.UseCase
 import com.dailystudio.devbricksx.samples.usecase.model.UseCaseViewModelExt
@@ -24,7 +26,14 @@ class UseCasesFragmentExt : UseCasesListFragment() {
         super.onItemClick(recyclerView, itemView, position, item, id)
 
         try {
-            findNavController().navigate(item.name)
+            findNavController().navigate(
+                route = item.name,
+                navOptions = if (AppSettingsPrefs.instance.useAnimation) {
+                    NaviAnimations.naviOptions
+                } else {
+                    null
+                }
+            )
 
             val actionBar = (activity as AppCompatActivity).supportActionBar
             actionBar?.title = item.title

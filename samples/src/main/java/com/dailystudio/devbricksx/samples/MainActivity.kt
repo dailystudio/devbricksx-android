@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.NavOptions
 import androidx.navigation.createGraph
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.fragment
 import com.dailystudio.devbricksx.app.activity.DevBricksActivity
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.samples.fragment.AboutFragment
+import com.dailystudio.devbricksx.samples.fragment.SettingsFragment
 import com.dailystudio.devbricksx.samples.usecase.fragment.UseCasesFragmentExt
 
 class MainActivity : DevBricksActivity() {
@@ -61,6 +64,7 @@ class MainActivity : DevBricksActivity() {
             fragment<com.dailystudio.devbricksx.samples.viewpager.CaseFragment>("viewpager")
             fragment<com.dailystudio.devbricksx.samples.webview.CaseFragment>("webview")
             fragment<com.dailystudio.devbricksx.samples.midi.channelview.CaseFragment>("midichannelview")
+            fragment<SettingsFragment>("settings")
         }
     }
 
@@ -75,6 +79,15 @@ class MainActivity : DevBricksActivity() {
                 val fragment = AboutFragment()
 
                 fragment.show(supportFragmentManager, "about")
+            }
+
+            R.id.action_settings -> {
+                findNavController(R.id.nav_host_fragment).navigate(
+                    "settings",
+                    navOptions = if (AppSettingsPrefs.instance.useAnimation) {
+                        NaviAnimations.naviOptions
+                    } else null
+                )
             }
         }
 
