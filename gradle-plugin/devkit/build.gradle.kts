@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.android.tools.build:gradle:8.4.1")
+    compileOnly("com.android.tools.build:gradle:8.7.0")
     implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.0.21-1.0.28")
     implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.0.21")
     testImplementation(kotlin("test"))

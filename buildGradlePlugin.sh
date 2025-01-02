@@ -22,7 +22,6 @@ agp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "AGP")
 plugin_version="${version}-$(getProperty $DEP_VERSIONS_PROPERTIES "DEVKIT")"
 ksp_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KSP")
 kotlin_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KOTLIN")
-kotlin_compiler_ext_version=$(getProperty $DEP_VERSIONS_PROPERTIES "KOTLIN_COMPILER_EXT")
 room_version=$(getProperty $DEP_VERSIONS_PROPERTIES "ROOM")
 
 echo "--------------------------------------"

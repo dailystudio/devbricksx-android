@@ -27,7 +27,7 @@ plugins {
 The latest version of the Gradle plugin is:
 
 ```Groovy
-devkit_version = "1.9.5-1.1.1"
+devkit_version = "2.0.0-1.2.0"
 ```
 
 That's it. Everything is done. You can use anything provided by **DevBricks X**. 
@@ -82,8 +82,8 @@ dependencies {
 The latest version of the dependencies above are:
 
 ```groovy
-ksp_version = "1.9.24-1.0.20"
-devbricksx_version = "1.9.5"
+ksp_version = "2.0.21-1.0.28"
+devbricksx_version = "2.0.0"
 ```
 
 Then, if you are using annotations through [KSP (Kotlin Symbol Processing)](https://kotlinlang.org/docs/ksp-overview.html), DO NOT forget to add plug-ins repo in **settings.gradle**:
@@ -284,6 +284,11 @@ Besides, **DevBricksX** also provided sufficient facilities to accelerate your e
 
 
 ## Changelogs
+
+### 2.0.0
+- Compatible with Gradle 8.9, AGP (Android Gradle Plugin) 8.7.1, Kotlin 2.0.21
+- Support K2 Compiler
+- Fix collecting issue of AbsPrefs.preChanges caused incorrect destroy of Channels
 
 ### 1.8.0
 
