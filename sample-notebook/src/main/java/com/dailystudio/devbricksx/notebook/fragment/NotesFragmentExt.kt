@@ -21,6 +21,7 @@ import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.dailystudio.devbricksx.utils.FabAnimationDirection
+import com.dailystudio.devbricksx.utils.registerActionBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,6 +50,12 @@ class NotesFragmentExt : NotesListFragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        activity?.registerActionBar(view, R.id.topAppBar)
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -56,7 +63,7 @@ class NotesFragmentExt : NotesListFragment() {
         // being displayed after user navigates back from
         // note edit fragment
         findActionBar()?.setDisplayHomeAsUpEnabled(false)
-        changeTitle(notebookName)
+        changeTitle(notebookName?.capitalize())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

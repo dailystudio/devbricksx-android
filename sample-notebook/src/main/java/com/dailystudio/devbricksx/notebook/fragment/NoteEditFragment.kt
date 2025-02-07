@@ -16,6 +16,7 @@ import com.dailystudio.devbricksx.notebook.R
 import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Note
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
+import com.dailystudio.devbricksx.utils.registerActionBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -75,6 +76,8 @@ class NoteEditFragment : Fragment() {
     private fun setupViews(view: View) {
         titleView = view.findViewById(R.id.title)
         descView = view.findViewById(R.id.description)
+
+        activity?.registerActionBar(view, R.id.topAppBar)
     }
 
     override fun onResume() {

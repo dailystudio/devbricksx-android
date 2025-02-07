@@ -13,6 +13,7 @@ import com.dailystudio.devbricksx.notebook.core.R as coreR
 import com.dailystudio.devbricksx.notebook.db.Notebook
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModel
 import com.dailystudio.devbricksx.notebook.model.NotebookViewModelExt
+import com.dailystudio.devbricksx.utils.registerActionBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -33,6 +34,8 @@ class NotebooksFragmentExt : NotebooksListFragment() {
 
         nbNameView = view.findViewById(R.id.notebook_name)
         nbNameView?.requestFocus()
+
+        activity?.registerActionBar(view, R.id.topAppBar)
     }
 
     override fun getDataSource(): Flow<PagingData<Notebook>> {

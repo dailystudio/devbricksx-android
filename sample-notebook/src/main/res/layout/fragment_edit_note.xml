@@ -1,31 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_view_root"
-    android:padding="@dimen/default_content_padding"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:clipChildren="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/title"
-        style="@style/TitleInput"
-        android:background="@null"
+    <com.google.android.material.appbar.AppBarLayout
+        app:liftOnScroll="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/divider"
-        android:layout_below="@id/title"
-        android:background="@drawable/list_divider"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/fragment_view_root"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:padding="@dimen/default_content_padding"
         android:layout_width="match_parent"
-        android:layout_height="2px"/>
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/description"
-        style="@style/DescInput"
-        android:background="@null"
-        android:layout_below="@id/divider"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/title"
+            style="@style/TitleInput"
+            android:background="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-</RelativeLayout>
+        <View
+            android:id="@+id/divider"
+            android:layout_below="@id/title"
+            android:background="@drawable/list_divider"
+            android:layout_width="match_parent"
+            android:layout_height="2px"/>
+
+        <EditText
+            android:id="@+id/description"
+            style="@style/DescInput"
+            android:background="@null"
+            android:layout_below="@id/divider"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
