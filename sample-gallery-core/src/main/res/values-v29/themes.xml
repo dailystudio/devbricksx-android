@@ -24,6 +24,7 @@
         <item name="android:enforceStatusBarContrast">true</item>
         <item name="android:enforceNavigationBarContrast">true</item>
 
+        <item name="statusBarBackground">@color/primaryColor</item>
         <item name="appBarLayoutStyle">@style/Widget.App.AppBarLayout</item>
         <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
 
