@@ -1,10 +1,10 @@
 package com.dailystudio.devbricksx.compose
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -12,13 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.paging.compose.LazyPagingItems
 
 @Composable
 fun <T : Any> BaseListScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -26,7 +26,7 @@ fun <T : Any> BaseListScreen(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyList(modifier, orientation, listOfItems = dataSource(),
+    BaseLazyList(modifier, orientation, state, listOfItems = dataSource(),
         key, contentType, onItemClicked, onItemLongClicked, itemContent)
 }
 
@@ -34,6 +34,7 @@ fun <T : Any> BaseListScreen(
 fun <T : Any> BaseSelectableListScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -44,7 +45,7 @@ fun <T : Any> BaseSelectableListScreen(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    BaseSelectableLazyList(modifier, orientation, listOfItems = dataSource(),
+    BaseSelectableLazyList(modifier, orientation, state, listOfItems = dataSource(),
         key, contentType, onItemClicked, onItemLongClicked,
         selectable, selectKey, onItemSelected,
         itemContent)
@@ -54,6 +55,7 @@ fun <T : Any> BaseSelectableListScreen(
 fun <T : Any> BasePagingListScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     dataSource: @Composable () -> LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -61,7 +63,7 @@ fun <T : Any> BasePagingListScreen(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyPagingList(modifier, orientation, listOfItems = dataSource(),
+    BaseLazyPagingList(modifier, orientation, state, listOfItems = dataSource(),
         key, contentType, onItemClicked, onItemLongClicked, itemContent)
 }
 
@@ -69,6 +71,7 @@ fun <T : Any> BasePagingListScreen(
 fun <T : Any> BaseSelectablePagingListScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     dataSource: @Composable () -> LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -79,7 +82,7 @@ fun <T : Any> BaseSelectablePagingListScreen(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    BaseSelectableLazyPagingList(modifier, orientation, listOfItems = dataSource(),
+    BaseSelectableLazyPagingList(modifier, orientation, state, listOfItems = dataSource(),
         key, contentType, onItemClicked, onItemLongClicked,
         selectable, selectKey, onItemSelected,
         itemContent)
@@ -90,6 +93,7 @@ fun <T : Any> BaseSelectablePagingListScreen(
 fun <T: Any> BaseLazyPagingList(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     listOfItems: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -97,7 +101,7 @@ fun <T: Any> BaseLazyPagingList(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    val listState = rememberLazyListState()
+    val listState = state ?: rememberLazyListState()
 
     when (orientation) {
         ListOrientation.Vertical -> {
@@ -137,6 +141,7 @@ fun <T: Any> BaseLazyPagingList(
 fun <T: Any> BaseSelectableLazyPagingList(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     listOfItems: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -147,7 +152,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    val listState = rememberLazyListState()
+    val listState = state ?: rememberLazyListState()
 
     val selectedItems = remember {
         mutableStateMapOf<Any, Boolean>()
@@ -214,6 +219,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
 fun <T: Any> BaseLazyList(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     listOfItems: List<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -221,7 +227,7 @@ fun <T: Any> BaseLazyList(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    val listState = rememberLazyListState()
+    val listState = state ?: rememberLazyListState()
 
     when (orientation) {
         ListOrientation.Vertical -> {
@@ -262,6 +268,7 @@ fun <T: Any> BaseLazyList(
 fun <T: Any> BaseSelectableLazyList(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyListState? = null,
     listOfItems: List<T>,
     key: ((item: T) -> Any)? = null,
     contentType: (item: T) -> Any? = { null },
@@ -272,7 +279,7 @@ fun <T: Any> BaseSelectableLazyList(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    val listState = rememberLazyListState()
+    val listState = state ?: rememberLazyListState()
 
     val selectedItems = remember {
         mutableStateMapOf<Any, Boolean>()

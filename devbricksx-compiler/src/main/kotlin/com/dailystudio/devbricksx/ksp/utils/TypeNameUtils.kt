@@ -472,6 +472,18 @@ object TypeNameUtils {
         return ClassName("androidx.compose.foundation.lazy.grid", "GridCells")
     }
 
+    fun typeOfLazyListState(): ClassName {
+        return ClassName("androidx.compose.foundation.lazy", "LazyListState")
+    }
+
+    fun typeOfLazyGridState(): ClassName {
+        return ClassName("androidx.compose.foundation.lazy.grid", "LazyGridState")
+    }
+
+    fun typeOfListOrientation(): ClassName {
+        return ClassName("com.dailystudio.devbricksx.compose", "ListOrientation")
+    }
+
     fun typeOfBaseGridScreen(): ClassName {
         return ClassName("com.dailystudio.devbricksx.compose",
             "BaseGridScreen")

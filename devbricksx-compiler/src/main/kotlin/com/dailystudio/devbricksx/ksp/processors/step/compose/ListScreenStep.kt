@@ -151,9 +151,11 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
         val columns = options.columns
         val paged = options.paged
 
-        val gridCells = TypeNameUtils.typeOfGridCells()
+
+        val orientation = TypeNameUtils.typeOfListOrientation()
 
         if (gridLayout) {
+            val gridCells = TypeNameUtils.typeOfGridCells()
             val gridScreen = if (paged) {
                 if (options.selectable) {
                     TypeNameUtils.typeOfBaseSelectablePagingGridScreen()
@@ -179,6 +181,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 """
                     %T(
                         modifier = modifier, 
+                        orientation = orientation,
+                        state = state,
                         dataSource = dataSource, 
                         key = key,
                         contentType = contentType,
@@ -195,6 +199,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 """
                     %T(
                         modifier = modifier, 
+                        orientation = orientation,
+                        state = state,
                         dataSource = dataSource, 
                         key = key,
                         contentType = contentType,
@@ -208,7 +214,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
             composableBuilder.addStatement(
                 statements,
-                gridScreen
+                gridScreen,
             )
         } else {
             val listScreen = if (paged) {
@@ -229,6 +235,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 """
                     %T(
                         modifier = modifier, 
+                        orientation = orientation,
+                        state = state,
                         dataSource = dataSource, 
                         key = key,
                         contentType = contentType,
@@ -244,6 +252,8 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                 """
                     %T(
                         modifier = modifier, 
+                        orientation = orientation,
+                        state = state,
                         dataSource = dataSource, 
                         key = key,
                         contentType = contentType,
@@ -256,7 +266,7 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
 
             composableBuilder.addStatement(
                 statements,
-                listScreen
+                listScreen,
             )
         }
     }
@@ -337,7 +347,11 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
                                               composableBuilder: FunSpec.Builder,
                                               options: BuildOptions): Boolean {
         warn("add item extra parameter for [${typeOfObject}]: options = $options")
+        val gridLayout = options.isGradLayout
 
+        val typeOfListOrientation = TypeNameUtils.typeOfListOrientation()
+        val typeOfListState = TypeNameUtils.typeOfLazyListState().copy(nullable = true)
+        val typeOfGridState = TypeNameUtils.typeOfLazyGridState().copy(nullable = true)
 
         val funcTypeOfKey = LambdaTypeName.get(
             parameters = listOf(
@@ -354,6 +368,24 @@ open class ListScreenStep (processor: BaseSymbolProcessor)
             ),
             returnType = ANY.copy(nullable = true)
         )
+
+        val orientationParameter = ParameterSpec.builder(
+            name = "orientation",
+            typeOfListOrientation
+        ).defaultValue("%T.Vertical", typeOfListOrientation)
+
+        composableBuilder.addParameter(orientationParameter.build())
+
+        val stateParameter = ParameterSpec.builder(
+            name = "state",
+            if (gridLayout) {
+                typeOfGridState
+            } else {
+                typeOfListState
+            }
+        ).defaultValue("null")
+
+        composableBuilder.addParameter(stateParameter.build())
 
         val keyParameter = ParameterSpec.builder(
             name = "key",

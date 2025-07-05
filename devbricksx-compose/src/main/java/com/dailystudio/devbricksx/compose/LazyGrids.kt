@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -20,6 +21,7 @@ import androidx.paging.compose.LazyPagingItems
 fun <T : Any> BaseGridScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
@@ -29,7 +31,7 @@ fun <T : Any> BaseGridScreen(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyGrid(modifier, orientation, cells, listOfItems = dataSource(),
+    BaseLazyGrid(modifier, orientation, state, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClicked, onItemLongClicked, itemContent)
 }
 
@@ -37,6 +39,7 @@ fun <T : Any> BaseGridScreen(
 fun <T: Any> BaseSelectableGridScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     dataSource: @Composable () -> List<T>,
     key: ((item: T) -> Any)? = null,
@@ -49,7 +52,7 @@ fun <T: Any> BaseSelectableGridScreen(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    BaseSelectableLazyGrid(modifier, orientation, cells, listOfItems = dataSource(),
+    BaseSelectableLazyGrid(modifier, orientation, state, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClicked, onItemLongClicked,
         selectable, selectKey, onItemSelected,
         itemContent)
@@ -59,6 +62,7 @@ fun <T: Any> BaseSelectableGridScreen(
 fun <T : Any> BasePagingGridScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     dataSource: @Composable () -> LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
@@ -68,7 +72,7 @@ fun <T : Any> BasePagingGridScreen(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    BaseLazyPagingGrid(modifier, orientation, cells, listOfItems = dataSource(),
+    BaseLazyPagingGrid(modifier, orientation, state, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClicked, onItemLongClicked, itemContent)
 }
 
@@ -76,6 +80,7 @@ fun <T : Any> BasePagingGridScreen(
 fun <T : Any> BaseSelectablePagingGridScreen(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     dataSource: @Composable () -> LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
@@ -88,7 +93,7 @@ fun <T : Any> BaseSelectablePagingGridScreen(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    BaseSelectableLazyPagingGrid(modifier, orientation, cells, listOfItems = dataSource(),
+    BaseSelectableLazyPagingGrid(modifier, orientation, state, cells, listOfItems = dataSource(),
         key, span, contentType, onItemClicked, onItemLongClicked,
         selectable, selectKey, onItemSelected,
         itemContent)
@@ -99,6 +104,7 @@ fun <T : Any> BaseSelectablePagingGridScreen(
 fun <T: Any> BaseLazyPagingGrid(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     listOfItems: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
@@ -108,7 +114,7 @@ fun <T: Any> BaseLazyPagingGrid(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: @Composable (item: T?, modifier: Modifier) -> Unit
 ) {
-    val gridState = rememberLazyGridState()
+    val gridState = state ?: rememberLazyGridState()
 
     when (orientation) {
         ListOrientation.Vertical -> {
@@ -151,6 +157,7 @@ fun <T: Any> BaseLazyPagingGrid(
 fun <T: Any> BaseSelectableLazyPagingGrid(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     listOfItems: LazyPagingItems<T>,
     key: ((item: T) -> Any)? = null,
@@ -163,7 +170,7 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    val gridState = rememberLazyGridState()
+    val gridState = state ?: rememberLazyGridState()
 
     val selectedItems = remember {
         mutableStateMapOf<Any, Boolean>()
@@ -232,6 +239,7 @@ fun <T: Any> BaseSelectableLazyPagingGrid(
 fun <T: Any> BaseLazyGrid(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     listOfItems: List<T>,
     key: ((item: T) -> Any)? = null,
@@ -241,7 +249,7 @@ fun <T: Any> BaseLazyGrid(
     onItemLongClicked: ItemClickAction<T>? = null,
     itemContent: ItemContentComposable<T>
 ) {
-    val gridState = rememberLazyGridState()
+    val gridState = state ?: rememberLazyGridState()
 
     when (orientation) {
         ListOrientation.Vertical -> {
@@ -283,6 +291,7 @@ fun <T: Any> BaseLazyGrid(
 fun <T: Any> BaseSelectableLazyGrid(
     modifier: Modifier = Modifier,
     orientation: ListOrientation = ListOrientation.Vertical,
+    state: LazyGridState? = null,
     cells: GridCells,
     listOfItems: List<T>,
     key: ((item: T) -> Any)? = null,
@@ -295,7 +304,7 @@ fun <T: Any> BaseSelectableLazyGrid(
     onItemSelected: ItemClickAction<T>? = null,
     itemContent: SelectableItemContentComposable<T>
 ) {
-    val gridState = rememberLazyGridState()
+    val gridState = state ?: rememberLazyGridState()
 
     val selectedItems = remember {
         mutableStateMapOf<Any, Boolean>()
