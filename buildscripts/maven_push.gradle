@@ -19,7 +19,7 @@ task androidJavadocsJar(type: Jar) {
 
 afterEvaluate {
     publishing {
-/*
+
         println '---------- [MavenCentral Publications] ----------'
         println '[Repository]'
         println " |- URL: ${RELEASE_REPOSITORY_URL}"
@@ -33,7 +33,7 @@ afterEvaluate {
         println " |- Url: [${SITE_URL}]"
         println " |- License: ${LICENCE_NAME} [${LICENCE_URL}]"
         println " `- SCM: ${SCM_CONNECTION}"
-*/
+
 
         publications {
             release(MavenPublication) {
@@ -124,7 +124,7 @@ afterEvaluate {
         // The repository to publish to, Sonatype/MavenCentral
         repositories {
             maven {
-                name = "mavencentral"
+                name = "ossrh-staging-api"
                 url = RELEASE_REPOSITORY_URL
                 credentials {
                     username NEXUS_USER

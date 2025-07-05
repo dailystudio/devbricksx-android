@@ -24,5 +24,7 @@ for artifact in ${artifactsToPublish[@]}; do
   ./gradlew ${task} > /dev/null
 done
 
+./completeMavenCentralStaging.sh
+
 ./updateVersionInDocs.sh
 ./updateRoomVersionInDocs.sh
