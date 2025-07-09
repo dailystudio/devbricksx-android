@@ -111,7 +111,7 @@ fun <T: Any> BaseLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItemPlacement(),
+                        modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -126,7 +126,7 @@ fun <T: Any> BaseLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItemPlacement(),
+                        modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -170,7 +170,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
-                        Modifier.animateItemPlacement(),
+                        Modifier.animateItem(),
                         selectable = selectable,
                         selectKey = selectKey,
                         selectedItems.keys,
@@ -194,7 +194,7 @@ fun <T: Any> BaseSelectableLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
-                        Modifier.animateItemPlacement(),
+                        Modifier.animateItem(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -238,7 +238,7 @@ fun <T: Any> BaseLazyList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItemPlacement(),
+                        modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -253,7 +253,7 @@ fun <T: Any> BaseLazyList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItemPlacement(),
+                        modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -298,7 +298,7 @@ fun <T: Any> BaseSelectableLazyList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
-                        Modifier.animateItemPlacement(),
+                        Modifier.animateItem(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,
@@ -322,7 +322,7 @@ fun <T: Any> BaseSelectableLazyList(
                 items(listOfItems, key, contentType) { item ->
                     SelectableLazyItem(
                         item = item,
-                        Modifier.animateItemPlacement(),
+                        Modifier.animateItem(),
                         selectable = selectable,
                         selectKey,
                         selectedItems.keys,

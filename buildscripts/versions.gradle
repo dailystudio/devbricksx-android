@@ -58,6 +58,10 @@ ext.depVersions = [
         ext.depVersions.all(versionsFile)['COIL']
     },
 
+    mavenPublish: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['MAVEN_PUBLISH']
+    },
+
     devKit: { versionsFile = "$rootDir/dep_versions.properties" ->
         ext.depVersions.all(versionsFile)['DEVKIT']
     },
@@ -75,6 +79,7 @@ ext.depVersions = [
         println("using Compose: ${ext.depVersions.compose()}")
         println("using Navigation: ${ext.depVersions.navigation()}")
         println("using Coil: ${ext.depVersions.coil()}")
+        println("using Maven Publish: ${ext.depVersions.mavenPublish()}")
         println("using Java: ${ext.depVersions.java()}")
     }
 ]
