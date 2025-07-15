@@ -2,7 +2,10 @@ package com.dailystudio.devbricksx.ui
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.PixelFormat
+import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Process
 import android.util.AttributeSet
@@ -23,7 +26,6 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
             defStyleAttr: Int = 0
     ) : super(context, attrs, defStyleAttr)
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     constructor(
             context: Context,
             attrs: AttributeSet?,
@@ -33,6 +35,8 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
 
     private var drawingService: ExecutorService? = null
     private var surfaceReady = false
+
+    private val lock = Any()
     private var drawingActive = false
 
     init {
@@ -83,7 +87,7 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
             return
         }
 
-        synchronized(drawingActive) {
+        synchronized(lock) {
             drawingActive = false
         }
 
@@ -107,7 +111,7 @@ abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
         var canvas: Canvas? = null
 
         while (true) {
-            synchronized(drawingActive) {
+            synchronized(lock) {
                 if (!drawingActive) {
                     return
                 }

@@ -10,6 +10,10 @@ buildscript {
     ext.maven_publish_version = depVersions.mavenPublish()
     ext.devkit_version = "${versions.devBricksXVersion()}-${depVersions.devKit()}"
 
+    ext.junit_version = '4.13.2'
+    ext.android_junit_ext_version = '1.2.1'
+    ext.android_junit_espresso_version = '3.6.1'
+
     repositories {
         google()
         mavenCentral()
@@ -22,6 +26,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin:$maven_publish_version"
     }
 
 }
@@ -41,6 +46,15 @@ allprojects {
     }
 
     apply from: "$rootDir/buildscripts/versions.gradle"
+}
+
+subprojects {
+    tasks.matching { task ->
+        // Disables the Javadoc generation task for every module
+        task.name.toLowerCase().contains("javadocreleasegeneration")
+    }.configureEach {
+        enabled = false
+    }
 }
 
 ext {

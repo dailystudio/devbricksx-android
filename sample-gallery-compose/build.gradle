@@ -56,12 +56,13 @@ devKit {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     implementation(project(":sample-gallery-core"))
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.36.0"
 
     implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$android_junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$android_junit_espresso_version"
 }

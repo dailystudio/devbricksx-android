@@ -44,7 +44,7 @@ class DevKitPlugin: Plugin<Project> {
             }
         }
 
-        androidComponentsExtension.onVariants { variant ->
+        androidComponentsExtension.beforeVariants { variant ->
             val useAnnotation = config.useAnnotations.get()
             val compileType = try {
                 CompileType.valueOf(config.compileType.get())

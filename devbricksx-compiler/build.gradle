@@ -1,8 +1,7 @@
 plugins {
-    id 'java-library'
     id 'kotlin'
 
-    id "com.vanniktech.maven.publish" version "$maven_publish_version"
+    id "com.vanniktech.maven.publish"
 }
 
 kotlin {

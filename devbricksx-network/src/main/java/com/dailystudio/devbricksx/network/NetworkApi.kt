@@ -121,7 +121,7 @@ abstract class HeaderInterceptor : Interceptor {
         val original = chain.request()
 
         val builder = original.newBuilder()
-            .method(original.method(), original.body())
+            .method(original.method, original.body)
 
         val headers = getHeaders()
 
@@ -170,10 +170,10 @@ abstract class NetworkApi<Interface> {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
-            Logger.debug("request [headers]: ${request.headers()}", )
-            Logger.debug("request [url]: ${request.url()}", )
+            Logger.debug("request [headers]: ${request.headers}", )
+            Logger.debug("request [url]: ${request.url}", )
             val buffer = Buffer()
-            request.body()?.writeTo(buffer)
+            request.body?.writeTo(buffer)
 
             val bufferInUtf8 = buffer.readUtf8()
             val maxLength =
@@ -194,7 +194,7 @@ abstract class NetworkApi<Interface> {
             val request = chain.request()
             val response = chain.proceed(request)
 
-            val responseBody = response.body()
+            val responseBody = response.body
             val bodyCopied = responseBody?.copy(bufferLen.toLong())
 
             val responseBodyString = try {
@@ -228,12 +228,12 @@ abstract class NetworkApi<Interface> {
                     .body(
                         ProgressResponseBody(
                             identifier,
-                            originalResponse.body()!!,
+                            originalResponse.body!!,
                             listener)
                     )
                     .build()
             } else  {
-                val responseBody = originalResponse.body()
+                val responseBody = originalResponse.body
 
                 return originalResponse.newBuilder().body(
                     ResponseBody.create(

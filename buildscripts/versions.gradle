@@ -70,6 +70,18 @@ ext.depVersions = [
         ext.depVersions.all(versionsFile)['JAVA']
     },
 
+    junit: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['JUNIT']
+    },
+
+    android_junit_ext: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['ANDROID_JUNIT_EXT']
+    },
+
+    android_junit_espresso: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['ANDROID_JUNIT_ESPRESSO']
+    },
+
     dumpVersions: {
         println("using DevKit: ${ext.depVersions.devKit()}")
         println("using Android Gradle Plugin: ${ext.depVersions.agp()}")
@@ -81,5 +93,8 @@ ext.depVersions = [
         println("using Coil: ${ext.depVersions.coil()}")
         println("using Maven Publish: ${ext.depVersions.mavenPublish()}")
         println("using Java: ${ext.depVersions.java()}")
+        println("using JUnit: ${ext.depVersions.junit()}")
+        println("using Android JUnit Extension: ${ext.depVersions.android_junit_ext()}")
+        println("using Android JUnit Expresso: ${ext.depVersions.android_junit_espresso()}")
     }
 ]
