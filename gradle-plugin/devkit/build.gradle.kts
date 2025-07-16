@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "cn.dailystudio"
-version = "2.0.4-1.2.0"
+version = "2.0.4-1.2.1"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.android.tools.build:gradle:8.10.0")
+    compileOnly("com.android.tools.build:gradle:8.11.0")
     implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.1.20-2.0.1")
     implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.1.20")
     testImplementation(kotlin("test"))

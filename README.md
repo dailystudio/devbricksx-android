@@ -27,7 +27,7 @@ plugins {
 The latest version of the Gradle plugin is:
 
 ```Groovy
-devkit_version = "2.0.3-1.2.0"
+devkit_version = "2.0.4-1.2.1"
 ```
 
 That's it. Everything is done. You can use anything provided by **DevBricks X**. 
@@ -82,8 +82,8 @@ dependencies {
 The latest version of the dependencies above are:
 
 ```groovy
-ksp_version = "2.0.21-1.0.28"
-devbricksx_version = "2.0.3"
+ksp_version = "2.1.20-2.0.1"
+devbricksx_version = "2.0.4"
 ```
 
 Then, if you are using annotations through [KSP (Kotlin Symbol Processing)](https://kotlinlang.org/docs/ksp-overview.html), DO NOT forget to add plug-ins repo in **settings.gradle**:
@@ -102,12 +102,12 @@ Add the following compile options in build.gradle of your application module. Th
 
 ```groovy
 compileOptions {
-    sourceCompatibility JavaVersion.VERSION_17
-    targetCompatibility JavaVersion.VERSION_17
+    sourceCompatibility JavaVersion.VERSION_21
+    targetCompatibility JavaVersion.VERSION_21
 }
 
 kotlinOptions {
-    jvmTarget = "17"
+    jvmTarget = "21"
 }
 
 // If you are using KSP and your Room databases leveraging versioning features.
