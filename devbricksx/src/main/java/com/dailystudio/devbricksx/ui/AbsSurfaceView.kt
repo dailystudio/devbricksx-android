@@ -1,163 +1,141 @@
 package com.dailystudio.devbricksx.ui
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.PorterDuff
-import android.os.Build
-import android.os.Process
 import android.util.AttributeSet
+import android.view.Choreographer
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.dailystudio.devbricksx.development.Logger
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
-abstract class AbsSurfaceView: SurfaceView, SurfaceHolder.Callback {
+abstract class AbsSurfaceView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : SurfaceView(context, attrs, defStyleAttr, defStyleRes), SurfaceHolder.Callback, Choreographer.FrameCallback {
 
-    private var framesPerSecond = 60
-
-    @JvmOverloads
-    constructor(
-            context: Context,
-            attrs: AttributeSet? = null,
-            defStyleAttr: Int = 0
-    ) : super(context, attrs, defStyleAttr)
-
-    constructor(
-            context: Context,
-            attrs: AttributeSet?,
-            defStyleAttr: Int,
-            defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes)
-
-    private var drawingService: ExecutorService? = null
     private var surfaceReady = false
+    private var isDrawingActive = false
 
-    private val lock = Any()
-    private var drawingActive = false
+    // --- Start of New Code for Frame Rate Control ---
+
+    // The time in nanoseconds between each frame. 1 second = 1,000,000,000 nanoseconds.
+    private var frameIntervalNanos: Long = 1_000_000_000L / 60 // Default to 60 FPS
+
+    // The timestamp of the last frame that was actually drawn.
+    private var lastFrameTimeNanos: Long = 0
+
+    // --- End of New Code ---
 
     init {
         holder.addCallback(this)
-        holder.setFormat(PixelFormat.RGBA_8888)
-
+        holder.setFormat(PixelFormat.TRANSLUCENT)
         setZOrderOnTop(true)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        stopDrawThread()
-
         surfaceReady = true
-        startDrawThread()
+        startDrawing()
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        stopDrawThread()
-        holder.surface?.release()
-
         surfaceReady = false
+        stopDrawing()
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-    }
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
 
-    @Synchronized
-    private fun startDrawThread() {
-        if (surfaceReady) {
-            drawingService = Executors.newSingleThreadExecutor().apply {
-                drawingActive = true
-
-                execute {
-                    /*
-                     * MUST HAVE: to avoid drawing thread affect the main thread performance
-                     */
-                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
-                    renderFrames()
-                }
-            }
-        }
-    }
-
-    @Synchronized
-    private fun stopDrawThread() {
-        if (drawingService == null) {
-            Logger.debug("drawing service is null, needn't to stop")
+    override fun doFrame(frameTimeNanos: Long) {
+        if (!isDrawingActive) {
             return
         }
 
-        synchronized(lock) {
-            drawingActive = false
+        // --- Start of Modified Logic ---
+
+        val elapsedNanos = frameTimeNanos - lastFrameTimeNanos
+
+        // Check if enough time has passed to draw the next frame.
+        if (elapsedNanos < frameIntervalNanos) {
+            // Not time yet, just request the next callback and skip drawing.
+            Choreographer.getInstance().postFrameCallback(this)
+            return
         }
 
-        drawingService?.let {
-            try {
-                Logger.debug("shutting down drawing service ...")
-                it.shutdown()
-            } catch (e: Exception) {
-                Logger.warn("Could not shut down drawing service")
-            }
-        }
+        // It's time to draw. Update the last frame time.
+        // We use a modulo operation to prevent lastFrameTimeNanos from growing indefinitely
+        // while still preserving the correct interval.
+        lastFrameTimeNanos = frameTimeNanos - (elapsedNanos % frameIntervalNanos)
 
-        drawingService = null
-    }
+        // --- End of Modified Logic ---
 
-    fun setFramesPerSecond(fps: Int) {
-        framesPerSecond = fps
-    }
 
-    private fun renderFrames() {
         var canvas: Canvas? = null
-
-        while (true) {
-            synchronized(lock) {
-                if (!drawingActive) {
-                    return
-                }
-            }
-
-            val startTime = System.currentTimeMillis()
-            try {
-                canvas = holder.lockCanvas(null)
-
-                if (canvas == null) {
-                    Logger.debug("surface is not ready, skip and try it later")
-                }
-
+        try {
+            canvas = holder.lockCanvas()
+            if (canvas != null) {
                 synchronized(holder) {
-                    canvas?.let {
-                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-                        drawingCanvas(it)
-                    }
-                }
-            } finally {
-                canvas?.let {
-                    try {
-
-                        holder.unlockCanvasAndPost(canvas)
-                    } catch (e: Exception) {
-                        Logger.error("failed to unlock surface: $e")
-                    }
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                    drawingCanvas(canvas)
                 }
             }
-
-            val endTime = System.currentTimeMillis()
-
-            val drawTime = (endTime - startTime)
-            val frameTime = (1000 / framesPerSecond)
-            val sleepTime = (frameTime - drawTime)
-
-            if (sleepTime > 0) {
-//                Logger.debug("sleep with remained frame time = $sleepTime [expected: $frameTime, elapsed: $drawTime]")
-
+        } catch (e: Exception) {
+            Logger.error("Error during rendering: $e")
+        } finally {
+            if (canvas != null) {
                 try {
-                    Thread.sleep(frameTime - drawTime)
-                } catch (e: InterruptedException) {
+                    holder.unlockCanvasAndPost(canvas)
+                } catch (e: Exception) {
+                    Logger.error("Failed to unlock canvas: $e")
                 }
             }
         }
+
+        // Request the next frame callback to keep the loop running.
+        Choreographer.getInstance().postFrameCallback(this)
     }
+
+    fun startDrawing() {
+        if (!surfaceReady) {
+            Logger.warn("Surface not ready, abort starting drawing.")
+            return
+        }
+        if (isDrawingActive) {
+            Logger.debug("Drawing is already active.")
+            return
+        }
+
+        isDrawingActive = true
+        // Reset last frame time when starting
+        lastFrameTimeNanos = 0
+        Choreographer.getInstance().postFrameCallback(this)
+    }
+
+    fun stopDrawing() {
+        if (!isDrawingActive) {
+            return
+        }
+
+        isDrawingActive = false
+        Choreographer.getInstance().removeFrameCallback(this)
+    }
+
+    // --- New Public Method to Set FPS ---
+    /**
+     * Sets the desired frame rate for the drawing loop.
+     * @param fps The target frames per second. Must be greater than 0.
+     */
+    fun setFrameRate(fps: Int) {
+        if (fps <= 0) {
+            Logger.warn("Frame rate must be positive. Ignoring.")
+            return
+        }
+        frameIntervalNanos = 1_000_000_000L / fps
+    }
+
 
     abstract fun drawingCanvas(canvas: Canvas)
 

@@ -111,7 +111,7 @@ fun <T: Any> BaseLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -126,7 +126,7 @@ fun <T: Any> BaseLazyPagingList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -238,7 +238,7 @@ fun <T: Any> BaseLazyList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -253,7 +253,7 @@ fun <T: Any> BaseLazyList(
                 items(listOfItems, key, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)

@@ -41,7 +41,7 @@ class RawAudioDataVisualizer @JvmOverloads constructor(
     init {
         initAttrs(context, attrs, defStyleAttr)
 
-        setFramesPerSecond(10)
+        setFrameRate(10)
 
         paint = Paint(Paint.ANTI_ALIAS_FLAG)
     }

@@ -125,7 +125,7 @@ fun <T: Any> BaseLazyPagingGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -141,7 +141,7 @@ fun <T: Any> BaseLazyPagingGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -260,7 +260,7 @@ fun <T: Any> BaseLazyGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)
@@ -276,7 +276,7 @@ fun <T: Any> BaseLazyGrid(
                 items(listOfItems, key, span, contentType) { item ->
                     LazyItem(
                         item,
-                        modifier.animateItem(),
+                        Modifier.animateItem(),
                         onItemClicked,
                         onItemLongClicked,
                         itemContent)

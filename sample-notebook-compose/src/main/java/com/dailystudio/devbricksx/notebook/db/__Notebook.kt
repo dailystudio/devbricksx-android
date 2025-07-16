@@ -134,8 +134,7 @@ fun NotebookContent(
 
 @ListScreen(paged = true,
     dataSource = DataSource.Flow,
-    gridLayout = true,
-    columns = 2,
+    gridLayout = false,
     selectable = true
 )
 class __Notebook
