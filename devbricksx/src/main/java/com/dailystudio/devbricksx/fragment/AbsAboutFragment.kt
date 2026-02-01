@@ -19,6 +19,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Abstract dialog fragment for displaying an "About" screen.
+ *
+ * It shows the app icon, name, version, and description.
+ */
 abstract class AbsAboutFragment : DevBricksDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -56,6 +61,11 @@ abstract class AbsAboutFragment : DevBricksDialogFragment() {
         bindIcon(appIconView)
     }
 
+    /**
+     * Binds the app thumbnail/banner to the view.
+     *
+     * @param view The thumbnail view.
+     */
     protected open fun bindThumb(view: View?) {
         val thumbView = view as? ImageView ?: return
 
@@ -68,12 +78,22 @@ abstract class AbsAboutFragment : DevBricksDialogFragment() {
         }
     }
 
+    /**
+     * Binds the app icon to the view.
+     *
+     * @param view The icon view.
+     */
     protected open fun bindIcon(view: View?) {
         val appIconView = view as? ImageView ?: return
 
         appIconView.setImageResource(appIconResource)
     }
 
+    /**
+     * Binds the app version to the view.
+     *
+     * @param view The version text view.
+     */
     protected open fun bindVersion(view: View?) {
         val versionView = view as? TextView ?: return
         val context = requireContext()
@@ -87,11 +107,21 @@ abstract class AbsAboutFragment : DevBricksDialogFragment() {
         }
     }
 
+    /**
+     * Binds the app name to the view.
+     *
+     * @param view The name text view.
+     */
     protected open fun bindName(view: View?) {
         val nameView = view as? TextView ?: return
         nameView.text = appName
     }
 
+    /**
+     * Binds the app description to the view.
+     *
+     * @param view The description text view.
+     */
     protected open fun bindDesc(view: View?) {
         val descView = view as? TextView ?: return
 
@@ -105,18 +135,40 @@ abstract class AbsAboutFragment : DevBricksDialogFragment() {
         descView.text = appDescription
     }
 
+    /**
+     * Checks if the description contains HTML content.
+     *
+     * @return True if HTML, false otherwise.
+     */
     protected fun hasHtmlDescription(): Boolean {
         return false
     }
 
+    /**
+     * Gets the layout resource for the fragment.
+     */
     protected open val fragmentLayoutResource: Int
         get() = R.layout.fragment_about
 
+    /**
+     * Gets the resource ID for the app thumbnail/banner.
+     */
     protected open val appThumbResource: Int
         get() = -1
 
+    /**
+     * Gets the app name.
+     */
     abstract val appName: CharSequence?
+
+    /**
+     * Gets the app description.
+     */
     abstract val appDescription: CharSequence?
+
+    /**
+     * Gets the resource ID for the app icon.
+     */
     abstract val appIconResource: Int
 
 }

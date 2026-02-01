@@ -8,10 +8,23 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Abstract Fragment for managing runtime permissions.
+ *
+ * It handles permission requests, shows a prompt view when permissions are missing,
+ * and callbacks for permission granted/denied states.
+ */
 abstract class AbsPermissionsFragment : DevBricksFragment() {
 
     companion object {
 
+        /**
+         * Checks if the specified permissions are granted.
+         *
+         * @param context The context.
+         * @param permissions Array of permissions to check.
+         * @return True if all permissions are granted, false otherwise.
+         */
         fun hasPermissions(context: Context,
                            permissions: Array<String>): Boolean {
             if (permissions.isEmpty()) {
@@ -67,6 +80,9 @@ abstract class AbsPermissionsFragment : DevBricksFragment() {
 
     private var mPromptView: View? = null
 
+    /**
+     * Whether to automatically check permissions in [onCreate].
+     */
     protected open val autoCheckPermissions: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +93,10 @@ abstract class AbsPermissionsFragment : DevBricksFragment() {
         }
     }
 
+    /**
+     * Checks if permissions are granted, and requests them if not.
+     * If already granted, calls [onPermissionsGranted].
+     */
     fun checkOrGrantPermissions() {
         if (!hasPermissions(requireContext(), getRequiredPermissions())) {
             requestPermissions()
@@ -139,13 +159,39 @@ abstract class AbsPermissionsFragment : DevBricksFragment() {
         }
     }
 
+    /**
+     * Checks if all required permissions are currently granted.
+     *
+     * @return True if granted, false otherwise.
+     */
     protected fun isPermissionsGranted(): Boolean {
         return hasPermissions(requireContext(), getRequiredPermissions())
     }
 
+    /**
+     * Gets the ID of the view to show when permissions are missing (e.g. a button to request permissions).
+     *
+     * @return The resource ID of the prompt view.
+     */
     abstract fun getPermissionsPromptViewId(): Int
+
+    /**
+     * Gets the list of required permissions.
+     *
+     * @return Array of permission strings.
+     */
     abstract fun getRequiredPermissions(): Array<String>
+
+    /**
+     * Called when all required permissions are granted.
+     *
+     * @param newlyGranted True if the permissions were just granted by the user, false if they were already granted.
+     */
     abstract fun onPermissionsGranted(newlyGranted: Boolean)
+
+    /**
+     * Called when the permission request is denied.
+     */
     abstract fun onPermissionsDenied()
 
 }

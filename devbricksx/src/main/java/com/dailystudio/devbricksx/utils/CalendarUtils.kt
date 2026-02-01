@@ -3,6 +3,12 @@ package com.dailystudio.devbricksx.utils
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Utility class for common calendar and time operations.
+ *
+ * Provides methods to get start/end of day/week/month/year, extract date components,
+ * and format time/duration strings.
+ */
 object CalendarUtils {
 
     const val FORMAT_TEPML_TIME = "HH:mm:ss"
@@ -21,6 +27,12 @@ object CalendarUtils {
         sCalendar.firstDayOfWeek = Calendar.MONDAY
     }
 
+    /**
+     * Gets the time of day from a timestamp (sets year/month/day to a fixed date).
+     *
+     * @param mills The timestamp.
+     * @return The timestamp with year/month/day set to a fixed epoch reference.
+     */
     @Synchronized
     fun getTimeOfDay(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -31,6 +43,13 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Sets the date part of a timestamp to match another date.
+     *
+     * @param mills The timestamp whose time component is preserved.
+     * @param targetDate The timestamp whose date component is used.
+     * @return The resulting timestamp.
+     */
     @Synchronized
     fun setTimeOfDate(mills: Long, targetDate: Long): Long {
         sCalendar.timeInMillis = targetDate
@@ -46,6 +65,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the start of the day (00:00:00.000) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The start of the day.
+     */
     @Synchronized
     fun getStartOfDay(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -58,6 +83,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the end of the day (23:59:59.999) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The end of the day.
+     */
     @Synchronized
     fun getEndOfDay(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -70,6 +101,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the start of the week (Monday 00:00:00.000) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The start of the week.
+     */
     @Synchronized
     fun getStartOfWeek(mills: Long): Long {
         sCalendar.firstDayOfWeek = Calendar.MONDAY
@@ -84,6 +121,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the end of the week (Sunday 23:59:59.999) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The end of the week.
+     */
     @Synchronized
     fun getEndOfWeek(mills: Long): Long {
         val startMillis = getStartOfWeek(mills)
@@ -99,6 +142,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the start of the month (1st day 00:00:00.000) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The start of the month.
+     */
     @Synchronized
     fun getStartOfMonth(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -112,6 +161,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the end of the month (Last day 23:59:59.999) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The end of the month.
+     */
     @Synchronized
     fun getEndOfMonth(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -127,6 +182,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the start of the year (Jan 1st 00:00:00.000) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The start of the year.
+     */
     @Synchronized
     fun getStartOfYear(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -141,6 +202,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the end of the year (Dec 31st 23:59:59.999) for a given timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The end of the year.
+     */
     @Synchronized
     fun getEndOfYear(mills: Long): Long {
         sCalendar.timeInMillis = mills
@@ -155,6 +222,12 @@ object CalendarUtils {
         return sCalendar.timeInMillis
     }
 
+    /**
+     * Gets the year component of a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The year.
+     */
     @Synchronized
     fun getYear(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -162,6 +235,12 @@ object CalendarUtils {
         return sCalendar.get(Calendar.YEAR)
     }
 
+    /**
+     * Gets the month component of a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The month (0-based).
+     */
     @Synchronized
     fun getMonth(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -169,6 +248,12 @@ object CalendarUtils {
         return sCalendar.get(Calendar.MONTH)
     }
 
+    /**
+     * Gets the week of year for a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The week of year.
+     */
     @Synchronized
     fun getWeek(mills: Long): Int {
         /* Week number according to the ISO-8601 standard,
@@ -185,6 +270,12 @@ object CalendarUtils {
         return sCalendar.get(Calendar.WEEK_OF_YEAR)
     }
 
+    /**
+     * Gets the day of month for a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The day of month.
+     */
     @Synchronized
     fun getDay(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -192,6 +283,12 @@ object CalendarUtils {
         return sCalendar.get(Calendar.DAY_OF_MONTH)
     }
 
+    /**
+     * Gets the day of week for a timestamp (1 = Monday, 7 = Sunday).
+     *
+     * @param mills The timestamp.
+     * @return The day of week.
+     */
     @Synchronized
     fun getWeekDay(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -204,6 +301,12 @@ object CalendarUtils {
         return day
     }
 
+    /**
+     * Gets the hour of day (24-hour) for a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The hour.
+     */
     @Synchronized
     fun getHour(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -211,6 +314,12 @@ object CalendarUtils {
         return sCalendar.get(Calendar.HOUR_OF_DAY)
     }
 
+    /**
+     * Gets the minute for a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The minute.
+     */
     @Synchronized
     fun getMinute(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -218,6 +327,12 @@ object CalendarUtils {
         return sCalendar.get(Calendar.MINUTE)
     }
 
+    /**
+     * Gets the second for a timestamp.
+     *
+     * @param mills The timestamp.
+     * @return The second.
+     */
     @Synchronized
     fun getSecond(mills: Long): Int {
         sCalendar.timeInMillis = mills
@@ -225,34 +340,71 @@ object CalendarUtils {
         return sCalendar.get(Calendar.SECOND)
     }
 
+    /**
+     * Checks if a timestamp is in the current day.
+     *
+     * @param time The timestamp.
+     * @return True if in current day.
+     */
     fun isCurrentDay(time: Long): Boolean {
         val now = System.currentTimeMillis()
 
         return getStartOfDay(time) == getStartOfDay(now)
     }
 
+    /**
+     * Checks if a timestamp is in the current week.
+     *
+     * @param time The timestamp.
+     * @return True if in current week.
+     */
     fun isCurrentWeek(time: Long): Boolean {
         val now = System.currentTimeMillis()
 
         return getStartOfWeek(time) == getStartOfWeek(now)
     }
 
+    /**
+     * Checks if a timestamp is in the current month.
+     *
+     * @param time The timestamp.
+     * @return True if in current month.
+     */
     fun isCurrentMonth(time: Long): Boolean {
         val now = System.currentTimeMillis()
 
         return getStartOfMonth(time) == getStartOfMonth(now)
     }
 
+    /**
+     * Checks if a timestamp is in the current year.
+     *
+     * @param time The timestamp.
+     * @return True if in current year.
+     */
     fun isCurrentYear(time: Long): Boolean {
         val now = System.currentTimeMillis()
 
         return getStartOfYear(time) == getStartOfYear(now)
     }
 
+    /**
+     * Checks if a timestamp is within a given range (inclusive).
+     *
+     * @param time The timestamp to check.
+     * @param start The start of the range.
+     * @param end The end of the range.
+     * @return True if within range.
+     */
     fun isInRange(time: Long, start: Long, end: Long): Boolean {
         return time in start..end
     }
 
+    /**
+     * Gets the current timezone offset in milliseconds.
+     *
+     * @return The offset.
+     */
     fun getTimezoneOffset(): Long {
         val tz = TimeZone.getDefault()
         val now = Date()
@@ -260,6 +412,12 @@ object CalendarUtils {
         return offsetFromUtc.toLong()
     }
 
+    /**
+     * Formats a duration into a readable string (e.g., "1h 30' 15" 500").
+     *
+     * @param duration The duration in milliseconds.
+     * @return The formatted string.
+     */
     fun durationToReadableString(duration: Long): String? {
         val hourLabel = "h"
         val minLabel = "\'"
@@ -274,6 +432,14 @@ object CalendarUtils {
                 duration % 1000)
     }
 
+    /**
+     * Formats a timestamp into a readable date/time string.
+     *
+     * @param time The timestamp.
+     * @param hasDate Whether to include the date.
+     * @param hasTime Whether to include the time.
+     * @return The formatted string.
+     */
     fun timeToReadableString(time: Long,
                              hasDate: Boolean, hasTime: Boolean): String? {
         val builder = StringBuilder()
@@ -289,14 +455,32 @@ object CalendarUtils {
         return formater.format(time)
     }
 
+    /**
+     * Formats a timestamp into a readable date and time string.
+     *
+     * @param time The timestamp.
+     * @return The formatted string.
+     */
     fun timeToReadableString(time: Long): String? {
         return timeToReadableString(time, true, true)
     }
 
+    /**
+     * Formats a timestamp into a readable date string (no time).
+     *
+     * @param time The timestamp.
+     * @return The formatted string.
+     */
     fun timeToReadableStringWithoutTime(time: Long): String? {
         return timeToReadableString(time, true, false)
     }
 
+    /**
+     * Formats a timestamp into a readable time string (no date).
+     *
+     * @param time The timestamp.
+     * @return The formatted string.
+     */
     fun timeToReadableStringWithoutDate(time: Long): String? {
         return timeToReadableString(time, false, true)
     }

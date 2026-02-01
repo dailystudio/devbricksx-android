@@ -5,6 +5,11 @@ import com.dailystudio.devbricksx.BuildConfig
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Base Application class for DevBricksX based applications.
+ *
+ * It automatically initializes [GlobalContextWrapper] and configures [Logger] based on the build type.
+ */
 open class DevBricksApplication : Application() {
 
     override fun onCreate() {
@@ -47,6 +52,11 @@ open class DevBricksApplication : Application() {
         Logger.isSecureDebugEnabled = isDebugBuild()
     }
 
+    /**
+     * Checks if the application is running in debug mode.
+     *
+     * @return True if in debug mode, false otherwise. Defaults to [BuildConfig.DEBUG].
+     */
     protected open fun isDebugBuild() : Boolean {
         return BuildConfig.DEBUG
     }

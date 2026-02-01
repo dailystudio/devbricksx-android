@@ -7,6 +7,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 
+/**
+ * Abstract PagingDataAdapter (for Paging 3) that implements [AbsRecyclerAdapter].
+ *
+ * It bridges `PagingDataAdapter` with DevBricksX's selection and interaction delegates.
+ *
+ * @param Item The type of the item.
+ * @param ViewHolder The type of the ViewHolder.
+ * @param diffCallback The DiffUtil callback.
+ */
 abstract class AbsPagingDataAdapter<Item: Any, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
     : PagingDataAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {
@@ -57,11 +66,26 @@ abstract class AbsPagingDataAdapter<Item: Any, ViewHolder : RecyclerView.ViewHol
         return delegate.getSelection()
     }
 
+    /**
+     * Submits a new PagingData to the adapter.
+     *
+     * Clears current selection upon submission.
+     *
+     * @param pagedList The new PagingData.
+     */
     suspend fun submitList(pagedList: PagingData<Item>) {
         super.submitData(pagedList)
         stopSelection()
     }
 
+    /**
+     * Submits a new PagingData to the adapter (Lifecycle-bound version).
+     *
+     * Clears current selection upon submission.
+     *
+     * @param lifecycle The lifecycle of the owner.
+     * @param pagingData The new PagingData.
+     */
     fun submitList(lifecycle: Lifecycle, pagingData: PagingData<Item>) {
         super.submitData(lifecycle, pagingData)
         stopSelection()

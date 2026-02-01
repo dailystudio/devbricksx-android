@@ -7,25 +7,68 @@ import com.dailystudio.devbricksx.BuildConfig
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import java.io.File
 
+/**
+ * Configuration for the Logger.
+ *
+ * @property debugEnabled Whether debug logs are enabled.
+ * @property secureDebugEnabled Whether secure debug logs are enabled.
+ * @property methodAsPrefix Whether to include the method name as a prefix in the log message.
+ */
 open class LoggerConfig(
     val debugEnabled: Boolean = BuildConfig.DEBUG,
     val secureDebugEnabled: Boolean = BuildConfig.DEBUG,
     val methodAsPrefix: Boolean = true
 )
 
+/**
+ * sealed class to describe how tags and prefixes should be handled in logs.
+ *
+ * @property androidTag The tag used for `Log.d(tag, msg)`.
+ * @property outputLeading A string prepended to the log message.
+ */
 sealed class TagDescriptor (
     val androidTag: String? = null,
     val outputLeading: String? = null
 ) {
+    /**
+     * Use a custom Android tag.
+     */
     open class AndroidTag(tag: String? = null): TagDescriptor(tag, null)
+
+    /**
+     * Use a custom leading string.
+     */
     open class LeadingTag(leading: String? = null): TagDescriptor(null, leading)
+
+    /**
+     * Use both a custom Android tag and a leading string.
+     */
     open class FullTag(tag: String? = null, leading: String? = null): TagDescriptor(tag, leading)
 }
 
+/**
+ * Alias for [TagDescriptor.LeadingTag].
+ */
 typealias LT = TagDescriptor.LeadingTag
+/**
+ * Alias for [TagDescriptor.AndroidTag].
+ */
 typealias AT = TagDescriptor.AndroidTag
+/**
+ * Alias for [TagDescriptor.FullTag].
+ */
 typealias FT = TagDescriptor.FullTag
 
+/**
+ * A unified logging utility.
+ *
+ * It supports:
+ * - Automatic tag generation based on class name.
+ * - Automatic method name prefixing.
+ * - Debug/Release mode switching.
+ * - Dynamic suppression/forcing via files on external storage.
+ * - Secure logging (logging only when enabled explicitly).
+ */
 object Logger {
 
     private enum class LogToken {
@@ -44,6 +87,11 @@ object Logger {
     @Volatile
     private var defaultLoggerConfig: LoggerConfig = LoggerConfig()
 
+    /**
+     * Global switch for debug logs.
+     *
+     * Changing this value updates the default logger configuration.
+     */
     @Volatile
     var isDebugEnabled: Boolean = BuildConfig.DEBUG
         set(value) {
@@ -51,6 +99,11 @@ object Logger {
             updateDefaultLoggerConfig()
         }
 
+    /**
+     * Global switch for secure debug logs.
+     *
+     * Changing this value updates the default logger configuration.
+     */
     @Volatile
     var isSecureDebugEnabled: Boolean = BuildConfig.DEBUG
         set(value) {
@@ -82,9 +135,15 @@ object Logger {
         )
     }
 
+    /**
+     * Checks if debug logging is suppressed via a file marker.
+     */
     val isDebugSuppressed: Boolean
         get() = isTagFileExisted(SUPPRESS_FILE)
 
+    /**
+     * Checks if debug logging is forced via a file marker.
+     */
     val isDebugForced: Boolean
         get() = isTagFileExisted(FORCE_FILE)
 
@@ -155,66 +214,171 @@ object Logger {
         }
     }
 
+    /**
+     * Logs a debug message using the default configuration and inferred tag.
+     *
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun debug(format: String, vararg args: Any?) {
         debug(AT(), format, *args)
     }
 
+    /**
+     * Logs a debug message with a custom tag descriptor.
+     *
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun debug(tag: TagDescriptor, format: String, vararg args: Any?) {
         debug(defaultLoggerConfig, tag, format, *args)
     }
 
+    /**
+     * Logs a debug message with explicit configuration.
+     *
+     * @param config The logger configuration.
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun debug(config: LoggerConfig, tag: TagDescriptor, format: String, vararg args: Any?) {
         if (config.debugEnabled) {
             output(config, tag, format, LogToken.LOG_D, *args)
         }
     }
 
+    /**
+     * Logs a secure debug message. Only logged if secure debug is enabled.
+     *
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun debugSecure(format: String, vararg args: Any?) {
         debugSecure(AT(), format, *args)
     }
 
+    /**
+     * Logs a secure debug message with a custom tag descriptor.
+     *
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun debugSecure(tag: TagDescriptor, format: String, vararg args: Any?) {
         debugSecure(defaultLoggerConfig, tag, format, *args)
     }
 
+    /**
+     * Logs a secure debug message with explicit configuration.
+     *
+     * @param config The logger configuration.
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun debugSecure(config: LoggerConfig, tag: TagDescriptor, format: String, vararg args: Any?) {
         if (config.secureDebugEnabled) {
             output(config, tag, format, LogToken.LOG_SD, *args)
         }
     }
 
+    /**
+     * Logs an info message.
+     *
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun info(format: String, vararg args: Any?) {
         info(AT(), format, *args)
     }
 
+    /**
+     * Logs an info message with a custom tag descriptor.
+     *
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun info(tag: TagDescriptor, format: String, vararg args: Any?) {
         info(defaultLoggerConfig, tag, format, *args)
     }
 
+    /**
+     * Logs an info message with explicit configuration.
+     *
+     * @param config The logger configuration.
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun info(config: LoggerConfig, tag: TagDescriptor = LT(), format: String, vararg args: Any?) {
         output(config, tag, format, LogToken.LOG_I, *args)
     }
 
+    /**
+     * Logs a warning message.
+     *
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun warn(format: String, vararg args: Any?) {
         warn(AT(), format, *args)
     }
 
+    /**
+     * Logs a warning message with a custom tag descriptor.
+     *
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun warn(tag: TagDescriptor, format: String, vararg args: Any?) {
         warn(defaultLoggerConfig, tag, format, *args)
     }
 
+    /**
+     * Logs a warning message with explicit configuration.
+     *
+     * @param config The logger configuration.
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun warn(config: LoggerConfig, tag: TagDescriptor = LT(), format: String, vararg args: Any?) {
         output(config, tag, format, LogToken.LOG_W, *args)
     }
 
+    /**
+     * Logs an error message.
+     *
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun error(format: String, vararg args: Any?) {
         error(AT(), format, *args)
     }
 
+    /**
+     * Logs an error message with a custom tag descriptor.
+     *
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun error(tag: TagDescriptor, format: String, vararg args: Any?) {
         error(defaultLoggerConfig, tag, format, *args)
     }
 
+    /**
+     * Logs an error message with explicit configuration.
+     *
+     * @param config The logger configuration.
+     * @param tag The tag descriptor.
+     * @param format The message format string.
+     * @param args Arguments for the format string.
+     */
     fun error(config: LoggerConfig, tag: TagDescriptor = LT(), format: String, vararg args: Any?) {
         output(config, tag, format, LogToken.LOG_E, *args)
     }

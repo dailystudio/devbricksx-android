@@ -8,6 +8,14 @@ import androidx.core.widget.TextViewCompat
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Abstract ViewHolder for displaying items in a "Page" or "Introduction" style (e.g., in a ViewPager).
+ *
+ * It provides standard bindings for a media image, a title, and a description.
+ *
+ * @param Item The type of the item.
+ * @param itemView The root view.
+ */
 abstract class AbsPageViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(itemView) {
 
     override fun bind(item: Item) {
@@ -21,11 +29,23 @@ abstract class AbsPageViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(
         bindDescription(item, descriptionView)
     }
 
+    /**
+     * Binds the media image to the view.
+     *
+     * @param item The item.
+     * @param imageView The ImageView for the media.
+     */
     protected open fun bindMedia(item: Item, imageView: ImageView?) {
         val drawable = getMedia(item)
         imageView?.setImageDrawable(drawable)
     }
 
+    /**
+     * Binds the title to the view.
+     *
+     * @param item The item.
+     * @param titleView The TextView for the title.
+     */
     protected open fun bindTitle(item: Item, titleView: TextView?) {
         val title = getTitle(item)
         titleView?.text = title
@@ -37,6 +57,12 @@ abstract class AbsPageViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(
         }
     }
 
+    /**
+     * Binds the description to the view.
+     *
+     * @param item The item.
+     * @param descriptionView The TextView for the description.
+     */
     protected open fun bindDescription(item: Item, descriptionView: TextView?) {
         val description = getDescription(item)
         val title = getTitle(item)
@@ -62,8 +88,28 @@ abstract class AbsPageViewHolder<in Item>(itemView: View) : AbsViewHolder<Item>(
         }
     }
 
+    /**
+     * Gets the media drawable for the item.
+     *
+     * @param item The item.
+     * @return The drawable.
+     */
     abstract fun getMedia(item: Item) : Drawable?
+
+    /**
+     * Gets the title for the item.
+     *
+     * @param item The item.
+     * @return The title text.
+     */
     abstract fun getTitle(item: Item) : CharSequence?
+
+    /**
+     * Gets the description for the item.
+     *
+     * @param item The item.
+     * @return The description text.
+     */
     abstract fun getDescription(item: Item) : CharSequence?
 
 }

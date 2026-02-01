@@ -10,14 +10,31 @@ import androidx.core.widget.TextViewCompat
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Interface for an item in a [RadioSetting].
+ */
 interface RadioSettingItem {
 
+    /**
+     * Gets the unique ID of the item.
+     *
+     * @return The ID.
+     */
     fun getId(): String
+
+    /**
+     * Gets the display label of the item.
+     *
+     * @return The label.
+     */
     fun getLabel(): CharSequence
 
 }
 
 
+/**
+ * A simple implementation of [RadioSettingItem].
+ */
 data class SimpleRadioSettingItem(private val context: Context,
                                   private val itemId: String,
                                   private val labelResId: Int) : RadioSettingItem {
@@ -32,6 +49,11 @@ data class SimpleRadioSettingItem(private val context: Context,
 
 }
 
+/**
+ * A setting that allows selecting one option from a group of radio buttons.
+ *
+ * @param T The type of the radio setting item.
+ */
 abstract class RadioSetting<T : RadioSettingItem>(context: Context,
                                                   name: String,
                                                   iconResId: Int,
@@ -48,11 +70,21 @@ abstract class RadioSetting<T : RadioSettingItem>(context: Context,
         addItems(items)
     }
 
+    /**
+     * Adds an item to the setting.
+     *
+     * @param item The item to add.
+     */
     fun addItem(item: T) {
         synchronized(lock) { items.add(item) }
         postInvalidate()
     }
 
+    /**
+     * Adds multiple items to the setting.
+     *
+     * @param items The items to add.
+     */
     fun addItems(items: Array<T>) {
         if (items.isEmpty()) {
             return
@@ -67,18 +99,36 @@ abstract class RadioSetting<T : RadioSettingItem>(context: Context,
         postInvalidate()
     }
 
+    /**
+     * Clears all items.
+     */
     fun clear() {
         synchronized(lock) { items.clear() }
         postInvalidate()
     }
 
+    /**
+     * Gets the item at the specified position.
+     *
+     * @param position The position.
+     * @return The item.
+     */
     fun getItem(position: Int): T {
         return items[position]
     }
 
+    /**
+     * Gets the number of items.
+     */
     val itemCount: Int
         get() = items.size
 
+    /**
+     * Finds an item by its ID.
+     *
+     * @param itemId The item ID.
+     * @return The item, or null if not found.
+     */
     fun findItemById(itemId: String): T? {
         if (TextUtils.isEmpty(itemId)) {
             return null
@@ -91,13 +141,24 @@ abstract class RadioSetting<T : RadioSettingItem>(context: Context,
         return null
     }
 
+    /**
+     * Gets the ID of the currently selected item.
+     */
     abstract val selectedId: String?
 
+    /**
+     * Sets the selected item by its ID.
+     *
+     * @param selectedId The ID.
+     */
     abstract fun setSelected(selectedId: String?)
 
 }
 
 
+/**
+ * Holder for [RadioSetting].
+ */
 open class RadioSettingHolder: AbsSettingHolder() {
 
     private var mRadioGroup: RadioGroup? = null

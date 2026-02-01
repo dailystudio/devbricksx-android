@@ -10,18 +10,40 @@ import kotlinx.coroutines.flow.*
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
+/**
+ * Interface for objects that can be stored in [InMemoryObjectManager].
+ *
+ * @param Key The type of the key used to identify the object.
+ */
 interface InMemoryObject<Key: Comparable<Key>> {
 
+    /**
+     * Gets the unique key for this object.
+     *
+     * @return The key.
+     */
     fun getKey(): Key
 
 }
 
+/**
+ * Observer interface for [InMemoryObjectManager].
+ */
 interface InMemoryObjectObserver {
 
+    /**
+     * Called when the data in the manager has changed.
+     */
     fun onChanged()
 
 }
 
+/**
+ * A LiveData that observes an [InMemoryObjectManager] and emits its contents as a list.
+ *
+ * @param Object The type of the in-memory object.
+ * @property manager The manager to observe.
+ */
 class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
         private val manager: InMemoryObjectManager<*, Object>)
     : LiveData<List<Object>>(), InMemoryObjectObserver {
@@ -64,6 +86,14 @@ class InMemoryObjectsLiveData<Object: InMemoryObject<*>>(
 
 }
 
+/**
+ * Manager for storing and managing [InMemoryObject]s.
+ *
+ * It provides thread-safe access to objects and supports observation via LiveData, Flow, and PagingSource.
+ *
+ * @param Key The type of the key.
+ * @param Object The type of the object.
+ */
 open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<Key>> {
 
     private val mapOfObjects: MutableMap<Key, Object> = mutableMapOf()
@@ -74,6 +104,11 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
     private val liveDataSet: MutableList<LiveData<Map<Key, Object>>>
             = mutableListOf()
 
+    /**
+     * Adds an object to the manager.
+     *
+     * @param object The object to add.
+     */
     fun add(`object`: Object) {
         synchronized(mapOfObjects) {
             mapOfObjects[`object`.getKey()] = `object`
@@ -82,6 +117,11 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         notifyObservers()
     }
 
+    /**
+     * Adds a list of objects to the manager.
+     *
+     * @param objects The objects to add.
+     */
     fun addAll(objects: List<Object>) {
         synchronized(mapOfObjects) {
             for (o in objects) {
@@ -92,6 +132,11 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         notifyObservers()
     }
 
+    /**
+     * Removes an object from the manager.
+     *
+     * @param object The object to remove.
+     */
     fun remove(`object`: Object) {
         synchronized(mapOfObjects) {
             val key = `object`.getKey()
@@ -105,6 +150,12 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         notifyObservers()
     }
 
+    /**
+     * Removes an object by its key.
+     *
+     * @param key The key of the object to remove.
+     * @return The removed object, or null if not found.
+     */
     fun removeByKey(key: Key): Object? {
         var `object`: Object? = null
         synchronized(mapOfObjects) {
@@ -120,6 +171,9 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         return `object`
     }
 
+    /**
+     * Clears all objects from the manager.
+     */
     fun clear() {
         synchronized(mapOfObjects) {
             mapOfObjects.clear()
@@ -128,6 +182,12 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         notifyObservers()
     }
 
+    /**
+     * Gets an object by its key.
+     *
+     * @param key The key.
+     * @return The object, or null if not found.
+     */
     fun get(key: Key): Object? {
         synchronized(mapOfObjects) {
             if (!mapOfObjects.containsKey(key)) {
@@ -138,24 +198,45 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         }
     }
 
+    /**
+     * Gets all objects as a sorted list.
+     *
+     * @return The list of objects.
+     */
     fun toList(): List<Object> {
         synchronized(mapOfObjects) {
             return sortList(mapOfObjects.values.toList())
         }
     }
 
+    /**
+     * Sorts the list of objects. Defaults to sorting by key.
+     *
+     * @param objects The list to sort.
+     * @return The sorted list.
+     */
     protected open fun sortList(objects: List<Object>): List<Object> {
         return objects.sortedBy {
             it.getKey()
         }
     }
 
+    /**
+     * Adds an observer.
+     *
+     * @param observer The observer.
+     */
     fun addObserver(observer: InMemoryObjectObserver) {
         synchronized(observerDelegates) {
             observerDelegates.add(WeakReference(observer))
         }
     }
 
+    /**
+     * Removes an observer.
+     *
+     * @param observer The observer.
+     */
     fun removeObserver(observer: InMemoryObjectObserver) {
         synchronized(observerDelegates) {
             var targetDelegate: WeakReference<InMemoryObjectObserver>? = null
@@ -193,14 +274,29 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
         }
     }
 
+    /**
+     * Converts the manager's contents to a LiveData.
+     *
+     * @return The LiveData.
+     */
     fun toLiveData(): LiveData<List<Object>> {
         return InMemoryObjectsLiveData(this)
     }
 
+    /**
+     * Converts the manager's contents to a PagingSource.
+     *
+     * @return The PagingSource.
+     */
     fun toPagingSource(): PagingSource<Int, Object> {
         return InMemoryObjectPagingSource(this)
     }
 
+    /**
+     * Converts the manager's contents to a Flow.
+     *
+     * @return The Flow.
+     */
     fun toFlow(): Flow<List<Object>> = flow {
         Logger.debug("flow[${this.hashCode()}] is created.")
         val channel = Channel<List<Object>>(Channel.UNLIMITED)
@@ -228,6 +324,12 @@ open class InMemoryObjectManager<Key: Comparable<Key>, Object : InMemoryObject<K
 
 }
 
+/**
+ * A PagingSource for [InMemoryObjectManager].
+ *
+ * @param Object The type of the in-memory object.
+ * @property manager The manager to provide data from.
+ */
 class InMemoryObjectPagingSource<Object: InMemoryObject<*>>(
         private val manager: InMemoryObjectManager<*, Object>)
     : PagingSource<Int, Object>(), InMemoryObjectObserver {

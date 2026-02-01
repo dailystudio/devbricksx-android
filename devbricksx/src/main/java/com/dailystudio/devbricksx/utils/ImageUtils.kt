@@ -21,15 +21,43 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
+/**
+ * Comprehensive utility class for image manipulation.
+ *
+ * Includes methods for:
+ * - Sampling and scaling bitmaps.
+ * - Rotating, flipping, and transforming bitmaps.
+ * - Applying color filters and masks.
+ * - Converting between Bitmap and Base64/YUV.
+ * - Calculating image hashes (pHash) and brightness.
+ * - Saving bitmaps to files.
+ */
 object ImageUtils {
 
     private val DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565
 
+    /**
+     * Estimates the sample size for decoding a bitmap to a target size.
+     *
+     * @param filePath The path to the image file.
+     * @param destWidth The target width.
+     * @param destHeight The target height.
+     * @return The calculated sample size (power of 2).
+     */
     fun estimateSampleSize(filePath: String,
                            destWidth: Int, destHeight: Int): Int {
         return estimateSampleSize(filePath, destWidth, destHeight, 0)
     }
 
+    /**
+     * Estimates the sample size for decoding a bitmap to a target size, considering orientation.
+     *
+     * @param filePath The path to the image file.
+     * @param destWidth The target width.
+     * @param destHeight The target height.
+     * @param orientation The orientation angle (90, 180, 270).
+     * @return The calculated sample size (power of 2).
+     */
     fun estimateSampleSize(filePath: String,
                            destWidth: Int,
                            destHeight: Int,
@@ -68,6 +96,13 @@ object ImageUtils {
         return min(sw / destWidth, sh / destHeight)
     }
 
+    /**
+     * Rotates a bitmap by a specified degree.
+     *
+     * @param source The source bitmap.
+     * @param degrees The degrees to rotate.
+     * @return The rotated bitmap (might be the same instance if degrees is 0).
+     */
     fun rotateBitmap(source: Bitmap, degrees: Int): Bitmap {
         var source = source
         if (degrees != 0 && source != null) {
@@ -92,6 +127,14 @@ object ImageUtils {
         return source
     }
 
+    /**
+     * Scales a bitmap to a target size while maintaining aspect ratio (filling the target dimensions).
+     *
+     * @param bitmap The source bitmap.
+     * @param destWidth The target width.
+     * @param destHeight The target height.
+     * @return The scaled and clipped bitmap.
+     */
     fun scaleBitmapRatioLocked(bitmap: Bitmap,
                                destWidth: Int,
                                destHeight: Int): Bitmap {
@@ -125,6 +168,14 @@ object ImageUtils {
         return scaleBitmap(bitmap, tw, th)
     }
 
+    /**
+     * Scales a bitmap to exactly match the target dimensions (may crop).
+     *
+     * @param bitmap The source bitmap.
+     * @param destWidth The target width.
+     * @param destHeight The target height.
+     * @return The scaled bitmap.
+     */
     fun scaleBitmap(bitmap: Bitmap,
                     destWidth: Int,
                     destHeight: Int): Bitmap {
@@ -179,6 +230,16 @@ object ImageUtils {
         return newBitmap
     }
 
+    /**
+     * Creates a new bitmap by applying a matrix transformation to the source bitmap.
+     *
+     * @param bitmap The source bitmap.
+     * @param matrix The transformation matrix.
+     * @param dstWidth The target width (optional, 0 to auto-calculate).
+     * @param dstHeight The target height (optional, 0 to auto-calculate).
+     * @param paddingColor The color to fill empty areas.
+     * @return The transformed bitmap.
+     */
     fun createTransformedBitmap(bitmap: Bitmap,
                                 matrix: Matrix,
                                 dstWidth: Int = 0,
@@ -226,25 +287,65 @@ object ImageUtils {
                 matrix, true)
     }
 
+    /**
+     * Creates a clipped bitmap from the source.
+     *
+     * @param bitmap The source bitmap.
+     * @param x The x coordinate of the first pixel.
+     * @param y The y coordinate of the first pixel.
+     * @param width The width of the clipped area.
+     * @param height The height of the clipped area.
+     * @return The clipped bitmap.
+     */
     fun createClippedBitmap(bitmap: Bitmap,
                             x: Int, y: Int,
                             width: Int, height: Int): Bitmap {
         return Bitmap.createBitmap(bitmap, x, y, width, height)
     }
 
+    /**
+     * Saves a bitmap to a file.
+     *
+     * @param bitmap The bitmap to save.
+     * @param filename The file path.
+     * @return True if successful.
+     */
     fun saveBitmap(bitmap: Bitmap, filename: String): Boolean {
         return saveBitmap(bitmap, filename, 100)
     }
 
+    /**
+     * Saves a bitmap to a file with specified quality.
+     *
+     * @param bitmap The bitmap to save.
+     * @param filename The file path.
+     * @param quailty The compression quality (0-100).
+     * @return True if successful.
+     */
     fun saveBitmap(bitmap: Bitmap, filename: String, quailty: Int): Boolean {
         val file = File(filename)
         return saveBitmap(bitmap, file, quailty)
     }
 
+    /**
+     * Saves a bitmap to a file object.
+     *
+     * @param bitmap The bitmap to save.
+     * @param file The file object.
+     * @return True if successful.
+     */
     fun saveBitmap(bitmap: Bitmap, file: File): Boolean {
         return saveBitmap(bitmap, file, 100)
     }
 
+    /**
+     * Saves a bitmap to a file object with specified quality.
+     *
+     * @param bitmap The bitmap to save.
+     * @param file The file object.
+     * @param quality The compression quality (0-100).
+     * @return True if successful.
+     */
     fun saveBitmap(bitmap: Bitmap, file: File, quality: Int): Boolean {
         return try {
             val out = FileOutputStream(file)
@@ -260,6 +361,13 @@ object ImageUtils {
         }
     }
 
+    /**
+     * Creates a new bitmap with a ColorFilter applied.
+     *
+     * @param origBitmap The source bitmap.
+     * @param cm The ColorMatrix to apply.
+     * @return The filtered bitmap.
+     */
     fun createColorFilteredBitmap(origBitmap: Bitmap,
                                   cm: ColorMatrix?): Bitmap {
         if (cm == null) {
@@ -285,6 +393,12 @@ object ImageUtils {
         return filteredBitmap
     }
 
+    /**
+     * Creates a grayscale version of the bitmap.
+     *
+     * @param origBitmap The source bitmap.
+     * @return The grayscale bitmap.
+     */
     fun createGrayScaledBitmap(origBitmap: Bitmap): Bitmap {
         val cm = ColorMatrix()
         cm.setSaturation(0f)
@@ -292,6 +406,14 @@ object ImageUtils {
         return createColorFilteredBitmap(origBitmap, cm)
     }
 
+    /**
+     * Creates a bitmap snapshot of a View.
+     *
+     * @param view The view to capture.
+     * @param desireWidth The target width.
+     * @param desireHeight The target height.
+     * @return The snapshot bitmap, or null if failed.
+     */
     fun createViewSnapshot(view: View?,
                            desireWidth: Int, desireHeight: Int): Bitmap? {
         if (view == null) {
@@ -343,6 +465,12 @@ object ImageUtils {
         return bitmap
     }
 
+    /**
+     * Converts a bitmap to a Base64 string (PNG format).
+     *
+     * @param bitmap The bitmap to convert.
+     * @return The Base64 string.
+     */
     fun bitmapToBase64String(bitmap: Bitmap): String {
         val baos = ByteArrayOutputStream()
         var bytes: ByteArray? = null
@@ -360,6 +488,12 @@ object ImageUtils {
         return base64str
     }
 
+    /**
+     * Decodes a Base64 string to a bitmap.
+     *
+     * @param base64String The Base64 string.
+     * @return The decoded bitmap, or null.
+     */
     fun bitmapFromBase64String(base64String: String): Bitmap? {
         if (TextUtils.isEmpty(base64String)) {
             return null
@@ -380,6 +514,13 @@ object ImageUtils {
         return bitmap
     }
 
+    /**
+     * Composites a drawable with a mask bitmap.
+     *
+     * @param rgbBitmap The source bitmap (RGB).
+     * @param alphaBitmap The mask bitmap (Alpha).
+     * @return The composited bitmap.
+     */
     fun compositeDrawableWithMask(rgbBitmap: Bitmap,
                                   alphaBitmap: Bitmap): Bitmap {
         val rgbW = rgbBitmap.width
@@ -411,18 +552,46 @@ object ImageUtils {
         return destBitmap
     }
 
+    /**
+     * Composites two bitmaps.
+     *
+     * @param bitmap1 The first bitmap (background).
+     * @param bitmap2 The second bitmap (foreground).
+     * @return The composited bitmap.
+     */
     fun compositeBitmaps(bitmap1: Bitmap, bitmap2: Bitmap): Bitmap {
         return compositeBitmaps(false, bitmap1, bitmap2)
     }
 
+    /**
+     * Composites two bitmaps with optional scaling.
+     *
+     * @param scale Whether to scale the foreground to match the background.
+     * @param bitmap1 The first bitmap.
+     * @param bitmap2 The second bitmap.
+     * @return The composited bitmap.
+     */
     fun compositeBitmaps(scale: Boolean, bitmap1: Bitmap, bitmap2: Bitmap): Bitmap {
         return compositeBitmaps(scale, *arrayOf(bitmap1, bitmap2))
     }
 
+    /**
+     * Composites multiple bitmaps.
+     *
+     * @param bitmaps The bitmaps to composite.
+     * @return The composited bitmap.
+     */
     fun compositeBitmaps(vararg bitmaps: Bitmap): Bitmap {
         return compositeBitmaps(false, *bitmaps)
     }
 
+    /**
+     * Composites multiple bitmaps with optional scaling.
+     *
+     * @param scale Whether to scale.
+     * @param bitmaps The bitmaps.
+     * @return The composited bitmap.
+     */
     fun compositeBitmaps(scale: Boolean, vararg bitmaps: Bitmap): Bitmap {
         val N = bitmaps.size
         if (N == 1) {
@@ -491,6 +660,13 @@ object ImageUtils {
         return finalBitmap
     }
 
+    /**
+     * Loads a bitmap from the assets folder.
+     *
+     * @param context The context.
+     * @param assetFile The asset file path.
+     * @return The loaded bitmap, or null.
+     */
     fun loadAssetBitmap(context: Context, assetFile: String): Bitmap? {
         val assetManager = context.assets ?: return null
         if (TextUtils.isEmpty(assetFile)) {
@@ -524,6 +700,12 @@ object ImageUtils {
         return bitmap
     }
 
+    /**
+     * Finds the maximum dimensions among a set of bitmaps.
+     *
+     * @param bitmaps The bitmaps to check.
+     * @return An array containing {maxWidth, maxHeight}.
+     */
     fun findMaxDimension(vararg bitmaps: Bitmap): IntArray {
         val dimension = intArrayOf(0, 0)
         val N = bitmaps.size
@@ -549,6 +731,13 @@ object ImageUtils {
         return dimension
     }
 
+    /**
+     * Creates a round bitmap from a source bitmap.
+     *
+     * @param source The source bitmap.
+     * @param radius The radius of the circle.
+     * @return The round bitmap.
+     */
     fun getRoundBitmap(source: Bitmap, radius: Int): Bitmap {
         val scaledBitmap: Bitmap? = if (source.width != radius || source.height != radius) {
             scaleBitmap(source, radius * 2, radius * 2)
@@ -575,6 +764,13 @@ object ImageUtils {
         return output
     }
 
+    /**
+     * Estimates the brightness of a bitmap.
+     *
+     * @param bitmap The bitmap.
+     * @param pixelSpacing The sampling interval.
+     * @return The estimated brightness (0-255).
+     */
     fun calculateBrightnessEstimate(bitmap: Bitmap, pixelSpacing: Int): Int {
         val width = bitmap.width
         val height = bitmap.height
@@ -603,10 +799,23 @@ object ImageUtils {
         return (r + b + g) / (n * 3)
     }
 
+    /**
+     * Calculates the brightness of a bitmap (samples every pixel).
+     *
+     * @param bitmap The bitmap.
+     * @return The brightness (0-255).
+     */
     fun calculateBrightness(bitmap: Bitmap): Int {
         return calculateBrightnessEstimate(bitmap, 1)
     }
 
+    /**
+     * Clips a bitmap with rounded corners.
+     *
+     * @param source The source bitmap.
+     * @param radius The corner radius.
+     * @return The clipped bitmap.
+     */
     fun clipBitmapWithRoundCorner(source: Bitmap, radius: Float): Bitmap {
         val output = Bitmap.createBitmap(source.width,
                 source.height, Bitmap.Config.ARGB_8888)
@@ -629,6 +838,13 @@ object ImageUtils {
         return output
     }
 
+    /**
+     * Trims a bitmap to a specific aspect ratio.
+     *
+     * @param bitmap The bitmap.
+     * @param ratio The target aspect ratio (width/height).
+     * @return The trimmed bitmap.
+     */
     fun trimBitmap(bitmap: Bitmap, ratio: Float): Bitmap {
         val clipWidth: Int = if (ratio > 1.0f) {
             bitmap.width
@@ -651,6 +867,15 @@ object ImageUtils {
         )
     }
 
+    /**
+     * Adds padding to a bitmap.
+     *
+     * @param origin The original bitmap.
+     * @param padding The padding amount.
+     * @param paddingBackground The background color for the padding.
+     * @param expand Whether to expand the bitmap size or shrink content.
+     * @return The padded bitmap.
+     */
     fun paddingBitmap(origin: Bitmap,
                       padding: Int,
                       paddingBackground: Int,
@@ -687,6 +912,15 @@ object ImageUtils {
         return newOne
     }
 
+    /**
+     * Extends a bitmap to a larger size, centering the original content.
+     *
+     * @param origin The original bitmap.
+     * @param destW The target width.
+     * @param destH The target height.
+     * @param backgroundColor The background color for the extended area.
+     * @return The extended bitmap.
+     */
     fun extendBitmap(origin: Bitmap,
                      destW: Int, destH: Int,
                      backgroundColor: Int): Bitmap {
@@ -726,10 +960,24 @@ object ImageUtils {
     private val sSumG = IntArray(256)
     private val sSumB = IntArray(256)
 
+    /**
+     * Applies an oil paint effect to the bitmap.
+     *
+     * @param bitmap The source bitmap.
+     * @return The oil painted bitmap.
+     */
     fun oilPaintBitmap(bitmap: Bitmap): Bitmap {
         return oilPaintBitmap(bitmap, DEFAULT_RADIUS, DEFAULT_INTENSITY)
     }
 
+    /**
+     * Applies an oil paint effect to the bitmap with custom parameters.
+     *
+     * @param bitmap The source bitmap.
+     * @param radius The radius of the effect.
+     * @param intensity The intensity of the effect.
+     * @return The oil painted bitmap.
+     */
     fun oilPaintBitmap(bitmap: Bitmap, radius: Int, intensity: Int): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
@@ -815,6 +1063,13 @@ object ImageUtils {
         return dest
     }
 
+    /**
+     * Concatenates two bitmaps either horizontally or vertically depending on orientation.
+     *
+     * @param bitmap1 The first bitmap.
+     * @param bitmap2 The second bitmap.
+     * @return The concatenated bitmap.
+     */
     fun concatBitmap(bitmap1: Bitmap, bitmap2: Bitmap): Bitmap? {
         var bitmap1 = bitmap1
         var bitmap2 = bitmap2
@@ -885,6 +1140,13 @@ object ImageUtils {
         return newBitmap
     }
 
+    /**
+     * Clips a bitmap using a Path.
+     *
+     * @param src The source bitmap.
+     * @param path The clipping path.
+     * @return The clipped bitmap.
+     */
     fun clipBitmapByPath(src: Bitmap, path: Path?): Bitmap {
         if (path == null) {
             return src
@@ -915,6 +1177,11 @@ object ImageUtils {
         return resizedPath
     }
 
+    /**
+     * Converts an [Image] (YUV_420_888, NV21, YV12) to a Bitmap.
+     *
+     * @return The converted Bitmap.
+     */
     fun Image.toBitmap(): Bitmap {
         val nv21 = getDataFromImage(this, 2)
 
@@ -1021,6 +1288,13 @@ object ImageUtils {
         return data
     }
 
+    /**
+     * Tints a bitmap with a solid color.
+     *
+     * @param bitmap The source bitmap.
+     * @param color The color.
+     * @return The tinted bitmap.
+     */
     fun tintBitmap(bitmap: Bitmap,
                    @ColorInt color: Int): Bitmap {
         val paint = Paint().apply {
@@ -1041,6 +1315,13 @@ object ImageUtils {
         return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
     }
 
+    /**
+     * Flips a bitmap horizontally or vertically.
+     *
+     * @param bitmap The source bitmap.
+     * @param horizontally True to flip horizontally, false to flip vertically.
+     * @return The flipped bitmap.
+     */
     fun flipBitmap(bitmap: Bitmap,
                    horizontally: Boolean = true): Bitmap {
         val cx = bitmap.width / 2f
@@ -1053,6 +1334,13 @@ object ImageUtils {
         }
     }
 
+    /**
+     * Masks a bitmap with another bitmap.
+     *
+     * @param original The original bitmap.
+     * @param mask The mask bitmap (uses alpha channel).
+     * @return The masked bitmap.
+     */
     fun maskBitmap(original: Bitmap,
                    mask: Bitmap?): Bitmap {
         val bitmap = createBitmap(original.width, original.height,
@@ -1085,6 +1373,14 @@ object ImageUtils {
         return buffer
     }
 
+    /**
+     * Converts an int array (ABGR format) to a Bitmap.
+     *
+     * @param intArrayInABGRFormat The pixel data.
+     * @param width The width.
+     * @param height The height.
+     * @return The bitmap.
+     */
     fun intArrayToBitmap(intArrayInABGRFormat: IntArray,
                          width: Int,
                          height: Int): Bitmap {
@@ -1101,6 +1397,13 @@ object ImageUtils {
         return Bitmap.createScaledBitmap(bitmap, n, n, true)
     }
 
+    /**
+     * Calculates the perceptual hash (pHash) of a bitmap.
+     *
+     * @param bitmap The bitmap.
+     * @param bitSize The size of the hash grid (e.g., 8 for 64-bit hash).
+     * @return The pHash string (binary representation).
+     */
     fun buildPHash(bitmap: Bitmap, bitSize: Int): String {
         val resizedBitmap = resizeToNxN(bitmap, bitSize)
         val grayscaleBitmap = createGrayScaledBitmap(resizedBitmap)
@@ -1145,6 +1448,13 @@ object ImageUtils {
         return (counter * 100f / pHash1.length).roundToInt()
     }
 
+    /**
+     * Calculates the similarity between two pHash strings.
+     *
+     * @param pHash1 The first pHash.
+     * @param pHash2 The second pHash.
+     * @return Similarity percentage (0-100).
+     */
     fun getSimilarity(pHash1: String, pHash2: String): Int {
         val hammingDistance = getHammingDistance(pHash1, pHash2)
         Logger.debug("[PHASH]: hash1 = $pHash1")

@@ -6,6 +6,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 
+/**
+ * Abstract PagedListAdapter (for Paging 2) that implements [AbsRecyclerAdapter].
+ *
+ * It bridges `PagedListAdapter` with DevBricksX's selection and interaction delegates.
+ * Note: Paging 3 uses `PagingDataAdapter`, see [AbsPagingDataAdapter].
+ *
+ * @param Item The type of the item.
+ * @param ViewHolder The type of the ViewHolder.
+ * @param diffCallback The DiffUtil callback.
+ */
 abstract class AbsPagedListAdapter<Item: Any, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
     : PagedListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {

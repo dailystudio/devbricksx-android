@@ -7,8 +7,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Listener for soft keyboard visibility changes.
+ *
+ * @param v The view observing the changes.
+ * @param showingKeyboard True if keyboard is visible, false otherwise.
+ */
 typealias SoftKeyboardShowingListener = (v: View, showingKeyboard: Boolean) -> Unit
 
+/**
+ * Hides the soft keyboard associated with this view's window.
+ */
 fun View.hideKeyboard() {
     val imm: InputMethodManager? =
         context.getSystemService(Activity.INPUT_METHOD_SERVICE)
@@ -16,6 +25,11 @@ fun View.hideKeyboard() {
     imm?.hideSoftInputFromWindow(windowToken, 0);
 }
 
+/**
+ * Adds a listener to detect soft keyboard visibility changes.
+ *
+ * @param listener The callback to invoke when visibility changes.
+ */
 fun View.addSoftKeyboardChangesListener(listener: SoftKeyboardShowingListener) {
     var lastShowingKeyboard = false
 

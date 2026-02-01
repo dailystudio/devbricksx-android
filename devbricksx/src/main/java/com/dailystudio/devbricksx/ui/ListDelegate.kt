@@ -5,6 +5,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.development.Logger
 import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 
+/**
+ * A delegate class that handles common logic for RecyclerView adapters in DevBricksX.
+ *
+ * It manages item click listeners, selection mode, and selection state (single/multi-select logic).
+ * This allows sharing this logic across different adapter types (ListAdapter, PagedListAdapter, etc.).
+ *
+ * @param Item The type of the item.
+ * @property adapter The adapter using this delegate.
+ */
 class ListDelegate<Item>(
         val adapter: AbsRecyclerAdapter<Item>) {
 
@@ -15,6 +24,12 @@ class ListDelegate<Item>(
     private var inSelectionMode = false
     private val selectedItems = mutableSetOf<Item>()
 
+    /**
+     * Called when binding a ViewHolder. Sets up click and long-click listeners.
+     *
+     * @param holder The ViewHolder.
+     * @param position The position of the item.
+     */
     fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder.itemView.setOnClickListener(View.OnClickListener { v ->
             if (v == null) {
@@ -45,10 +60,20 @@ class ListDelegate<Item>(
         }
     }
 
+    /**
+     * Sets the item click listener.
+     *
+     * @param l The listener.
+     */
     fun setOnItemClickListener(l: OnItemClickListener<Item>) {
         itemClickListener = l
     }
 
+    /**
+     * Sets the selection changed listener.
+     *
+     * @param l The listener.
+     */
     fun setOnSelectionChangedListener(l: OnSelectionChangedListener<Item>) {
         selectionChangedListener = l
     }
@@ -68,6 +93,12 @@ class ListDelegate<Item>(
         }
     }
 
+    /**
+     * Starts selection mode.
+     *
+     * @param holder The ViewHolder of the item starting the selection.
+     * @param position The position of the item.
+     */
     fun startSelection(holder: RecyclerView.ViewHolder, position: Int) {
         if (isInSelectionMode()) {
             return
@@ -81,6 +112,9 @@ class ListDelegate<Item>(
         handleSelection(holder, position)
     }
 
+    /**
+     * Stops selection mode.
+     */
     fun stopSelection() {
         if (!isInSelectionMode()) {
             return
@@ -95,6 +129,11 @@ class ListDelegate<Item>(
         selectionChangedListener?.onSelectionStopped()
     }
 
+    /**
+     * Gets the list of selected items.
+     *
+     * @return The list of selected items.
+     */
     fun getSelection(): List<Item> {
         return selectedItems.toList()
     }
@@ -109,6 +148,11 @@ class ListDelegate<Item>(
         selectedItems.clear()
     }
 
+    /**
+     * Checks if selection mode is active.
+     *
+     * @return True if in selection mode, false otherwise.
+     */
     fun isInSelectionMode(): Boolean {
         return inSelectionMode
     }
@@ -142,6 +186,11 @@ class ListDelegate<Item>(
         selectionChangedListener?.onSelectionChanged(selectedItems.toList())
     }
 
+    /**
+     * Enables or disables selection capability.
+     *
+     * @param enabled True to enable, false to disable.
+     */
     fun setSelectionEnabled(enabled: Boolean) {
         isSelectionEnabled = enabled
 
@@ -150,6 +199,11 @@ class ListDelegate<Item>(
         }
     }
 
+    /**
+     * Checks if selection capability is enabled.
+     *
+     * @return True if enabled, false otherwise.
+     */
     fun isSelectionEnabled(): Boolean {
         return isSelectionEnabled
     }

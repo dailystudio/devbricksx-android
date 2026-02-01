@@ -13,12 +13,30 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
 
+/**
+ * Data class representing a preference change event.
+ *
+ * @property appPrefs The [AbsPrefs] instance where the change occurred.
+ * @property prefKey The key of the preference that changed.
+ */
 data class PrefsChange(val appPrefs: AbsPrefs,
                        val prefKey: String)
 
+/**
+ * Abstract base class for managing SharedPreferences.
+ *
+ * It provides typed accessors and mutators for preferences, and notifies observers about changes.
+ */
 abstract class AbsPrefs {
 
+    /**
+     * LiveData emitting preference changes.
+     */
     val prefsChange: MutableLiveData<PrefsChange> = MutableLiveData()
+
+    /**
+     * SharedFlow emitting preference changes.
+     */
     val prefsChanges: MutableSharedFlow<PrefsChange> = MutableSharedFlow<PrefsChange>(replay = 0, extraBufferCapacity = 64)
 
     private fun getSharedPreferences(context: Context): SharedPreferences {
@@ -31,6 +49,13 @@ abstract class AbsPrefs {
         return sharedPref.edit()
     }
 
+    /**
+     * Sets a String preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param sValue The new value.
+     */
     fun setStringPrefValue(context: Context,
                            pref: String, sValue: String?) {
         val editor = getEditor(context)
@@ -40,6 +65,13 @@ abstract class AbsPrefs {
         notifyPrefChanged(pref)
     }
 
+    /**
+     * Sets a Boolean preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param bValue The new value.
+     */
     fun setBooleanPrefValue(context: Context,
                             pref: String,
                             bValue: Boolean) {
@@ -50,6 +82,13 @@ abstract class AbsPrefs {
         notifyPrefChanged(pref)
     }
 
+    /**
+     * Sets a Long preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param lValue The new value.
+     */
     fun setLongPrefValue(context: Context,
                          pref: String,
                          lValue: Long) {
@@ -60,6 +99,13 @@ abstract class AbsPrefs {
         notifyPrefChanged(pref)
     }
 
+    /**
+     * Sets an Integer preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param iValue The new value.
+     */
     fun setIntegerPrefValue(context: Context,
                             pref: String,
                             iValue: Int) {
@@ -70,6 +116,13 @@ abstract class AbsPrefs {
         notifyPrefChanged(pref)
     }
 
+    /**
+     * Sets a Float preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param fValue The new value.
+     */
     fun setFloatPrefValue(context: Context,
                           pref: String,
                           fValue: Float) {
@@ -80,17 +133,39 @@ abstract class AbsPrefs {
         notifyPrefChanged(pref)
     }
 
+    /**
+     * Gets a String preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @return The value, or null if not found.
+     */
     fun getStringPrefValue(context: Context,
                            pref: String): String? {
         val sharedPref = getSharedPreferences(context)
         return sharedPref.getString(pref, null)
     }
 
+    /**
+     * Gets a Boolean preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @return The value, or false if not found.
+     */
     fun getBooleanPrefValue(context: Context,
                             pref: String): Boolean {
         return getBooleanPrefValue(context, pref, false)
     }
 
+    /**
+     * Gets a Boolean preference value with a default.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param defVal The default value.
+     * @return The value, or [defVal] if not found.
+     */
     fun getBooleanPrefValue(context: Context,
                             pref: String,
                             defVal: Boolean): Boolean {
@@ -99,11 +174,26 @@ abstract class AbsPrefs {
         return sharedPref.getBoolean(pref, defVal)
     }
 
+    /**
+     * Gets a Long preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @return The value, or 0 if not found.
+     */
     fun getLongPrefValue(context: Context,
                          pref: String): Long {
         return getLongPrefValue(context, pref, 0L)
     }
 
+    /**
+     * Gets a Long preference value with a default.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param defVal The default value.
+     * @return The value, or [defVal] if not found.
+     */
     fun getLongPrefValue(context: Context,
                          pref: String,
                          defVal: Long): Long {
@@ -112,11 +202,26 @@ abstract class AbsPrefs {
         return sharedPref.getLong(pref, defVal)
     }
 
+    /**
+     * Gets an Integer preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @return The value, or 0 if not found.
+     */
     fun getIntegerPrefValue(context: Context,
                             pref: String): Int {
         return getIntegerPrefValue(context, pref, 0)
     }
 
+    /**
+     * Gets an Integer preference value with a default.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param defVal The default value.
+     * @return The value, or [defVal] if not found.
+     */
     fun getIntegerPrefValue(context: Context,
                             pref: String,
                             defVal: Int): Int {
@@ -125,11 +230,26 @@ abstract class AbsPrefs {
         return sharedPref.getInt(pref, defVal)
     }
 
+    /**
+     * Gets a Float preference value.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @return The value, or 0.0f if not found.
+     */
     fun getFloatPrefValue(context: Context,
                           pref: String): Float {
         return getFloatPrefValue(context, pref, 0.0f)
     }
 
+    /**
+     * Gets a Float preference value with a default.
+     *
+     * @param context The context.
+     * @param pref The preference key.
+     * @param defVal The default value.
+     * @return The value, or [defVal] if not found.
+     */
     fun getFloatPrefValue(context: Context,
                           pref: String,
                           defVal: Float): Float {
@@ -138,6 +258,11 @@ abstract class AbsPrefs {
         return sharedPref.getFloat(pref, defVal)
     }
 
+    /**
+     * Notifies listeners that a preference has changed.
+     *
+     * @param key The key of the changed preference.
+     */
     protected fun notifyPrefChanged(key: String) {
         if (TextUtils.isEmpty(key)) {
             return
@@ -150,6 +275,9 @@ abstract class AbsPrefs {
         prefsChanges.tryEmit(change)
     }
 
+    /**
+     * The name of the SharedPreferences file.
+     */
     protected abstract val prefName: String
 
 }

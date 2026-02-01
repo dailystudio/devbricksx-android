@@ -7,6 +7,11 @@ import com.dailystudio.devbricksx.BuildConfig
 import com.dailystudio.devbricksx.GlobalContextWrapper
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Base MultiDexApplication class for DevBricksX based applications.
+ *
+ * It provides MultiDex support along with the features of [DevBricksApplication].
+ */
 open class DevBricksMultiDexApplication : MultiDexApplication() {
 
     override fun onCreate() {
@@ -49,6 +54,11 @@ open class DevBricksMultiDexApplication : MultiDexApplication() {
         Logger.isSecureDebugEnabled = isDebugBuild()
     }
 
+    /**
+     * Checks if the application is running in debug mode.
+     *
+     * @return True if in debug mode, false otherwise. Defaults to [BuildConfig.DEBUG].
+     */
     protected open fun isDebugBuild() : Boolean {
         return BuildConfig.DEBUG
     }

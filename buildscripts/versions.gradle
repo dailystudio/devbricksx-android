@@ -62,6 +62,10 @@ ext.depVersions = [
         ext.depVersions.all(versionsFile)['MAVEN_PUBLISH']
     },
 
+    dokka: { versionsFile = "$rootDir/dep_versions.properties" ->
+        ext.depVersions.all(versionsFile)['DOKKA']
+    },
+
     devKit: { versionsFile = "$rootDir/dep_versions.properties" ->
         ext.depVersions.all(versionsFile)['DEVKIT']
     },

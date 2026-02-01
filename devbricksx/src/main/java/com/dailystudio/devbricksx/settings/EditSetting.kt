@@ -16,6 +16,9 @@ import android.widget.ImageView
 import com.dailystudio.devbricksx.R
 
 
+/**
+ * A setting that allows text editing via an EditText.
+ */
 abstract class EditSetting(context: Context,
                            name: String,
                            iconResId: Int,
@@ -24,16 +27,47 @@ abstract class EditSetting(context: Context,
                            holder: EditSettingHolder = EditSettingHolder())
     : AbsSetting(context, name, iconResId, labelResId, enabled, holder) {
 
+    /**
+     * Gets the hint text for the EditText.
+     *
+     * @param context The context.
+     * @return The hint text.
+     */
     open fun getEditHint(context: Context): CharSequence? {
         return null
     }
 
+    /**
+     * Gets the drawable for the optional edit button.
+     *
+     * @param context The context.
+     * @return The drawable, or null if no button is needed.
+     */
     open fun getEditButtonDrawable(context: Context): Drawable? {
         return null
     }
 
+    /**
+     * Gets the current text value of the setting.
+     *
+     * @param context The context.
+     * @return The text.
+     */
     abstract fun getEditText(context: Context): CharSequence?
+
+    /**
+     * Sets the text value of the setting.
+     *
+     * @param context The context.
+     * @param text The new text.
+     */
     abstract fun setEditText(context: Context, text: CharSequence?)
+
+    /**
+     * Called when the edit button is clicked.
+     *
+     * @param context The context.
+     */
     abstract fun onEditButtonClicked(context: Context)
 
 }
@@ -41,6 +75,9 @@ abstract class EditSetting(context: Context,
 private data class TextChangeData(val setting: EditSetting,
                                   val text: CharSequence? = null)
 
+/**
+ * Holder for [EditSetting].
+ */
 open class EditSettingHolder : AbsSettingHolder() {
 
     companion object {
@@ -126,6 +163,11 @@ open class EditSettingHolder : AbsSettingHolder() {
 
     }
 
+    /**
+     * Applies custom styles to the EditText.
+     *
+     * @param editText The EditText.
+     */
     protected open fun applyEditTextStyles(editText: EditText) {
 
     }

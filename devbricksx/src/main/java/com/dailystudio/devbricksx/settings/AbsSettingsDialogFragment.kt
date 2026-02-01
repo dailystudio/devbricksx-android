@@ -11,6 +11,11 @@ import androidx.appcompat.app.AlertDialog
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.fragment.DevBricksDialogFragment
 
+/**
+ * Abstract DialogFragment for displaying a list of settings in a dialog.
+ *
+ * It uses [SettingsView] to render the settings and supports an optional thumbnail image.
+ */
 abstract class AbsSettingsDialogFragment: DevBricksDialogFragment() {
 
     private var settingsView: SettingsView? = null
@@ -61,23 +66,49 @@ abstract class AbsSettingsDialogFragment: DevBricksDialogFragment() {
         reloadSettings(requireContext())
     }
 
+    /**
+     * Gets the drawable for the dialog's thumbnail image.
+     *
+     * @return The drawable, or null if no thumbnail is needed.
+     */
     protected open fun getDialogThumbImageDrawable(): Drawable? {
         return null
     }
 
+    /**
+     * Whether to display a divider between the thumbnail and the settings list.
+     *
+     * @return True to display, false otherwise. Defaults to false.
+     */
     protected open fun shouldDisplayDivider(): Boolean {
         return false
     }
 
+    /**
+     * Reloads the settings and updates the view.
+     *
+     * @param context The context.
+     */
     protected open fun reloadSettings(context: Context) {
         val settings: Array<AbsSetting> = createSettings(context)
         settingsView?.setSettings(settings)
     }
 
+    /**
+     * Adds a setting dynamically.
+     *
+     * @param setting The setting to add.
+     */
     open fun addSetting(setting: AbsSetting) {
         settingsView?.addSetting(setting)
     }
 
+    /**
+     * Creates the list of settings to be displayed.
+     *
+     * @param context The context.
+     * @return An array of [AbsSetting] objects.
+     */
     protected abstract fun createSettings(context: Context): Array<AbsSetting>
 
 }

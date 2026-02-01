@@ -1,5 +1,8 @@
 package com.dailystudio.devbricksx.database
 
+/**
+ * TypeConverter for Short arrays.
+ */
 open class ShortArrayConverter: AbsTypedArrayConverter<Short>() {
 
     override fun createTypedArray(size: Int): Array<Short> {

@@ -1,5 +1,8 @@
 package com.dailystudio.devbricksx.database
 
+/**
+ * TypeConverter for Int arrays.
+ */
 open class IntArrayConverter: AbsTypedArrayConverter<Int>() {
 
     override fun createTypedArray(size: Int): Array<Int> {

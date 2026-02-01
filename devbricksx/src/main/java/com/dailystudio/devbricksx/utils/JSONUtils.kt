@@ -7,10 +7,21 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import java.lang.Exception
 
+/**
+ * Utility class for JSON operations using Gson.
+ */
 object JSONUtils {
 
     private val GSON = Gson()
 
+    /**
+     * Deserializes a JSON string to an object.
+     *
+     * @param jsonStr The JSON string.
+     * @param objectClass The class of the object to deserialize to.
+     * @param adapters Optional map of custom JsonDeserializers.
+     * @return The deserialized object, or null if parsing fails.
+     */
     fun <Object> fromString(jsonStr: String,
                             objectClass: Class<Object>,
                             adapters: Map<Class<*>, JsonDeserializer<*>>? = null): Object? {
@@ -33,6 +44,14 @@ object JSONUtils {
         }
     }
 
+    /**
+     * Deserializes a JSON file to an object.
+     *
+     * @param file The path to the JSON file.
+     * @param objectClass The class of the object to deserialize to.
+     * @param adapters Optional map of custom JsonDeserializers.
+     * @return The deserialized object, or null if reading or parsing fails.
+     */
     fun <Object> fromFile(file: String,
                           objectClass: Class<Object>,
                           adapters: Map<Class<*>, JsonDeserializer<*>>? = null): Object? {
@@ -44,6 +63,15 @@ object JSONUtils {
         return fromString(json, objectClass, adapters)
     }
 
+    /**
+     * Deserializes a JSON file from assets to an object.
+     *
+     * @param context The context.
+     * @param file The asset file path.
+     * @param objectClass The class of the object to deserialize to.
+     * @param adapters Optional map of custom JsonDeserializers.
+     * @return The deserialized object, or null if reading or parsing fails.
+     */
     fun <Object> fromAsset(context: Context,
                            file: String,
                            objectClass: Class<Object>,
@@ -56,6 +84,15 @@ object JSONUtils {
         return fromString(json, objectClass, adapters)
     }
 
+    /**
+     * Deserializes a JSON file from raw resources to an object.
+     *
+     * @param context The context.
+     * @param resId The raw resource ID.
+     * @param objectClass The class of the object to deserialize to.
+     * @param adapters Optional map of custom JsonDeserializers.
+     * @return The deserialized object, or null if reading or parsing fails.
+     */
     fun <Object> fromRaw(context: Context,
                          resId: Int,
                          objectClass: Class<Object>,

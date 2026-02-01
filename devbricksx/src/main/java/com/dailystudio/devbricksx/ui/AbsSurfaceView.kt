@@ -11,6 +11,15 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * Abstract SurfaceView that simplifies drawing loop management using Choreographer.
+ *
+ * It provides:
+ * - Automatic start/stop of the drawing loop based on Surface lifecycle.
+ * - Frame rate control.
+ * - Thread-safe canvas locking and drawing.
+ * - Transparent background support.
+ */
 abstract class AbsSurfaceView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -98,6 +107,10 @@ abstract class AbsSurfaceView @JvmOverloads constructor(
         Choreographer.getInstance().postFrameCallback(this)
     }
 
+    /**
+     * Starts the drawing loop.
+     * Usually called automatically when surface is created.
+     */
     fun startDrawing() {
         if (!surfaceReady) {
             Logger.warn("Surface not ready, abort starting drawing.")
@@ -114,6 +127,10 @@ abstract class AbsSurfaceView @JvmOverloads constructor(
         Choreographer.getInstance().postFrameCallback(this)
     }
 
+    /**
+     * Stops the drawing loop.
+     * Usually called automatically when surface is destroyed.
+     */
     fun stopDrawing() {
         if (!isDrawingActive) {
             return
@@ -137,6 +154,11 @@ abstract class AbsSurfaceView @JvmOverloads constructor(
     }
 
 
+    /**
+     * Called when it's time to draw on the canvas.
+     *
+     * @param canvas The canvas to draw on. It is already locked and cleared.
+     */
     abstract fun drawingCanvas(canvas: Canvas)
 
 }

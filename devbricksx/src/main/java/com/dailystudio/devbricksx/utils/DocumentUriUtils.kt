@@ -10,6 +10,11 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 
+/**
+ * Utility class for handling Document Uris and resolving file paths.
+ *
+ * It provides methods to resolve real file paths from various types of Uris (Content, Document, File).
+ */
 object DocumentUriUtils {
 
     private fun getPathDeprecated(
@@ -32,12 +37,28 @@ object DocumentUriUtils {
         return uri.path
     }
 
+    /**
+     * Gets the real path from a Uri, compatible across different Android versions.
+     *
+     * @param ctx The context.
+     * @param uri The Uri to resolve.
+     * @return The file path, or null if it could not be resolved.
+     */
     fun getPathCompat(ctx: Context, uri: Uri): String? {
         return if (Build.VERSION.SDK_INT < 19) {
             getPathDeprecated(ctx, uri)
         } else getPath(ctx, uri)
     }
 
+    /**
+     * Gets the real path from a Uri (API 19+).
+     *
+     * Handles DocumentProvider Uris (ExternalStorage, Downloads, Media), Content Uris, and File Uris.
+     *
+     * @param context The context.
+     * @param uri The Uri to resolve.
+     * @return The file path, or null.
+     */
     @SuppressLint("NewApi")
     fun getPath(context: Context, uri: Uri): String? {
         val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT

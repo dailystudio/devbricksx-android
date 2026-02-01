@@ -8,6 +8,7 @@ buildscript {
     ext.nav_version = depVersions.navigation()
     ext.coil_version = depVersions.coil()
     ext.maven_publish_version = depVersions.mavenPublish()
+    ext.dokka_version = depVersions.dokka()
     ext.devkit_version = "${versions.devBricksXVersion()}-${depVersions.devKit()}"
 
     ext.junit_version = '4.13.2'
@@ -22,6 +23,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$agp_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

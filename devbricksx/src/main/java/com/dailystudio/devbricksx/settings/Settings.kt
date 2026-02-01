@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * A singleton LiveData that observes and emits setting changes globally.
+ */
 object Settings: MutableLiveData<SettingChange>() {
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in SettingChange>) {

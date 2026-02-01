@@ -1,5 +1,8 @@
 package com.dailystudio.devbricksx.database
 
+/**
+ * TypeConverter for String arrays.
+ */
 open class StringArrayConverter: AbsTypedArrayConverter<String>() {
 
     override fun createTypedArray(size: Int): Array<String> {

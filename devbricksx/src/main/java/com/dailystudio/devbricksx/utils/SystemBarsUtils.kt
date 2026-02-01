@@ -6,8 +6,17 @@ import android.os.Build
 import android.view.WindowManager
 import androidx.annotation.ColorInt
 
+/**
+ * Utility class for System Bars (Status Bar, Navigation Bar) operations.
+ */
 object SystemBarsUtils {
 
+    /**
+     * Sets the status bar color.
+     *
+     * @param activity The activity.
+     * @param color The color to set.
+     */
     fun statusBarColor(activity: Activity,
                        @ColorInt color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

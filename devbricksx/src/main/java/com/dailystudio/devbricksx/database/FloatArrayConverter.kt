@@ -1,5 +1,8 @@
 package com.dailystudio.devbricksx.database
 
+/**
+ * TypeConverter for Float arrays.
+ */
 open class FloatArrayConverter: AbsTypedArrayConverter<Float>() {
 
     override fun createTypedArray(size: Int): Array<Float> {

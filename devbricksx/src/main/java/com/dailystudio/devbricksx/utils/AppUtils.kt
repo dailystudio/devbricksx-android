@@ -14,6 +14,12 @@ import com.dailystudio.devbricksx.app.activity.ActivityLauncher
 import com.dailystudio.devbricksx.development.Logger
 import java.lang.Exception
 
+/**
+ * Represents a change in an application package.
+ *
+ * @property action The action that occurred (e.g., [Intent.ACTION_PACKAGE_ADDED]).
+ * @property packageName The package name of the affected application.
+ */
 class AppChange(val action: String,
                 val packageName: String) {
 
@@ -27,6 +33,11 @@ class AppChange(val action: String,
     }
 }
 
+/**
+ * A LiveData that emits [AppChange] events when applications are installed, removed, or changed.
+ *
+ * @param context The context.
+ */
 class AppChangesLiveData(var context: Context): LiveData<AppChange>() {
     companion object {
 
@@ -83,8 +94,18 @@ class AppChangesLiveData(var context: Context): LiveData<AppChange>() {
 
 }
 
+/**
+ * Utility class for application-related operations.
+ */
 object AppUtils {
 
+    /**
+     * Checks if an application is installed.
+     *
+     * @param context The context.
+     * @param packageName The package name of the application.
+     * @return True if installed, false otherwise.
+     */
     fun isApplicationInstalled(context: Context,
                                packageName: String): Boolean {
         return try {
@@ -95,6 +116,13 @@ object AppUtils {
         }
     }
 
+    /**
+     * Gets the icon of an application.
+     *
+     * @param context The context.
+     * @param packageName The package name.
+     * @return The application icon, or null if not found.
+     */
     fun getApplicationIcon(context: Context,
                            packageName: String): Drawable? {
         return try {
@@ -104,6 +132,13 @@ object AppUtils {
         }
     }
 
+    /**
+     * Gets the package info of an application.
+     *
+     * @param context The context.
+     * @param packageName The package name.
+     * @return The [PackageInfo], or null if not found.
+     */
     fun getApplicationInfo(context: Context,
                            packageName: String): PackageInfo? {
         return try {
@@ -113,6 +148,12 @@ object AppUtils {
         }
     }
 
+    /**
+     * Launches an application by its package name.
+     *
+     * @param context The context.
+     * @param packageName The package name.
+     */
     fun launchApplication(context: Context,
                           packageName: String) {
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
@@ -124,6 +165,12 @@ object AppUtils {
         }
     }
 
+    /**
+     * Opens the application page in the Play Store.
+     *
+     * @param context The context.
+     * @param packageName The package name.
+     */
     fun downloadApplication(context: Context,
                             packageName: String) {
         val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -140,6 +187,13 @@ object AppUtils {
         ActivityLauncher.launchActivity(context, intent)
     }
 
+    /**
+     * Gets the version name of an application.
+     *
+     * @param context The context.
+     * @param packageName The package name.
+     * @return The version name, or "Unknown" if not found.
+     */
     fun getApplicationVersion(context: Context,
                               packageName: String): String {
         var verName = context.getString(android.R.string.unknownName)
@@ -162,6 +216,9 @@ object AppUtils {
 
 }
 
+/**
+ * Extension function to get PackageInfo in a backward-compatible way.
+ */
 fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): PackageInfo =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))

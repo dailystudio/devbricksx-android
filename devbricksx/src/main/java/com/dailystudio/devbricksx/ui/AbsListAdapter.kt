@@ -5,6 +5,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.settings.OnSelectionChangedListener
 
+/**
+ * Base ListAdapter class that implements [AbsRecyclerAdapter] and delegates functionality to [ListDelegate].
+ *
+ * It combines [ListAdapter] (DiffUtil support) with DevBricksX's selection and interaction features.
+ *
+ * @param Item The type of the item.
+ * @param ViewHolder The type of the ViewHolder.
+ * @param diffCallback The DiffUtil callback for calculating changes.
+ */
 abstract class AbsListAdapter<Item, ViewHolder : RecyclerView.ViewHolder>(
         diffCallback: DiffUtil.ItemCallback<Item>)
     : ListAdapter<Item, ViewHolder>(diffCallback), AbsRecyclerAdapter<Item> {

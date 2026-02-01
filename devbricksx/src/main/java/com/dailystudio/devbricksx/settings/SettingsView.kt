@@ -12,6 +12,11 @@ import android.widget.LinearLayout
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * A custom view that displays a list of [AbsSetting]s.
+ *
+ * It dynamically creates and adds views for each setting using their associated holders.
+ */
 class SettingsView: FrameLayout {
 
     private var settingsContainer: ViewGroup? = null
@@ -43,6 +48,11 @@ class SettingsView: FrameLayout {
                 R.id.settings_container)
     }
 
+    /**
+     * Replaces current settings with a new set.
+     *
+     * @param settings The new settings to display.
+     */
     open fun setSettings(settings: Array<AbsSetting>) {
         settingsContainer?.removeAllViews()
 
@@ -51,6 +61,11 @@ class SettingsView: FrameLayout {
         }
     }
 
+    /**
+     * Adds a single setting to the view.
+     *
+     * @param setting The setting to add.
+     */
     open fun addSetting(setting: AbsSetting) {
         Logger.debug("add setting: $setting")
         val container = settingsContainer ?: return

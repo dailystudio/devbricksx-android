@@ -6,8 +6,14 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Utility class for Matrix operations.
+ */
 object MatrixUtils {
 
+    /**
+     * Flag to enable detailed debug logging for matrix calculations.
+     */
     var DEBUG_DETAIL = false
     
     private inline fun debugDetail(format: String, vararg args: Any?) {
@@ -16,6 +22,19 @@ object MatrixUtils {
         }
     }
 
+    /**
+     * Calculates a transformation matrix to map a source rectangle to a destination rectangle,
+     * considering rotation and aspect ratio.
+     *
+     * @param srcWidth Source width.
+     * @param srcHeight Source height.
+     * @param dstWidth Destination width.
+     * @param dstHeight Destination height.
+     * @param rotation Rotation angle in degrees (must be a multiple of 90).
+     * @param maintainAspectRatio Whether to maintain the aspect ratio of the source.
+     * @param fitIn If true, the source is scaled to fit *inside* the destination. If false, it fills the destination (center crop).
+     * @return The calculated transformation [Matrix].
+     */
     fun getTransformationMatrix(srcWidth: Int, srcHeight: Int,
                                 dstWidth: Int, dstHeight: Int,
                                 rotation: Int,

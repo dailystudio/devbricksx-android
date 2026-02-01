@@ -11,26 +11,63 @@ import java.nio.charset.Charset
 import java.security.MessageDigest
 import java.util.*
 
+/**
+ * Utility class for file operations.
+ *
+ * Includes methods for directory creation, file encoding detection, content reading/writing,
+ * hashing, and asset/raw resource copying.
+ */
 object FileUtils {
 
     private const val NO_MEDIA_TAG_FILE = ".nomedia"
 
+    /**
+     * Checks if a directory exists, creating it if necessary, and ensures a `.nomedia` file exists within it.
+     *
+     * @param directory The path to the directory.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateNoMediaDirectory(directory: String): Boolean {
         return checkOrCreateNoMediaDirectory(File(directory))
     }
 
+    /**
+     * Checks if a directory exists, creating it if necessary, and ensures a `.nomedia` file exists within it.
+     *
+     * @param directory The directory file.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateNoMediaDirectory(directory: File): Boolean {
         return checkOrCreateDirectory(directory, true)
     }
 
+    /**
+     * Checks if a directory exists, creating it if necessary.
+     *
+     * @param directory The path to the directory.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateDirectory(directory: String): Boolean {
         return checkOrCreateDirectory(File(directory))
     }
 
+    /**
+     * Checks if a directory exists, creating it if necessary.
+     *
+     * @param directory The directory file.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateDirectory(directory: File): Boolean {
         return checkOrCreateDirectory(directory, false)
     }
 
+    /**
+     * Checks if a directory exists, creating it if necessary.
+     *
+     * @param directory The directory file.
+     * @param nomedia Whether to create a `.nomedia` file in the directory.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateDirectory(directory: File, nomedia: Boolean): Boolean {
         if (directory.exists()) {
             if (directory.isDirectory) {
@@ -50,10 +87,22 @@ object FileUtils {
         } else checkOrCreateNoMediaTagInDirectory(directory)
     }
 
+    /**
+     * Checks for the existence of a `.nomedia` file in a directory, creating it if missing.
+     *
+     * @param directory The path to the directory.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateNoMediaTagInDirectory(directory: String): Boolean {
         return checkOrCreateNoMediaTagInDirectory(File(directory))
     }
 
+    /**
+     * Checks for the existence of a `.nomedia` file in a directory, creating it if missing.
+     *
+     * @param dir The directory file.
+     * @return True if successful, false otherwise.
+     */
     fun checkOrCreateNoMediaTagInDirectory(dir: File): Boolean {
         val tagFile = File(dir, NO_MEDIA_TAG_FILE)
         if (tagFile.exists()) {
@@ -71,14 +120,33 @@ object FileUtils {
         }
     }
 
+    /**
+     * Checks if a file exists.
+     *
+     * @param filename The path to the file.
+     * @return True if exists, false otherwise.
+     */
     fun isFileExisted(filename: String): Boolean {
         return File(filename).exists()
     }
 
+    /**
+     * Detects the character encoding of a file.
+     *
+     * @param file The path to the file.
+     * @return The detected encoding, or null if detection failed.
+     */
     fun detectFileEncoding(file: String): String? {
         return detectFileEncoding(File(file))
     }
 
+    /**
+     * Detects the character encoding of a raw resource.
+     *
+     * @param context The context.
+     * @param rawId The resource ID.
+     * @return The detected encoding, or null if detection failed.
+     */
     fun detectFileEncoding(context: Context, rawId: Int): String? {
         if (rawId <= 0) {
             Logger.warn("invalid resource id: $rawId")
@@ -98,6 +166,13 @@ object FileUtils {
         return detectFileEncoding(fStream)
     }
 
+    /**
+     * Detects the character encoding of an asset file.
+     *
+     * @param context The context.
+     * @param file The asset file path.
+     * @return The detected encoding, or null if detection failed.
+     */
     fun detectFileEncoding(context: Context, file: String): String? {
         val assetManager = context.assets ?: return null
 
@@ -112,6 +187,12 @@ object FileUtils {
         return detectFileEncoding(fStream)
     }
 
+    /**
+     * Detects the character encoding of a file.
+     *
+     * @param file The file.
+     * @return The detected encoding, or null if detection failed.
+     */
     fun detectFileEncoding(file: File): String? {
         var fs: FileInputStream = try {
             FileInputStream(file)
@@ -123,6 +204,12 @@ object FileUtils {
         return detectFileEncoding(fs)
     }
 
+    /**
+     * Detects the character encoding of an input stream.
+     *
+     * @param iStream The input stream.
+     * @return The detected encoding, or null if detection failed.
+     */
     fun detectFileEncoding(iStream: InputStream): String? {
         val buf = ByteArray(4096)
 
@@ -150,6 +237,12 @@ object FileUtils {
         return encoding
     }
 
+    /**
+     * Reads a file content into a String.
+     *
+     * @param file The path to the file.
+     * @return The file content, or null if reading failed.
+     */
     fun fileToString(file: String): String? {
         var fs: FileInputStream = try {
             FileInputStream(file)
@@ -161,6 +254,13 @@ object FileUtils {
         return fileToString(fs, detectFileEncoding(file))
     }
 
+    /**
+     * Reads an input stream content into a String.
+     *
+     * @param fStream The input stream.
+     * @param encoding The encoding to use.
+     * @return The content, or null if reading failed.
+     */
     fun fileToString(fStream: InputStream, encoding: String?): String? {
         var reader: InputStreamReader? = null
         reader = encoding?.let {
@@ -181,6 +281,13 @@ object FileUtils {
         return writer.toString()
     }
 
+    /**
+     * Reads an asset file content into a String.
+     *
+     * @param context The context.
+     * @param file The asset file path.
+     * @return The content, or null if reading failed.
+     */
     fun assetToString(context: Context, file: String): String? {
         val assetManager = context.assets ?: return null
 
@@ -195,6 +302,13 @@ object FileUtils {
         return fileToString(fStream, detectFileEncoding(context, file))
     }
 
+    /**
+     * Reads a raw resource content into a String.
+     *
+     * @param context The context.
+     * @param rawId The resource ID.
+     * @return The content, or null if reading failed.
+     */
     fun rawToString(context: Context, rawId: Int): String? {
         if (rawId <= 0) {
             Logger.warn("invalid resource id: $rawId")
@@ -215,10 +329,22 @@ object FileUtils {
                 detectFileEncoding(context, rawId))
     }
 
+    /**
+     * Gets the base name of a file (with extension).
+     *
+     * @param filename The path to the file.
+     * @return The base name.
+     */
     fun getBaseName(filename: String): String {
         return File(filename).name
     }
 
+    /**
+     * Gets the file name without extension.
+     *
+     * @param filename The path to the file.
+     * @return The file name without extension.
+     */
     fun getFileName(filename: String): String {
         val baseName = getBaseName(filename)
         if (baseName.isNotEmpty()) {
@@ -230,10 +356,23 @@ object FileUtils {
         return baseName
     }
 
+    /**
+     * Gets the file extension.
+     *
+     * @param filename The path to the file.
+     * @return The file extension, or empty string if not found.
+     */
     fun getFileExtension(filename: String): String {
         return getFileExtension(filename, "")
     }
 
+    /**
+     * Gets the file extension with a default value.
+     *
+     * @param filename The path to the file.
+     * @param defExt The default extension if not found.
+     * @return The file extension, or [defExt] if not found.
+     */
     fun getFileExtension(filename: String, defExt: String): String {
         if (filename.isNotEmpty()) {
             val i = filename.lastIndexOf('.')
@@ -245,11 +384,24 @@ object FileUtils {
         return defExt
     }
 
+    /**
+     * Writes a string to a file.
+     *
+     * @param file The path to the file.
+     * @param fileContent The content to write.
+     */
     fun stringToFile(file: String,
                      fileContent: String?) {
         stringToFile(file, fileContent, false)
     }
 
+    /**
+     * Writes a string to a file.
+     *
+     * @param file The path to the file.
+     * @param fileContent The content to write.
+     * @param append Whether to append to the file.
+     */
     fun stringToFile(file: String, fileContent: String?, append: Boolean) {
         if (TextUtils.isEmpty(fileContent)) {
             return
@@ -277,16 +429,37 @@ object FileUtils {
         }
     }
 
+    /**
+     * Saves a byte array to a file.
+     *
+     * @param bytes The byte array.
+     * @param filename The path to the file.
+     * @return True if successful, false otherwise.
+     */
     fun saveToFile(bytes: ByteArray?, filename: String): Boolean {
         return if (TextUtils.isEmpty(filename)) {
             false
         } else saveToFile(bytes, File(filename))
     }
 
+    /**
+     * Saves a byte array to a file.
+     *
+     * @param bytes The byte array.
+     * @param file The file.
+     * @return True if successful, false otherwise.
+     */
     fun saveToFile(bytes: ByteArray?, file: File): Boolean {
         return saveToFile(bytes, FileOutputStream(file))
     }
 
+    /**
+     * Saves a byte array to an output stream.
+     *
+     * @param bytes The byte array.
+     * @param out The output stream.
+     * @return True if successful, false otherwise.
+     */
     fun saveToFile(bytes: ByteArray?, out: OutputStream): Boolean {
         if (bytes == null) {
             return false
@@ -305,26 +478,68 @@ object FileUtils {
         }
     }
 
+    /**
+     * Calculates the MD5 hash of a directory.
+     *
+     * @param dir The directory path.
+     * @return The MD5 hash string.
+     */
     fun md5Dir(dir: String): String {
         return md5Dir(dir, false)
     }
 
+    /**
+     * Calculates the MD5 hash of a directory.
+     *
+     * @param dir The directory file.
+     * @return The MD5 hash string.
+     */
     fun md5Dir(dir: File): String {
         return md5Dir(dir, false)
     }
 
+    /**
+     * Calculates the MD5 hash of a directory.
+     *
+     * @param dir The directory path.
+     * @param hiddenFies Whether to include hidden files.
+     * @return The MD5 hash string.
+     */
     fun md5Dir(dir: String, hiddenFies: Boolean): String {
         return md5Dir(dir, hiddenFies, false)
     }
 
+    /**
+     * Calculates the MD5 hash of a directory.
+     *
+     * @param dir The directory file.
+     * @param hiddenFiles Whether to include hidden files.
+     * @return The MD5 hash string.
+     */
     fun md5Dir(dir: File, hiddenFiles: Boolean): String {
         return md5Dir(dir, hiddenFiles, false)
     }
 
+    /**
+     * Calculates the MD5 hash of a directory.
+     *
+     * @param dir The directory path.
+     * @param hiddenFiles Whether to include hidden files.
+     * @param verbose Whether to log verbose output.
+     * @return The MD5 hash string.
+     */
     fun md5Dir(dir: String, hiddenFiles: Boolean, verbose: Boolean): String {
         return md5Dir(File(dir), hiddenFiles, verbose)
     }
 
+    /**
+     * Calculates the MD5 hash of a directory.
+     *
+     * @param dir The directory file.
+     * @param hiddenFiles Whether to include hidden files.
+     * @param verbose Whether to log verbose output.
+     * @return The MD5 hash string.
+     */
     fun md5Dir(dir: File, hiddenFiles: Boolean, verbose: Boolean): String {
         var md5 = ""
         if (!dir.exists() || !dir.isDirectory) {
@@ -355,10 +570,22 @@ object FileUtils {
         return md5HashOfString(md5)
     }
 
+    /**
+     * Calculates the MD5 hash of a file.
+     *
+     * @param file The file path.
+     * @return The MD5 hash string.
+     */
     fun md5File(file: String): String {
         return md5File(File(file))
     }
 
+    /**
+     * Calculates the MD5 hash of a file.
+     *
+     * @param file The file.
+     * @return The MD5 hash string.
+     */
     fun md5File(file: File): String {
         var md5 = ""
         if (!file.exists() || !file.isFile) {
@@ -414,6 +641,14 @@ object FileUtils {
         return md5
     }
 
+    /**
+     * Copies a raw resource to a file.
+     *
+     * @param context The context.
+     * @param rawFile The name of the raw file (without extension).
+     * @param dstFile The destination file path.
+     * @return True if successful, false otherwise.
+     */
     fun copyRawFile(context: Context,
                     rawFile: String,
                     dstFile: String
@@ -432,6 +667,13 @@ object FileUtils {
         return ResourcesUtils.copyToFile(istream, ostream)
     }
 
+    /**
+     * Checks if an asset file exists.
+     *
+     * @param context The context.
+     * @param assetFile The asset file path.
+     * @return True if exists, false otherwise.
+     */
     fun isAssetFileExisted(context: Context, assetFile: String): Boolean {
         if (TextUtils.isEmpty(assetFile)) {
             return false
@@ -454,6 +696,14 @@ object FileUtils {
         return false
     }
 
+    /**
+     * Copies an asset file to a destination file.
+     *
+     * @param context The context.
+     * @param assetFile The asset file path.
+     * @param dstFile The destination file path.
+     * @return True if successful, false otherwise.
+     */
     fun copyAssetFile(
         context: Context,
         assetFile: String,

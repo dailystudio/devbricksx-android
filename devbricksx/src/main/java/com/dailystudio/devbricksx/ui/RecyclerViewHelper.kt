@@ -2,6 +2,11 @@ package com.dailystudio.devbricksx.ui
 
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * Smoothly scrolls the RecyclerView to center the item at the specified position horizontally.
+ *
+ * @param pos The position of the item to center.
+ */
 fun RecyclerView.smoothCentralizeItemHorizontally(pos: Int) {
     if (pos == RecyclerView.NO_POSITION) {
         return

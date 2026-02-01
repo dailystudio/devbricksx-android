@@ -7,10 +7,19 @@ import android.view.animation.AnimationUtils
 import com.dailystudio.devbricksx.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+/**
+ * Enumeration for FloatingActionButton animation directions.
+ */
 enum class FabAnimationDirection {
     LEFT, TOP, RIGHT, BOTTOM
 }
 
+/**
+ * Shows the FloatingActionButton with an animation.
+ *
+ * @param context The context.
+ * @param direction The direction from which the FAB should appear.
+ */
 fun FloatingActionButton.showWithAnimation(context: Context,
                                            direction: FabAnimationDirection) {
     return showWithAnimation(context, when (direction) {
@@ -21,6 +30,12 @@ fun FloatingActionButton.showWithAnimation(context: Context,
     })
 }
 
+/**
+ * Shows the FloatingActionButton with a custom animation resource.
+ *
+ * @param context The context.
+ * @param animResId The animation resource ID.
+ */
 fun FloatingActionButton.showWithAnimation(context: Context,
                       animResId: Int) {
     val anim = AnimationUtils.loadAnimation(
@@ -29,12 +44,23 @@ fun FloatingActionButton.showWithAnimation(context: Context,
     return showWithAnimation(anim)
 }
 
+/**
+ * Shows the FloatingActionButton with a custom animation object.
+ *
+ * @param animation The animation object.
+ */
 fun  FloatingActionButton.showWithAnimation(animation: Animation) {
     visibility = View.VISIBLE
     startAnimation(animation)
 }
 
 
+/**
+ * Hides the FloatingActionButton with an animation.
+ *
+ * @param context The context.
+ * @param direction The direction to which the FAB should disappear.
+ */
 fun FloatingActionButton.hideWithAnimation(context: Context,
                                            direction: FabAnimationDirection) {
     return hideWithAnimation(context, when (direction) {
@@ -46,6 +72,12 @@ fun FloatingActionButton.hideWithAnimation(context: Context,
 }
 
 
+/**
+ * Hides the FloatingActionButton with a custom animation resource.
+ *
+ * @param context The context.
+ * @param animResId The animation resource ID.
+ */
 fun FloatingActionButton.hideWithAnimation(context: Context,
                       animResId: Int) {
     val anim = AnimationUtils.loadAnimation(
@@ -54,6 +86,11 @@ fun FloatingActionButton.hideWithAnimation(context: Context,
     return hideWithAnimation(anim)
 }
 
+/**
+ * Hides the FloatingActionButton with a custom animation object.
+ *
+ * @param animation The animation object.
+ */
 fun  FloatingActionButton.hideWithAnimation(animation: Animation) {
 
     animation.setAnimationListener(object: Animation.AnimationListener {

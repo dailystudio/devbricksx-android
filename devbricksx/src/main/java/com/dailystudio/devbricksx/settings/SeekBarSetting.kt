@@ -11,6 +11,9 @@ import com.dailystudio.devbricksx.development.Logger
 import java.text.NumberFormat
 import kotlin.math.roundToInt
 
+/**
+ * A setting that allows selecting a value from a range using a SeekBar.
+ */
 abstract class SeekBarSetting(context: Context,
                               name: String,
                               iconResId: Int,
@@ -19,14 +22,51 @@ abstract class SeekBarSetting(context: Context,
                               holder: SeekBarSettingHolder = SeekBarSettingHolder())
     : AbsSetting(context, name, iconResId, labelResId, enabled, holder) {
 
+    /**
+     * Gets the current progress value.
+     *
+     * @param context The context.
+     * @return The progress value.
+     */
     abstract fun getProgress(context: Context): Float
+
+    /**
+     * Sets the current progress value.
+     *
+     * @param context The context.
+     * @param progress The new progress value.
+     */
     abstract fun setProgress(context: Context, progress: Float)
+
+    /**
+     * Gets the minimum value of the range.
+     *
+     * @param context The context.
+     * @return The minimum value.
+     */
     abstract fun getMinValue(context: Context): Float
+
+    /**
+     * Gets the maximum value of the range.
+     *
+     * @param context The context.
+     * @return The maximum value.
+     */
     abstract fun getMaxValue(context: Context): Float
+
+    /**
+     * Gets the step size for the range.
+     *
+     * @param context The context.
+     * @return The step size.
+     */
     abstract fun getStep(context: Context): Float
 
 }
 
+/**
+ * Holder for [SeekBarSetting].
+ */
 open class SeekBarSettingHolder : AbsSettingHolder() {
 
     override fun onCreateView(context: Context, layoutInflater: LayoutInflater, setting: AbsSetting): View {

@@ -9,6 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dailystudio.devbricksx.R
 import com.dailystudio.devbricksx.development.Logger
 
+/**
+ * A layout that displays a list of items using a [RecyclerView.Adapter] but without recycling views.
+ *
+ * This is useful for short lists where the overhead of a full RecyclerView is unnecessary,
+ * or when the list needs to be embedded inside another scrollable container (like a ScrollView).
+ * It supports an internal ScrollView via the `self_scrollable` attribute.
+ */
 open class NonRecyclableListView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
@@ -40,6 +47,11 @@ open class NonRecyclableListView @JvmOverloads constructor(
         initLayout()
     }
 
+    /**
+     * Enables or disables internal scrolling.
+     *
+     * @param scrollable True to wrap items in a ScrollView, false otherwise.
+     */
     fun setSelfScrollable(scrollable: Boolean) {
         selfScrollable = scrollable
 
@@ -58,6 +70,11 @@ open class NonRecyclableListView @JvmOverloads constructor(
         itemsContainer = findViewById(R.id.items_container)
     }
 
+    /**
+     * Sets the adapter to use for creating views.
+     *
+     * @param listAdapter The adapter.
+     */
     fun setAdapter(listAdapter: RecyclerView.Adapter<*>?) {
         adapter?.unregisterAdapterDataObserver(mAdapterObserver)
         Logger.debug("unregister observer from old adapter: $adapter")
@@ -69,16 +86,28 @@ open class NonRecyclableListView @JvmOverloads constructor(
         requestItemsUpdate()
     }
 
+    /**
+     * Gets the current adapter.
+     *
+     * @return The adapter.
+     */
     fun getAdapter(): RecyclerView.Adapter<*>? {
         return adapter
     }
 
+    /**
+     * Requests an update of the items view.
+     * Use post to ensure layout is ready.
+     */
     protected open fun requestItemsUpdate() {
         post {
             appendItems()
         }
     }
 
+    /**
+     * Rebuilds the list of views based on the adapter's data.
+     */
     protected open fun appendItems() {
         val adapter = adapter ?: return
         val container = itemsContainer?: return

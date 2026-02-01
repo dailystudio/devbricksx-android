@@ -7,6 +7,9 @@ import android.widget.Switch
 import androidx.appcompat.widget.SwitchCompat
 import com.dailystudio.devbricksx.R
 
+/**
+ * A setting that provides a toggle switch.
+ */
 abstract class SwitchSetting(context: Context,
                              name: String,
                              iconResId: Int,
@@ -16,10 +19,24 @@ abstract class SwitchSetting(context: Context,
                              holder: SwitchSettingLayoutHolder = SwitchSettingLayoutHolder())
     : TextSetting(context, name, iconResId, labelResId, descResId, enabled, holder) {
 
+    /**
+     * Checks if the switch is currently on.
+     *
+     * @return True if on, false otherwise.
+     */
     abstract fun isOn(): Boolean
+
+    /**
+     * Sets the switch state.
+     *
+     * @param on True to turn on, false to turn off.
+     */
     abstract fun setOn(on: Boolean)
 }
 
+/**
+ * Holder for [SwitchSetting].
+ */
 open class SwitchSettingLayoutHolder : TextSettingLayoutHolder() {
 
     private var switch: SwitchCompat? = null
