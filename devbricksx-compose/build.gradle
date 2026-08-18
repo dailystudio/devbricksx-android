@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
     id("org.jetbrains.kotlin.plugin.compose") version "$kotlin_version"
     id "com.vanniktech.maven.publish"
 }
@@ -28,12 +27,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
+        sourceCompatibility JAVA_VERSION
+        targetCompatibility JAVA_VERSION
     }
 
     buildFeatures {
@@ -49,12 +44,15 @@ dependencies {
     // Material Design 3
     api "androidx.compose.material3:material3:${project.ext.md3ComposeVersion}"
 
+    api "androidx.compose.foundation:foundation:$compose_version"
+    api "androidx.compose.foundation:foundation-layout:$compose_version"
+
     // Android Studio Preview support
     api "androidx.compose.ui:ui-tooling-preview:$compose_version"
     debugApi "androidx.compose.ui:ui-tooling:$compose_version"
 
     // UI Tests
-    androidTestApi "androidx.compose.ui:ui-test-junit4:$compose_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugApi "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     // Paging

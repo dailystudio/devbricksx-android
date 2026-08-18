@@ -10,9 +10,9 @@ buildscript {
     ext.maven_publish_version = depVersions.mavenPublish()
     ext.devkit_version = "${versions.devBricksXVersion()}-${depVersions.devKit()}"
 
-    ext.junit_version = '4.13.2'
-    ext.android_junit_ext_version = '1.2.1'
-    ext.android_junit_espresso_version = '3.6.1'
+    ext.junit_version = depVersions.junit()
+    ext.android_junit_ext_version = depVersions.androidJUnitExt()
+    ext.android_junit_espresso_version = depVersions.androidJUnitEspresso()
 
     repositories {
         google()
@@ -91,10 +91,10 @@ ext {
     }
 
     // Compile Settings
-    COMPILE_SDK = 35
-    TARGET_SDK = 35
-    MINI_SDK = 21
-    BUILD_TOOLS = '35.0.0'
+    COMPILE_SDK = 37
+    TARGET_SDK = 37
+    MINI_SDK = 23
+    BUILD_TOOLS = '37.0.0'
     VERSION_NAME = versions.devBricksXVersion()
     VERSION_CODE = versions.devBricksXVersionCode().toInteger()
 

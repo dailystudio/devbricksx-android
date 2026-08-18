@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
 
     id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
 }
@@ -35,10 +34,6 @@ android {
     compileOptions {
         sourceCompatibility JAVA_VERSION
         targetCompatibility JAVA_VERSION
-    }
-
-    kotlinOptions {
-        jvmTarget = JVM_TARGET
     }
 
     buildFeatures {

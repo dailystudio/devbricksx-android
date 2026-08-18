@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import coil.load
 import com.dailystudio.devbricksx.fragment.PickFilesFragment
 import com.dailystudio.devbricksx.samples.R
 import com.dailystudio.devbricksx.samples.phash.viewmodel.PHashViewModel
@@ -62,7 +63,7 @@ abstract class PickImageFragment: PickFilesFragment() {
 
     override fun onFilesPicked(listOfUri: Array<Uri>?) {
         val imageUri = listOfUri?.first() ?: return
-        imageView?.setImageURI(imageUri)
+        imageView?.load(imageUri)
 
         viewModel.setImage(imageIndex, imageUri)
     }

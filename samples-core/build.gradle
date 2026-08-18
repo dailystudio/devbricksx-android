@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
 
     id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
 }
@@ -22,8 +21,6 @@ android {
             useSupportLibrary = true
         }
 
-        resValue "string", "api_key", "${project.UNSPLASH_API_KEY}"
-
         multiDexEnabled true
 
         consumerProguardFiles 'consumer-rules.pro'
@@ -43,10 +40,6 @@ android {
     compileOptions {
         sourceCompatibility JAVA_VERSION
         targetCompatibility JAVA_VERSION
-    }
-
-    kotlinOptions {
-        jvmTarget = JVM_TARGET
     }
 }
 

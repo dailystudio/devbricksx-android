@@ -4,9 +4,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.*
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import kotlin.reflect.KClass
 
 class DevKitPlugin: Plugin<Project> {
@@ -18,7 +16,7 @@ class DevKitPlugin: Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        val config = project.extensions.create<DevKitExtension>(EXTENSION_NAME)
+        val config = project.extensions.create(EXTENSION_NAME, DevKitExtension::class.java)
         val isApplication = project.plugins.hasPlugin("com.android.application")
 
         val androidComponentsExtension = project.extensionByType(
@@ -96,7 +94,7 @@ class DevKitPlugin: Plugin<Project> {
 
             project.dependencies.apply {
                 if (compileType == CompileType.Project) {
-                    add(nameOfConfig, project(":devbricksx"))
+                    add(nameOfConfig, project.project(":devbricksx"))
                 } else {
                     add(nameOfConfig,"cn.dailystudio:devbricksx:${devBricksXVersion}")
                 }
@@ -106,7 +104,7 @@ class DevKitPlugin: Plugin<Project> {
                 val artifactName = comp.toString().lowercase()
                 project.dependencies.apply {
                     if (compileType == CompileType.Project) {
-                        add(nameOfConfig, project(":devbricksx-${artifactName}"))
+                        add(nameOfConfig, project.project(":devbricksx-${artifactName}"))
                     } else {
                         add(nameOfConfig,"cn.dailystudio:devbricksx-${artifactName}:${devBricksXVersion}")
                     }
@@ -129,7 +127,20 @@ class DevKitPlugin: Plugin<Project> {
             if (useAnnotation) {
                 val commonExtension = project.extensionByType(CommonExtension::class)
                 commonExtension?.sourceSets?.configureEach {
-                    kotlin.srcDir("${project.buildDir}/generated/ksp/$name/kotlin/")
+
+                    val name = it.name
+
+                    // 2. 获取 Kotlin 源码集扩展
+                    val kotlinSourceSet = (it as? org.gradle.api.plugins.ExtensionAware)
+                        ?.extensions
+                        ?.findByName("kotlin") as? KotlinSourceSet
+
+                    val kspGeneratedDir = project.layout.buildDirectory
+                        .dir("generated/ksp/$name/kotlin")
+                        .get()
+                        .asFile
+
+                    kotlinSourceSet?.kotlin?.srcDir(kspGeneratedDir)
                 }
 
                 val kspExtension = project.extensionByType(KspExtension::class)
@@ -137,7 +148,7 @@ class DevKitPlugin: Plugin<Project> {
 
                 project.dependencies.apply {
                     if (compileType == CompileType.Project) {
-                        add("ksp", project(":devbricksx-compiler"))
+                        add("ksp", project.project(":devbricksx-compiler"))
                     } else {
                         add("ksp","cn.dailystudio:devbricksx-compiler:${devBricksXVersion}")
                     }
@@ -161,7 +172,7 @@ fun separatorLineToWrap(artifactName: String): String {
 fun <T : Any> Project.extensionByType(
     klass: KClass<T>): T? {
     return try {
-        extensions.getByType(klass)
+        extensions.getByType(klass.java)
     } catch (e: UnknownDomainObjectException) {
         println("unable to get extension for type [$klass]: $e")
 

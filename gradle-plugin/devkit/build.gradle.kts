@@ -2,15 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.3.10"
     `java-gradle-plugin`
-    `kotlin-dsl`
     id("maven-publish")
     id("com.gradle.plugin-publish") version "1.1.0"
 }
 
 group = "cn.dailystudio"
-version = "2.0.4-1.2.1"
+version = "2.0.5-1.2.2"
 
 repositories {
     mavenCentral()
@@ -18,9 +17,11 @@ repositories {
 }
 
 dependencies {
+    compileOnly(gradleApi())
+    implementation(kotlin("stdlib"))
     compileOnly("com.android.tools.build:gradle:8.11.0")
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.1.20-2.0.1")
-    implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.1.20")
+    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.6")
+    implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.3.10")
     testImplementation(kotlin("test"))
 }
 
