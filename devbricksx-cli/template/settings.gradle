@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        def localRepo = file("$rootDir/../../gradle-plugin/.local-plugin-repository")
+        if (localRepo.exists()) {
+            maven {
+                url uri(localRepo)
+            }
+        }
+    }
+}
+
+include ':core'
+include ':app'
+include ':app-compose'
+include ':core-native'

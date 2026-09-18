@@ -1,0 +1,86 @@
+plugins {
+    id 'com.android.application'
+
+    id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
+}
+
+android {
+    defaultConfig {
+        applicationId "com.dailystudio.codebase"
+        namespace "com.dailystudio.codebase"
+
+        compileSdk COMPILE_SDK
+
+        minSdkVersion MINI_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+
+    signingConfigs {
+
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+
+        debug {
+            storeFile file(DEBUG_STORE_FILE)
+            storePassword DEBUG_STORE_PASSWORD
+            keyAlias DEBUG_KEY_ALIAS
+            keyPassword DEBUG_KEY_PASSWORD
+        }
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+        }
+
+        releaseUnsigned {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            matchingFallbacks = ["release"]
+        }
+
+        debug {
+            applicationIdSuffix '.dev'
+
+            debuggable true
+            signingConfig signingConfigs.debug
+            versionNameSuffix " (DEBUG)"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JAVA_VERSION
+        targetCompatibility JAVA_VERSION
+    }
+}
+
+devKit {
+    devKitComps = [ "Compose" ]
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(":core")
+    implementation project(":core-native")
+
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$android_junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$android_junit_espresso_version"
+}

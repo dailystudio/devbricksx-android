@@ -1,0 +1,78 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    def depProps = new Properties()
+    file("dep_versions.properties").withInputStream { depProps.load(it) }
+
+    ext.agp_version = depProps['AGP']
+    ext.kotlin_version = depProps['KOTLIN']
+    ext.nav_version = depProps['NAVIGATION']
+    ext.devkit_version = "${depProps['DEVBRICKSX']}-${depProps['DEVKIT']}"
+
+    ext.junit_version = depProps['JUNIT']
+    ext.android_junit_ext_version = depProps['ANDROID_JUNIT_EXT']
+    ext.android_junit_espresso_version = depProps['ANDROID_JUNIT_ESPRESSO']
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$agp_version"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        maven { url 'https://jitpack.io' }
+        def localRepo = file("$rootDir/../../gradle-plugin/.local-plugin-repository")
+        if (localRepo.exists()) {
+            maven {
+                url uri(localRepo)
+            }
+        }
+    }
+}
+
+ext {
+    // Compile Settings
+    COMPILE_SDK = 37
+    BUILD_TOOLS = '37.0.0'
+
+    MINI_SDK_VERSION = 23
+    TARGET_SDK_VERSION = 37
+
+    JAVA_VERSION = JavaVersion.VERSION_21
+    JVM_TARGET = "21"
+
+    VERSION_NAME = version()
+    VERSION_CODE = versionCode().toInteger()
+}
+
+def String version() {
+    def versionPropsFile = file('version.properties')
+    def Properties versionProps = new Properties()
+    versionProps.load(new FileInputStream(versionPropsFile))
+
+    return versionProps['major'] + "." + versionProps['minor'] + "." + versionProps['patch']
+}
+
+def String versionCode() {
+    def versionPropsFile = file('version.properties')
+    def Properties versionProps = new Properties()
+    versionProps.load(new FileInputStream(versionPropsFile))
+
+    return versionProps['code']
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

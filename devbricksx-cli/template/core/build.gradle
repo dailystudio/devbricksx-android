@@ -1,0 +1,72 @@
+plugins {
+    id 'com.android.library'
+
+    id("cn.dailystudio.devbricksx.devkit") version "$devkit_version"
+}
+
+android {
+    defaultConfig {
+        namespace 'com.dailystudio.codebase.core'
+
+        compileSdk COMPILE_SDK
+
+        minSdkVersion MINI_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            resValue "string", "app_name", "@string/app_name_release"
+
+            buildConfigField "boolean","USE_STETHO","false"
+        }
+
+        debug {
+            resValue "string", "app_name", "@string/app_name_debug"
+
+            buildConfigField "boolean","USE_STETHO","true"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JAVA_VERSION
+        targetCompatibility JAVA_VERSION
+    }
+
+    buildFeatures {
+        buildConfig true
+        resValues true
+    }
+}
+
+/* DevBricksX */
+devKit {
+    devKitComps = [ "Network" ]
+}
+
+dependencies {
+
+    /* EventBut */
+    api "com.github.Rasalexman:KDispatcher:${project.ext.kdispatcherVersion}"
+
+    /* Debug */
+    api "com.facebook.stetho:stetho:${project.ext.stethoVersion}"
+
+    /* Image & Animation */
+    api("io.coil-kt:coil:${project.ext.coilVersion}")
+
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$android_junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$android_junit_espresso_version"
+
+}

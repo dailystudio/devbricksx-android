@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name_release">Code Base</string>
+    <string name="app_name_debug">Code Base (Debug)</string>
+
+    <string name="native_suffix">（来自原生）</string>
+
+</resources>
