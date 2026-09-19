@@ -137,4 +137,115 @@ class ProjectGeneratorTest {
         assertTrue(settingsContent.contains("include ':app'"))
         assertFalse(settingsContent.contains("include ':app-compose'"))
     }
+
+    @Test
+    fun `test generate project with custom png icon`(@TempDir tempDir: File) {
+        val dummyIcon = File(tempDir, "test_icon.png")
+        val image = java.awt.image.BufferedImage(256, 256, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+        val g = image.createGraphics()
+        g.color = java.awt.Color.RED
+        g.fillRect(0, 0, 256, 256)
+        g.dispose()
+        javax.imageio.ImageIO.write(image, "png", dummyIcon)
+
+        val output = File(tempDir, "IconApp")
+        val config = ProjectConfig(
+            appName = "Icon App",
+            packageName = "com.sample.iconapp",
+            outputDir = output,
+            uiTarget = "all",
+            iconFile = dummyIcon
+        )
+
+        val generator = ProjectGenerator(config)
+        generator.generate()
+
+        // Verify Play Store icon
+        val playStoreIcon = File(output, "core/src/main/ic_launcher-playstore.png")
+        assertTrue(playStoreIcon.exists())
+        val playStoreImg = javax.imageio.ImageIO.read(playStoreIcon)
+        assertEquals(512, playStoreImg.width)
+        assertEquals(512, playStoreImg.height)
+
+        // Verify mipmap icons
+        val mdpiPng = File(output, "core/src/main/res/mipmap-mdpi/ic_launcher.png")
+        assertTrue(mdpiPng.exists())
+        assertFalse(File(output, "core/src/main/res/mipmap-mdpi/ic_launcher.webp").exists())
+
+        val mdpiRoundPng = File(output, "core/src/main/res/mipmap-mdpi/ic_launcher_round.png")
+        assertTrue(mdpiRoundPng.exists())
+
+        // Verify adaptive foreground
+        val fgPng = File(output, "core/src/main/res/drawable-mdpi/ic_launcher_foreground.png")
+        assertTrue(fgPng.exists())
+        assertFalse(File(output, "core/src/main/res/drawable-v24/ic_launcher_foreground.xml").exists())
+    }
+
+    @Test
+    fun `test default ui target is compose only`(@TempDir tempDir: File) {
+        val output = File(tempDir, "DefaultApp")
+        val config = ProjectConfig(
+            appName = "Default App",
+            packageName = "com.sample.defaultapp",
+            outputDir = output
+        )
+
+        val generator = ProjectGenerator(config)
+        generator.generate()
+
+        assertTrue(File(output, "app-compose").isDirectory)
+        assertTrue(File(output, "core").isDirectory)
+        assertFalse(File(output, "app").exists())
+    }
+
+    @Test
+    fun `test generate project with custom svg icon`(@TempDir tempDir: File) {
+        val dummySvg = File(tempDir, "test_icon.svg")
+        dummySvg.writeText(
+            """
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+                <circle cx="50" cy="50" r="40" fill="#000000" />
+            </svg>
+            """.trimIndent()
+        )
+
+        val output = File(tempDir, "SvgApp")
+        val config = ProjectConfig(
+            appName = "Svg App",
+            packageName = "com.sample.svgapp",
+            outputDir = output,
+            uiTarget = "compose",
+            themeColor = "#123456",
+            iconFile = dummySvg,
+            iconFgColor = "#FFFFFF",
+            iconScale = 75
+        )
+
+        val generator = ProjectGenerator(config)
+        generator.generate()
+
+        // 1. Play Store icon
+        val playStoreIcon = File(output, "core/src/main/ic_launcher-playstore.png")
+        assertTrue(playStoreIcon.exists())
+        val playStoreImg = javax.imageio.ImageIO.read(playStoreIcon)
+        assertEquals(512, playStoreImg.width)
+        assertEquals(512, playStoreImg.height)
+
+        // 2. Mipmap icons
+        val mdpiPng = File(output, "core/src/main/res/mipmap-mdpi/ic_launcher.png")
+        assertTrue(mdpiPng.exists())
+        assertFalse(File(output, "core/src/main/res/mipmap-mdpi/ic_launcher.webp").exists())
+
+        val mdpiRoundPng = File(output, "core/src/main/res/mipmap-mdpi/ic_launcher_round.png")
+        assertTrue(mdpiRoundPng.exists())
+
+        // 3. Adaptive vector foreground
+        val vectorFg = File(output, "core/src/main/res/drawable-v24/ic_launcher_foreground.xml")
+        assertTrue(vectorFg.exists())
+        val vectorXml = vectorFg.readText()
+        assertTrue(vectorXml.contains("android:width=\"108dp\""))
+        assertTrue(vectorXml.contains("android:height=\"108dp\""))
+        assertTrue(vectorXml.contains("<group"))
+        assertTrue(vectorXml.contains("#FFFFFF"))
+    }
 }

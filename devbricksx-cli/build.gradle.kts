@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.github.ajalt.clikt:clikt:4.4.0")
+    implementation(files("libs/vector-drawable-tool.jar"))
     testImplementation(kotlin("test"))
 }
 

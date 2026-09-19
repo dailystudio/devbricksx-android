@@ -11,9 +11,12 @@ data class ProjectConfig(
     val appName: String,
     val packageName: String,
     val outputDir: File,
-    val uiTarget: String = "all", // "all", "views", "compose"
+    val uiTarget: String = "compose", // "compose", "views", "all"
     val extraModules: List<String> = emptyList(), // e.g. ["ndk"]
     val themeColor: String? = null,
+    val iconFile: File? = null,
+    val iconFgColor: String? = null,
+    val iconScale: Int = 70,
     val localTemplateDir: File? = null
 )
 
@@ -39,6 +42,13 @@ class ProjectGenerator(private val config: ProjectConfig) {
         println("Extra modules:       [${config.extraModules.joinToString(", ")}]")
         if (config.themeColor != null) {
             println("Theme Color:         [${config.themeColor}]")
+        }
+        if (config.iconFile != null) {
+            println("Icon File:           [${config.iconFile.absolutePath}]")
+            if (config.iconFgColor != null) {
+                println("Icon FG Color:       [${config.iconFgColor}]")
+            }
+            println("Icon FG Scale:       [${config.iconScale}%]")
         }
         println("-------------------------------------------------------------------")
 
@@ -126,7 +136,18 @@ class ProjectGenerator(private val config: ProjectConfig) {
                 customizeThemeColor(tempDir, config.themeColor)
             }
 
-            println("[STEP 5]: Finalizing project into destination ...")
+            if (config.iconFile != null) {
+                println("[STEP 5]: Customizing launcher icon (${config.iconFile.extension.uppercase()}) ...")
+                IconGenerator.applyIcon(
+                    rootDir = tempDir,
+                    iconFile = config.iconFile,
+                    themeColor = config.themeColor ?: "#008577",
+                    iconFgColor = config.iconFgColor,
+                    iconScale = config.iconScale
+                )
+            }
+
+            println("[STEP 6]: Finalizing project into destination ...")
             config.outputDir.mkdirs()
             tempDir.copyRecursively(config.outputDir, overwrite = true)
             File(config.outputDir, "gradlew").setExecutable(true, false)
