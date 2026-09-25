@@ -1,5 +1,6 @@
 package com.dailystudio.devbricksx.cli
 
+import com.github.ajalt.clikt.completion.CompletionCandidates
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.help
@@ -19,18 +20,31 @@ class CreateCommand : CliktCommand(
     val packageName by option("-p", "--package", help = "Android package name (e.g. 'com.dailystudio.myapp')")
         .required()
 
-    val outputDir by option("-o", "--output", help = "Output directory for the generated project (default: ./<appName>)")
+    val outputDir by option(
+        "-o", "--output",
+        help = "Output directory for the generated project (default: ./<appName>)",
+        completionCandidates = CompletionCandidates.Path
+    )
 
-    val uiTarget by option("-u", "--ui", help = "UI target: compose [Jetpack Compose], views [Android Views + XML], all [Both] (default: compose)")
-        .default("compose")
+    val uiTarget by option(
+        "-u", "--ui",
+        help = "UI target: compose [Jetpack Compose], views [Android Views + XML], all [Both] (default: compose)",
+        completionCandidates = CompletionCandidates.Fixed("compose", "views", "all")
+    ).default("compose")
 
-    val extraModules by option("-e", "--extra-modules", help = "Extra modules to include, comma-separated (e.g. 'ndk')")
-        .split(",")
-        .default(emptyList())
+    val extraModules by option(
+        "-e", "--extra-modules",
+        help = "Extra modules to include, comma-separated (e.g. 'ndk')",
+        completionCandidates = CompletionCandidates.Fixed("ndk")
+    ).split(",").default(emptyList())
 
     val themeColor by option("-t", "--theme-color", help = "Primary color for application theme (e.g. '#008577')")
 
-    val icon by option("-i", "--icon", help = "Path to application launcher icon file (.svg or .png)")
+    val icon by option(
+        "-i", "--icon",
+        help = "Path to application launcher icon file (.svg or .png)",
+        completionCandidates = CompletionCandidates.Path
+    )
 
     val iconFgColor by option(
         "--icon-fg-color",

@@ -21,9 +21,58 @@ A command-line interface tool written in Kotlin to quickly create and bootstrap 
   - **PNG Icons**: Supports transparent PNG logos (composited over the theme background) and opaque icons, generating adaptive foregrounds, Play Store 512x512 icons, and all mipmap densities.
   - Fully self-contained without external dependencies (`magick`, `rsvg-convert`, etc.).
 
-## Building and Installing
+## Installation
 
-### Build Distribution
+### Quick Install
+Run the installer script from the root repository or inside `devbricksx-cli`:
+```bash
+# From root repository:
+./install-cli.sh
+
+# Or from devbricksx-cli directory:
+cd devbricksx-cli
+./install.sh
+```
+
+The installer will:
+1. **Check Java Environment**: DevBricksX CLI requires Java 21 or higher. The installer checks your local Java runtime (`JAVA_HOME` or `PATH`).
+2. **Download Dedicated JRE If Needed**: If no compatible Java 21+ is found on your PC, the installer automatically downloads Eclipse Adoptium Temurin JRE 21 for your OS and architecture into `~/.devbricksx/jre`, ensuring the CLI always has its required JRE. You can also force a dedicated JRE with `--download-jre`.
+3. **Install Binary & Libraries**: Deploys `devbricksx` binary into `~/.devbricksx/bin` and libraries into `~/.devbricksx/lib`.
+4. **Configure Shell Auto-Completion**: Automatically configures tab auto-completion for your shell (`zsh`, `bash`, `fish`) and adds `~/.devbricksx/bin` to your `PATH` in `~/.zshrc` / `~/.bashrc`.
+
+### Installer Options
+```bash
+./install.sh [options]
+
+Options:
+  -d, --prefix <dir>       Installation target directory (default: ~/.devbricksx)
+      --download-jre       Force download and bundle a dedicated Java 21 JRE
+      --no-completion      Skip modifying shell profile for auto-completion
+  -s, --shell <shell>      Specify target shell for completions (zsh, bash, fish)
+  -h, --help               Show installer options
+      --uninstall          Remove DevBricksX CLI from ~/.devbricksx
+```
+
+### Manual Shell Auto-Completion
+If you prefer manual shell completion configuration:
+- **Zsh**:
+  ```zsh
+  # In ~/.zshrc
+  export PATH="$HOME/.devbricksx/bin:$PATH"
+  source <(devbricksx completion zsh)
+  ```
+- **Bash**:
+  ```bash
+  # In ~/.bashrc
+  export PATH="$HOME/.devbricksx/bin:$PATH"
+  source <(devbricksx completion bash)
+  ```
+- **Fish**:
+  ```fish
+  devbricksx completion fish > ~/.config/fish/completions/devbricksx.fish
+  ```
+
+### Build Distribution Manually
 ```bash
 cd devbricksx-cli
 ./gradlew installDist

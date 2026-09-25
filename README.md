@@ -12,6 +12,15 @@ With only a few lines, you can save in memory **User** objects into the database
 ![](docs/assets/samples.png)
 
 
+## DevBricksX CLI (`devbricksx`)
+
+DevBricksX comes with a command-line tool to quickly bootstrap new multi-module Android projects with Compose, XML Views, NDK, and launcher icon generation:
+
+```bash
+./install-cli.sh
+```
+The installer automatically verifies your Java environment (downloads a dedicated Java 21 JRE if missing) and configures shell auto-completion for `zsh`, `bash`, and `fish`. See [devbricksx-cli/README.md](devbricksx-cli/README.md) for full details and options.
+
 ## Quick Setup
 To use **DevBricks X** Libraries in your application, follow the steps below. There are two options for you.
 

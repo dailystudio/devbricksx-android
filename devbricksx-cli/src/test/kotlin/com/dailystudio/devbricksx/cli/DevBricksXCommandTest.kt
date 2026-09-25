@@ -11,10 +11,74 @@ class DevBricksXCommandTest {
 
     @Test
     fun `test cli help output`() {
-        val cmd = DevBricksXCommand().subcommands(CreateCommand())
+        val cmd = DevBricksXCommand().subcommands(
+            CreateCommand(),
+            CompletionCommand(name = "completion")
+        )
         val helpText = cmd.getFormattedHelp()!!
         assertTrue(helpText.contains("devbricksx"))
         assertTrue(helpText.contains("create"))
+        // completion should be hidden from help output
+        assertTrue(!helpText.contains("completion"))
+    }
+
+    @Test
+    fun `test zsh completion script is safe and guarded`() {
+        val cmd = DevBricksXCommand().subcommands(
+            CreateCommand(),
+            CompletionCommand(name = "completion")
+        )
+        val zshScript = try {
+            cmd.parse(listOf("completion", "zsh"))
+            ""
+        } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+            e.message ?: ""
+        }
+
+        // Must not have bare unconditional compinit which clears _comps
+        assertTrue(!zshScript.contains("\ncompinit\nautoload"))
+        // Must contain guarded checks
+        assertTrue(zshScript.contains("if ! type compdef >/dev/null 2>&1; then"))
+        assertTrue(zshScript.contains("if ! type complete >/dev/null 2>&1; then"))
+        // Must contain KSH_ARRAYS for 0-indexed bash completion compatibility
+        assertTrue(zshScript.contains("setopt localoptions KSH_ARRAYS"))
+        // Must use isolated helper function to avoid namespace collision
+        assertTrue(zshScript.contains("__devbricksx_skip_opt_eq"))
+        assertTrue(!zshScript.contains("__skip_opt_eq()"))
+        // Must not offer completion as a subcommand choice
+        assertTrue(!zshScript.contains("create completion"))
+        assertTrue(zshScript.contains("compgen -W 'create'"))
+    }
+
+    @Test
+    fun `test bash and fish completion scripts`() {
+        val bashCmd = DevBricksXCommand().subcommands(
+            CreateCommand(),
+            CompletionCommand(name = "completion")
+        )
+        val bashScript = try {
+            bashCmd.parse(listOf("completion", "bash"))
+            ""
+        } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+            e.message ?: ""
+        }
+        assertTrue(bashScript.contains("complete -F _devbricksx devbricksx"))
+        assertTrue(!bashScript.contains("create completion"))
+        assertTrue(bashScript.contains("compgen -W 'create'"))
+
+        val fishCmd = DevBricksXCommand().subcommands(
+            CreateCommand(),
+            CompletionCommand(name = "completion")
+        )
+        val fishScript = try {
+            fishCmd.parse(listOf("completion", "fish"))
+            ""
+        } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+            e.message ?: ""
+        }
+        assertTrue(fishScript.contains("complete -c devbricksx"))
+        assertTrue(fishScript.contains("set -l devbricksx_subcommands 'create'"))
+        assertTrue(!fishScript.contains("set -l devbricksx_subcommands 'create completion'"))
     }
 
     @Test
