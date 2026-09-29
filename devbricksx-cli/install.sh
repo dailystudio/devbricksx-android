@@ -363,9 +363,11 @@ Or simply open a new terminal window.
 Verify with:
   ${BOLD}devbricksx --help${NC}
   ${BOLD}devbricksx create --help${NC}
+  ${BOLD}devbricksx studio open --help${NC}
 
 Try tab completion:
   ${BOLD}devbricksx <TAB>${NC}
   ${BOLD}devbricksx create --ui <TAB>${NC}
+  ${BOLD}devbricksx studio open <TAB>${NC}
 ====================================================================
 EOF

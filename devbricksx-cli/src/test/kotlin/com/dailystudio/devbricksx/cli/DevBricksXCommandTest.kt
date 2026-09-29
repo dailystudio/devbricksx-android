@@ -114,4 +114,49 @@ class DevBricksXCommandTest {
         assertTrue(File(outDir, "core").exists())
         assertTrue(File(outDir, "app-compose/src/main/java/com/example/clitest/compose/MainActivity.kt").exists())
     }
+
+    @Test
+    fun `test cli help output includes studio`() {
+        val cmd = DevBricksXCommand().subcommands(
+            CreateCommand(),
+            StudioCommand().subcommands(StudioOpenCommand()),
+            CompletionCommand(name = "completion")
+        )
+        val helpText = cmd.getFormattedHelp()!!
+        assertTrue(helpText.contains("create"))
+        assertTrue(helpText.contains("studio"))
+    }
+
+    @Test
+    fun `test completions include studio`() {
+        val cmd = DevBricksXCommand().subcommands(
+            CreateCommand(),
+            StudioCommand().subcommands(StudioOpenCommand()),
+            CompletionCommand(name = "completion")
+        )
+
+        val bashScript = try {
+            cmd.parse(listOf("completion", "bash"))
+            ""
+        } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+            e.message ?: ""
+        }
+        assertTrue(bashScript.contains("create") && bashScript.contains("studio"))
+
+        val zshScript = try {
+            cmd.parse(listOf("completion", "zsh"))
+            ""
+        } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+            e.message ?: ""
+        }
+        assertTrue(zshScript.contains("create") && zshScript.contains("studio"))
+
+        val fishScript = try {
+            cmd.parse(listOf("completion", "fish"))
+            ""
+        } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+            e.message ?: ""
+        }
+        assertTrue(fishScript.contains("create") && fishScript.contains("studio"))
+    }
 }

@@ -103,6 +103,7 @@ Options:
 
 Commands:
   create  Create a new Android project using DevBricksX template.
+  studio  Manage and interact with Android Studio.
 ```
 
 ### Create a Project (`create`)
@@ -149,6 +150,47 @@ devbricksx create \
 3. **Create Views (XML)-only project**:
 ```bash
 devbricksx create -n "Views App" -p "com.example.viewsapp" -u views
+```
+
+### Open a Project in Android Studio (`studio open`)
+```bash
+devbricksx studio open --help
+```
+Opens an Android project directory using Android Studio. By default, it automatically discovers Android Studio in common installation directories across macOS, Linux, and Windows (including JetBrains Toolbox, Spotlight, snap, flatpak, and standard application directories). You can also explicitly specify the Android Studio path using `--android-studio <path>`.
+
+Options:
+- `-s`, `--studio`, `--android-studio <path>`: Path to Android Studio application bundle, installation directory, or executable.
+- `-h`, `--help`: Show command help.
+
+Arguments:
+- `<project_dir>`: Path to the Android project directory (default: current directory `.`).
+
+#### Examples
+
+1. **Open current directory in Android Studio**:
+```bash
+devbricksx studio open
+# or
+devbricksx studio open .
+```
+
+2. **Open a specific project directory**:
+```bash
+devbricksx studio open ./MyApp
+# or
+devbricksx studio open /path/to/android/project
+```
+
+3. **Open with a specific Android Studio installation**:
+```bash
+# On macOS:
+devbricksx studio open ./MyApp --android-studio "/Applications/Android Studio Preview.app"
+
+# On Linux:
+devbricksx studio open ./MyApp --android-studio /opt/android-studio/bin/studio.sh
+
+# On Windows:
+devbricksx studio open ./MyApp --android-studio "C:\Program Files\Android\Android Studio\bin\studio64.exe"
 ```
 
 ## Template Project

@@ -6,6 +6,7 @@ fun main(args: Array<String>) {
     DevBricksXCommand()
         .subcommands(
             CreateCommand(),
+            StudioCommand().subcommands(StudioOpenCommand()),
             CompletionCommand(name = "completion")
         )
         .main(args)
