@@ -110,10 +110,12 @@ Commands:
 ```bash
 devbricksx create --help
 ```
+Arguments:
+- `<dir>`: Output directory for the generated project (default: `./<appName>`). Supports tab key auto-completion.
+
 Options:
 - `-n`, `--name <text>`: Application name (e.g. `"My Application"`). Required.
 - `-p`, `--package <text>`: Android package name (e.g. `"com.example.myapp"`). Required.
-- `-o`, `--output <text>`: Output directory for the generated project (default: `./<appName>`).
 - `-u`, `--ui <text>`: UI target: `compose`, `views`, `all` (default: `compose`).
 - `-e`, `--extra-modules <text>`: Extra modules to include, comma-separated (e.g. `ndk`).
 - `-t`, `--theme-color <text>`: Primary theme color hex (e.g. `#008577` or `#3F51B5`).
@@ -126,10 +128,9 @@ Options:
 
 1. **Create project with SVG icon**:
 ```bash
-devbricksx create \
+devbricksx create ./MyApp \
   -n "My App" \
   -p "com.example.myapp" \
-  -o ./MyApp \
   -u compose \
   -t "#008577" \
   -i /path/to/icon.svg
@@ -137,17 +138,16 @@ devbricksx create \
 
 2. **Create full project with PNG icon and NDK module**:
 ```bash
-devbricksx create \
+devbricksx create ./MyApp \
   -n "My App" \
   -p "com.example.myapp" \
-  -o ./MyApp \
   -u all \
   -e ndk \
   -t "#3F51B5" \
   -i /path/to/icon.png
 ```
 
-3. **Create Views (XML)-only project**:
+3. **Create Views (XML)-only project in default directory (`./ViewsApp`)**:
 ```bash
 devbricksx create -n "Views App" -p "com.example.viewsapp" -u views
 ```

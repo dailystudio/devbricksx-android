@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
 import com.github.ajalt.clikt.parameters.options.option
+import com.dailystudio.devbricksx.cli.utils.expandHome
 import java.io.File
 
 class StudioOpenCommand(
@@ -20,29 +21,21 @@ class StudioOpenCommand(
         completionCandidates = CompletionCandidates.Path
     )
 
-    val projectDir by argument(
-        name = "project_dir",
+    val dir by argument(
+        name = "dir",
         help = "Path to the Android project directory (default: current directory)",
         completionCandidates = CompletionCandidates.Path
     ).default(".")
 
     override fun run() {
-        val trimmed = projectDir.trim()
-        val home = System.getProperty("user.home")
-        val expandedPath = if (trimmed.startsWith("~/") || trimmed == "~") {
-            trimmed.replaceFirst("^~(?=/|$)".toRegex(), home)
-        } else {
-            trimmed
-        }
-
-        val targetDir = File(expandedPath).canonicalFile
+        val targetDir = File(dir.expandHome()).canonicalFile
 
         if (!targetDir.exists()) {
-            throw UsageError("Project directory does not exist: $projectDir")
+            throw UsageError("Project directory does not exist: $dir")
         }
 
         if (!targetDir.isDirectory) {
-            throw UsageError("Project path is not a directory: $projectDir")
+            throw UsageError("Project path is not a directory: $dir")
         }
 
         if (!isAndroidProject(targetDir)) {
@@ -50,7 +43,7 @@ class StudioOpenCommand(
         }
 
         val target = if (!androidStudio.isNullOrBlank()) {
-            AndroidStudioLocator.resolveCustomPath(androidStudio!!)
+            AndroidStudioLocator.resolveCustomPath(androidStudio!!.expandHome())
                 ?: throw UsageError("Specified Android Studio path does not exist: $androidStudio")
         } else {
             AndroidStudioLocator.findDefaultStudio()

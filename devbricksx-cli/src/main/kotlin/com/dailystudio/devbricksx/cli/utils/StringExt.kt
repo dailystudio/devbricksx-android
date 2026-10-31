@@ -19,3 +19,13 @@ fun parseThemeColor(color: String): String {
     }
     return "0xff$rgb"
 }
+
+fun String.expandHome(): String {
+    val trimmed = this.trim()
+    val home = System.getProperty("user.home") ?: return trimmed
+    return if (trimmed.startsWith("~/") || trimmed == "~") {
+        trimmed.replaceFirst("^~(?=/|$)".toRegex(), home)
+    } else {
+        trimmed
+    }
+}

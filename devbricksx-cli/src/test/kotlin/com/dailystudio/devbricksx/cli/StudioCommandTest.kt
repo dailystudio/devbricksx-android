@@ -5,6 +5,7 @@ import com.github.ajalt.clikt.core.subcommands
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import com.dailystudio.devbricksx.cli.utils.expandHome
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -29,7 +30,7 @@ class StudioCommandTest {
         assertTrue(help.contains("--android-studio"))
         assertTrue(help.contains("--studio"))
         assertTrue(help.contains("-s"))
-        assertTrue(help.contains("project_dir"))
+        assertTrue(help.contains("dir"))
     }
 
     @Test
@@ -273,5 +274,55 @@ class StudioCommandTest {
         assertEquals(projectDir.canonicalFile, launchedDir)
         assertNotNull(launchedTarget)
         assertEquals(customStudio.canonicalPath, (launchedTarget as StudioLaunchTarget.Executable).file.canonicalPath)
+    }
+
+    @Test
+    fun `test tab auto-completion for create dir and studio open dir in bash zsh and fish`() {
+        fun getScript(shell: String): String {
+            val root = DevBricksXCommand().subcommands(
+                CreateCommand(),
+                StudioCommand().subcommands(StudioOpenCommand()),
+                CompletionCommand(name = "completion")
+            )
+            return try {
+                root.parse(listOf("completion", shell))
+                ""
+            } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
+                e.message ?: ""
+            }
+        }
+
+        val bashScript = getScript("bash")
+        assertTrue(bashScript.contains("__devbricksx_complete_dirs"))
+        assertTrue(bashScript.contains("__devbricksx_complete_files"))
+        assertTrue(bashScript.contains("""[[ "${'$'}word" == "~" ]] && word="~/""""))
+        assertTrue(bashScript.contains("compgen -d"))
+        assertTrue(bashScript.contains("complete -o filenames -F _devbricksx devbricksx"))
+        assertTrue(bashScript.contains("_devbricksx_create"))
+        assertTrue(bashScript.contains("_devbricksx_studio_open"))
+
+        val zshScript = getScript("zsh")
+        assertTrue(zshScript.contains("__devbricksx_complete_dirs"))
+        assertTrue(zshScript.contains("__devbricksx_complete_files"))
+        assertTrue(zshScript.contains("setopt localoptions glob bareglobqual nullglob"))
+        assertTrue(zshScript.contains("""word/#\~/${'$'}HOME"""))
+        assertTrue(zshScript.contains("complete -o filenames -F _devbricksx devbricksx"))
+        assertTrue(zshScript.contains("_devbricksx_create"))
+        assertTrue(zshScript.contains("_devbricksx_studio_open"))
+
+        val fishScript = getScript("fish")
+        assertTrue(fishScript.contains("(__fish_complete_directories)"))
+        assertTrue(fishScript.contains("""__fish_seen_subcommand_from create" -f -a "(__fish_complete_directories)""""))
+        assertTrue(fishScript.contains("""__fish_seen_subcommand_from open" -f -a "(__fish_complete_directories)""""))
+    }
+
+    @Test
+    fun `test expandHome utility method`() {
+        val userHome = System.getProperty("user.home")
+        assertEquals(userHome, "~".expandHome())
+        assertEquals(userHome, "~/".expandHome().removeSuffix("/"))
+        assertEquals("$userHome/projects", "~/projects".expandHome())
+        assertEquals("/var/tmp", "/var/tmp".expandHome())
+        assertEquals("./relative", "./relative".expandHome())
     }
 }

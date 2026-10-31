@@ -62,7 +62,7 @@ class DevBricksXCommandTest {
         } catch (e: com.github.ajalt.clikt.core.PrintCompletionMessage) {
             e.message ?: ""
         }
-        assertTrue(bashScript.contains("complete -F _devbricksx devbricksx"))
+        assertTrue(bashScript.contains("complete -o filenames -F _devbricksx devbricksx"))
         assertTrue(!bashScript.contains("create completion"))
         assertTrue(bashScript.contains("compgen -W 'create'"))
 
@@ -88,22 +88,23 @@ class DevBricksXCommandTest {
         assertTrue(helpText.contains("--name"))
         assertTrue(helpText.contains("--package"))
         assertTrue(helpText.contains("--ui"))
-        assertTrue(helpText.contains("--output"))
+        assertTrue(!helpText.contains("--output"))
+        assertTrue(helpText.contains("dir"))
         assertTrue(helpText.contains("--extra-modules"))
         assertTrue(helpText.contains("--theme-color"))
     }
 
     @Test
-    fun `test create command execution via main args`(@TempDir tempDir: File) {
+    fun `test create command execution via positional dir arg`(@TempDir tempDir: File) {
         val outDir = File(tempDir, "CliTestApp")
         val cmd = DevBricksXCommand().subcommands(CreateCommand())
 
         cmd.parse(
             listOf(
                 "create",
+                outDir.absolutePath,
                 "-n", "Cli Test App",
                 "-p", "com.example.clitest",
-                "-o", outDir.absolutePath,
                 "-u", "compose",
                 "-t", "#2196F3"
             )
